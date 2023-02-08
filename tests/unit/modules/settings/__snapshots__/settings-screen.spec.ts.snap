@@ -1,0 +1,464 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`settings screen render  1`] = `
+<div
+  data-v-app=""
+>
+  
+  <div
+    class="antialiased w-full justify-center"
+  >
+    <form
+      class="w-full"
+    >
+      
+      <div
+        class="w-full"
+      >
+        <div>
+          <div
+            class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
+          >
+            <!--v-if-->
+            <h3
+              class=""
+              id="lblTitle-0"
+            >
+              Mock Konnektor
+            </h3>
+          </div>
+          
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.mockConnector"
+              id="form-connector.mockConnector-label"
+            >
+              Status
+            </label>
+            <div>
+              <!--v-if-->
+              <div>
+                <select
+                  class="settings-input"
+                  id="form-connector.mockConnector"
+                >
+                  
+                  <option
+                    value="true"
+                  >
+                    Aktiviert
+                  </option>
+                  <option
+                    value="false"
+                  >
+                    Deaktiviert
+                  </option>
+                  
+                </select>
+              </div>
+              <!--v-if-->
+            </div>
+          </div>
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          
+        </div>
+      </div>
+      <div
+        class="w-full pt-[32px]"
+      >
+        <div>
+          <div
+            class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px] pl-[23px]"
+          >
+            <img
+              alt="form icon"
+              class="object-none pr-[10px]"
+              src="[object Object]"
+            />
+            <h3
+              class=""
+              id="lblTitle-1"
+            >
+              Konnektor-Einstellungen
+            </h3>
+          </div>
+          
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.entryOption.hostname"
+              id="form-connector.entryOption.hostname-label"
+            >
+              Host
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-connector.entryOption.hostname"
+                  placeholder=""
+                  required=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.entryOption.port"
+              id="form-connector.entryOption.port-label"
+            >
+              Port
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-connector.entryOption.port"
+                  placeholder=""
+                  required=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.contextParameter.mandantId"
+              id="form-connector.contextParameter.mandantId-label"
+            >
+              Mandant-ID
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-connector.contextParameter.mandantId"
+                  placeholder=""
+                  required=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.contextParameter.clientId"
+              id="form-connector.contextParameter.clientId-label"
+            >
+              Client-ID
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-connector.contextParameter.clientId"
+                  placeholder=""
+                  required=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.contextParameter.workplaceId"
+              id="form-connector.contextParameter.workplaceId-label"
+            >
+              Arbeitsplatz-ID
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-connector.contextParameter.workplaceId"
+                  placeholder=""
+                  required=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.tlsAuthType"
+              id="form-connector.tlsAuthType-label"
+            >
+              TLS Authentisierung
+            </label>
+            <div>
+              <!--v-if-->
+              <div>
+                <select
+                  class="settings-input"
+                  id="form-connector.tlsAuthType"
+                >
+                  
+                  <option
+                    value="BasicAuth"
+                  >
+                    Benutzername/Passwort
+                  </option>
+                  <option
+                    value="ServerClientCertAuth"
+                  >
+                    Zertifikat
+                  </option>
+                  <option
+                    value="ServerCertAuth"
+                  >
+                    Keine Authentisierung
+                  </option>
+                  
+                </select>
+              </div>
+              <!--v-if-->
+            </div>
+          </div>
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-connector.entryOption.tlsRejectUnauthorized"
+              id="form-connector.entryOption.tlsRejectUnauthorized-label"
+            >
+              Konnektor Zertifikat prüfen
+            </label>
+            <div>
+              <!--v-if-->
+              <div>
+                <select
+                  class="settings-input"
+                  id="form-connector.entryOption.tlsRejectUnauthorized"
+                >
+                  
+                  <option
+                    value="true"
+                  >
+                    Aktiviert
+                  </option>
+                  <option
+                    value="false"
+                  >
+                    Deaktiviert
+                  </option>
+                  
+                </select>
+              </div>
+              <!--v-if-->
+            </div>
+          </div>
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          
+        </div>
+      </div>
+      <div
+        class="w-full pt-[32px]"
+      >
+        <div>
+          <div
+            class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
+          >
+            <!--v-if-->
+            <h3
+              class=""
+              id="lblTitle-2"
+            >
+              Proxy Einstellungen
+            </h3>
+          </div>
+          
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-proxy.proxySettingsType"
+              id="form-proxy.proxySettingsType-label"
+            >
+              Proxy-Authentifizierung
+            </label>
+            <div>
+              <!--v-if-->
+              <div>
+                <select
+                  class="settings-input"
+                  id="form-proxy.proxySettingsType"
+                >
+                  
+                  <option
+                    value="false"
+                  >
+                    Keine Proxy-Authentifizierung
+                  </option>
+                  <option
+                    value="BasicAuth"
+                  >
+                    Basic Authentifizierung
+                  </option>
+                  <option
+                    value="ProxyClientCert"
+                  >
+                    Zertifikats-Authentifizierung
+                  </option>
+                  
+                </select>
+              </div>
+              <!--v-if-->
+            </div>
+          </div>
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-proxy.proxyIgnoreList"
+              id="form-proxy.proxyIgnoreList-label"
+            >
+              kein Proxy für:
+            </label>
+            <div>
+              <div>
+                <input
+                  class="settings-input"
+                  id="form-proxy.proxyIgnoreList"
+                  placeholder=""
+                  type="input"
+                />
+              </div>
+              <!--v-if-->
+              <!--v-if-->
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div
+        class="w-full pt-[32px]"
+      >
+        <div>
+          <div
+            class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
+          >
+            <!--v-if-->
+            <h3
+              class=""
+              id="lblTitle-3"
+            >
+              Automatische Updates
+            </h3>
+          </div>
+          
+          <div
+            class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+          >
+            <label
+              class="text-sm"
+              for="input-checkUpdatesAutomatically"
+              id="form-checkUpdatesAutomatically-label"
+            >
+              Updates automatisch durchführen
+            </label>
+            <div>
+              <!--v-if-->
+              <div>
+                <select
+                  class="settings-input"
+                  id="form-checkUpdatesAutomatically"
+                  required=""
+                >
+                  
+                  <option
+                    value="true"
+                  >
+                    Aktiviert
+                  </option>
+                  <option
+                    value="false"
+                  >
+                    Deaktiviert
+                  </option>
+                  
+                </select>
+              </div>
+              <!--v-if-->
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div
+        class="flex items-center pt-[32px]"
+      >
+        <button
+          class="bt"
+          id="btnSaveSettings"
+          title="Die Änderungen sind erst wirksam nach dem Speichern"
+          type="submit"
+        >
+          Speichern
+        </button>
+        <!--v-if-->
+        <div
+          class="w-3/3"
+        >
+          <div>
+            <button
+              class="bt ml-[15px]"
+              id="btnFeatureTest"
+              type="button"
+            >
+              Funktionstest (inkl. Speichern)
+            </button>
+            <br />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!--v-if-->
+  <!--v-if-->
+  
+</div>
+`;

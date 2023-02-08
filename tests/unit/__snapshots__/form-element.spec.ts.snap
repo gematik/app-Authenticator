@@ -1,0 +1,291 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`form element renders drop-down for custom options 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <!--v-if-->
+    <div>
+      <select
+        class="settings-input"
+        id="form-name"
+        required=""
+      >
+        
+        <option
+          value="awesome"
+        >
+          Awesome
+        </option>
+        
+      </select>
+    </div>
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders drop-down for standard options 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <!--v-if-->
+    <div>
+      <select
+        class="settings-input"
+        id="form-name"
+        required=""
+      >
+        
+        <option
+          value="true"
+        >
+          Aktiviert
+        </option>
+        <option
+          value="false"
+        >
+          Deaktiviert
+        </option>
+        
+      </select>
+    </div>
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders email field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <div>
+      <input
+        class="settings-input"
+        id="form-name"
+        placeholder="Awesome Value"
+        required=""
+        type="email"
+      />
+    </div>
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders file field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <!--v-if-->
+    <div>
+      <label
+        class="flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
+      >
+        
+        <span
+          class="w-[273px] overflow-hidden truncate rtl"
+          title="Datei Ausgewählt"
+        >
+          Datei Ausgewählt
+        </span>
+        
+        <img
+          alt="File-Upload Icon"
+          class="object-none"
+        />
+        <input
+          accept=".pem"
+          id="form-name"
+          required=""
+          title=""
+          type="file"
+        />
+        <!--v-if-->
+      </label>
+    </div>
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders file-path field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <!--v-if-->
+    <div>
+      <label
+        class="flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
+      >
+        
+        <span
+          class="w-[273px] overflow-hidden truncate rtl"
+        />
+        
+        <img
+          alt="File-Upload Icon"
+          class="object-none"
+        />
+        <input
+          accept=".pem"
+          id="form-name"
+          required=""
+          title=""
+          type="file"
+        />
+        <!--v-if-->
+      </label>
+    </div>
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders file-path field 2`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <div>
+      <input
+        class="settings-input"
+        id="form-name"
+        placeholder="Awesome Value"
+        required=""
+        type="password"
+      />
+    </div>
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders input field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <div>
+      <input
+        class="settings-input"
+        id="form-name"
+        placeholder="Awesome Value"
+        required=""
+        type="input"
+      />
+    </div>
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders number field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <div>
+      <input
+        class="settings-input"
+        id="form-name"
+        placeholder="Awesome Value"
+        required=""
+        type="number"
+      />
+    </div>
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+</div>
+`;
+
+exports[`form element renders text field 1`] = `
+<div
+  class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+>
+  <label
+    class="text-sm"
+    for="input-name"
+    id="form-name-label"
+  >
+    Awesome Label
+  </label>
+  <div>
+    <!--v-if-->
+    <div>
+      <textarea
+        class="settings-input"
+        id="form-name"
+        placeholder="Awesome Value"
+        required=""
+      />
+    </div>
+    <!--v-if-->
+  </div>
+</div>
+`;

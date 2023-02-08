@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`configMapperByGroup and error handling response should set auth sign params properly 1`] = `
+Object {
+  "base64data": "YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=",
+  "signatureCidpSchemes": "RSASSA-PSS",
+  "signatureKeycloackSchemes": "RSASSA-PKCS1-v1_5",
+  "signatureType": "urn:ietf:rfc:3447",
+}
+`;
+
+exports[`configMapperByGroup and error handling response should set context parameters right 1`] = `
+Object {
+  "clientId": "Client-System-y",
+  "mandantId": "Mandant-y",
+  "userId": "user1",
+  "workplaceId": "Arbeitsplatz-y",
+}
+`;
+
+exports[`configMapperByGroup and error handling response should set setEntryOptions right 1`] = `
+Object {
+  "certFile": "c:/yyy.pem",
+  "hostname": "127.1.1.1",
+  "keyFile": "c:/xxx.pem",
+  "localKT": "not-defined",
+  "method": "GET",
+  "password": "not-defined",
+  "path": "/connector.sds",
+  "port": 80,
+  "protocol": "https",
+  "rejectUnauthorized": false,
+  "remoteKT": "not-defined",
+  "secureProtocol": "TLSv1_2_method",
+  "username": "not-defined",
+}
+`;

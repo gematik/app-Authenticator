@@ -1,0 +1,55 @@
+.DS_Store
+node_modules
+/dist
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+#Electron-builder output
+/dist_electron
+release/
+
+test-report.html
+coverage
+*.pfx
+/src/index.ts
+
+
+/src/assets/certs-idp/tu-ca.crt
+/src/assets/certs-idp/dev-idp-ca.crt
+/src/assets/certs-idp/org_ru_chain.pem
+/src/assets/certs-konnektor/ca/pu/rsa/fullchain.pem
+/src/assets/certs-konnektor/ca/pu/rsa/konnektor.pem
+/src/assets/certs-konnektor/ca/pu/rsa/secunet-fullchain.pem
+/src/assets/certs-konnektor/ca/pu/rsa/*.cer
+
+# ignore jest report files
+/reports/
+/jenkins-jest-test-report.xml
+/junit.xml
+/test-report.xml
+/test-cases-config.json
+/.env
+
+Archive.Jenkinsfile
+Jenkinsfile
+Release.Jenkinsfile
+Github-Release.Jenkinsfile
+/tests/Integration/

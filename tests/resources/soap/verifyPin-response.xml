@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns4:VerifyPinResponse xmlns:ns2="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                               xmlns:ns3="http://ws.gematik.de/conn/CardServiceCommon/v2.0"
+                               xmlns:ns4="http://ws.gematik.de/conn/CardService/v8.1"
+        >
+            <ns2:Status>
+                <ns2:Result>OK</ns2:Result>
+            </ns2:Status>
+            <ns3:PinResult>OK</ns3:PinResult>
+        </ns4:VerifyPinResponse>
+    </S:Body>
+</S:Envelope>

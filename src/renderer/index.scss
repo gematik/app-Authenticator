@@ -1,0 +1,134 @@
+/*!
+ * Copyright (c) 2023 gematik GmbH
+ * 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+ * the European Commission - subsequent versions of the EUPL (the Licence);
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
+ * 
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Apercu';
+    font-weight: 400;
+    src: local('Apercu'), url(../assets/fonts/Apercu-Regular.otf) format('truetype');
+  }
+  @font-face {
+    font-family: 'Apercu';
+    font-weight: 400;
+    font-style: italic;
+    src: local('Apercu'), url(../assets/fonts/Apercu-Light.otf) format('truetype');
+  }
+  @font-face {
+    font-family: 'Apercu';
+    font-weight: 700;
+    src: local('Apercu'), url(../assets/fonts/Apercu-Bold.otf) format('truetype');
+  }
+  h1 {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 60px;
+    letter-spacing: -0.02em;
+    color: #000e52;
+  }
+
+  h2 {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+    color: #667085;
+  }
+
+  h3 {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000e52;
+  }
+}
+
+.bt {
+  @apply min-w-[145px] h-[36px] px-[16px] py-[8px] bg-btDefault rounded-[4px] text-light text-sm;
+}
+
+.bt:hover {
+  @apply bg-btHover;
+}
+
+.bt:focus {
+  @apply outline-none;
+}
+
+.bt-sec {
+  @apply min-w-[145px] h-[36px] px-[16px] py-[8px]
+    bg-transparent rounded-[4px] text-btDefault text-sm
+    border-solid border-[1px] border-btDefault;
+}
+
+.bt-sec:hover {
+  @apply border-btSecHover text-btSecHover;
+}
+
+.bt-sec:focus {
+  @apply outline-none;
+}
+
+body {
+  /* width: 100vw; */
+  height: 100vh;
+}
+
+.router-link {
+  padding-bottom: 6px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  font-family: 'Apercu';
+}
+
+.router-link-active {
+  border-bottom: #4e5ba6 2px solid;
+}
+
+.swal-title {
+  font-size: 24px;
+}
+
+/* total width */
+#app-content::-webkit-scrollbar {
+  background-color: transparent;
+  width: 12px;
+}
+
+/* background of the scrollbar except button or resizer */
+#app-content::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* scrollbar itself */
+#app-content::-webkit-scrollbar-thumb {
+  background-color: #71717180;
+  border-radius: 16px;
+  border: 3px solid #fff;
+}
+
+/* set button(top and bottom of the scrollbar) */
+#app-content::-webkit-scrollbar-button {
+  display:none;
+}

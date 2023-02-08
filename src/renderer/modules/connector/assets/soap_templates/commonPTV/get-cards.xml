@@ -1,0 +1,20 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v7="http://ws.gematik.de/conn/EventService/v7.2"
+                  xmlns:v2="http://ws.gematik.de/conn/ConnectorContext/v2.0"
+                  xmlns:v5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                  xmlns:v21="http://ws.gematik.de/conn/CardServiceCommon/v2.0">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v7:GetCards mandant-wide="false">
+            <v2:Context>
+                <v5:MandantId>{MANDANT}</v5:MandantId>
+                <v5:ClientSystemId>{CLIENT}</v5:ClientSystemId>
+                <v5:WorkplaceId>{WORKPLACE}</v5:WorkplaceId>
+                <!--Optional:-->
+
+            </v2:Context>
+            <!--Optional:-->
+            <v21:CardType>{CARDTYPE}</v21:CardType>
+        </v7:GetCards>
+    </soapenv:Body>
+</soapenv:Envelope>

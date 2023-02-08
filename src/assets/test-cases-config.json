@@ -1,0 +1,6 @@
+{
+  "zentralen IDP RU Internet": "https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration",
+  "zentralen IDP RU TI": "https://idp-ref.zentral.idp.splitdns.ti-dienste.de/.well-known/openid-configuration",
+  "zentralen IDP PU Internet": "https://idp.app.ti-dienste.de/.well-known/openid-configuration",
+  "zentralen IDP PU TI": "https://idp.zentral.idp.splitdns.ti-dienste.de/.well-known/openid-configuration"
+}

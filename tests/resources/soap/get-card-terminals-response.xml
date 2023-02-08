@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns11:GetCardTerminalsResponse xmlns:ns2="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                                       xmlns:ns3="http://ws.gematik.de/conn/CardServiceCommon/v2.0"
+                                       xmlns:ns9="http://ws.gematik.de/int/version/ProductInformation/v1.1"
+                                       xmlns:ns10="http://ws.gematik.de/conn/CardTerminalInfo/v8.0"
+                                       xmlns:ns11="http://ws.gematik.de/conn/EventService/v7.2"
+        >
+            <ns2:Status>
+                <ns2:Result>OK</ns2:Result>
+            </ns2:Status>
+            <ns10:CardTerminals>
+                <ns10:CardTerminal>
+                    <ns9:ProductInformation>
+                        <ns9:InformationDate>2022-02-21T10:41:58.614Z</ns9:InformationDate>
+                        <ns9:ProductTypeInformation>
+                            <ns9:ProductType>eHealth-Kartenterminal</ns9:ProductType>
+                            <ns9:ProductTypeVersion>1.2.0</ns9:ProductTypeVersion>
+                        </ns9:ProductTypeInformation>
+                        <ns9:ProductIdentification>
+                            <ns9:ProductVendorID>EHEX</ns9:ProductVendorID>
+                            <ns9:ProductCode>VTerm</ns9:ProductCode>
+                            <ns9:ProductVersion>
+                                <ns9:Local>
+                                    <ns9:HWVersion>1.0.1</ns9:HWVersion>
+                                    <ns9:FWVersion>1.1.0</ns9:FWVersion>
+                                </ns9:Local>
+                            </ns9:ProductVersion>
+                        </ns9:ProductIdentification>
+                        <ns9:ProductMiscellaneous>
+                            <ns9:ProductVendorName>eHealthExperts</ns9:ProductVendorName>
+                            <ns9:ProductName>Virtual Terminal</ns9:ProductName>
+                        </ns9:ProductMiscellaneous>
+                    </ns9:ProductInformation>
+                    <ns3:CtId>T1</ns3:CtId>
+                    <ns2:WorkplaceIds>
+                        <ns2:WorkplaceId>Workplace1</ns2:WorkplaceId>
+                    </ns2:WorkplaceIds>
+                    <ns10:Name>Terminal 1</ns10:Name>
+                    <ns10:MacAddress>00-25-0E-00-44-C1</ns10:MacAddress>
+                    <ns10:IPAddress>
+                        <ns10:IPV4Address>192.168.180.131</ns10:IPV4Address>
+                    </ns10:IPAddress>
+                    <ns10:Slots>4</ns10:Slots>
+                    <ns10:IS_PHYSICAL>true</ns10:IS_PHYSICAL>
+                    <ns10:Connected>true</ns10:Connected>
+                </ns10:CardTerminal>
+                <ns10:CardTerminal>
+                    <ns9:ProductInformation>
+                        <ns9:InformationDate>2022-02-21T10:41:58.614Z</ns9:InformationDate>
+                        <ns9:ProductTypeInformation>
+                            <ns9:ProductType>eHealth-Kartenterminal</ns9:ProductType>
+                            <ns9:ProductTypeVersion>1.2.0</ns9:ProductTypeVersion>
+                        </ns9:ProductTypeInformation>
+                        <ns9:ProductIdentification>
+                            <ns9:ProductVendorID>EHEX</ns9:ProductVendorID>
+                            <ns9:ProductCode>VTerm</ns9:ProductCode>
+                            <ns9:ProductVersion>
+                                <ns9:Local>
+                                    <ns9:HWVersion>1.0.1</ns9:HWVersion>
+                                    <ns9:FWVersion>1.1.0</ns9:FWVersion>
+                                </ns9:Local>
+                            </ns9:ProductVersion>
+                        </ns9:ProductIdentification>
+                        <ns9:ProductMiscellaneous>
+                            <ns9:ProductVendorName>eHealthExperts</ns9:ProductVendorName>
+                            <ns9:ProductName>Virtual Terminal</ns9:ProductName>
+                        </ns9:ProductMiscellaneous>
+                    </ns9:ProductInformation>
+                    <ns3:CtId>T-N-LOC</ns3:CtId>
+                    <ns2:WorkplaceIds/>
+                    <ns10:Name>Terminal (nicht lokal)</ns10:Name>
+                    <ns10:MacAddress>DC-2D-43-31-40-8D</ns10:MacAddress>
+                    <ns10:IPAddress>
+                        <ns10:IPV4Address>206.213.107.205</ns10:IPV4Address>
+                    </ns10:IPAddress>
+                    <ns10:Slots>4</ns10:Slots>
+                    <ns10:IS_PHYSICAL>true</ns10:IS_PHYSICAL>
+                    <ns10:Connected>true</ns10:Connected>
+                </ns10:CardTerminal>
+            </ns10:CardTerminals>
+        </ns11:GetCardTerminalsResponse>
+    </S:Body>
+</S:Envelope>

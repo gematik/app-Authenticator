@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sign challenge utils creates sha256 hash 1`] = `Promise {}`;
+
+exports[`sign challenge utils creates signing input string 1`] = `Promise {}`;

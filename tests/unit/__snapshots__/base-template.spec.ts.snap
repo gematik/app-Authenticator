@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`base template screen render with settings button 1`] = `
+<div
+  class="h-full flex flex-col bg-primary text-defaultext"
+>
+  <div
+    class="flex flex-row justify-between px-[32px] py-[32px]"
+  >
+    <div>
+      <router-link
+        class="mr-[16px]"
+        id="navLogin"
+        to="/"
+      >
+        Anmeldung
+      </router-link>
+      <router-link
+        id="navSettings"
+        to="/settings"
+      >
+        Einstellungen
+      </router-link>
+    </div>
+    <img
+      alt="logo"
+      class="object-contain"
+    />
+  </div>
+  <div
+    class="content flex-1 px-[32px] overflow-auto"
+    id="app-content"
+  >
+    
+    
+  </div>
+  <div
+    class="flex flex-row justify-between relative px-[32px] py-[32px]"
+  >
+    <router-link
+      class="inline-flex"
+      to="/imprint"
+    >
+      <img
+        alt="info icon"
+        class="object-contain mr-[8px]"
+      />
+      <span
+        class="text-sm hover:underline"
+        id="lblImprint"
+      >
+        Impressum
+      </span>
+    </router-link>
+    <div
+      class="text-sm cursor-default"
+      id="lblVersion"
+      title="3.1.0"
+    >
+      Version dev 
+    </div>
+  </div>
+  <div />
+  <div />
+</div>
+`;

@@ -1,0 +1,31 @@
+<!--
+  - Copyright (c) 2023 gematik GmbH
+  - 
+  - Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+  - the European Commission - subsequent versions of the EUPL (the Licence);
+  - You may not use this work except in compliance with the Licence.
+  - You may obtain a copy of the Licence at:
+  - 
+  -     https://joinup.ec.europa.eu/software/page/eupl
+  - 
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the Licence is distributed on an "AS IS" basis,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the Licence for the specific language governing permissions and
+  - limitations under the Licence.
+  - 
+  -->
+
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 10.7333C4 8.05532 6.30468 6 9 6H15C17.6953 6 20 8.05532 20 10.7333V17.2667C20 19.9447 17.6953 22 15 22H9C6.30468 22 4 19.9447 4 17.2667L4 10.7333ZM9 8C7.27704 8 6 9.28762 6 10.7333L6 17.2667C6 18.7124 7.27704 20 9 20H15C16.723 20 18 18.7124 18 17.2667V10.7333C18 9.28762 16.723 8 15 8H9Z" fill="#000E52"/>
+<path d="M7 5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5V7H7V5Z" fill="#C8CCE5"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9 4C8.44772 4 8 4.44772 8 5V6H16V5C16 4.44772 15.5523 4 15 4H9ZM6 5C6 3.34315 7.34315 2 9 2H15C16.6569 2 18 3.34315 18 5V8H6V5Z" fill="#000E52"/>
+<path d="M10 11C10 11.5523 9.55228 12 9 12C8.44772 12 8 11.5523 8 11C8 10.4477 8.44772 10 9 10C9.55228 10 10 10.4477 10 11Z" fill="#4E5BA6"/>
+<path d="M10 14C10 14.5523 9.55228 15 9 15C8.44772 15 8 14.5523 8 14C8 13.4477 8.44772 13 9 13C9.55228 13 10 13.4477 10 14Z" fill="#4E5BA6"/>
+<path d="M9 18C9.55228 18 10 17.5523 10 17C10 16.4477 9.55228 16 9 16C8.44772 16 8 16.4477 8 17C8 17.5523 8.44772 18 9 18Z" fill="#4E5BA6"/>
+<path d="M13 11C13 11.5523 12.5523 12 12 12C11.4477 12 11 11.5523 11 11C11 10.4477 11.4477 10 12 10C12.5523 10 13 10.4477 13 11Z" fill="#4E5BA6"/>
+<path d="M12 15C12.5523 15 13 14.5523 13 14C13 13.4477 12.5523 13 12 13C11.4477 13 11 13.4477 11 14C11 14.5523 11.4477 15 12 15Z" fill="#4E5BA6"/>
+<path d="M13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17Z" fill="#4E5BA6"/>
+<path d="M15 12C15.5523 12 16 11.5523 16 11C16 10.4477 15.5523 10 15 10C14.4477 10 14 10.4477 14 11C14 11.5523 14.4477 12 15 12Z" fill="#4E5BA6"/>
+<path d="M15 13C14.4477 13 14 13.4477 14 14V17C14 17.5523 14.4477 18 15 18C15.5523 18 16 17.5523 16 17V14C16 13.4477 15.5523 13 15 13Z" fill="#4E5BA6"/>
+</svg>

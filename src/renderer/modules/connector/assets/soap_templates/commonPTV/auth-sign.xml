@@ -1,0 +1,30 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v7="http://ws.gematik.de/conn/SignatureService/v7.4"
+                  xmlns:v5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                  xmlns:v2="http://ws.gematik.de/conn/ConnectorContext/v2.0"
+                  xmlns:urn="urn:oasis:names:tc:dss:1.0:core:schema">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v7:ExternalAuthenticate>
+            <v5:CardHandle>{CARDHANDLE}</v5:CardHandle>
+            <v2:Context>
+                <v5:MandantId>{MANDANT}</v5:MandantId>
+                <v5:ClientSystemId>{CLIENT}</v5:ClientSystemId>
+                <v5:WorkplaceId>{WORKPLACE}</v5:WorkplaceId>
+                <!--Optional:-->
+                <v5:UserId>{USER}</v5:UserId>
+            </v2:Context>
+            <!--Optional:-->
+            <v7:OptionalInputs>
+                <!--You may enter the following 2 items in any order-->
+                <!--Optional:-->
+                <urn:SignatureType>{SIGNATURETYPE}</urn:SignatureType>
+                <!--Optional:-->
+                <v7:SignatureSchemes>{SIGNATURESCHEME}</v7:SignatureSchemes>
+            </v7:OptionalInputs>
+            <v7:BinaryString>
+                <urn:Base64Data MimeType="application/octet-stream">{BASE64DATA}</urn:Base64Data>
+            </v7:BinaryString>
+        </v7:ExternalAuthenticate>
+    </soapenv:Body>
+</soapenv:Envelope>

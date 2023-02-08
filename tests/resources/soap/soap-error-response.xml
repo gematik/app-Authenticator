@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"
+>
+    <S:Body xmlns="">
+        <S:Fault>
+            <faultcode>S:Server</faultcode>
+            <faultstring>Ungültige Mandanten-ID</faultstring>
+            <detail>
+                <ns4:Error xmlns:ns4="http://ws.gematik.de/tel/error/v2.0">
+                    <ns4:MessageID>d681a03d-072a-4583-875c-3f67d13b0c34</ns4:MessageID>
+                    <ns4:Timestamp>2021-06-29T12:53:28.542Z</ns4:Timestamp>
+                    <ns4:Trace>
+                        <ns4:EventID>cf3a552a-d7c2-4ca3-867b-a206b4d5e916</ns4:EventID>
+                        <ns4:Instance>Konnektor-Lokal</ns4:Instance>
+                        <ns4:LogReference>Konnektor-Log</ns4:LogReference>
+                        <ns4:CompType>Konnektor</ns4:CompType>
+                        <ns4:Code>4004</ns4:Code>
+                        <ns4:Severity>Error</ns4:Severity>
+                        <ns4:ErrorType>Technical</ns4:ErrorType>
+                        <ns4:ErrorText>Ungültige Mandanten-ID</ns4:ErrorText>
+                    </ns4:Trace>
+                </ns4:Error>
+            </detail>
+        </S:Fault>
+    </S:Body>
+</S:Envelope>

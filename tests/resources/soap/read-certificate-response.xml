@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns8:ReadCardCertificateResponse xmlns:ns2="http://ws.gematik.de/conn/CertificateServiceCommon/v2.0"
+                                         xmlns:ns5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                                         xmlns:ns8="http://ws.gematik.de/conn/CertificateService/v6.0"
+        >
+            <ns5:Status>
+                <ns5:Result>OK</ns5:Result>
+            </ns5:Status>
+            <ns2:X509DataInfoList>
+                <ns2:X509DataInfo>
+                    <ns2:CertRef>C.AUT</ns2:CertRef>
+                    <ns2:X509Data>
+                        <ns2:X509IssuerSerial>
+                            <ns2:X509IssuerName>C=DE, O=eHealthExperts GmbH, OU=eHealthExperts-CA der
+                                Telematikinfrastruktur, CN=C.EHEX.HUMAN-CA1 TEST-ONLY
+                            </ns2:X509IssuerName>
+                            <ns2:X509SerialNumber>1548365549</ns2:X509SerialNumber>
+                        </ns2:X509IssuerSerial>
+                        <ns2:X509SubjectName>C=DE, O=eHealthExperts GmbH, SERIALNUMBER=1-smcb-doctor-valid, CN=Test
+                            Praxis Valid
+                        </ns2:X509SubjectName>
+                        <ns2:X509Certificate>
+                            MIIEpzCCA4+gAwIBAgIEXEou7TANBgkqhkiG9w0BAQsFADCBhzEjMCEGA1UEAwwaQy5FSEVYLkhVTUFOLUNBMSBURVNULU9OTFkxNTAzBgNVBAsMLGVIZWFsdGhFeHBlcnRzLUNBIGRlciBUZWxlbWF0aWtpbmZyYXN0cnVrdHVyMRwwGgYDVQQKDBNlSGVhbHRoRXhwZXJ0cyBHbWJIMQswCQYDVQQGEwJERTAeFw0yMjAxMjMxMzQwNDNaFw00ODEyMzAyMzAwMDBaMGUxGjAYBgNVBAMMEVRlc3QgUHJheGlzIFZhbGlkMRwwGgYDVQQFExMxLXNtY2ItZG9jdG9yLXZhbGlkMRwwGgYDVQQKDBNlSGVhbHRoRXhwZXJ0cyBHbWJIMQswCQYDVQQGEwJERTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkKY4Kq2ZWRCZny+8lr67/+tnruAJpxjDPDzPINl7YC6XtLr4X/nPVhAm/7A4OhIw3ZD80un2xG1zT0sk/SloYNy7E5CHrwbXyTQFsgs/KY6Yv6qtGHhzJgxZgCxh51dEqNABNXjeufOPybifhpfTuOLBPWOMZsm7+Z0YvHaqcWSMIe+Z+B6tahnU3pmIBQtVm2PCRQ4y7J2IaGJJWDmSOu374gZZ3PD+dWDhB6nhI49v5tkEIaLH22yaGw1qWgnOtvCBSckkcKq8acT/0/p/CluRZ6f/KT9bt2FHtOdvq3pAKpsKqiQvtKXFR2Xsblq+Qy5dUvFxAl9fdNO7uBvwsCAwEAAaOCATowggE2MB8GA1UdIwQYMBaAFOPZXgu7FVVpJIu2lrtvzEHdB3pfMB0GA1UdDgQWBBQNSxtEyraUYexl3/apjyRGvNxfcjAMBgNVHRMBAf8EAjAAMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggrBgEFBQcDAjAgBgNVHSAEGTAXMAoGCCqCFABMBIEjMAkGByqCFABMBE0wUgYIKwYBBQUHAQEERjBEMEIGCCsGAQUFBzABhjZodHRwOi8vb2NzcC5laGV4LmRlOjI1NjAvZWpiY2EvcHJpdmF0ZS93ZWIvc3RhdHVzL29jc3AwSwYFKyQIAwMEQjBAMD4wPDA6MDgwFgwUQmV0cmllYnNzdMOkdHRlIEFyenQwCQYHKoIUAEwEMhMTMS1zbWNiLWRvY3Rvci12YWxpZDANBgkqhkiG9w0BAQsFAAOCAQEAIM0LaTCeGraf+1+2ng5Nu37WSBa7Kgl7DEUHPCLHXwgonCdgMrD3Ez27RGDr9OJydyKst8ywa0Birvw7NnLxvIIoYkLtM0bZNwyPoiGlihR69CEOuQFn0gOHdpDf8ew9AjcubhHVtoNQpXQxHH8iIZ5Fui5pHfEH4zTDXO1jy7DDbjUt9q/0GaqUu1/TQoAUDAN1blQBvVeAb1O38C0Va4mX6XvCztbhn+cxOM8FIL766xCx1xrdQwVNC/TVhFOtOqjqVuIda3M5naCbFoL5NgSpaKeYY3e1S/wfNkIs8R7VW6ivC5JRPop/Yxm6106pBGDJCtYkbIqBTQa6GcYRlw==
+                        </ns2:X509Certificate>
+                    </ns2:X509Data>
+                </ns2:X509DataInfo>
+            </ns2:X509DataInfoList>
+        </ns8:ReadCardCertificateResponse>
+    </S:Body>
+</S:Envelope>

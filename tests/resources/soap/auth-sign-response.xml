@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns8:ExternalAuthenticateResponse
+                xmlns:ns5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                xmlns:ns7="urn:oasis:names:tc:dss:1.0:core:schema"
+                xmlns:ns8="http://ws.gematik.de/conn/SignatureService/v7.4"
+        >
+            <ns5:Status>
+                <ns5:Result>OK</ns5:Result>
+            </ns5:Status>
+            <ns7:SignatureObject>
+                <ns7:Base64Signature Type="urn:ietf:rfc:3447">
+                    hRCQXm8H5fLYCPuzwrbg0xXz+HvC3tfaR1ErJRabjKlOhXF1H778UgmCOqppmC6G7L0gHM4x86jjZTpwacjoggnTZZF3bXfvxwOVOxq47dIx37iMe+dAQQHm5hX7N+MOJVXKtV+baPGe80UzuYJ+YNhrIj7Vq8QSIaV1lUqcq0knZfBztLLvShztE3fAbEV2ZdYSSrpS7JOkT65UxWP2e9yGrG2BkSK92gWZnMN2BnO9Fg+xUp3k9o1++d3smLWUFv3sUTNil5g3TM1U93QwNy4lFbr/c+B9YmbJe3hRbldAdA9YJwjG/ysLIqQEya3Whg/ZJB0ytCisf6xM4V5yWw==
+                </ns7:Base64Signature>
+            </ns7:SignatureObject>
+        </ns8:ExternalAuthenticateResponse>
+    </S:Body>
+</S:Envelope>

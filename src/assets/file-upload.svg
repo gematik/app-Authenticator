@@ -1,0 +1,22 @@
+<!--
+  - Copyright (c) 2023 gematik GmbH
+  - 
+  - Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+  - the European Commission - subsequent versions of the EUPL (the Licence);
+  - You may not use this work except in compliance with the Licence.
+  - You may obtain a copy of the Licence at:
+  - 
+  -     https://joinup.ec.europa.eu/software/page/eupl
+  - 
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the Licence is distributed on an "AS IS" basis,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the Licence for the specific language governing permissions and
+  - limitations under the Licence.
+  - 
+  -->
+
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7 19C7 18.4477 7.44772 18 8 18H16C16.5523 18 17 18.4477 17 19C17 19.5523 16.5523 20 16 20H8C7.44772 20 7 19.5523 7 19Z" fill="#4E5BA6"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.2929 4.29289C11.6834 3.90237 12.3166 3.90237 12.7071 4.29289L16.7071 8.29289C17.0976 8.68342 17.0976 9.31658 16.7071 9.70711C16.3166 10.0976 15.6834 10.0976 15.2929 9.70711L13 7.41421V15C13 15.5523 12.5523 16 12 16C11.4477 16 11 15.5523 11 15V7.41421L8.70711 9.70711C8.31658 10.0976 7.68342 10.0976 7.29289 9.70711C6.90237 9.31658 6.90237 8.68342 7.29289 8.29289L11.2929 4.29289Z" fill="#000E52"/>
+</svg>

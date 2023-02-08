@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "dist_electron",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": "src",
+    "types": ["jest", "node"],
+    "paths": {
+      "@/*": ["*"]
+    },
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "typeRoots": ["src/@types", "node_modules/@types"],
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "node_modules/@types/jest/index.d.ts"
+  ],
+  "exclude": ["node_modules", "tests"]
+}

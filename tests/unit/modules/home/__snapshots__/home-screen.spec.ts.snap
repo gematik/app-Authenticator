@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`home screen render with loading spinner 1`] = `
+<div
+  class="home flex flex-col justify-center w-full mt-[128px]"
+>
+  <div
+    class="flex row justify-center"
+  >
+    <img
+      alt="logo icon"
+      class="object-contain pr-1 h-[156px]"
+    />
+  </div>
+  <h2
+    class="text-center"
+    id="lblMainCenter"
+  >
+    Sichere Anmeldung in der Telematikinfrastruktur
+  </h2>
+  <div
+    class="flex justify-center"
+  >
+    <div
+      class="loader"
+    />
+  </div>
+  <div
+    class="flex flex-col items-center mt-[64px]"
+  >
+    <p
+      class="text-base text-baseText mb-[16px]"
+    >
+      Es wurden noch keine Einstellungen vorgenommen.
+    </p>
+    <button
+      class="bt"
+      type="submit"
+    >
+      <img
+        alt="settings icon"
+        class="inline pr-[8px]"
+      />
+      Einstellungen öffnen
+    </button>
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`home screen render with settings button 1`] = `
+<div
+  class="home flex flex-col justify-center w-full mt-[128px]"
+>
+  <div
+    class="flex row justify-center"
+  >
+    <img
+      alt="logo icon"
+      class="object-contain pr-1 h-[156px]"
+    />
+  </div>
+  <h2
+    class="text-center"
+    id="lblMainCenter"
+  >
+    Sichere Anmeldung in der Telematikinfrastruktur
+  </h2>
+  <!--v-if-->
+  <div
+    class="flex flex-col items-center mt-[64px]"
+  >
+    <p
+      class="text-base text-baseText mb-[16px]"
+    >
+      Es wurden noch keine Einstellungen vorgenommen.
+    </p>
+    <button
+      class="bt"
+      type="submit"
+    >
+      <img
+        alt="settings icon"
+        class="inline pr-[8px]"
+      />
+      Einstellungen öffnen
+    </button>
+  </div>
+  <!--v-if-->
+</div>
+`;

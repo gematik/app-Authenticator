@@ -1,0 +1,22 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v6="http://ws.gematik.de/conn/CertificateService/v6.0"
+                  xmlns:v5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                  xmlns:v2="http://ws.gematik.de/conn/ConnectorContext/v2.0">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v6:ReadCardCertificate>
+            <v5:CardHandle>{CARDHANDLE}</v5:CardHandle>
+            <v2:Context>
+                <v5:MandantId>{MANDANT}</v5:MandantId>
+                <v5:ClientSystemId>{CLIENT}</v5:ClientSystemId>
+                <v5:WorkplaceId>{WORKPLACE}</v5:WorkplaceId>
+                <!--Optional:-->
+                <v5:UserId>{USER}</v5:UserId>
+            </v2:Context>
+            <v6:CertRefList>
+                <!--1 or more repetitions:-->
+                <v6:CertRef>{CERTIFICATE_REF}</v6:CertRef>
+            </v6:CertRefList>
+        </v6:ReadCardCertificate>
+    </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns11:GetCardsResponse xmlns:ns2="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                               xmlns:ns4="http://ws.gematik.de/conn/CardService/v8.1"
+                               xmlns:ns11="http://ws.gematik.de/conn/EventService/v7.2"
+        >
+            <ns2:Status>
+                <ns2:Result>OK</ns2:Result>
+            </ns2:Status>
+            <ns4:Cards/>
+        </ns11:GetCardsResponse>
+    </S:Body>
+</S:Envelope>

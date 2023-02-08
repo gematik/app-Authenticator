@@ -1,0 +1,20 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v8="http://ws.gematik.de/conn/CardService/v8.1"
+                  xmlns:v2="http://ws.gematik.de/conn/ConnectorContext/v2.0"
+                  xmlns:v5="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+                  xmlns:v21="http://ws.gematik.de/conn/CardServiceCommon/v2.0">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v8:VerifyPin>
+            <v2:Context>
+                <v5:MandantId>{MANDANT}</v5:MandantId>
+                <v5:ClientSystemId>{CLIENT}</v5:ClientSystemId>
+                <v5:WorkplaceId>{WORKPLACE}</v5:WorkplaceId>
+                <!--Optional:-->
+                <v5:UserId>{USER}</v5:UserId>
+            </v2:Context>
+            <v5:CardHandle>{CARDHANDLE}</v5:CardHandle>
+            <v21:PinTyp>{PINTYPE}</v21:PinTyp>
+        </v8:VerifyPin>
+    </soapenv:Body>
+</soapenv:Envelope>
