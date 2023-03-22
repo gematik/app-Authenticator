@@ -1,30 +1,27 @@
 <!--
-  - Copyright (c) 2023 gematik GmbH
-  - 
-  - Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-  - the European Commission - subsequent versions of the EUPL (the Licence);
-  - You may not use this work except in compliance with the Licence.
-  - You may obtain a copy of the Licence at:
-  - 
-  -     https://joinup.ec.europa.eu/software/page/eupl
-  - 
-  - Unless required by applicable law or agreed to in writing, software
-  - distributed under the Licence is distributed on an "AS IS" basis,
-  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  - See the Licence for the specific language governing permissions and
-  - limitations under the Licence.
-  - 
+  - Copyright 2023 gematik GmbH
+  -
+  - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+  - Sourcecode must be in compliance with the EUPL.
+  -
+  - You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+  -
+  - Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+  - IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+  - language governing permissions and limitations under the License.ee the Licence for the specific language governing
+  - permissions and limitations under the Licence.
   -->
+y
 
 <template>
   <div
     v-if="hide !== true"
     class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
   >
-    <label :id="`form-${name}-label`" class="text-sm" :for="`input-${name}`">
-      {{ label }}
-    </label>
-
+    <div class="text-sm" :for="`input-${name}`">
+      <label :id="`form-${name}-label`" class="text-sm"> {{ label }} </label>
+      <Tooltip :tooltip-content="infoText"></Tooltip>
+    </div>
     <div>
       <div v-if="type === 'input' || type === 'password' || type === 'email' || type === 'number'">
         <input
@@ -106,7 +103,7 @@
           </button>
         </label>
       </div>
-      <div v-if="!isValid" class="text-error text-[12px] px-[15px] pt-[5px]">Value is not valid!</div>
+      <div v-if="!isValid" class="text-error text-[12px] px-[15px] pt-[5px]">{{ $t('value_is_not_valid') }}</div>
     </div>
   </div>
 </template>
@@ -114,9 +111,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { IFormInputColumnTypes, IFormInputDropDownOptions, IFormInputDropDownOptionType } from '@/@types/common-types';
+import Tooltip from '@/renderer/components/Tooltip.vue';
 
 export default defineComponent({
   name: 'FormElement',
+  components: { Tooltip },
   props: {
     model: {
       type: Object,
@@ -171,6 +170,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    infoText: {
+      type: String,
+      required: false,
+      default: '',
     },
     /**
      * Get fired for whole form any time an element changes

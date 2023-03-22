@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import fs from 'fs';
@@ -22,6 +18,8 @@ import https from 'https';
 import os from 'os';
 import util from 'util';
 import path from 'path';
+import { Options } from 'got';
+import { TClientRes } from '@/main/services/http-client';
 
 export declare global {
   interface Window {
@@ -47,14 +45,11 @@ export declare global {
       httpsAgent: typeof https.Agent;
       setAppConfigInPreload: (data: Record<string, unknown>) => void;
       setCaChainIdpInPreload: (data: string[]) => void;
-      httpGet: (
-        url: string,
-        followRedirect: boolean,
-        options?: any,
-      ) => Promise<{ data: any; status: number; headers: any }>;
-      httpPost: (url: string, envelope: any, options?: any) => Promise<{ data: any; status: number; headers: any }>;
+      httpGet: (url: string, options?: Options) => Promise<TClientRes>;
+      httpPost: (url: string, envelope: any, options?: Options) => Promise<TClientRes>;
       getProcessCwd: () => string;
       getProcessEnvs: () => Record<string, string>;
+      createLogZipFile: () => Promise<boolean>;
     };
   }
 }

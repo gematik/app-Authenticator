@@ -1,22 +1,22 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
-import sweetalert from 'sweetalert';
+jest.mock('sweetalert2', () => ({
+  fire: jest.fn().mockReturnValue({ isConfirmed: true }),
+}));
+
+import Swal from 'sweetalert2';
 import fs from 'fs';
 
 import { mount } from '@vue/test-utils';
@@ -43,7 +43,6 @@ const TEST_FILE_PATH = process.cwd() + '/tests/resources/certs/example/example-c
 const contentKey = fs.readFileSync(TEST_FILE_PATH_TO_KEY);
 const contentCert = fs.readFileSync(TEST_FILE_PATH);
 
-jest.mock('sweetalert', () => jest.fn());
 const fileStorageRepository = new FileStorageRepository();
 jest.mock('@/renderer/modules/settings/useSettings.ts', () => ({
   useSettings: () => {
@@ -56,6 +55,7 @@ describe('settings page validation', () => {
     clearSampleData();
   });
 
+  const valueNotValidText = 'Wert ist nicht gültig!';
   it('no validation error appears ', async function () {
     setSampleData();
     const wrapper = await mount(SettingsScreen, {
@@ -64,7 +64,7 @@ describe('settings page validation', () => {
       },
     });
 
-    expect(wrapper.element?.textContent?.includes('Value is not valid!')).toBeFalsy();
+    expect(wrapper.element?.textContent?.includes(valueNotValidText)).toBeFalsy();
   });
 
   it('validation error appears ', async function () {
@@ -75,7 +75,7 @@ describe('settings page validation', () => {
       },
     });
 
-    expect(wrapper.element?.textContent?.includes('Value is not valid!')).toBeTruthy();
+    expect(wrapper.element?.textContent?.includes(valueNotValidText)).toBeTruthy();
   });
 
   it('validation error blocks saving the form', async function () {
@@ -87,10 +87,11 @@ describe('settings page validation', () => {
     });
 
     expect(await wrapper.vm.saveConfigValues()).toBe(false);
-    expect(sweetalert).toHaveBeenCalledTimes(1);
-    expect(sweetalert).toHaveBeenCalledWith({
+    expect(Swal.fire).toHaveBeenCalledTimes(1);
+    expect(Swal.fire).toHaveBeenCalledWith({
       icon: 'warning',
       title: 'Bitte geben Sie einen korrekten Eingabewert ein!',
+      confirmButtonText: 'OK',
     });
   });
 

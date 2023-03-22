@@ -1,22 +1,18 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 import { IPC_UPDATE_ENV, IPC_WARN_USER } from '@/constants';
 import { TUserWarnObject } from '@/@types/common-types';
@@ -30,7 +26,7 @@ const translate = i18n.global.tc;
  */
 window.api.on(IPC_WARN_USER, (_: Event, args: TUserWarnObject) => {
   const { swalOptions, data } = args;
-  swal({
+  Swal.fire({
     ...swalOptions,
     title: translate('errors.technical_error'),
     text: translate('errors.technical_error_code', { code: data.code }),

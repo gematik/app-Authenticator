@@ -1,22 +1,20 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 export const CONFIG_FILE_NAME = 'config.json';
+
+export const ALLOWED_DEEPLINK_PROTOCOLS = ['tim'];
 
 /**
  * App's slug name
@@ -39,6 +37,8 @@ export const IPC_READ_MAIN_PROCESS_ENVS = 'IPC_READ_MAIN_PROCESS_ENVS';
 
 export const IPC_UPDATE_ENV = 'IPC_UPDATE_ENV';
 
+export const IPC_SELECT_FOLDER = 'IPC_SELECT_FOLDER';
+
 /**
  * The event listener name for starting CIDP authentication process
  */
@@ -47,8 +47,6 @@ export const IPC_CENTRAL_IDP_AUTH_START_EVENT = 'IPC_CENTRAL_IDP_AUTH_START_EVEN
 /**
  * Event name for redirecting the http request
  */
-export const IPC_AUTH_FLOW_FINISH_REDIRECT_EVENT = 'IPC_AUTH_FLOW_FINISH_REDIRECT_EVENT';
-
 export const IPC_GET_PATH = 'IPC_GET_PATH';
 
 export const SCOPE_ADDITION_HBA = ' Person_ID';
@@ -96,6 +94,7 @@ export const COMMON_USED_REGEXES = {
   BASE64: /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/i,
   URL: /(http|https):\/\/(\w+:?\w*@)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/,
   JWT: /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
+  CONNECTOR_ALLOWED: /^((?![<>&]).)*$/,
 };
 
 /**
@@ -141,8 +140,6 @@ export const PROCESS_ENVS = window?.api?.sendSync
  */
 export const IS_DEV = process.env.NODE_ENV === 'test' || PROCESS_ENVS.NODE_ENV === 'development';
 export const IS_TEST = process.env.NODE_ENV === 'test';
-
-export const LOCAL_HTTP_SERVER_PORT = 39000;
 
 /**
  * Error or success message duration in the end of the auth process

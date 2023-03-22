@@ -1,26 +1,23 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
-import { PROCESS_ENVS, WIKI_ERRORCODES_URL, USERAGENT_PRODUKTNAME, USERAGENT_HERSTELLERNAME } from '@/constants';
+import { PROCESS_ENVS, USERAGENT_HERSTELLERNAME, USERAGENT_PRODUKTNAME, WIKI_ERRORCODES_URL } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
-import swal from 'sweetalert';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 import i18n from '@/renderer/i18n';
+import { IdpError, OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 
 const translate = i18n.global.tc;
 const packageJson = require('../../../package.json');
@@ -29,6 +26,7 @@ function openUrlOnclick() {
   if (!WIKI_ERRORCODES_URL.includes('https')) return;
   window.api.openExternal(WIKI_ERRORCODES_URL);
 }
+
 function determineUserAgentVersion() {
   if (packageJson) {
     return packageJson.version;
@@ -39,51 +37,52 @@ function determineUserAgentVersion() {
 }
 
 export async function alertTechnicErrorAndThrow(errorCode: string, errorMsg: string) {
-  const value = await swal({
+  const value = await Swal.fire({
     title: translate('errors.technical_error'),
     text: translate('errors.technical_error_code', { code: errorCode }),
-    buttons: {
-      cancel: { text: translate('cancel'), value: 0, visible: true },
-      ok: { text: translate('errors.technical_error_wiki_link'), value: 1, visible: true },
-    },
+    cancelButtonText: translate('cancel'),
+    confirmButtonText: translate('errors.technical_error_wiki_link'),
+    showCancelButton: true,
   });
-  if (value) {
+  if (value.isConfirmed) {
     openUrlOnclick();
   }
   throw new UserfacingError(translate('errors.technical_error_code', { code: errorCode }), errorMsg, errorCode);
 }
 
-export async function alertTechnicErrorWithIconOptional(errorCode: string, iconLable?: string) {
-  const value = await swal({
+export async function alertTechnicErrorWithIconOptional(errorCode: string, iconLable?: SweetAlertIcon) {
+  const value = await Swal.fire({
     title: translate('errors.technical_error'),
     text: translate('errors.technical_error_code', { code: errorCode }),
     icon: iconLable,
-    buttons: {
-      cancel: { text: translate('cancel'), value: 0, visible: true },
-      ok: { text: translate('errors.technical_error_wiki_link'), value: 1, visible: true },
-    },
+    cancelButtonText: translate('cancel'),
+    confirmButtonText: translate('errors.technical_error_wiki_link'),
+    showCancelButton: true,
   });
-  if (value) {
+  if (value.isConfirmed) {
     openUrlOnclick();
   }
 }
 
 export async function alertDefinedErrorWithDataOptional(errorCode: string | undefined, errorData?: []) {
-  const value = await swal({
+  const value = await Swal.fire({
     title: translate(`errors.${errorCode}.title`, { ...errorData }),
     text: translate(`errors.${errorCode}.text`, { ...errorData }),
-    buttons: {
-      cancel: { text: translate('cancel'), value: 0, visible: true },
-      ok: { text: translate('errors.technical_error_wiki_link'), value: 1, visible: true },
-    },
+    cancelButtonText: translate('cancel'),
+    confirmButtonText: translate('errors.technical_error_wiki_link'),
+    showCancelButton: true,
   });
-  if (value) {
+  if (value.isConfirmed) {
     openUrlOnclick();
   }
 }
 
-export async function alertLoginResultWithIconAndTimer(iconLable: string, loginResult: string, timerValue: number) {
-  await swal({
+export async function alertLoginResultWithIconAndTimer(
+  iconLable: SweetAlertIcon,
+  loginResult: string,
+  timerValue: number,
+) {
+  await Swal.fire({
     icon: iconLable,
     title: translate(loginResult),
     timer: timerValue,
@@ -91,19 +90,83 @@ export async function alertLoginResultWithIconAndTimer(iconLable: string, loginR
 }
 
 export function alertWithCancelButton(errorCode: string, initValue: number, cardType: string) {
-  return swal({
+  return Swal.fire({
     title: translate(`errors.${errorCode}.title`),
     text: translate(`errors.${errorCode}.text`, { cardType }),
-    closeOnEsc: false,
-    closeOnClickOutside: false,
-    buttons: {
-      cancel: { text: translate('cancel'), value: initValue, visible: true },
+    cancelButtonText: translate('cancel'),
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    showCancelButton: true,
+    showClass: { popup: 'swal2-show-loading-above-buttons', backdrop: 'swal2-backdrop-show' },
+    hideClass: { popup: '', backdrop: '' },
+    didOpen() {
+      Swal.showLoading();
     },
   });
 }
 
 export function closeSwal() {
-  return swal.close;
+  return Swal.close;
 }
 
 export const userAgent = `${USERAGENT_PRODUKTNAME}/${determineUserAgentVersion()} ${USERAGENT_HERSTELLERNAME}/`;
+
+export function parseUrlToIdpError(message: string): IdpError | null {
+  const url = new URL(message);
+  let error = null;
+  if (url.searchParams.get('error')) {
+    error = {
+      oauth2ErrorType: parseOauthError(url.searchParams.get('error') ?? ''),
+      gamatikErrorText: url.searchParams.get('gematik_error_text') ?? '',
+      gematikCode: url.searchParams.get('gematik_code') ?? '',
+    };
+  }
+  return error;
+}
+
+export function parseErrorMessageToIDPError(message: string): IdpError {
+  const errorMap = new Map();
+  if (message) {
+    message.split(',').forEach(function (entry) {
+      const keyValue = entry.split(':');
+      const regex = /[\\"{}]/g;
+      errorMap.set(keyValue[0].replaceAll(regex, ''), keyValue[1].replaceAll(regex, ''));
+    });
+  }
+
+  return {
+    oauth2ErrorType: parseOauthError(errorMap.get('error')),
+    gamatikErrorText: errorMap.get('gematik_error_text'),
+    gematikCode: errorMap.get('gematik_code'),
+  };
+}
+
+export function parseOauthError(error: string): OAUTH2_ERROR_TYPE | undefined {
+  switch (error) {
+    case 'invalid_request':
+      return OAUTH2_ERROR_TYPE.INVALID_REQUEST;
+    case 'access_denied':
+      return OAUTH2_ERROR_TYPE.ACCESS_DENIED;
+    case 'unauthorized_client':
+      return OAUTH2_ERROR_TYPE.UNAUTHORIZED_CLIENT;
+    case 'unsupported_response_type':
+      return OAUTH2_ERROR_TYPE.UNSUPPORTED_RESPONSE_TYPE;
+    case 'invalid_scope':
+      return OAUTH2_ERROR_TYPE.INVALID_SCOPE;
+    case 'server_error':
+      return OAUTH2_ERROR_TYPE.SERVER_ERROR;
+    case 'temporarily_unavailable':
+      return OAUTH2_ERROR_TYPE.TEMPORARILY_UNAVAILABLE;
+    case 'invalid_client':
+      return OAUTH2_ERROR_TYPE.INVALID_CLIENT;
+    case 'invalid_grant':
+      return OAUTH2_ERROR_TYPE.INVALID_GRANT;
+    case 'unsupported_grant_type':
+      return OAUTH2_ERROR_TYPE.UNSUPPORTED_GRANT_TYPE;
+  }
+}
+
+export function createRedirectDeeplink(protocol: string, redirectIdp: string): string {
+  const url = new URL(redirectIdp);
+  return `${protocol}://${url.searchParams}`;
+}

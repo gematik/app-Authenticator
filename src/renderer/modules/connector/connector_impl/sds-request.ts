@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import sdsParser from '../common/sds-parser';
@@ -35,7 +31,7 @@ function extractEndpoints(sds: string) {
  */
 export const getConnectorSdsTls = async (): Promise<string> => {
   const url = getConnectorEndpoint();
-  const { data: connectorSdsResponse } = await window.api.httpGet(url, false, httpReqConfig());
+  const { data: connectorSdsResponse } = await window.api.httpGet(url, { ...httpReqConfig() });
 
   extractEndpoints(connectorSdsResponse);
   return connectorSdsResponse;
@@ -44,7 +40,7 @@ export const getConnectorSdsTls = async (): Promise<string> => {
 export const getServiceEndpointTls = async (serviceName: string): Promise<string> => {
   if (endpoints.size == 0 || productTypeVersion === '') {
     const url = getConnectorEndpoint();
-    const { data: sds } = await window.api.httpGet(url, false, httpReqConfig());
+    const { data: sds } = await window.api.httpGet(url, { ...httpReqConfig() });
     extractEndpoints(sds);
     extractPtv(sds);
   } else {

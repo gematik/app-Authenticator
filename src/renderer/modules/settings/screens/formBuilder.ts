@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import { IConfig, IConfigSection } from '@/@types/common-types';
@@ -63,6 +59,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'drop-down',
           optionsType: 'standardBool',
           required: false,
+          infoText: translate('info_text_status'),
         },
         {
           label: 'SMC-B Certificate',
@@ -70,6 +67,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: false,
           hide: !mocked,
+          infoText: translate('info_text_smcb_certificate'),
           onChange: async (e: Event) => {
             const input = e.target as HTMLInputElement;
             const file = input.files && input.files[0];
@@ -95,6 +93,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: false,
           hide: !mocked,
+          infoText: translate('info_text_smcb_private_key'),
           onChange: async (e: Event) => {
             const input = e.target as HTMLInputElement;
             const file = input.files && input.files[0];
@@ -120,6 +119,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: false,
           hide: !mocked,
+          infoText: translate('info_text_hba_certificate'),
           onChange: async (e: Event) => {
             const input = e.target as HTMLInputElement;
             const file = input.files && input.files[0];
@@ -146,6 +146,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           optionsType: 'standardBool',
           required: false,
           hide: !mocked,
+          infoText: translate('info_text_hba_private_key'),
           onChange: async (e: Event) => {
             const input = e.target as HTMLInputElement;
             const file = input.files && input.files[0];
@@ -178,6 +179,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME,
           required: true,
           type: 'input',
+          infoText: translate('info_text_host'),
         },
         {
           label: translate('port'),
@@ -185,27 +187,31 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.NUMBER,
+          infoText: translate('info_text_port'),
         },
         {
-          label: translate('merchant_id'),
+          label: translate('mandant_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID,
           required: true,
           type: 'input',
-          validationRegex: COMMON_USED_REGEXES.LETTERS_NUMBERS,
+          validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
+          infoText: translate('info_text_mandant_id'),
         },
         {
           label: translate('client_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID,
           required: true,
           type: 'input',
-          validationRegex: COMMON_USED_REGEXES.LETTERS_NUMBERS,
+          validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
+          infoText: translate('info_text_client_id'),
         },
         {
           label: translate('work_space_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID,
           required: true,
           type: 'input',
-          validationRegex: COMMON_USED_REGEXES.LETTERS_NUMBERS,
+          validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
+          infoText: translate('info_text_work_space_id'),
         },
         {
           label: translate('tls_authentication'),
@@ -223,6 +229,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             },
           ],
           required: false,
+          infoText: translate('info_text_tls_authentication'),
         },
         {
           label: translate('reject_unauthorized'),
@@ -230,6 +237,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: false,
           type: 'drop-down',
           optionsType: 'standardBool',
+          infoText: translate('info_text_reject_unauthorized'),
         },
         {
           label: translate('username_from_connector'),
@@ -237,6 +245,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           type: 'input',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== BASIC_AUTH,
+          infoText: translate('info_text_username_con'),
         },
         {
           label: translate('password_from_connector'),
@@ -244,6 +253,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           type: 'password',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== BASIC_AUTH,
+          infoText: translate('info_text_password_con'),
         },
         {
           label: translate('private_key'),
@@ -251,6 +261,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: true,
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== 'ServerClientCertAuth',
+          infoText: translate('info_text_private_key'),
           /**
            * Moves file to right position and renames it
            * @param e
@@ -282,6 +293,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: true,
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== 'ServerClientCertAuth',
+          infoText: translate('info_text_client_certificate'),
           /**
            * Moves file to right position and renames it
            * @param e
@@ -335,6 +347,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             },
           ],
           required: false,
+          infoText: translate('info_text_proxy_auth_type'),
         },
         {
           label: translate('proxy_username'),
@@ -342,6 +355,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           type: 'input',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
+          infoText: translate('info_text_proxy_username'),
         },
         {
           label: translate('proxy_password'),
@@ -349,6 +363,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           type: 'password',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
+          infoText: translate('info_text_proxy_password'),
         },
         {
           label: translate('proxy_client_certificate'),
@@ -356,6 +371,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           required: true,
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.PROXY_CLIENT_CERT,
+          infoText: translate('info_text_proxy_client_certificate'),
           /**
            * Moves file to right position and renames it
            * @param e
@@ -384,6 +400,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST,
           required: false,
           type: 'input',
+          infoText: translate('info_text_proxy_ignore_list'),
         },
       ],
     },
@@ -397,6 +414,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'drop-down',
           optionsType: 'standardBool',
           required: true,
+          infoText: translate('info_text_check_updates_automatically'),
         },
       ],
     },

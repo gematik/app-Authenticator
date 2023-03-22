@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import ConnectorConfig from './connector-config';
@@ -26,6 +22,8 @@ import { checkGetCards } from '@/renderer/modules/connector/connector_impl/looku
 import { TCardData } from '@/renderer/modules/connector/type-definitions';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
+import { ConnectorError } from '@/renderer/errors/errors';
+import { ERROR_CODES } from '@/error-codes';
 
 const executeService = async (endpoint: string, cardType: ECardTypes) => {
   logger.info(`Sending SOAP request to ${endpoint} to get smartcard information from connector.`);
@@ -39,6 +37,7 @@ const executeService = async (endpoint: string, cardType: ECardTypes) => {
 
 export const launch = async (cardType: ECardTypes): Promise<Partial<TCardData>> => {
   let cardsResponse;
+
   try {
     const endpoint = await sdsRequestObj.getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
     logger.debug(`Using event service endpoint ${endpoint} to send SDS requests to connector.`);
@@ -63,7 +62,19 @@ export const launch = async (cardType: ECardTypes): Promise<Partial<TCardData>> 
       iccsn: iccsn,
     };
   } catch (err) {
-    logger.error('Error getting card from connector: ', err.message);
-    throw checkSoapError(err?.response?.body) || err;
+    if (err.code === ERROR_CODES.AUTHCL_1105) {
+      logger.debug('Error getting card from connector: ', err.message);
+      const foundCards = err.data.foundCards;
+      const cardType = err.data.cardType;
+      throw new ConnectorError(
+        ERROR_CODES.AUTHCL_1105,
+        'Konnektor Hinweis-Fehler',
+        `Mehrere ${cardType.toUpperCase()}-Karten als gesteckt gefunden!`,
+        { foundCards, cardType },
+      );
+    } else {
+      logger.error('Error getting card from connector: ', err.message);
+      throw checkSoapError(err?.response?.body) || err;
+    }
   }
 };

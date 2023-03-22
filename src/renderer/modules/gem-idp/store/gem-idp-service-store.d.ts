@@ -1,4 +1,4 @@
-import { OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
+import { OAUTH2_ERROR_TYPE, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 
 export type IOpenIdConfiguration = {
   authorization_endpoint: string;
@@ -50,7 +50,6 @@ export type TGemIdpServiceStore = {
   idpHost: string;
   challenge: string;
   jweChallenge: null | IJweChallenge;
-  authRequestPath?: string;
   openIdConfiguration?: IOpenIdConfiguration;
   idpEncJwk?: IIdpEncJwk;
   errorShown: boolean;
@@ -60,4 +59,7 @@ export type TGemIdpServiceStore = {
     oauthErrorType?: OAUTH2_ERROR_TYPE;
   };
   clientId: string;
+
+  callback: TCallback | undefined;
+  deeplink: string;
 };

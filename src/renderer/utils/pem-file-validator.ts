@@ -1,23 +1,19 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import i18n from '@/renderer/i18n';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 
@@ -43,7 +39,7 @@ export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
   const isFormatLineValid = CERT_HEAD_AND_FOOTER_REGEX[type].FILEFORMAT.test(fileContent);
 
   if (!isFormatLineValid) {
-    await swal({
+    await Swal.fire({
       icon: 'error',
       title: translate('selected_cert_file_is_not_valid'),
     });

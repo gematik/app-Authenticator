@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import got from 'got';
@@ -62,8 +58,8 @@ export enum HTTP_METHODS {
   GET,
 }
 
-type TClientRes = {
-  data: unknown;
+export type TClientRes = {
+  data: any;
   status: number;
   headers?: IncomingHttpHeaders;
 };
@@ -71,10 +67,9 @@ type TClientRes = {
 export const httpClient = async (
   method: HTTP_METHODS,
   url: string,
-  followRedirect: boolean,
   config: any = {},
   envelope?: any,
-): Promise<TClientRes> => {
+): Promise<TClientRes | undefined> => {
   try {
     if (method === HTTP_METHODS.POST) {
       if (typeof envelope === 'object') {
@@ -88,13 +83,13 @@ export const httpClient = async (
     logger.debug('Proxy for Url:' + url + ' is:', proxy);
     const client = method === HTTP_METHODS.POST ? gotAdvanced.post : gotAdvanced.get;
     const res = client(url, {
+      followRedirect: false, // default false, can be superseded by config.followRedirect
       ...config,
       cookieJar,
       agent: {
         https: proxy instanceof HttpsProxyAgent ? proxy : undefined,
         http: proxy instanceof HttpProxyAgent ? proxy : undefined,
       },
-      followRedirect,
     });
 
     let data;

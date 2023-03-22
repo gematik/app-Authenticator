@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import { ActionContext, Module } from 'vuex';
@@ -92,7 +88,7 @@ async function paramsToSignChallenge(
 export const connectorStore: Module<TConnectorStore, TRootStore> = {
   namespaced: true,
   state: {
-    cards: INITIAL_CARDS_STATE,
+    cards: { ...INITIAL_CARDS_STATE },
     flowType: undefined,
   },
   mutations: {
@@ -101,8 +97,8 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       state.cards = { ...state.cards, [ECardTypes.HBA]: hbaCardData };
     },
     setSmcbCardData(state: TConnectorStore, cardData: TCardData): void {
-      const hbaCardData = { ...state.cards[ECardTypes.SMCB], ...cardData };
-      state.cards = { ...state.cards, [ECardTypes.SMCB]: hbaCardData };
+      const smcbCardData = { ...state.cards[ECardTypes.SMCB], ...cardData };
+      state.cards = { ...state.cards, [ECardTypes.SMCB]: smcbCardData };
     },
     setTerminals(state: TConnectorStore, terminals: any): void {
       state.terminals = terminals;
@@ -112,7 +108,8 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
     },
 
     resetStore(state: TConnectorStore): void {
-      state.cards = INITIAL_CARDS_STATE;
+      logger.debug('resetStore');
+      state.cards = { ...INITIAL_CARDS_STATE };
       state.terminals = undefined;
       state.flowType = undefined;
     },
@@ -260,8 +257,10 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
         context.commit('setHbaCardData', { ...response, cardHandle });
       } else {
         context.commit('setSmcbCardData', { ...response, cardHandle });
+        logger.debug('setSmcbCardData: response:', response, ' cardHandle:', cardHandle);
       }
     },
+
     async checkPinStatus(context: ActionContext<TConnectorStore, TRootStore>, cardType: ECardTypes): Promise<boolean> {
       /* @if MOCK_MODE == 'ENABLED' */
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
@@ -283,7 +282,11 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
           /* @if MOCK_MODE == 'ENABLED' */
         }
         /* @endif */
-        logger.info(`PIN status for ${cardType.toUpperCase()}-card: ${pinStatusResult.pinStatus}`);
+        logger.info(
+          `PIN status for ${cardType.toUpperCase()}-card with CardHandle:${cardHandle} is: ${
+            pinStatusResult.pinStatus
+          }`,
+        );
         if (cardType === ECardTypes.HBA) {
           context.commit('setHbaCardData', { pinStatus: pinStatusResult.pinStatus, cardType: ECardTypes.HBA });
         } else {

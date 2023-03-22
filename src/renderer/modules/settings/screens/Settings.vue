@@ -1,19 +1,15 @@
 <!--
-  - Copyright (c) 2023 gematik GmbH
-  - 
-  - Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-  - the European Commission - subsequent versions of the EUPL (the Licence);
-  - You may not use this work except in compliance with the Licence.
-  - You may obtain a copy of the Licence at:
-  - 
-  -     https://joinup.ec.europa.eu/software/page/eupl
-  - 
-  - Unless required by applicable law or agreed to in writing, software
-  - distributed under the Licence is distributed on an "AS IS" basis,
-  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  - See the Licence for the specific language governing permissions and
-  - limitations under the Licence.
-  - 
+  - Copyright 2023 gematik GmbH
+  -
+  - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+  - Sourcecode must be in compliance with the EUPL.
+  -
+  - You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+  -
+  - Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+  - IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+  - language governing permissions and limitations under the License.ee the Licence for the specific language governing
+  - permissions and limitations under the Licence.
   -->
 
 <template>
@@ -55,6 +51,7 @@
             :hide="config.hide"
             :validation-regex="config.validationRegex"
             :on-element-change="config.onChange"
+            :info-text="config.infoText"
           />
         </div>
       </div>
@@ -73,17 +70,24 @@
             <br />
           </div>
         </div>
+        <div class="w-3/3">
+          <div>
+            <button id="btnLogToZip" class="bt ml-[15px]" type="button" @click="createZipWithLogData">
+              {{ $t('log_to_zip') }}
+            </button>
+            <br />
+          </div>
+        </div>
       </div>
     </form>
   </div>
-  <LoadingSpinner v-if="showSpinner" />
   <TestResultModal v-if="showModal" :function-test-results="functionTestResults" :close-modal="closeModal" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRaw } from 'vue';
 import { useStore } from 'vuex';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 import FormElement from '@/renderer/components/FormElement.vue';
 import { IConfigSection } from '@/@types/common-types';
@@ -93,7 +97,6 @@ import { useSettings } from '@/renderer/modules/settings/useSettings';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 import { runTestsCases, TestResult } from '@/renderer/modules/settings/services/test-runner';
 import i18n from '@/renderer/i18n';
-import LoadingSpinner from '@/renderer/modules/home/components/LoadingSpinner.vue';
 import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
 import TestResultModal from '@/renderer/modules/settings/components/TestResultModal.vue';
 import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
@@ -107,7 +110,6 @@ export default defineComponent({
   name: 'SettingsScreen',
   components: {
     FormElement,
-    LoadingSpinner,
     TestResultModal,
   },
   setup() {
@@ -133,21 +135,22 @@ export default defineComponent({
      *
      */
     function validateData(): boolean {
+      let isFormValid = true;
       for (const key in configValues) {
         const val = configValues[key];
         const regex = formColumnsFlat[key]?.validationRegex;
 
         // no need to check boolean
         if (typeof val === 'boolean') {
-          return true;
+          continue;
         }
 
         if (val && regex && !regex.test(String(val))) {
-          return false;
+          isFormValid = false;
+          break;
         }
       }
-
-      return true;
+      return isFormValid;
     }
 
     async function saveConfigValues(showConfirmModals = true) {
@@ -158,23 +161,25 @@ export default defineComponent({
 
       // validate
       if (!validateData()) {
-        swal({ title: translate('settings_please_enter_valid_data'), icon: 'warning' });
+        await Swal.fire({
+          title: translate('settings_please_enter_valid_data'),
+          icon: 'warning',
+          confirmButtonText: 'OK',
+        });
         return false;
       }
-
       // confirm prompt
       if (showConfirmModals) {
-        const saveConfirm = await swal({
+        const saveConfirm = await Swal.fire({
           title: translate('settings_will_be_saved'),
           text: translate('are_you_sure'),
           icon: 'warning',
-          buttons: {
-            cancel: { text: translate('cancel'), value: 0, visible: true },
-            confirm: { text: 'OK', value: 1, visible: true },
-          },
+          showCancelButton: true,
+          confirmButtonText: 'OK',
+          cancelButtonText: translate('cancel'),
         });
 
-        if (!saveConfirm) {
+        if (!saveConfirm.isConfirmed) {
           return false;
         }
       }
@@ -191,7 +196,7 @@ export default defineComponent({
       } catch (err) {
         logger.error('Config file could not be saved: ', err.message);
 
-        await swal({
+        await Swal.fire({
           title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
           text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
             configPath: FileStorageRepository.getConfigPath(),
@@ -207,34 +212,53 @@ export default defineComponent({
       clearEndpoints();
 
       if (showConfirmModals) {
-        swal({ title: translate('settings_saved_successfully') });
+        Swal.fire({
+          title: translate('settings_saved_successfully'),
+          timer: 1000,
+          showConfirmButton: false,
+          icon: 'success',
+        });
       }
     }
 
     async function runAndFormatTestCases(): Promise<TestResult[]> {
       await saveConfigValues(false);
-      swal({
+      Swal.fire({
         title: translate('funktion_test'),
         text: translate('funktion_test_processing'),
-        buttons: [false],
-        closeOnEsc: false,
-        closeOnClickOutside: false,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
       });
 
-      const results = await runTestsCases();
-      setTimeout(() => {
-        if (swal && swal.close) {
-          swal?.close();
-        }
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          runTestsCases().then((results) => {
+            Swal.close();
+            resolve(results);
+          });
+        }, 10);
       });
+    }
 
-      return results;
+    async function createZipWithLogData() {
+      const isSelected = await window.api.createLogZipFile();
+      if (isSelected) {
+        await Swal.fire({
+          title: translate('create_zip_file_successful'),
+          icon: 'success',
+        });
+      }
     }
 
     return {
       resetData,
       saveConfigValues,
       runAndFormatTestCases,
+      createZipWithLogData,
       configValues,
       isDev,
       formSections,

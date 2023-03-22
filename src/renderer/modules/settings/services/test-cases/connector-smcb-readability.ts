@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import { TestResult, TestStatus } from '@/renderer/modules/settings/services/test-runner';
@@ -22,6 +18,7 @@ import { ConnectorError } from '@/renderer/errors/errors';
 import { logger } from '@/renderer/service/logger';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import i18n from '@/renderer/i18n';
+import { ERROR_CODES } from '@/error-codes';
 
 const translate = i18n.global.tc;
 
@@ -31,11 +28,21 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
     return {
       name: translate('smcb_availability'),
       status: TestStatus.success,
-      details: `SMCB in Slot ${cardSmcbInfo.slotNr} vom CardTerminal ${cardSmcbInfo.ctId} gefunden!`,
+      details: `SMC-B in Slot ${cardSmcbInfo.slotNr} vom CardTerminal ${cardSmcbInfo.ctId} gefunden!`,
     };
   } catch (err) {
     logger.debug(err.message);
     // @ts-ignore
+
+    if (err.code === ERROR_CODES.AUTHCL_1105) {
+      logger.debug('Multiple SMCBs found, no error');
+      return {
+        name: translate('smcb_availability'),
+        status: TestStatus.success,
+        details: translate('readability_test_Multi_SMCBs'),
+      };
+    }
+
     const details =
       err instanceof ConnectorError
         ? translate('error_info') + `${err.code}, ${err.description} `

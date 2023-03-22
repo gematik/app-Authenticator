@@ -5,7 +5,7 @@ nachfolgenden Lizenzbedingungen des Rechteinhabers gematik GmbH:
 
 I. OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
 
-EUPL (c) Europäische Union 2007, 2016
+EUPL © Europäische Union 2007, 2016
 
 Diese Open-Source-Lizenz für die Europäische Union ("EUPL") gilt für Werke (im Sinne
 der nachfolgenden Begriffsbestimmung), die unter EUPL-Bedingungen zur Verfügung
@@ -66,21 +66,21 @@ Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Original
 bestehenden Urheberrechte eine weltweite, unentgeltliche, nicht ausschließliche,
 unterlizenzierbare Lizenz, die Sie berechtigt:
 
--  das Werk uneingeschränkt zu nutzen,
+- das Werk uneingeschränkt zu nutzen,
 
--  das Werk zu vervielfältigen,
+- das Werk zu vervielfältigen,
 
--  das Werk zu verändern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
+- das Werk zu verändern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
 
--  das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder
+- das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder
 Vervielfältigungsstücke davon öffentlich bereitzustellen oder wahrnehmbar zu machen
 oder das Werk, soweit möglich, öffentlich aufzuführen,
 
--  das Werk oder Vervielfältigungen davon zu verbreiten,
+- das Werk oder Vervielfältigungen davon zu verbreiten,
 
--  das Werk oder Vervielfältigungen davon zu vermieten oder zu verleihen,
+- das Werk oder Vervielfältigungen davon zu vermieten oder zu verleihen,
 
--  das Werk oder Vervielfältigungen davon weiter zu lizenzieren.
+- das Werk oder Vervielfältigungen davon weiter zu lizenzieren.
 
 Für die Wahrnehmung dieser Rechte können beliebige, derzeit bekannte oder künftige
 Medien, Träger und Formate verwendet werden, soweit das geltende Recht dem nicht
@@ -203,7 +203,7 @@ aufgrund der von Ihnen eingegangenen Gewährleistungsverpflichtung oder
 Haftungsübernahme Forderungen gegen sie geltend gemacht werden oder eine
 Haftungsverpflichtung entsteht.
 
-10.    Annahme der Lizenz
+10. Annahme der Lizenz
 
 Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol "Lizenz
 annehmen" unter dem Fenster mit dem Lizenztext anklicken oder indem Sie Ihre
@@ -217,7 +217,7 @@ Ausübung eines Rechtes, das in Artikel 2 dieser Lizenz angeführt ist, wie das 
 einer Bearbeitung oder die Verbreitung oder Zugänglichmachung des Werks oder dessen
 Vervielfältigungen.
 
-11.    Informationspflichten
+11. Informationspflichten
 
 Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es
 zum Herunterladen von einer Website anbieten), müssen Sie über den Vertriebskanal
@@ -227,7 +227,7 @@ und ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wi
 Lizenz durch den Lizenznehmer gespeichert und vervielfältigt werden kann, erforderlich
 sind.#
 
-12.    Beendigung der Lizenz
+12. Beendigung der Lizenz
 
 Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der
 Lizenznehmer gegen die Lizenzbedingungen verstößt.
@@ -236,7 +236,7 @@ Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von P
 denen das Werk vom Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist,
 solange diese Personen die Lizenzbedingungen erfüllen.
 
-13.    Sonstiges
+13.   Sonstiges
 
 Unbeschadet des Artikels 9 stellt die Lizenz die vollständige Vereinbarung der Parteien
 über das Werk dar.
@@ -254,27 +254,27 @@ werden mit einer eindeutigen Versionsnummer veröffentlicht.
 Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz sind
 gleichwertig. Die Parteien können sich auf die Sprachfassung ihrer Wahl berufen.
 
-14.    Gerichtsstand
+14. Gerichtsstand
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
--  Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen,
+- Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen,
 Einrichtungen und sonstigen Stellen der Europäischen Union als Lizenzgeber und
 einem Lizenznehmer ist der Gerichtshof der Europäischen Union gemäß Artikel 272
 des Vertrags über die Arbeitsweise der Europäischen Union zuständig;
 
--  Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser
+- Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser
 Lizenz ist allein der Ort, an dem der Lizenzgeber seinen Wohnsitz oder den
 wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
 
-15.    Anwendbares Recht
+15. Anwendbares Recht
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
--  Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem
+- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem
 der Lizenzgeber seinen Sitz, Wohnsitz oder eingetragenen Sitz hat;
 
--  diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz,
+- diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz,
 Wohnsitz oder eingetragenen Sitz in einem Mitgliedstaat der Europäischen Union hat.
 
 
@@ -286,17 +286,17 @@ Anlage
 
 "Kompatible Lizenzen" nach Artikel 5 der EUPL sind:
 
--  GNU General Public License (GPL) v. 2, v. 3
--  GNU Affero General Public License (AGPL) v. 3
--  Open Software License (OSL) v. 2.1, v. 3.0
--  Eclipse Public License (EPL) v. 1.0
--  CeCILL v. 2.0, v. 2.1
--  Mozilla Public Licence (MPL) v. 2
--  GNU Lesser General Public Licence (LGPL) v. 2.1, v. 3
--  Creative Commons Attribution-ShareAlike v. 3.0 Unported (CC BY-SA 3.0) für andere
+- GNU General Public License (GPL) v. 2, v. 3
+- GNU Affero General Public License (AGPL) v. 3
+- Open Software License (OSL) v. 2.1, v. 3.0
+- Eclipse Public License (EPL) v. 1.0
+- CeCILL v. 2.0, v. 2.1
+- Mozilla Public Licence (MPL) v. 2
+- GNU Lesser General Public Licence (LGPL) v. 2.1, v. 3
+- Creative Commons Attribution-ShareAlike v. 3.0 Unported (CC BY-SA 3.0) für andere
 Werke als Software
--  European Union Public Licence (EUPL) v. 1.1, v. 1.2
--  Québec Free and Open-Source Licence - Reciprocity (LiLiQ-R) oder Strong
+- European Union Public Licence (EUPL) v. 1.1, v. 1.2
+- Québec Free and Open-Source Licence - Reciprocity (LiLiQ-R) oder Strong
 Reciprocity (LiLiQ-R+)
 
 Die Europäische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen
@@ -307,7 +307,7 @@ und den erfassten Quellcode vor ausschließlicher Aneignung schützen.
 Alle sonstigen Änderungen oder Ergänzungen dieses Anhangs bedürfen der Ausarbeitung
 einer neuen Version der EUPL.
 
-II.    Bestehende Abhängigkeiten zu Open Source Bibliotheken
+II. Bestehende Abhängigkeiten zu Open Source Bibliotheken
 
 Es bestehen bei der Nutzung der vorbezeichneten Software bzw. des Quellcodes folgende
 Abhängigkeiten zu Open Source Bibliotheken, deren jeweilige Lizenzbedingungen
@@ -317,11 +317,11 @@ Drittsoftwareanteile:
 
 
     Komponente: Electron
-    Version: 21.2.1
+    Version: 23.1.0
     Lizenz: MIT
 
     Komponente: got
-    Version: 11.8.5
+    Version: 11.8.6
     Lizenz: MIT
 
     Komponente: base64url
@@ -337,15 +337,15 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: jsonwebtoken
-    Version: 8.5.1
+    Version: 9.0.0
     Lizenz: MIT
 
     Komponente: node-jose
-    Version: 2.1.1
+    Version: 2.2.0
     Lizenz: Apache-2.0
 
     Komponente: query-string
-    Version: 7.1.1
+    Version: 7.1.3
     Lizenz: MIT
 
     Komponente: sax
@@ -356,12 +356,12 @@ Drittsoftwareanteile:
     Version: 3.0.0
     Lizenz: MIT
 
-    Komponente: sweetalert
-    Version: 2.1.2
+    Komponente: sweetalert2
+    Version: 11.7.3
     Lizenz: MIT
 
     Komponente: vue
-    Version: 3.2.45
+    Version: 3.2.47
     Lizenz: MIT
 
     Komponente: vue-i18n
@@ -395,3 +395,7 @@ Drittsoftwareanteile:
     Komponente: ip-range-check
     Version: 0.2.0
     Lizenz: MIT
+
+     Komponente: zip-a-folder
+     Version: 1.1.5
+     Lizenz: MIT

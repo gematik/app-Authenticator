@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import { ActionContext, Module } from 'vuex';
@@ -23,7 +19,6 @@ import { TRootStore } from '@/renderer/store';
 import { logger } from '@/renderer/service/logger';
 import { CentralIdpError, UserfacingError } from '@/renderer/errors/errors';
 import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
-import { TOidcProtocol2UrlSpec } from '@/@types/common-types';
 import { IDP_ENDPOINTS } from '@/constants';
 import {
   IIdpEncJwk,
@@ -31,14 +26,15 @@ import {
   IOpenIdConfiguration,
   TGemIdpServiceStore,
 } from '@/renderer/modules/gem-idp/store/gem-idp-service-store.d';
-import { userAgent } from '@/renderer/utils/utils';
-import { TAccessDataResponse } from '@/renderer/modules/gem-idp/type-definitions';
+import { parseErrorMessageToIDPError, parseUrlToIdpError, userAgent } from '@/renderer/utils/utils';
+import { TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
+import { StatusCodes } from 'http-status-codes';
+import { TClientRes } from '@/main/services/http-client';
 
 export const INITIAL_AUTH_STORE_STATE = {
   challengePath: '',
   challenge: '',
   jweChallenge: null,
-  authRequestPath: '',
   idpHost: '',
   errorShown: false,
   jwsHbaSignature: undefined,
@@ -46,6 +42,8 @@ export const INITIAL_AUTH_STORE_STATE = {
   sid: undefined,
   caughtAuthFlowError: undefined,
   clientId: '',
+  callback: undefined,
+  deeplink: '',
 };
 
 const httpsReqConfig = () => ({
@@ -106,8 +104,13 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
     setClientId(state: TGemIdpServiceStore, clientId: string): void {
       state.clientId = clientId;
     },
+    setCallback(state: TGemIdpServiceStore, callback: TCallback): void {
+      state.callback = callback;
+    },
+    setDeeplink(state: TGemIdpServiceStore, deeplink: string): void {
+      state.deeplink = deeplink;
+    },
     resetStore(state: TGemIdpServiceStore): void {
-      state.authRequestPath = '';
       state.jwsHbaSignature = undefined;
       state.jwsSmcbSignature = undefined;
       state.sid = undefined;
@@ -116,16 +119,15 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
       state.caughtAuthFlowError = undefined;
       state.errorShown = false;
       state.clientId = '';
-    },
-    setAuthRequestPath(state: TGemIdpServiceStore, authReqParameters: TOidcProtocol2UrlSpec): void {
-      state.authRequestPath = authReqParameters.challenge_path;
-      logger.debug('setAuthRequestPath ' + JSON.stringify(authReqParameters));
+      state.callback = undefined;
+      state.deeplink = '';
+      state.jweChallenge = null;
     },
   },
   actions: {
     async getDiscoveryDocument(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<void> {
       try {
-        const res = await window.api.httpGet(context.state.idpHost + IDP_ENDPOINTS.OPENID_CONFIGURATION, false, {
+        const res = await window.api.httpGet(context.state.idpHost + IDP_ENDPOINTS.OPENID_CONFIGURATION, {
           ...httpsReqConfig(),
           headers: {
             Accept: '*/*',
@@ -135,7 +137,8 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
 
         context.commit('setOpenIdConfiguration', jsonwebtoken.decode(res.data));
       } catch (err) {
-        throw new CentralIdpError('Could not read setOpenIdConfiguration', { error: err });
+        logger.error('Can not get Discovery Document', err);
+        throw new CentralIdpError('Could not get Discovery Document');
       }
     },
     async getIdpEncJwk(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<void> {
@@ -145,7 +148,7 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
       }
 
       try {
-        const res = await window.api.httpGet(context.state?.openIdConfiguration?.uri_puk_idp_enc, false, {
+        const res = await window.api.httpGet(context.state?.openIdConfiguration?.uri_puk_idp_enc, {
           ...httpsReqConfig(),
           headers: {
             'User-Agent': userAgent + context.state.clientId,
@@ -153,32 +156,40 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
         });
         context.commit('setIdpEncJwk', res.data);
       } catch (err) {
-        throw new CentralIdpError('could not read IdpEncJwk', { error: err });
+        logger.error('Can not get puk idp enc', err);
+        throw new CentralIdpError('could not get IdpEncJwk');
       }
     },
     async getChallengeData(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<boolean> {
       const { state, commit } = context;
       try {
-        logger.info('state.authRequestPath ' + state.authRequestPath);
         //  IDP host and Authorization Path
-        const url = state.authRequestPath;
+        const url = state.challengePath;
 
-        const { data } = await window.api.httpGet(<string>url, false, {
+        const result: TClientRes = await window.api.httpGet(url, {
           ...httpsReqConfig(),
           headers: {
             'User-Agent': userAgent + context.state.clientId,
           },
         });
 
-        logger.debug('data.challenge ' + data.challenge);
-        commit('setChallenge', data.challenge);
+        //An error occurred when the IDP sends a 302 as response with a location header containing an error parameter.
+        if (result.status == StatusCodes.MOVED_TEMPORARILY && result.headers?.location) {
+          const parsedIdpError = parseUrlToIdpError(result.headers.location);
+          if (parsedIdpError) {
+            logger.debug('IDP error as redirect with location');
+            throw new CentralIdpError('Could not get challenge data for authentication', parsedIdpError);
+          }
+        }
 
+        logger.debug('data.challenge ' + result.data.challenge);
+        commit('setChallenge', result.data.challenge);
         logger.info('challenge received successfully!');
 
         return true;
       } catch (err) {
         // error comes from validateAuthResponseData, just forward it
-        if (err instanceof UserfacingError) {
+        if (err instanceof UserfacingError || err instanceof CentralIdpError) {
           throw err;
         }
 
@@ -191,10 +202,16 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
           error_uri: response?.headers?.error_uri,
         });
 
-        throw new CentralIdpError('Could not get challenge data for authentication', {
-          error: response?.body?.error,
-          url: response?.headers['error_uri'] || response?.request?.responseURL,
-        });
+        // When the idp sends a exception as a redirect parse message search parameter to idp Error
+        let parsedIdpError;
+        if (response.statusCode == StatusCodes.MOVED_TEMPORARILY && !response.data) {
+          parsedIdpError = parseUrlToIdpError(err.message);
+        }
+        if (!parsedIdpError) {
+          parsedIdpError = parseErrorMessageToIDPError(response.body);
+        }
+
+        throw new CentralIdpError('Could not get challenge data for authentication', parsedIdpError);
       }
     },
     async getRedirectUriWithToken(
@@ -218,12 +235,13 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
           },
         });
         logger.info('response.status ' + response.status);
-        const location_returned = response.headers['location'];
-        logger.debug("response.headers['location'] " + location_returned);
+        const locationReturned = response.headers?.location;
+        logger.debug('response.headers?.location ' + locationReturned);
 
         return {
-          redirectUri: location_returned,
+          redirectUri: locationReturned,
           statusCode: response.status,
+          idpError: response.data?.body,
         };
       } catch (err) {
         const response = err?.response;
@@ -235,9 +253,12 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
           data: response?.body,
           error_uri: errorUri,
         });
+
+        const errorMessage = parseErrorMessageToIDPError(response?.body);
         return {
           errorUri: errorUri,
           statusCode: response?.status || 400,
+          idpError: errorMessage,
         };
       }
     },

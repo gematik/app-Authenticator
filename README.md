@@ -1,4 +1,6 @@
-<img align="right" width="200" height="37" src="docs/Gematik_Logo_Flag.png"/> <br/>
+<img src="https://raw.githubusercontent.com/gematik/app-Authenticator/master/docs/Gematik_Logo_Flag.png" alt="Gematik_Logo" width="200" height="37" align="right"> <br>
+
+![gematik_Logo](./docs/Gematik_Logo_Flag.png)
 
 # Authenticator
 
@@ -8,29 +10,20 @@
 [![Vulnerabilities](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=authenticator&metric=vulnerabilities&token=7b83ef28f0010bcf42e4223406311573dad4aca5)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=authenticator)
 [![Code Smells](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=authenticator&metric=code_smells&token=7b83ef28f0010bcf42e4223406311573dad4aca5)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=authenticator)
 
-<details>
-    <summary>Table of Contents</summary>
-        <ol>
-            <li><a href="#about-the-project">About The Project</a>
-                <ul>
-                    <li><a href="#release-notes">Release Notes</a></li>
-                </ul>
-            </li>
-            <li><a href="#development">Development</a>
-                <ul>
-                    <li><a href="#getting-started">Getting Started</a></li>
-                    <li><a href="#test-Repositories">Test-Repositories</a></li>
-                    <li><a href="#building-the-application">Building the application</a></li>
-                    <li><a href="#unittests">Unittests</a></li>
-                    <li><a href="#stack">Stack</a></li>
-                </ul>
-            </li>
-            <li><a href="#contributing">Contributing</a></li>
-            <li><a href="#license-eupl">License EUPL</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#support-and-feedback">Support and Feedback</a></li>
-        </ol>
-</details>
+## Table of Contents
+
+1. [About The Project](#about-the-project)
+    - [Release Notes](#release-notes)
+2. [Development](#development)
+    - [Getting Started](#getting-started)
+    - [Test-Repositories](#test-repositories)
+    - [Building the application](#building-the-application)
+    - [Unittests](#unittests)
+    - [Stack](#stack)
+3. [Contributing](#contributing)
+4. [License EUPL](#license-eupl)
+5. [FAQ](#faq)
+6. [Support and Feedback](#support-and-feedback)
 
 ## About The Project
 

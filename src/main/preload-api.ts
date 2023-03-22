@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2023 gematik GmbH
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the Licence);
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- *     https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- * 
+ * Copyright 2023 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 import { ipcRenderer, shell } from 'electron';
@@ -21,8 +17,10 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import util from 'util';
-import { IPC_FOCUS_TO_AUTHENTICATOR } from '@/constants';
-import { HTTP_METHODS, httpClient } from '@/main/services/http-client';
+import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER } from '@/constants';
+import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
+import { Options } from 'got';
+import { createLogZip } from '@/main/services/logging';
 
 /**
  * Config data for preload environment.
@@ -72,17 +70,25 @@ export const preloadApi = {
   getTmpDir: os.tmpdir,
   nativeURL: require('url').URL,
   httpsAgent: require('https').Agent,
-  httpGet: async (url: string, followRedirect: boolean, config: any) => {
-    return await httpClient(HTTP_METHODS.GET, url, followRedirect, config);
+  httpGet: async (url: string, config: Options = {}): Promise<TClientRes | undefined> => {
+    return await httpClient(HTTP_METHODS.GET, url, config);
   },
-  httpPost: async (url: string, envelope: any, config: any = {}) => {
-    return await httpClient(HTTP_METHODS.POST, url, false, config, envelope);
+  httpPost: async (url: string, envelope: any, config: Options = {}) => {
+    return await httpClient(HTTP_METHODS.POST, url, config, envelope);
   },
   setAppConfigInPreload(data: Record<string, unknown>) {
     APP_CONFIG_DATA = data;
   },
-
   setCaChainIdpInPreload(data: string[]) {
     APP_CA_CHAIN_IDP = data;
+  },
+  createLogZipFile: async (): Promise<boolean> => {
+    // send event to main process to select folder
+    const path = await ipcRenderer.sendSync(IPC_SELECT_FOLDER);
+    if (path === undefined) {
+      return false;
+    }
+    await createLogZip(path[0]);
+    return true;
   },
 };

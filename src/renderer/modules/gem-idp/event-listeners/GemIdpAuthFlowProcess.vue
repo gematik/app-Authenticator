@@ -1,32 +1,35 @@
 <!--
-  - Copyright (c) 2023 gematik GmbH
-  - 
-  - Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-  - the European Commission - subsequent versions of the EUPL (the Licence);
-  - You may not use this work except in compliance with the Licence.
-  - You may obtain a copy of the Licence at:
-  - 
-  -     https://joinup.ec.europa.eu/software/page/eupl
-  - 
-  - Unless required by applicable law or agreed to in writing, software
-  - distributed under the Licence is distributed on an "AS IS" basis,
-  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  - See the Licence for the specific language governing permissions and
-  - limitations under the Licence.
-  - 
+  - Copyright 2023 gematik GmbH
+  -
+  - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+  - Sourcecode must be in compliance with the EUPL.
+  -
+  - You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+  -
+  - Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+  - IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+  - language governing permissions and limitations under the License.ee the Licence for the specific language governing
+  - permissions and limitations under the Licence.
   -->
 
 <template>
   <div></div>
+  <SelectSmcbModal
+    v-if="showSMCBSelectModal"
+    :smcb-list="smcbList"
+    :resolve="selectCardPromises.resolve"
+    :reject="selectCardPromises.reject"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
+import { parse } from 'query-string';
+import SelectSmcbModal from '@/renderer/modules/home/components/SelectSmcbModal.vue';
 
 import {
   AUTH_RE_TRY_TIMEOUT,
-  IPC_AUTH_FLOW_FINISH_REDIRECT_EVENT,
   IPC_CENTRAL_IDP_AUTH_START_EVENT,
   LOGIN_CANCELLED_BY_USER,
   LOGIN_NOT_SUCCESSFUL,
@@ -53,20 +56,26 @@ import {
   alertTechnicErrorWithIconOptional,
   alertWithCancelButton,
   closeSwal,
+  createRedirectDeeplink,
 } from '@/renderer/utils/utils';
-import { validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
+import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
 import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/utils/url-service';
-import { OAUTH2_ERROR_TYPE, TAccessDataResponse } from '@/renderer/modules/gem-idp/type-definitions';
+import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
+import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
+import Swal from 'sweetalert2';
 
 /**
  * We store the sweetalert's close function in this variable.
  * This allows us to close the model automatically, after user inserts the card
  */
-let pendingCardActionModalClose: ((namespace?: string) => void) | undefined;
-let pinVerifyModalClose: ((namespace?: string) => void) | undefined;
+let pendingCardActionModalClose: undefined | typeof Swal.close;
+let pinVerifyModalClose: undefined | typeof Swal.close;
 
 export default defineComponent({
   name: 'GemIdpAuthFlowProcess',
+  components: {
+    SelectSmcbModal,
+  },
   data() {
     return {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -74,7 +83,9 @@ export default defineComponent({
         /* do nothing here */
       },
       isAuthProcessActive: false,
-      callRedirectEvent: false,
+      smcbList: [''],
+      showSMCBSelectModal: false,
+      selectCardPromises: { resolve: Promise.resolve as any, reject: Promise.reject as any },
     };
   },
   computed: {
@@ -91,6 +102,22 @@ export default defineComponent({
     window.api.on(IPC_CENTRAL_IDP_AUTH_START_EVENT, this.startAuthenticationFlow);
   },
   methods: {
+    async showSMCBSelectDialogModal(): Promise<void> {
+      this.showSMCBSelectModal = true;
+
+      return new Promise((resolve, reject) => {
+        this.selectCardPromises = {
+          resolve,
+
+          reject: () => {
+            logger.debug('reject Multi-SMCB-Select');
+            this.showSMCBSelectModal = false;
+            reject();
+          },
+        };
+      });
+    },
+
     clearStores() {
       this.$store.commit('connectorStore/resetStore');
       this.$store.commit('gemIdpServiceStore/resetStore');
@@ -101,16 +128,21 @@ export default defineComponent({
 
       // clear class state
       this.isAuthProcessActive = false;
-      this.callRedirectEvent = false;
     },
-
     async startAuthenticationFlow(_: Event, args: TOidcProtocol2UrlSpec): Promise<void> {
       let error: UserfacingError | null = null;
       // go to home page
       await this.$router.push('/');
 
       this.isAuthProcessActive = true;
-      this.callRedirectEvent = !!args.serverMode;
+
+      // get callback param from challenge path and remove it from challenge path
+      const callback = this.popParamFromChallengePath('callback', args.challenge_path);
+      if (!this.setCallback(callback)) {
+        !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0007));
+        this.clearStores();
+        return;
+      }
 
       // stop the process if parameters are not valid!
       if (!this.validateParamsAndSetState(args)) {
@@ -173,6 +205,7 @@ export default defineComponent({
           return;
         }
       } catch (err) {
+        this.showSMCBSelectModal = false;
         error = err;
         // handling happens in the getTokenAndOpenClient
       }
@@ -332,7 +365,36 @@ export default defineComponent({
         }
       } catch (err) {
         // 4047 is not handled in the handleErrors function!
-        await this.handleErrors(err);
+
+        // in case of 1105, there are multiple smcbs in the connector, so the user has to choose in a modal dialog which one he want´s to use
+        if (err.code === ERROR_CODES.AUTHCL_1105) {
+          this.smcbList = err.data.foundCards;
+
+          try {
+            const selectedCard: any = await this.showSMCBSelectDialogModal();
+            logger.debug('Selected Card:', selectedCard.CardHandle);
+            logger.debug('- CardHandle:', selectedCard.SlotId);
+            logger.debug('- CardHolderName:', selectedCard.CardHolderName);
+            logger.debug('- Iccsn:', selectedCard.Iccsn);
+            logger.debug('- CardType:', selectedCard.CardType);
+            logger.debug('- SlotId:', selectedCard.SlotId);
+            this.showSMCBSelectModal = false;
+
+            this.$store.commit('connectorStore/setSmcbCardData', {
+              cardHandle: selectedCard.CardHandle,
+              ctId: selectedCard.CtId,
+              slotNr: selectedCard.SlotId,
+              cardType: selectedCard.CardType,
+              iccsn: selectedCard.Iccsn,
+            });
+
+            return;
+          } catch (err) {
+            throw new UserfacingError(this.$t(LOGIN_CANCELLED_BY_USER), '', ERROR_CODES.AUTHCL_0006);
+          }
+        } else {
+          await this.handleErrors(err);
+        }
 
         /**
          * Connector Error code 4047 means card is not placed!
@@ -393,7 +455,7 @@ export default defineComponent({
               this.isAuthProcessActive = false;
 
               const authFlowEndState = await this.getRedirectUriWithToken(
-                promptRes == -1
+                promptRes.value == -1
                   ? new UserfacingError(this.$t(LOGIN_CANCELLED_BY_USER), '', ERROR_CODES.AUTHCL_0006)
                   : null,
               );
@@ -447,7 +509,11 @@ export default defineComponent({
         } else {
           // IdP error occurred, warn the user
           !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0002));
-          this.setCaughtError(ERROR_CODES.AUTHCL_0002, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
+          this.setCaughtError(
+            ERROR_CODES.AUTHCL_0002,
+            err?.data?.gamatikErrorText ?? undefined,
+            err?.data?.oauth2ErrorType ?? OAUTH2_ERROR_TYPE.SERVER_ERROR,
+          );
         }
 
         await this.openClientIfNeeded({ url: err?.data?.url, isSuccess: false });
@@ -474,6 +540,7 @@ export default defineComponent({
         this.setCaughtError('Unknown Error');
       }
 
+      //TODO is it possible to have a accessData.errorUri and a accessData.redirectUri????
       if (accessData.errorUri) {
         !this.errorShown &&
           (await alertLoginResultWithIconAndTimer('error', LOGIN_NOT_SUCCESSFUL, SHOW_DIALOG_DURATION));
@@ -486,8 +553,17 @@ export default defineComponent({
         return { isSuccess: true, url: accessData.redirectUri };
       }
 
+      !this.errorShown && (await alertLoginResultWithIconAndTimer('error', LOGIN_NOT_SUCCESSFUL, SHOW_DIALOG_DURATION));
+
+      this.setCaughtError(
+        accessData.idpError?.gematikCode ?? 'Unknown Error',
+        accessData.idpError?.gamatikErrorText,
+        accessData.idpError?.oauth2ErrorType,
+      );
+
       return { isSuccess: false, url: '' };
     },
+
     validateParamsAndSetState(args: TOidcProtocol2UrlSpec): boolean {
       try {
         validateLauncherArguments(args);
@@ -499,7 +575,7 @@ export default defineComponent({
           const clientId = url.searchParams.get('client_id');
           this.$store.commit('gemIdpServiceStore/setClientId', clientId);
         }
-        this.$store.commit('gemIdpServiceStore/setAuthRequestPath', authReqParameters);
+        this.$store.commit('gemIdpServiceStore/setChallengePath', authReqParameters.challenge_path);
 
         return true;
       } catch (e) {
@@ -521,7 +597,7 @@ export default defineComponent({
       if (!this.$store.state.gemIdpServiceStore.caughtAuthFlowError) {
         this.$store.commit('gemIdpServiceStore/setCaughtAuthFlowError', {
           errorCode: errorCode,
-          errorDetails: errorDescription,
+          errorDescription: errorDescription,
           oauthErrorType: errorType,
         });
       }
@@ -548,13 +624,16 @@ export default defineComponent({
       const caughtErrorObject = this.$store.state.gemIdpServiceStore.caughtAuthFlowError;
 
       // if there is no url, we parse the authz_path and get the redirect url
-      const authzPath = this.$store.state.gemIdpServiceStore.authRequestPath;
-
-      if (!authFlowEndState.isSuccess && !url && authzPath) {
-        const parsedHost = new URL(authzPath);
+      const challengePath = this.$store.state.gemIdpServiceStore.challengePath;
+      let state = '';
+      if (!authFlowEndState.isSuccess && !url && challengePath) {
+        const parsedHost = new URL(challengePath);
 
         if (parsedHost.searchParams.get('redirect_uri')) {
           url = parsedHost.searchParams.get('redirect_uri');
+        }
+        if (parsedHost.searchParams.get('state')) {
+          state = '&state=' + parsedHost.searchParams.get('state');
         }
       }
 
@@ -569,37 +648,93 @@ export default defineComponent({
           await alertLoginResultWithIconAndTimer('success', LOGIN_VIA_SMART_CARD_SUCCESSFUL, SHOW_DIALOG_DURATION);
         } else if (!url.includes('error=') && caughtErrorObject) {
           const definedError = caughtErrorObject.oauthErrorType || OAUTH2_ERROR_TYPE.SERVER_ERROR;
-
-          url = `${url}?error=${definedError}&error_details=${caughtErrorObject.errorCode}`;
+          url = `${url}?error=${definedError}&error_details=${caughtErrorObject.errorDescription}${state}`;
         }
-
         if (!authFlowEndState.isSuccess && !url.includes('error_uri')) {
           url = `${url}&error_uri=` + WIKI_ERRORCODES_URL;
         }
 
-        // redirect and minimize the app
-        if (this.callRedirectEvent) {
-          window.api.send(IPC_AUTH_FLOW_FINISH_REDIRECT_EVENT, url);
-          this.clearStores();
-          return;
+        url = encodeURI(url);
+        switch (this.$store.state.gemIdpServiceStore.callback) {
+          case TCallback.OPEN_TAB:
+            // open browser
+            window.api.openExternal(url);
+            break;
+          case TCallback.DIRECT:
+            // calls callback url of resource server to complete request, this must be async, do not convert to await!
+            logger.debug('Try to send: ' + url);
+            await window.api
+              .httpGet(url, {
+                ...{
+                  https: {
+                    certificateAuthority: getIdpTlsCertificates(),
+                    rejectUnauthorized: true,
+                  },
+                },
+              })
+              .then(() => {
+                logger.info('Redirecting automatically flow completed');
+              })
+              .catch((err) => {
+                logger.error('Redirecting automatically request failed!', err.message);
+              });
+            break;
+          case TCallback.DEEPLINK:
+            // eslint-disable-next-line no-case-declarations
+            const localDeepLink = createRedirectDeeplink(this.$store.state.gemIdpServiceStore.deeplink, url);
+            logger.info(`open local deeplink:${localDeepLink}`);
+            window.api.openExternal(localDeepLink);
+            break;
         }
-
-        // open browser
-        window.api.openExternal(url);
       }
 
       // reset the store in any case
       this.clearStores();
     },
     /**
-     * To get .well-known information from the IdP, we need to parse the authRequestPath
+     * To get .well-known information from the IdP, we need to parse the challengePath
      * and get the host name of it
      */
     parseAndSetIdpHost() {
-      const challengePath = this.$store.state.gemIdpServiceStore.authRequestPath;
+      const challengePath = this.$store.state.gemIdpServiceStore.challengePath;
       const parsedChallengePath = new URL(challengePath || '');
       const host = parsedChallengePath.protocol + '//' + parsedChallengePath.host;
       this.$store.commit('gemIdpServiceStore/setIdpHost', host);
+    },
+    /**
+     * Returns a parameter from challenge path and removes the parameter from challenge path
+     * @param challengePath
+     * @param paramName
+     */
+    popParamFromChallengePath(paramName: string, challengePath?: string): string | null {
+      if (challengePath && challengePath.includes(paramName)) {
+        const parsedPath = parse(challengePath);
+        const value = parsedPath[paramName];
+
+        // update challenge path
+        const cleanChallengePath = challengePath.replace('&' + paramName + '=' + value, '');
+        this.$store.commit('gemIdpServiceStore/setChallengePath', cleanChallengePath);
+
+        return typeof value === 'string' ? value : null;
+      }
+
+      return '';
+    },
+    setCallback(callbackValue: string | null): boolean {
+      this.$store.commit('gemIdpServiceStore/setCallback', TCallback.OPEN_TAB);
+
+      if (callbackValue) {
+        if (callbackValue.toUpperCase() == TCallback.DIRECT) {
+          this.$store.commit('gemIdpServiceStore/setCallback', TCallback.DIRECT);
+        } else if (validateDeeplinkProtocol(callbackValue)) {
+          this.$store.commit('gemIdpServiceStore/setCallback', TCallback.DEEPLINK);
+          this.$store.commit('gemIdpServiceStore/setDeeplink', callbackValue);
+        } else {
+          return false;
+        }
+      }
+
+      return true;
     },
   },
 });
