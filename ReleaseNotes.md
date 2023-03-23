@@ -5,23 +5,23 @@
 ## Version 4.0.0 (2023-03-22)
 
 added:
-- new Button to create a ZIP-File of the from the authenticator created log-files
+- new Button to create a ZIP-File of the authenticator created log-files
 - Multi-SMC-B support with User-Dialog for selecting the desired SMC-B for the Auth. Flow
 - Improved handling of HBAs with active transport Pin. A new Error-Message will be displayed that should help with identifying active transport pins and what to do with them.
-- Tooltips for Seetings Dialog
+- Tooltips for Settings Dialog
 - Localhost as interface / entry point removed
-- Link to "Wissensdatenbank" in function test dialog
+- Link to “Wissensdatenbank” in function test dialog
 - Settings dialog error messages optimized
-- Redirect to webapplication as alternative to browseropen
+- Redirect to web application as an alternative to browser open
 - OAuth2 conform handling of IDP errors
-- error_uri + state is send in case of error
-- functiontest logging of not valid certificates
+- sends an error_uri and the associated state in case of an error
+- function test logging of not valid certificates
 
 fixed:
 - User Certificates get no longer lost after update
 - UX : Spinner in connection tests + Insert Card + Pin
 - citrix "wandernde sessions"
-- fix for installation process
+- fix for the installation process
 
 ## Version 3.1.0 (2023-02-06)
 
