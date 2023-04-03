@@ -62,7 +62,7 @@ export const launch = async (terminals: Array<any>, cardData: TCardData): Promis
 };
 
 export function checkRemotePIN(terminals: Array<any>, card: TCardData): void {
-  logger.info('Check RemotePIN for CardData ', JSON.stringify(card));
+  logger.debug('Check RemotePIN for CardData ', JSON.stringify(card));
   const terminalData = Array.from(terminals).filter((item: any) => item.CtId === card.ctId && item.WorkplaceIds === '');
   if (terminalData.length > 0) {
     logger.warn('Remote VerifyPIN is not supported', terminalData);

@@ -166,7 +166,10 @@ export default defineComponent({
          * Read EncJwk from IdP
          */
         await this.$store.dispatch('gemIdpServiceStore/getIdpEncJwk');
-        logger.info('publicKey received: ', JSON.parse(JSON.stringify(this.$store.state.gemIdpServiceStore.idpEncJwk)));
+        logger.debug(
+          'publicKey received: ',
+          JSON.parse(JSON.stringify(this.$store.state.gemIdpServiceStore.idpEncJwk)),
+        );
       } catch (e) {
         await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0002);
         this.setCaughtError(ERROR_CODES.AUTHCL_0002, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
@@ -267,7 +270,7 @@ export default defineComponent({
     async getCardTerminals(): Promise<void> {
       try {
         await this.$store.dispatch('connectorStore/getCardTerminals');
-        logger.info('get Terminals finished');
+        logger.info('getTerminals finished');
       } catch (err) {
         await this.handleErrors(err);
 
@@ -354,7 +357,7 @@ export default defineComponent({
          * Throws ConnectorError 4047 if there is no placed cards, we wait until user places the card in that case
          */
         await this.$store.dispatch('connectorStore/getCardHandle', cardType);
-        logger.info('get CardHandle finished for:' + cardType + '-Card');
+        logger.debug('get CardHandle finished for:' + cardType + '-Card');
 
         // getCardHandle function is a recurring function! In an error case, we open a warning modal and give to the user
         // a second chance to enter the pin. This warning models close function is stored in the
