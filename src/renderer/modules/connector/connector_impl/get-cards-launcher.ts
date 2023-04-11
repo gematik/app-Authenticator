@@ -26,7 +26,6 @@ import { ConnectorError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 
 const executeService = async (endpoint: string, cardType: ECardTypes) => {
-  logger.info(`Sending SOAP request to ${endpoint} to get smartcard information from connector.`);
   const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
   return getCardsObj.runSoapRequest(
     ConnectorConfig.contextParameters,

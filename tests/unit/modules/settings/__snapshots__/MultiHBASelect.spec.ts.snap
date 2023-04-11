@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`multi-smcb select SelectSmcbModal render  1`] = `
+exports[`multi-hba select SelectHBAModal render  1`] = `
 <div
   class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
   id="multi-card-select-container"
@@ -21,12 +21,12 @@ exports[`multi-smcb select SelectSmcbModal render  1`] = `
             <h3
               class="text-2xl align-middle font-semibold"
             >
-              Bitte wählen Sie eine SMC-B aus:
+              Bitte wählen Sie eine HBA aus:
             </h3>
             <h3
               class="text-xs align-middle font-semibold"
             >
-              ( Es befinden sich mehrere SMC-Bs in den verbundenen Kartenterminals )
+              ( Es befinden sich mehrere HBAs in den verbundenen Kartenterminals )
             </h3>
           </div>
         </div>

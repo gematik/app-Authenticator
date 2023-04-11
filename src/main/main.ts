@@ -103,6 +103,7 @@ async function createWindow() {
     await mainWindow.loadURL('http://localhost:3000/');
   } else {
     // Load the index.html when not in development
+    // this file is the bundled version of the src/renderer/template.html
     await mainWindow.loadFile(path.join(__dirname, 'index.html'));
   }
 
@@ -137,6 +138,13 @@ async function createWindow() {
     mainWindow.maximize();
     mainWindow.webContents.openDevTools();
   }
+
+  /**
+   * Prevent navigating to another websites
+   */
+  mainWindow.webContents.on('will-navigate', (event) => {
+    event.preventDefault();
+  });
 }
 
 // register url schemas
@@ -160,6 +168,15 @@ if (!gotTheLock) {
     handleDeepLink(argv, mainWindow);
   });
 }
+
+/**
+ * never allows open new windows
+ */
+app.on('web-contents-created', (event, contents) => {
+  contents.setWindowOpenHandler(() => {
+    return { action: 'deny' };
+  });
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

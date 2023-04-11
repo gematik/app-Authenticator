@@ -27,7 +27,6 @@ import { checkSoapError } from '@/renderer/modules/connector/common/utils';
  * @returns {Promise<void>}
  */
 export const pinStatus = async (endpoint: string, cardHandle: string, pinType: string): Promise<string> => {
-  logger.info(`Sending SOAP request to ${endpoint} to get PIN status for from connector.`);
   const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
   return getPinStatus.runSoapRequest(ConnectorConfig.contextParameters, endpointMapped, cardHandle, pinType);
 };

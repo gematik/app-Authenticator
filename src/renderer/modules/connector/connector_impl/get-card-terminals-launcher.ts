@@ -28,7 +28,7 @@ const executeServiceGc = async (endpoint: string) => {
 export const launch = async (): Promise<{ [name: string]: any }> => {
   try {
     const endpoint = await sdsRequestObj.getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
-    logger.info(`getCardsTerminal.endpoint: ${endpoint}`);
+    logger.debug(`getCardsTerminal.endpoint: ${endpoint}`);
 
     const xmlSoapResponse = await executeServiceGc(endpoint);
     logger.debug('xmlSoupResponse: ' + xmlSoapResponse);

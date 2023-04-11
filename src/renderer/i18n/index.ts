@@ -13,7 +13,8 @@
  */
 
 import { createI18n } from 'vue-i18n';
-import de from './translations/de';
+
+import de from './translations/de.json';
 // import en from './translations/en';
 
 // Ready translated locale messages

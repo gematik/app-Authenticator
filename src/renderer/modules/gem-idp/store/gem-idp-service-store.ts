@@ -234,9 +234,8 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
             'User-Agent': userAgent + context.state.clientId,
           },
         });
-        logger.info('response.status ' + response.status);
+        logger.debug('response.status ' + response.status);
         const locationReturned = response.headers?.location;
-        logger.debug('response.headers?.location ' + locationReturned);
 
         return {
           redirectUri: locationReturned,

@@ -18,9 +18,9 @@ import store from '@/renderer/store';
 import i18n from '@/renderer/i18n';
 import { ECardTypes } from '../../../../src/renderer/modules/connector/ECardTypes';
 
-describe('multi-smcb select SelectSmcbModal', () => {
+describe('multi-hba select SelectHBAModal', () => {
   it('render ', async function () {
-    const multiCardList = ['demo-SMC-B-a-80276883110000117894', 'demo-SMC-B-b-23232323232323232333'];
+    const multiCardList = ['demo-hba-a-80276883110000117894', 'demo-hba-b-23232323232323232333'];
     const selectCardPromises = { resolve: Promise.resolve, reject: Promise.reject };
 
     const wrapper = mount(MultiCardSelectModal, {
@@ -31,7 +31,7 @@ describe('multi-smcb select SelectSmcbModal', () => {
         multiCardList: multiCardList,
         resolve: selectCardPromises.resolve,
         reject: selectCardPromises.reject,
-        selectedCardType: ECardTypes.SMCB,
+        selectedCardType: ECardTypes.HBA,
       } as any,
     });
 

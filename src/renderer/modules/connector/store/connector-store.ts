@@ -77,7 +77,6 @@ async function paramsToSignChallenge(
       ...ConnectorConfig.authSignParameter,
       base64data: <string>hashedToSignInputString,
     });
-    logger.debug('Signed input created.');
   } catch (err) {
     logger.error(`Could not create signed input. Error: ${err.message}`);
     throw new UserfacingError('JWS hashing failed', err.message, ERROR_CODES.AUTHCL_0003);
@@ -119,7 +118,6 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       const { cardType } = data as {
         cardType: ECardTypes;
       };
-      logger.info('cardType:', cardType);
 
       const isDefaultFlow: boolean = this.state.connectorStore.flowType == IPC_OGR_IDP_START_EVENT;
       const challenge = isDefaultFlow ? this.state.authServiceStore.challenge : this.state.gemIdpServiceStore.challenge;
@@ -137,7 +135,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
             jwsHelper.getPayload(),
             jwsHelper.getProtectedHeader(),
           );
-          logger.info('jwsSignature: ', jwsSignature);
+          logger.debug('jwsSignature: ', jwsSignature);
         } catch (err) {
           logger.error('jwsSignature not created: ', err.message);
         }
@@ -282,7 +280,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
           /* @if MOCK_MODE == 'ENABLED' */
         }
         /* @endif */
-        logger.info(
+        logger.debug(
           `PIN status for ${cardType.toUpperCase()}-card with CardHandle:${cardHandle} is: ${
             pinStatusResult.pinStatus
           }`,

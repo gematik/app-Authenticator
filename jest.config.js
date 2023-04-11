@@ -27,6 +27,7 @@ module.exports = {
     '^.+\\.(png|jpg|svg)$': 'jest-transform-stub',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  watchPathIgnorePatterns: ['<rootDir>/jest.json', '<rootDir>/node_modules'],
   moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node'],
   testMatch: ['<rootDir>/tests/**/*.spec.ts'],
   modulePathIgnorePatterns: ['__snapshots__'],
