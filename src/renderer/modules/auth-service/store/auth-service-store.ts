@@ -69,7 +69,6 @@ export const authServiceStore: Module<IAuthServiceStore, TRootStore> = {
     },
     setAuthRequestPath(state: IAuthServiceStore, authReqParameters: TOidcProtocol2UrlSpec): void {
       state.authRequestPath = authReqParameters.authz_path;
-      logger.info('start set AuthReqParams', authReqParameters);
     },
   },
   actions: {
@@ -79,7 +78,6 @@ export const authServiceStore: Module<IAuthServiceStore, TRootStore> = {
       try {
         //  IDP host and Authorization Path
         const url = state.authRequestPath;
-        logger.info('state.authRequestPath ' + state.authRequestPath);
         const idpHost = new URL(<string>url);
         const { data } = await window.api.httpGet(<string>url, { ...httpsReqConfig(), followRedirect: true });
 
@@ -139,7 +137,7 @@ export const authServiceStore: Module<IAuthServiceStore, TRootStore> = {
         };
 
         const response = await window.api.httpPost(state.challengePath, payload, httpsReqConfig());
-        logger.info(`IdP: Token received successfully. Http Status: ${response.status}`);
+        logger.debug(`IdP: Token received successfully. Http Status: ${response.status}`);
 
         return {
           redirectUri: <string>response?.headers?.['x-callback-location'],

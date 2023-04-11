@@ -23,7 +23,7 @@ let productTypeVersion = '';
 
 function extractEndpoints(sds: string) {
   endpoints = sdsParser(sds);
-  logger.info(`endpoints.size: ${endpoints.size}`);
+  logger.debug(`endpoints.size: ${endpoints.size}`);
 }
 
 /**
@@ -44,7 +44,7 @@ export const getServiceEndpointTls = async (serviceName: string): Promise<string
     extractEndpoints(sds);
     extractPtv(sds);
   } else {
-    logger.info(`reuse endpoints: ${endpoints.size} xEndpoints`);
+    logger.debug(`reuse endpoints: ${endpoints.size} xEndpoints`);
   }
   return getEndpoint(serviceName);
 };
@@ -59,10 +59,10 @@ export function getProductTypeVersion(): string {
 
 export function clearEndpoints() {
   endpoints.clear();
-  logger.info(`endpoints cleared: ${endpoints.size} xEndpoints`);
+  logger.debug(`endpoints cleared: ${endpoints.size} xEndpoints`);
 }
 
 function extractPtv(sds: string) {
   productTypeVersion = textParser(sds, XML_TAG_NAMES.TAG_PRODUCT_TYPE_VERSION);
-  logger.info('productVersionPTV: ' + productTypeVersion);
+  logger.debug('productVersionPTV: ' + productTypeVersion);
 }

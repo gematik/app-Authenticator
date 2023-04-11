@@ -114,6 +114,12 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(json5?|ya?ml)$/, // target json, json5, yaml and yml files
+        type: 'javascript/auto',
+        loader: '@intlify/vue-i18n-loader',
+        include: path.resolve(__dirname, 'src/renderer/i18n/translations'),
+      },
+      {
         test: /\.(scss|css)$/,
         use: [
           'style-loader',

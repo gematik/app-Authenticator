@@ -81,6 +81,10 @@ export const smcbCardSlot2Inserted = JSON.stringify({
   inserted: true,
 });
 
+export const smcbCardSlot3Inserted = JSON.stringify({
+  slotNumber: 3, // SMC_B Karte in Slot 2
+  inserted: true,
+});
 export const hbaTransportPinCardSlot3Inserted = JSON.stringify({
   slotNumber: 3, // HBA mit Transport PIN in Slot 3
   inserted: true,
@@ -243,6 +247,15 @@ export async function removeAllCardsFromRemoteKT() {
     ); // Remote KT
     expect(smcbRes2).toBeDefined();
     expect(smcbRes2?.status).toBe(200);
+
+    const smcbRes3 = await httpClient(
+      HTTP_METHODS.POST,
+      CONNECTOR_TEST_REMOTE_KT_URL,
+      httpReqConfig(),
+      smcbCardSlot3Removed,
+    ); // Remote KT
+    expect(smcbRes3).toBeDefined();
+    expect(smcbRes3?.status).toBe(200);
   } catch (e) {
     logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e), e);
     fail('UNEXPECTED ERROR OCCURRED: ' + JSON.stringify(e));
@@ -394,7 +407,6 @@ export async function insertAllCardsIntoRemoteKT() {
     expect(smcbResRem1).toBeDefined();
     expect(smcbResRem1?.status).toBe(200);
   } catch (e) {
-    logger.error('UNEXPECTED ERROR OCCURRED: ' + e);
     logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e) + ', ' + e);
     fail('UNEXPECTED ERROR OCCURRED: ' + e);
   }
@@ -409,7 +421,6 @@ export async function insertAllCardsIntoRemoteKT() {
     expect(smcbResRem2).toBeDefined();
     expect(smcbResRem2?.status).toBe(200);
   } catch (e) {
-    logger.error('UNEXPECTED ERROR OCCURRED: ' + e);
     logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e) + ', ' + e);
     fail('UNEXPECTED ERROR OCCURRED: ' + e);
   }
@@ -425,7 +436,6 @@ export async function insertCardIntoRemoteKT_Slot1_SMCB() {
     expect(smcbResRem1).toBeDefined();
     expect(smcbResRem1?.status).toBe(200);
   } catch (e) {
-    logger.error('UNEXPECTED ERROR OCCURRED: ' + e);
     logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e) + ', ' + e);
     fail('UNEXPECTED ERROR OCCURRED: ' + e);
   }
@@ -442,7 +452,22 @@ export async function insertCardIntoRemoteKT_Slot2_SMCB() {
     expect(smcbResRem1).toBeDefined();
     expect(smcbResRem1?.status).toBe(200);
   } catch (e) {
-    logger.error('UNEXPECTED ERROR OCCURRED: ' + e);
+    logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e) + ', ' + e);
+    fail('UNEXPECTED ERROR OCCURRED: ' + e);
+  }
+}
+
+export async function insertCardIntoRemoteKT_Slot3_SMCB_TransportPin() {
+  try {
+    const smcbResRem1 = await httpClient(
+      HTTP_METHODS.POST,
+      CONNECTOR_TEST_REMOTE_KT_URL,
+      httpReqConfig(),
+      smcbCardSlot3Inserted,
+    ); // Local KT
+    expect(smcbResRem1).toBeDefined();
+    expect(smcbResRem1?.status).toBe(200);
+  } catch (e) {
     logger.error('UNEXPECTED ERROR OCCURRED: ' + getCallerInfo(e) + ', ' + e);
     fail('UNEXPECTED ERROR OCCURRED: ' + e);
   }

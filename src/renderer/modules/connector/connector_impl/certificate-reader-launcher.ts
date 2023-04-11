@@ -21,7 +21,6 @@ import cardHandleParser from '../common/soap-response-xml-parser';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
 const readCertificate = async (endpoint: string, cardHandle: string) => {
-  logger.info(`Sending SOAP request to ${endpoint} to get certificate from connector.`);
   const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
 
   const res = await certificateReader.runSoapRequest(

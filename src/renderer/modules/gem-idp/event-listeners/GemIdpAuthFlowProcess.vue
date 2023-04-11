@@ -14,9 +14,10 @@
 
 <template>
   <div></div>
-  <SelectSmcbModal
-    v-if="showSMCBSelectModal"
-    :smcb-list="smcbList"
+  <MultiCardSelectModal
+    v-if="showMultiCardSelectModal"
+    :selected-card-type="selectedCardType"
+    :multi-card-list="multiCardList"
     :resolve="selectCardPromises.resolve"
     :reject="selectCardPromises.reject"
   />
@@ -26,7 +27,7 @@
 import { defineComponent } from 'vue';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import { parse } from 'query-string';
-import SelectSmcbModal from '@/renderer/modules/home/components/SelectSmcbModal.vue';
+import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMultiCardModal.vue';
 
 import {
   AUTH_RE_TRY_TIMEOUT,
@@ -74,7 +75,7 @@ let pinVerifyModalClose: undefined | typeof Swal.close;
 export default defineComponent({
   name: 'GemIdpAuthFlowProcess',
   components: {
-    SelectSmcbModal,
+    MultiCardSelectModal,
   },
   data() {
     return {
@@ -83,9 +84,13 @@ export default defineComponent({
         /* do nothing here */
       },
       isAuthProcessActive: false,
-      smcbList: [''],
-      showSMCBSelectModal: false,
-      selectCardPromises: { resolve: Promise.resolve as any, reject: Promise.reject as any },
+      selectedCardType: 'HBA',
+      multiCardList: [],
+      showMultiCardSelectModal: false,
+      selectCardPromises: {} as {
+        resolve: () => void;
+        reject: () => void;
+      },
     };
   },
   computed: {
@@ -102,16 +107,16 @@ export default defineComponent({
     window.api.on(IPC_CENTRAL_IDP_AUTH_START_EVENT, this.startAuthenticationFlow);
   },
   methods: {
-    async showSMCBSelectDialogModal(): Promise<void> {
-      this.showSMCBSelectModal = true;
+    async showMultiCardSelectDialogModal(): Promise<void> {
+      this.showMultiCardSelectModal = true;
 
       return new Promise((resolve, reject) => {
         this.selectCardPromises = {
           resolve,
 
           reject: () => {
-            logger.debug('reject Multi-SMCB-Select');
-            this.showSMCBSelectModal = false;
+            logger.debug('reject Multi-Card-Select');
+            this.showMultiCardSelectModal = false;
             reject();
           },
         };
@@ -166,7 +171,10 @@ export default defineComponent({
          * Read EncJwk from IdP
          */
         await this.$store.dispatch('gemIdpServiceStore/getIdpEncJwk');
-        logger.info('publicKey received: ', JSON.parse(JSON.stringify(this.$store.state.gemIdpServiceStore.idpEncJwk)));
+        logger.debug(
+          'publicKey received: ',
+          JSON.parse(JSON.stringify(this.$store.state.gemIdpServiceStore.idpEncJwk)),
+        );
       } catch (e) {
         await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0002);
         this.setCaughtError(ERROR_CODES.AUTHCL_0002, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
@@ -205,7 +213,7 @@ export default defineComponent({
           return;
         }
       } catch (err) {
-        this.showSMCBSelectModal = false;
+        this.showMultiCardSelectModal = false;
         error = err;
         // handling happens in the getTokenAndOpenClient
       }
@@ -267,7 +275,7 @@ export default defineComponent({
     async getCardTerminals(): Promise<void> {
       try {
         await this.$store.dispatch('connectorStore/getCardTerminals');
-        logger.info('get Terminals finished');
+        logger.info('getTerminals finished');
       } catch (err) {
         await this.handleErrors(err);
 
@@ -354,7 +362,7 @@ export default defineComponent({
          * Throws ConnectorError 4047 if there is no placed cards, we wait until user places the card in that case
          */
         await this.$store.dispatch('connectorStore/getCardHandle', cardType);
-        logger.info('get CardHandle finished for:' + cardType + '-Card');
+        logger.debug('get CardHandle finished for:' + cardType + '-Card');
 
         // getCardHandle function is a recurring function! In an error case, we open a warning modal and give to the user
         // a second chance to enter the pin. This warning models close function is stored in the
@@ -368,25 +376,32 @@ export default defineComponent({
 
         // in case of 1105, there are multiple smcbs in the connector, so the user has to choose in a modal dialog which one he want´s to use
         if (err.code === ERROR_CODES.AUTHCL_1105) {
-          this.smcbList = err.data.foundCards;
+          this.multiCardList = err.data.foundCards;
+          this.selectedCardType = (this.multiCardList[0] as any)?.CardType;
 
           try {
-            const selectedCard: any = await this.showSMCBSelectDialogModal();
+            const selectedCard: any = await this.showMultiCardSelectDialogModal();
             logger.debug('Selected Card:', selectedCard.CardHandle);
             logger.debug('- CardHandle:', selectedCard.SlotId);
             logger.debug('- CardHolderName:', selectedCard.CardHolderName);
             logger.debug('- Iccsn:', selectedCard.Iccsn);
             logger.debug('- CardType:', selectedCard.CardType);
             logger.debug('- SlotId:', selectedCard.SlotId);
-            this.showSMCBSelectModal = false;
+            this.showMultiCardSelectModal = false;
 
-            this.$store.commit('connectorStore/setSmcbCardData', {
+            const cardData = {
               cardHandle: selectedCard.CardHandle,
               ctId: selectedCard.CtId,
               slotNr: selectedCard.SlotId,
               cardType: selectedCard.CardType,
               iccsn: selectedCard.Iccsn,
-            });
+            };
+
+            if (selectedCard.CardType === ECardTypes.SMCB) {
+              this.$store.commit('connectorStore/setSmcbCardData', cardData);
+            } else {
+              this.$store.commit('connectorStore/setHbaCardData', cardData);
+            }
 
             return;
           } catch (err) {

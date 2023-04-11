@@ -2,6 +2,21 @@
 
 # Release Authenticator
 
+## Version 4.1.0 (2023-04-07)
+
+added:
+
+- Implementation of the support for multiple HBAs being used simultaneously
+- User-Dialog will appear, where the user is able to select the desired HBA for the auth. flow
+- Repositories "resource-server" and "vue-example-app" were combined
+- Decreased the amount of unnecessary logs significantly
+- Packages and dependencies were updated
+- Content Security Policy added and Electron security has been improved
+
+fixed:
+
+- Some parameters of a callback were not encoded correctly
+
 ## Version 4.0.0 (2023-03-22)
 
 added:

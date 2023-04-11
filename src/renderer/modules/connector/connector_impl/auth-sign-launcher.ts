@@ -21,7 +21,6 @@ import { logger } from '@/renderer/service/logger';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 
 const getAuthSignature = async (endpoint: string, cardHandle: string, flowType: string) => {
-  logger.info(`Sending SOAP request to ${endpoint} to get authentication signature from connector.`);
   const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
   const response = await authSigner.runSoapRequest(
     ConnectorConfig.contextParameters,

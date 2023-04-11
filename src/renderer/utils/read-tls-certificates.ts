@@ -21,7 +21,6 @@ import i18n from '@/renderer/i18n';
 
 export function readCaCerts(isConnector: boolean): string[] {
   const caCertificatePath = PathProvider.caCertificatePath(isConnector);
-  logger.info('caCertificatePath: ' + caCertificatePath);
   const certs = window.api.readdirSync(caCertificatePath);
 
   logger.debug('certificates found in ProgramFolder: ' + caCertificatePath, { certsCount: certs?.length });

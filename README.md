@@ -1,7 +1,5 @@
 <img src="https://raw.githubusercontent.com/gematik/app-Authenticator/master/docs/Gematik_Logo_Flag.png" alt="Gematik_Logo" width="200" height="37" align="right"> <br>
 
-![gematik_Logo](./docs/Gematik_Logo_Flag.png)
-
 # Authenticator
 
 [![Quality Gate Status](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=authenticator&metric=alert_status&token=7b83ef28f0010bcf42e4223406311573dad4aca5)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=authenticator)
