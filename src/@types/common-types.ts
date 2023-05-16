@@ -15,7 +15,6 @@
 import { SweetAlertOptions } from 'sweetalert2';
 
 export interface TOidcProtocol2UrlSpec {
-  authz_path?: string;
   challenge_path?: string;
   redirect_automatically?: boolean;
 }
@@ -77,4 +76,5 @@ export const TlsAuthType = {
   BasicAuth: 'BasicAuth',
   ServerCertAuth: 'ServerCertAuth',
   ServerClientCertAuth: 'ServerClientCertAuth',
+  ServerClientCertAuth_Pfx: 'ServerClientCertAuth_Pfx',
 };

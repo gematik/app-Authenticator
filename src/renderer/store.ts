@@ -14,15 +14,12 @@
 
 import { createStore } from 'vuex';
 import { connectorStore } from '@/renderer/modules/connector/store/connector-store';
-import { authServiceStore } from '@/renderer/modules/auth-service/store/auth-service-store';
-import { IAuthServiceStore } from '@/renderer/modules/auth-service/store/auth-service-store.d';
 import { TConnectorStore } from '@/renderer/modules/connector/type-definitions';
 import { TGemIdpServiceStore } from '@/renderer/modules/gem-idp/store/gem-idp-service-store.d';
 import { gemIdpServiceStore } from '@/renderer/modules/gem-idp/store/gem-idp-service-store';
 
 export type TRootStore = {
   connectorStore: TConnectorStore;
-  authServiceStore: IAuthServiceStore;
   gemIdpServiceStore: TGemIdpServiceStore;
   settingsIsSet: boolean;
   showLoadingSpinner: boolean;
@@ -41,7 +38,6 @@ export default createStore({
   actions: {},
   modules: {
     connectorStore,
-    authServiceStore,
     gemIdpServiceStore,
   },
 });

@@ -17,16 +17,14 @@ import { TAuthSignParameter, TContextParameter } from '../type-definitions/commo
 
 import template from '@/renderer/modules/connector/assets/soap_templates/commonPTV/auth-sign.xml';
 import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
-import { IPC_OGR_IDP_START_EVENT } from '@/constants';
 
 export const runSoapRequest = async (
   contextParameter: TContextParameter,
   endpoint: string,
   cardHandle: string,
   authSignParameter: TAuthSignParameter,
-  flowType: string,
 ): Promise<string> => {
-  const envelope = getTemplate(cardHandle, contextParameter, authSignParameter, flowType);
+  const envelope = getTemplate(cardHandle, contextParameter, authSignParameter);
   const requestHeaders = {
     'Content-Type': SOAP_ACTION_CONTENT_TYPE,
     soapAction: SOAP_ACTION.ExternalAuthenticate,
@@ -41,7 +39,6 @@ const getTemplate = (
   cardHandle: string,
   contextParameter: TContextParameter,
   authSignParameter: TAuthSignParameter,
-  flowType: string,
 ) => {
   return template
     .replace('{MANDANT}', contextParameter.mandantId)
@@ -50,11 +47,6 @@ const getTemplate = (
     .replace('{USER}', contextParameter.userId)
     .replace('{CARDHANDLE}', cardHandle)
     .replace('{SIGNATURETYPE}', authSignParameter.signatureType)
-    .replace(
-      '{SIGNATURESCHEME}',
-      flowType == IPC_OGR_IDP_START_EVENT
-        ? authSignParameter.signatureKeycloackSchemes
-        : authSignParameter.signatureCidpSchemes,
-    )
+    .replace('{SIGNATURESCHEME}', authSignParameter.signatureCidpSchemes)
     .replace('{BASE64DATA}', authSignParameter.base64data);
 };

@@ -12,6 +12,9 @@
  * permissions and limitations under the Licence.
  */
 
+// read envs from .env file for production
+require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
+
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import path from 'path';
 
@@ -28,10 +31,10 @@ import BeforeSendResponse = Electron.BeforeSendResponse;
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
+const IS_MOCK = process.env.MOCK_MODE === 'ENABLED';
+
 const PLATFORM_WIN32 = 'win32';
 const PLATFORM_DARWIN = 'darwin';
-// read envs from .env file for production
-require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -41,13 +44,9 @@ logger.info(`Starting ${app.getName()} application...`);
 logger.info(`Program version: ${app.getVersion()}`);
 logger.info(`Electron version: ${process.versions.electron}`);
 logger.info(`Platform: ${process.platform}`);
-if (IS_DEV) {
-  logger.info(`Not running in production mode: ${process.env.NODE_ENV}`);
+if (IS_DEV || IS_MOCK) {
+  logger.info(`Not running in production mode: ${process.env.NODE_ENV}, mock: ${process.env.MOCK_MODE}`);
 }
-
-logger.info(`AUTHCONFIGPATH: ${process.env.AUTHCONFIGPATH}`);
-logger.info(`CLIENTNAME: ${process.env.CLIENTNAME}`);
-logger.info(`COMPUTERNAME: ${process.env.COMPUTERNAME}`);
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);

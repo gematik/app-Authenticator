@@ -36,10 +36,13 @@ export class PathProvider {
    */
   static get configPath(): string {
     if (!this._configPath) {
-      const searchValue = 'Temp';
-      const replaceValue = '';
-      const pattern = new RegExp(searchValue, 'i');
-      const mainPath = PathProvider.getSystemUserTempPath().replace(pattern, replaceValue);
+      let mainPath = PathProvider.getSystemUserTempPath();
+      const tempPath = PathProvider.getSystemUserTempPath().toLowerCase();
+      const tempIndex = tempPath.indexOf('temp');
+      if (tempIndex !== -1) {
+        mainPath = tempPath.substring(0, tempIndex);
+      }
+
       this._configPath = window.api.pathJoin(mainPath, PRODUCT_NAME);
     }
     return this._configPath;

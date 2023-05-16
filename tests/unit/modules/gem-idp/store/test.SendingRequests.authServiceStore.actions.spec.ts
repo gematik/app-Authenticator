@@ -13,12 +13,10 @@
  */
 
 import store from '@/renderer/store';
-import { TOidcProtocol2UrlSpec } from '@/@types/common-types';
 
 const got = require('got');
 
 const MOCK_AUTH_REQUEST_PARAMS = {
-  authz_path: 'http://Authorization:8083/test/auth?var1=1&var2=2',
   challenge_path: 'http://login:8083/test/auth?var1=1&var2=2',
 };
 
@@ -36,47 +34,55 @@ const callbackUrl = 'http://test:0001/callback?session_state=1111111&code=testsc
 jest.spyOn(got, 'get').mockReturnValue({
   json: () => MOCK_AUTH_RESPONSE_PROMPT_DATA,
 });
+
 jest.spyOn(got, 'post').mockReturnValue({
   json: () => {},
   statusCode: 200,
   headers: {
-    'x-callback-location': callbackUrl,
+    location: callbackUrl,
   },
 });
 
 describe('auth service sendAuthRequest action', () => {
   beforeEach(() => {
-    store.commit('authServiceStore/resetStore');
+    store.commit('gemIdpServiceStore/resetStore');
   });
 
   it('sends auth request and gets authResponsePromptData ', async () => {
-    store.commit('authServiceStore/setAuthRequestPath', MOCK_AUTH_REQUEST_PARAMS as TOidcProtocol2UrlSpec);
-    expect(store.state.authServiceStore.authRequestPath).toEqual(MOCK_AUTH_REQUEST_PARAMS.authz_path);
-    const result = await store.dispatch('authServiceStore/getChallengeData');
-    store.commit('authServiceStore/setChallengePath', MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge_endpoint);
+    store.commit('gemIdpServiceStore/setChallengePath', MOCK_AUTH_REQUEST_PARAMS.challenge_path);
+    expect(store.state.gemIdpServiceStore.challengePath).toEqual(MOCK_AUTH_REQUEST_PARAMS.challenge_path);
+
+    const result = await store.dispatch('gemIdpServiceStore/getChallengeData');
+    store.commit('gemIdpServiceStore/setChallengePath', MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge_endpoint);
 
     expect(result).toEqual(true);
     expect(got.get).toHaveBeenCalledTimes(1);
-    expect(store.state.authServiceStore.sid).toEqual(MOCK_AUTH_RESPONSE_PROMPT_DATA.sid);
-    expect(store.state.authServiceStore.challenge).toEqual(MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge);
-    expect(store.state.authServiceStore.challengePath).toEqual(MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge_endpoint);
+    expect(store.state.gemIdpServiceStore.challenge).toEqual(MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge);
   });
 });
 
 describe('auth service sendSignedChallenge action', () => {
   beforeEach(() => {
-    store.commit('authServiceStore/resetStore');
+    store.commit('gemIdpServiceStore/resetStore');
   });
   it('sends auth request and gets authResponsePromptData ', async () => {
     // prepare store to test
-    store.commit('authServiceStore/setAuthRequestPath', MOCK_AUTH_REQUEST_PARAMS);
-    store.commit('authServiceStore/setHbaJwsSignature', 'JWS_HBA');
-    store.commit('authServiceStore/setSmcbJwsSignature', 'JWS_SMCB');
+    store.commit('gemIdpServiceStore/setChallengePath', MOCK_AUTH_REQUEST_PARAMS.challenge_path);
+    store.commit('gemIdpServiceStore/setOpenIdConfiguration', {
+      authorization_endpoint: 'https://xxx',
+    });
 
-    await store.dispatch('authServiceStore/getChallengeData');
+    store.commit('gemIdpServiceStore/setHbaJwsSignature', 'JWS_HBA');
+    store.commit('gemIdpServiceStore/setSmcbJwsSignature', 'JWS_SMCB');
 
-    const res = await store.dispatch('authServiceStore/getRedirectUriWithToken');
+    await store.dispatch('gemIdpServiceStore/getChallengeData');
 
-    expect(res).toEqual({ redirectUri: callbackUrl, statusCode: 200, error_uri: undefined });
+    const res = await store.dispatch('gemIdpServiceStore/getRedirectUriWithToken');
+
+    expect(res).toEqual({
+      redirectUri: callbackUrl,
+      statusCode: 200,
+      idpError: undefined,
+    });
   });
 });

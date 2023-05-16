@@ -30,8 +30,6 @@ import * as pinChecker from '@/renderer/modules/connector/connector_impl/check-p
 import { TCardData, TConnectorStore } from '@/renderer/modules/connector/type-definitions';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { ERROR_CODES } from '@/error-codes';
-import { IPC_OGR_IDP_START_EVENT } from '@/constants';
-import { OgrJwsOptions } from '@/renderer/modules/auth-service/sign-feature';
 import { GemIdpJwsOptions } from '@/renderer/modules/gem-idp/sign-feature/cidp-sign-options';
 
 /* @if MOCK_MODE == 'ENABLED' */
@@ -40,10 +38,7 @@ import {
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { MOCK_CARD_PIN_STATUS, MOCK_CARD_TERMINALS } from '@/renderer/modules/connector/connector-mock/mock-constants';
-import {
-  MockCIdpJWSOptions,
-  MockOgrJWSOptions,
-} from '@/renderer/modules/connector/connector-mock/jws-jose-tools/jws-tool-helper';
+import { MockCIdpJWSOptions } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/jws-tool-helper';
 import { MockJwsSignature } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/mock-jws-signature';
 import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
 /* @endif */
@@ -62,13 +57,10 @@ async function paramsToSignChallenge(
   isDefaultFlow: boolean,
   context: ActionContext<TConnectorStore, TRootStore>,
   challenge: string,
-  sid: string,
 ) {
   const certificate = <string>context.state.cards[cardType]?.certificate;
 
-  const jwsUtil = isDefaultFlow
-    ? new OgrJwsOptions(challenge, certificate, cardType).initializeJwsOptions(sid)
-    : new GemIdpJwsOptions(challenge, certificate, cardType).initializeJwsOptions();
+  const jwsUtil = new GemIdpJwsOptions(challenge, certificate, cardType).initializeJwsOptions();
 
   let hashedToSignInputString;
   try {
@@ -88,7 +80,6 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
   namespaced: true,
   state: {
     cards: { ...INITIAL_CARDS_STATE },
-    flowType: undefined,
   },
   mutations: {
     setHbaCardData(state: TConnectorStore, cardData: TCardData): void {
@@ -102,15 +93,11 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
     setTerminals(state: TConnectorStore, terminals: any): void {
       state.terminals = terminals;
     },
-    setFlowType(state: TConnectorStore, flowType: string): void {
-      state.flowType = flowType;
-    },
 
     resetStore(state: TConnectorStore): void {
       logger.debug('resetStore');
       state.cards = { ...INITIAL_CARDS_STATE };
       state.terminals = undefined;
-      state.flowType = undefined;
     },
   },
   actions: {
@@ -119,17 +106,13 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
         cardType: ECardTypes;
       };
 
-      const isDefaultFlow: boolean = this.state.connectorStore.flowType == IPC_OGR_IDP_START_EVENT;
-      const challenge = isDefaultFlow ? this.state.authServiceStore.challenge : this.state.gemIdpServiceStore.challenge;
+      const challenge = this.state.gemIdpServiceStore.challenge;
 
-      const sid = <string>this.state.authServiceStore.sid;
-      const { jwsUtil } = await paramsToSignChallenge(cardType, isDefaultFlow, context, challenge, sid);
+      const { jwsUtil } = await paramsToSignChallenge(cardType, false, context, challenge);
       let jwsSignature;
       /* @if MOCK_MODE == 'ENABLED' */
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
-        const jwsHelper = isDefaultFlow
-          ? new MockOgrJWSOptions(cardType, challenge, sid)
-          : new MockCIdpJWSOptions(cardType, challenge);
+        const jwsHelper = new MockCIdpJWSOptions(cardType, challenge);
         try {
           jwsSignature = await new MockJwsSignature(cardType).createJws(
             jwsHelper.getPayload(),
@@ -144,10 +127,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
         try {
           const cardData = <TCardData>context.state.cards[cardType];
           logger.debug('cardData', JSON.stringify(cardData));
-          const signedChallengeFromConnector = await authSignLauncher(
-            cardData.cardHandle,
-            <string>context.state.flowType,
-          );
+          const signedChallengeFromConnector = await authSignLauncher(cardData.cardHandle);
           const signature = base64url.fromBase64(signedChallengeFromConnector);
           jwsSignature = `${jwsUtil.header}.${jwsUtil.payload}.${signature}`;
           logger.debug('JWS signature created: ', jwsSignature);

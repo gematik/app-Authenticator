@@ -50,11 +50,9 @@ Then run  `npm run dev` to start the Authenticator locally.
 
 ### Test-Repositories
 
-These repositories contain the resources to set up the development environment for the authenticator app.
+This repository contain the resources to set up the development environment for the authenticator app.
 
-Clone the following repositories at the same level of the authenticator repository:
-
-`git clone https://github.com/gematik/Resource-Server-Example`
+Clone the following repository at the same level of the authenticator repository:
 
 `git clone https://github.com/gematik/Vue-Oidcauth-Sample`
 
@@ -93,9 +91,6 @@ This stack based on those technologies:
 * Linter: ESLint
 * Formatter: Prettier
 
-## Contributing
-
-We plan to enable contribution to the Authenticator in the near future.
 
 ## License EUPL
 

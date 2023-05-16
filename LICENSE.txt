@@ -320,6 +320,10 @@ Drittsoftwareanteile:
     Version: 23.2.0
     Lizenz: MIT
 
+    Komponente: @intlify/vue-i18n-loader
+    Version: 4.2.0
+    Lizenz: MIT
+
     Komponente: got
     Version: 11.8.6
     Lizenz: MIT
@@ -332,6 +336,10 @@ Drittsoftwareanteile:
     Version: 1.2.0
     Lizenz: MIT
 
+    Komponente: http-status-codes
+    Version: 2.2.0
+    Lizenz: MIT
+
     Komponente:dot-object
     Version: 2.1.4
     Lizenz: MIT
@@ -339,6 +347,10 @@ Drittsoftwareanteile:
     Komponente: jsonwebtoken
     Version: 9.0.0
     Lizenz: MIT
+
+    Komponente: node-forge
+    Version: 1.3.1
+    Lizenz: Apache-2.0
 
     Komponente: node-jose
     Version: 2.2.0
@@ -385,7 +397,7 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: xml2js
-    Version: 0.4.23
+    Version: 0.5.0
     Lizenz: MIT
 
     Komponente: flatted
@@ -396,6 +408,6 @@ Drittsoftwareanteile:
     Version: 0.2.0
     Lizenz: MIT
 
-     Komponente: zip-a-folder
-     Version: 1.1.5
-     Lizenz: MIT
+    Komponente: zip-a-folder
+    Version: 1.1.5
+    Lizenz: MIT

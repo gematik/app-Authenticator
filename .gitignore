@@ -53,3 +53,14 @@ Jenkinsfile
 Release.Jenkinsfile
 Github-Release.Jenkinsfile
 /tests/Integration/
+
+# echte p12 Dateien von unserem Kon23 - derzeit wird geklaert, ob die ins gitHub duerften, deshalb erst einmal hier
+/tests/resources/certs/example/cs0001.p12
+/tests/resources/certs/example/cs0001_ECC.p12
+/tests/resources/certs/example/smcb-idp-expired.p12
+/tests/unit/modules/settings/settings-validation.spec.ts
+/tests/unit/modules/settings/formBuilderP12Validity.spec.ts
+# private Schluessel mit Zertifikat
+/tests/resources/certs/example/example-cer.cer
+/tests/resources/certs/example/example-key.cer
+/tests/resources/certs/kops

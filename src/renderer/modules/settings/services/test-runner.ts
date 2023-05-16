@@ -22,6 +22,10 @@ import { getConfig } from '@/renderer/utils/get-configs';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 /* @endif */
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
+import { SweetAlertResult } from 'sweetalert2';
+import i18n from '@/renderer/i18n';
+
+const translate = i18n.global.tc;
 
 const allTestCases: TestFunction[] = [
   connectorReachabilityTest,
@@ -38,9 +42,13 @@ export enum TestStatus {
 export type TestResult = { name: string; status: TestStatus; details: string };
 type TestFunction = () => Promise<TestResult> | Promise<TestResult[]>;
 
-export async function runTestsCases(testCases: TestFunction[] = allTestCases): Promise<TestResult[]> {
+export async function runTestsCases(
+  testCases: TestFunction[] = allTestCases,
+  cancelPromise?: Promise<SweetAlertResult<Awaited<unknown>>>,
+): Promise<TestResult[]> {
   const results: TestResult[] = [];
   logger.info('start test cases');
+
   for (const testCase of testCases) {
     /* @if MOCK_MODE == 'ENABLED' */
     const isMockModeActive = getConfig(MOCK_CONNECTOR_CONFIG).value;
@@ -49,12 +57,36 @@ export async function runTestsCases(testCases: TestFunction[] = allTestCases): P
     }
     /* @endif */
 
-    const restResults = await testCase();
+    try {
+      /**
+       * This promise actually only waits for the test and returns the test result
+       * But if the user clicks the cancel button, the promise rejects and stops the whole process
+       */
+      const restResults: TestResult | TestResult[] = await new Promise((resolve, reject): void => {
+        testCase().then((testCaseResult) => {
+          resolve(testCaseResult);
+        });
 
-    if (Array.isArray(restResults)) {
-      results.push(...restResults);
-    } else {
-      results.push(restResults);
+        cancelPromise?.then((swalRes) => {
+          if (!swalRes.isConfirmed) {
+            reject();
+          }
+        });
+      });
+
+      if (Array.isArray(restResults)) {
+        results.push(...restResults);
+      } else {
+        results.push(restResults);
+      }
+    } catch (e) {
+      logger.info('Function test process interrupted');
+      results.push({
+        name: translate('function_test_cancelled'),
+        details: translate('function_test_cancelled_by_user_description'),
+        status: TestStatus.failure,
+      });
+      break;
     }
   }
   logger.info('finished test cases');

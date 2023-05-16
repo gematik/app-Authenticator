@@ -16,7 +16,6 @@ import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 export type TAuthSignParameter = {
   signatureType: string;
-  signatureKeycloackSchemes: string;
   signatureCidpSchemes: string;
   base64data: string;
 };
@@ -49,6 +48,8 @@ export type TEntryOptions = {
   secureProtocol?: string;
   keyFile?: string;
   certFile?: string;
+  pfxFile?: string;
+  pfxPassword?: string;
   username?: string;
   password?: string;
   protocol?: string;
@@ -87,6 +88,5 @@ export type TConnectorStore = {
     HBA?: TCardData;
     'SMC-B'?: TCardData;
   };
-  flowType?: string;
   terminals?: any;
 };

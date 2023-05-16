@@ -13,12 +13,17 @@
  */
 
 import got from 'got';
-import { createProxyAgent } from '@/main/services/proxyResolver';
-import { logger } from '@/main/services/logging';
+import fs from 'fs';
 import { IncomingHttpHeaders } from 'http';
 import { stringify } from 'flatted';
-import { IS_TEST } from '@/constants';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
+
+import { IS_TEST } from '@/constants';
+import { logger } from '@/main/services/logging';
+import { createProxyAgent } from '@/main/services/proxyResolver';
+import { TlsAuthType } from '@/@types/common-types';
+import { ENTRY_OPTIONS_CONFIG_GROUP, TLS_AUTH_TYPE_CONFIG } from '@/config';
+import { APP_CONFIG_DATA } from '@/main/preload-api';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
@@ -78,6 +83,16 @@ export const httpClient = async (
         config.body = envelope;
       }
     }
+
+    // put p12 certificate
+    config = {
+      ...config,
+      https: {
+        ...config.https,
+        ...putP12Config(url),
+      },
+    };
+
     const proxy = await createProxyAgent(url);
     //we don't get debug messages from the ipcRenderer in createProxyAgent, so we log it here
     logger.debug('Proxy for Url:' + url + ' is:', proxy);
@@ -122,5 +137,33 @@ export const httpClient = async (
         statusCode: err.response?.statusCode,
       },
     };
+  }
+};
+
+/**
+ * Electron doesn't allow us to read pfx (p12)-Files in the renderer process
+ * That´s why this function is implemented here and not in http-req-config.ts like the function for pem-files
+ */
+const putP12Config = (url: string) => {
+  // ignore idp requests
+  const connectorHost = <string>APP_CONFIG_DATA[ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME];
+  if (!url?.includes(connectorHost)) {
+    return {};
+  }
+
+  if (APP_CONFIG_DATA[TLS_AUTH_TYPE_CONFIG] != TlsAuthType.ServerClientCertAuth_Pfx) {
+    return {};
+  }
+
+  const pfxFile = APP_CONFIG_DATA[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE];
+  const pfxPassword = APP_CONFIG_DATA[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD];
+
+  if (pfxFile && typeof pfxFile === 'string') {
+    return {
+      pfx: fs.readFileSync(pfxFile),
+      passphrase: pfxPassword,
+    };
+  } else {
+    logger.warn('Missing pfx file for ServerClientCertAuth_Pfx');
   }
 };

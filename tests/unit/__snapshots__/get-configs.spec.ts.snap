@@ -4,7 +4,6 @@ exports[`configMapperByGroup and error handling response should set auth sign pa
 Object {
   "base64data": "YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=",
   "signatureCidpSchemes": "RSASSA-PSS",
-  "signatureKeycloackSchemes": "RSASSA-PKCS1-v1_5",
   "signatureType": "urn:ietf:rfc:3447",
 }
 `;
@@ -27,6 +26,8 @@ Object {
   "method": "GET",
   "password": "not-defined",
   "path": "/connector.sds",
+  "pfxFile": "not-defined",
+  "pfxPassword": "not-defined",
   "port": 80,
   "protocol": "https",
   "rejectUnauthorized": false,

@@ -38,5 +38,6 @@ export const createSettingsStore = ({ repository }: ConfigStoreProps): ConfigSto
   const clear = repository.clear;
   const load = repository.load;
   const exist = repository.exist;
-  return { save, clear, load, exist };
+  const setWithoutSave = repository.setWithoutSave;
+  return { save, clear, load, exist, setWithoutSave };
 };

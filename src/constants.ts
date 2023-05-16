@@ -23,15 +23,10 @@ export const ALLOWED_DEEPLINK_PROTOCOLS = ['tim'];
 export const CUSTOM_PROTOCOL_NAME = 'authenticator';
 
 /**
- * Additionial Information in the request header user-agent to the idp
+ * Additional Information in the request header user-agent to the idp
  */
 export const USERAGENT_PRODUKTNAME = 'authenticator';
 export const USERAGENT_HERSTELLERNAME = 'gematik';
-
-/**
- * The event listener name for starting OGR authentication process
- */
-export const IPC_OGR_IDP_START_EVENT = 'IPC_OGR_IDP_START_EVENT';
 
 export const IPC_READ_MAIN_PROCESS_ENVS = 'IPC_READ_MAIN_PROCESS_ENVS';
 
@@ -40,9 +35,9 @@ export const IPC_UPDATE_ENV = 'IPC_UPDATE_ENV';
 export const IPC_SELECT_FOLDER = 'IPC_SELECT_FOLDER';
 
 /**
- * The event listener name for starting CIDP authentication process
+ * The event listener name for starting authentication process
  */
-export const IPC_CENTRAL_IDP_AUTH_START_EVENT = 'IPC_CENTRAL_IDP_AUTH_START_EVENT';
+export const IPC_START_AUTH_FLOW_EVENT = 'IPC_START_AUTH_FLOW_EVENT';
 
 /**
  * Event name for redirecting the http request
@@ -107,7 +102,7 @@ export const PRODUCT_NAME = 'gematik Authenticator';
  */
 export const APP_NAME = 'authenticator';
 /**
- * URL zu den Authenticator-Fehlercodes (Komplettuebersicht)
+ * URL zu den Authenticator-Fehlercodes (Komplettübersicht)
  */
 export const WIKI_ERRORCODES_URL = 'https://wiki.gematik.de/x/-A3OGw';
 /**
@@ -128,12 +123,17 @@ export const CA_CONNECTOR_DIR_PATH = 'certs-konnektor';
  * Der Sub-Ordner mit CAs für IDP bei TLS-Verbindung
  */
 export const CA_IDP_DIR_PATH = 'certs-idp';
-/**
- * get process envs
- */
-export const PROCESS_ENVS = window?.api?.sendSync
+
+export let PROCESS_ENVS: Record<string, unknown> = window?.api?.sendSync
   ? JSON.parse(window.api.sendSync(IPC_READ_MAIN_PROCESS_ENVS) as string)
   : (process.env as Record<string, unknown>);
+
+/**
+ * First re-read process envs
+ */
+export const updateProcessEnvs = () => {
+  PROCESS_ENVS = JSON.parse(window?.api?.sendSync(IPC_READ_MAIN_PROCESS_ENVS) as string);
+};
 
 /**
  * check if env is dev
@@ -163,3 +163,10 @@ export const LOGIN_CANCELLED_BY_USER = 'login_cancelled_by_user';
 
 export const DEV_CON_CA_CERT_PATH = '/src/assets/certs-konnektor/ca/pu/rsa';
 export const DEV_IDP_CA_CERT_PATH = '/src/assets/certs-idp';
+
+export enum P12_VALIDITY_TYPE {
+  'VALID',
+  'WRONG_PASSWORD',
+  'CERT_INVALID',
+  'CERT_OUTDATED',
+}

@@ -16,12 +16,14 @@
  * @jest-environment node
  */
 import * as envVarsUpdater from '@/main/services/env-vars-updater';
+import { readRegistryForKey } from '@/main/services/env-vars-updater';
 import { UP_TO_DATE_PROCESS_ENVS } from '../../src/main/services/env-vars-updater';
 
 describe('test env-vars-updater', () => {
   beforeEach(() => {
-    jest.resetModules();
-    jest.resetAllMocks();
+    //jest.resetModules();
+    //jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('reads latest envs and does not detects any change ', async function () {
@@ -58,5 +60,63 @@ describe('test env-vars-updater', () => {
 
     // UP_TO_DATE_PROCESS_ENVS gets updated
     expect(UP_TO_DATE_PROCESS_ENVS.CLIENTNAME).toBe('NW005');
+  });
+
+  it('should reject with an error message when the registry key is not found', async () => {
+    const mockError = 'test error';
+    const mockSpawn = jest.spyOn(require('child_process'), 'spawn').mockImplementation(() => {
+      const mockChild = {
+        stdout: {
+          on: jest.fn(),
+        },
+        stderr: {
+          on: jest.fn().mockImplementation((event, callback) => {
+            if (event === 'data') {
+              callback(mockError);
+            }
+          }),
+        },
+        on: jest.fn().mockImplementation((event, callback) => {
+          if (event === 'close') {
+            callback();
+          }
+        }),
+      };
+      return mockChild as any;
+    });
+
+    try {
+      await readRegistryForKey('test key');
+    } catch (err) {
+      expect(err).toEqual(mockError);
+    }
+  });
+
+  it('should return the output of the registry query', async () => {
+    const mockOutput = 'test output';
+    const mockSpawn = jest.spyOn(require('child_process'), 'spawn').mockImplementation(() => {
+      const mockChild = {
+        stdout: {
+          on: jest.fn().mockImplementation((event, callback) => {
+            if (event === 'data') {
+              callback(mockOutput);
+            }
+          }),
+        },
+        stderr: {
+          on: jest.fn(),
+        },
+        on: jest.fn().mockImplementation((event, callback) => {
+          if (event === 'close') {
+            callback();
+          }
+        }),
+      };
+      return mockChild as any;
+    });
+
+    const result = await readRegistryForKey('test key');
+
+    expect(result).toEqual(mockOutput);
   });
 });

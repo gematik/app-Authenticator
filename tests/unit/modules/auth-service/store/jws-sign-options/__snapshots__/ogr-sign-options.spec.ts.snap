@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`sign challenge utils creates sha256 hash 1`] = `"y+lxwUCAeUZJ4WjURP9rKlMJWvFIpUPwojhTIer3rKA="`;
-
-exports[`sign challenge utils creates signing input string 1`] = `"zTMBn8QxC26ez7OcTsiiKcPRoKiBk7YzEf4p9YjlbGw="`;

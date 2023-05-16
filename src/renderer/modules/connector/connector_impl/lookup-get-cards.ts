@@ -14,7 +14,7 @@
 
 import { logger } from '@/renderer/service/logger';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
-import { ConnectorError } from '@/renderer/errors/errors';
+import { ConnectorError, ConnectorHint } from '@/renderer/errors/errors';
 import { findSpecificElementInResponseProperties } from '@/renderer/modules/connector/common/soap-response-json-parser';
 import soapRespParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
 import { CONNECTOR_ERROR_CODES, ERROR_CODES } from '@/error-codes';
@@ -33,8 +33,7 @@ export async function checkGetCards(xmlSoapResponse: string, cardType: string): 
   }
 
   if (Array.isArray(foundCards) && foundCards.length > 1 && result === 'OK') {
-    logger.debug(`Multiple ${cardType.toUpperCase()} Cards found in Connector!`);
-    throw new ConnectorError(
+    throw new ConnectorHint(
       ERROR_CODES.AUTHCL_1105,
       'Konnektor Hinweis-Fehler',
       `Mehrere ${cardType.toUpperCase()}-Karten als gesteckt gefunden!`,

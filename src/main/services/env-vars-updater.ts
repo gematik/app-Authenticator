@@ -11,17 +11,26 @@
  * language governing permissions and limitations under the License.ee the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
 import { logger } from '@/main/services/logging';
 import { BrowserWindow } from 'electron';
-import * as process from 'process';
 import { IPC_UPDATE_ENV } from '@/constants';
+import fs from 'fs';
+import path from 'path';
+import * as process from 'process';
 
-export const UP_TO_DATE_PROCESS_ENVS = process.env;
+require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
+
+//as compatibility reason initialize UP_TO_DATE_PROCESS_ENVS 'computername' from process env and not from registry!
+export const UP_TO_DATE_PROCESS_ENVS: Record<string, string> = {
+  ...process.env,
+  COMPUTERNAME: process.env.COMPUTERNAME ?? '',
+};
 
 let FOUND_ENV_VARS: Record<string, string> = {};
 
-const WATCHED_ENV_VAR_KEYS = ['CLIENTNAME', 'AUTHCONFIGPATH', 'COMPUTERNAME'];
+const WATCHED_ENV_VAR_KEYS = ['CLIENTNAME', 'AUTHCONFIGPATH', 'VIEWCLIENT_MACHINE_NAME'];
+
+const REGISTRY_KEY_SYSTEM_ENV = 'HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment';
 
 /**
  * interval for checking new env vars
@@ -31,7 +40,17 @@ export const setupEnvReadInterval = (mainWindow: BrowserWindow | null) => {
   setInterval(async () => {
     await readLatestEnvs(mainWindow);
   }, 10000);
+
+  readLatestEnvs(mainWindow).then(() => logger.debug('env loaded'));
 };
+
+/**
+ *  Returns the registry path to envs in volatile environment:
+ */
+async function getVolatileEnv(): Promise<string> {
+  const sessionID = await querySessionID();
+  return 'HKCU\\Volatile Environment' + '\\' + sessionID;
+}
 
 /**
  * Resets the FOUND_ENV_VARS and researches the latest envs. If latest changes are different from the previous
@@ -42,18 +61,17 @@ export const setupEnvReadInterval = (mainWindow: BrowserWindow | null) => {
 export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<void> => {
   FOUND_ENV_VARS = {};
 
-  for (const regKey of await envVarPlacesByPriority()) {
-    // this mutates the FOUND_ENV_VARS, changes will be controlled after this for loop
+  let keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
+  checkEnvVarsChange('AUTHCONFIGPATH', keyValuePairsFromRegistryAsString);
 
-    const keyValuePairsFromRegistryAsString = await readRegistryForKey(regKey);
-    checkWatchedEnvVarsChange(keyValuePairsFromRegistryAsString);
-  }
+  keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
+  checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
+  checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
 
   let hasVarsChanged = false;
-
   WATCHED_ENV_VAR_KEYS.forEach((envVar) => {
     const previousVal = UP_TO_DATE_PROCESS_ENVS[envVar];
-    if (FOUND_ENV_VARS[envVar] && FOUND_ENV_VARS[envVar] !== previousVal) {
+    if (FOUND_ENV_VARS[envVar] !== previousVal) {
       const newValue = FOUND_ENV_VARS[envVar];
       logger.info(`Env variable change detected: ${envVar} changed from ${previousVal} to ${newValue}`);
       UP_TO_DATE_PROCESS_ENVS[envVar] = newValue;
@@ -65,19 +83,6 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
     mainWindow.webContents.send(IPC_UPDATE_ENV);
   }
 };
-
-/**
- *  Returns the Path to envs in system-vars:
- *  The last one supersedes the previous ones(!)
- */
-export async function envVarPlacesByPriority() {
-  // The Reg-Key for the volatile Env. ( which has the highest priority for us of the Registry Keys )
-  // depends on the session id, so we have to construct the key:
-  const sessionID = await querySessionID();
-  const volEntry = 'HKCU\\Volatile Environment' + '\\' + sessionID;
-
-  return ['HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment', volEntry];
-}
 
 /**
  * updates ( if necessary ) special process-env-variables by reading the Windows registry and reloading of window
@@ -165,14 +170,24 @@ export const querySessionID = (): Promise<string> => {
   });
 };
 
-export const checkWatchedEnvVarsChange = (data: string) => {
-  WATCHED_ENV_VAR_KEYS.forEach((envVar: string) => {
-    const regex = new RegExp(`${envVar}\\s+\\w+\\s+(\\S+)`);
-    const match = data.match(regex);
-    const newValue = match && match[1];
+export const checkEnvVarsChange = (variable: string, data: string) => {
+  //Check only the lines where the variable exists, because the regex did not work on the whole text.
+  data
+    .toUpperCase()
+    .split(/\r\n|\r|\n/)
+    .forEach((line) => {
+      if (line.includes(variable)) {
+        const regex = new RegExp(`${variable}\\s+\\w+\\s+(\\S+)`);
+        const match = line.match(regex);
+        const newValue = match && match[1];
 
-    if (newValue) {
-      FOUND_ENV_VARS[envVar] = newValue;
-    }
-  });
+        //when  AUTHCONFIGPATH dont exists ignore it
+        if (variable === 'AUTHCONFIGPATH' && newValue && !fs.existsSync(path.join(newValue || ''))) {
+          FOUND_ENV_VARS[variable] = '';
+          logger.debug('The AUTHCONFIGPATH is ignored because it does not exist:' + newValue);
+        } else {
+          FOUND_ENV_VARS[variable] = newValue || '';
+        }
+      }
+    });
 };

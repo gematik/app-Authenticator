@@ -184,7 +184,7 @@ exports[`form element renders file field 1`] = `
           class="object-none"
         />
         <input
-          accept=".pem"
+          accept=".pem,.p12,.cer"
           id="form-name"
           required=""
           title=""
@@ -239,7 +239,7 @@ exports[`form element renders file-path field 1`] = `
           class="object-none"
         />
         <input
-          accept=".pem"
+          accept=".pem,.p12,.cer"
           id="form-name"
           required=""
           title=""

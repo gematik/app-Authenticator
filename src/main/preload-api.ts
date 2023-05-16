@@ -17,11 +17,11 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import util from 'util';
-import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER } from '@/constants';
+import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER, P12_VALIDITY_TYPE } from '@/constants';
 import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
 import { Options } from 'got';
-import { createLogZip } from '@/main/services/logging';
-
+import { createLogZip, logger } from '@/main/services/logging';
+const forge = require('node-forge');
 /**
  * Config data for preload environment.
  * This will be kept up-to-date with frontend config data
@@ -29,7 +29,6 @@ import { createLogZip } from '@/main/services/logging';
 export let APP_CONFIG_DATA: Record<string, unknown> = {};
 
 export let APP_CA_CHAIN_IDP: string[] = [];
-
 export const preloadApi = {
   send: (channel: string, data: unknown) => {
     ipcRenderer.send(channel, data);
@@ -90,5 +89,36 @@ export const preloadApi = {
     }
     await createLogZip(path[0]);
     return true;
+  },
+  /**
+   * Check if the p12 file is valid
+   * @param p12Path
+   * @param password
+   */
+  isP12Valid(p12Path: string, password: string): P12_VALIDITY_TYPE {
+    try {
+      // Read the p12 file
+      const p12File = fs.readFileSync(p12Path, 'binary');
+      // Load the PKCS #12 file using forge
+      const p12Asn1 = forge.asn1.fromDer(p12File);
+      const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, password);
+      // Extract key and certificate information
+      const bags = p12.getBags({ bagType: forge.pki.oids.certBag });
+      const certBag = bags[forge.pki.oids.certBag][0];
+      const certificate = certBag.cert;
+      if (certificate.validity.notAfter > new Date()) {
+        return P12_VALIDITY_TYPE.VALID;
+      } else {
+        logger.info('Certificate is outdated');
+        return P12_VALIDITY_TYPE.CERT_OUTDATED;
+      }
+    } catch (error) {
+      if (error.message.includes('PKCS#12 MAC could not be verified. Invalid password?')) {
+        logger.info('Password is incorrect: ', error);
+        return P12_VALIDITY_TYPE.WRONG_PASSWORD;
+      }
+      logger.info('Certificate is invalid: ', error);
+      return P12_VALIDITY_TYPE.CERT_INVALID;
+    }
   },
 };

@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { IConfig, IConfigSection } from '@/@types/common-types';
+import { IConfig, IConfigSection, TlsAuthType } from '@/@types/common-types';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
@@ -21,13 +21,14 @@ import {
   PROXY_SETTINGS_CONFIG,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
-import { COMMON_USED_REGEXES } from '@/constants';
+import { COMMON_USED_REGEXES, P12_VALIDITY_TYPE } from '@/constants';
 import { TRepositoryData } from '@/renderer/modules/settings/repository';
 import i18n from '@/renderer/i18n';
 import { AuthenticatorError, UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 import { checkPemFileFormat, PEM_TYPES } from '@/renderer/utils/pem-file-validator';
-import { copyPemFileToTargetDir } from '@/renderer/utils/read-tls-certificates';
+import { copyUploadedFileToTargetDir } from '@/renderer/utils/read-tls-certificates';
+import Swal from 'sweetalert2';
 
 /* @if MOCK_MODE == 'ENABLED' */
 import {
@@ -46,7 +47,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
   }
   /* @endif */
 
-  const BASIC_AUTH = 'BasicAuth';
   return [
     /* @if MOCK_MODE == 'ENABLED' */
     {
@@ -58,14 +58,12 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: MOCK_CONNECTOR_CONFIG,
           type: 'drop-down',
           optionsType: 'standardBool',
-          required: false,
           infoText: translate('info_text_status'),
         },
         {
           label: 'SMC-B Certificate',
           key: MOCK_CONNECTOR_CERTS_CONFIG.SMCB_CERT,
           type: 'file-path',
-          required: false,
           hide: !mocked,
           infoText: translate('info_text_smcb_certificate'),
           onChange: async (e: Event) => {
@@ -91,7 +89,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: 'SMC-B Private Key',
           key: MOCK_CONNECTOR_CERTS_CONFIG.SMCB_KEY,
           type: 'file-path',
-          required: false,
           hide: !mocked,
           infoText: translate('info_text_smcb_private_key'),
           onChange: async (e: Event) => {
@@ -117,7 +114,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: 'HBA Certificate',
           key: MOCK_CONNECTOR_CERTS_CONFIG.HBA_CERT,
           type: 'file-path',
-          required: false,
           hide: !mocked,
           infoText: translate('info_text_hba_certificate'),
           onChange: async (e: Event) => {
@@ -144,7 +140,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: MOCK_CONNECTOR_CERTS_CONFIG.HBA_KEY,
           type: 'file-path',
           optionsType: 'standardBool',
-          required: false,
           hide: !mocked,
           infoText: translate('info_text_hba_private_key'),
           onChange: async (e: Event) => {
@@ -177,14 +172,12 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('host'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME,
-          required: true,
           type: 'input',
           infoText: translate('info_text_host'),
         },
         {
           label: translate('port'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.PORT,
-          required: true,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.NUMBER,
           infoText: translate('info_text_port'),
@@ -192,7 +185,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('mandant_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID,
-          required: true,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_mandant_id'),
@@ -200,7 +192,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('client_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID,
-          required: true,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_client_id'),
@@ -208,7 +199,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('work_space_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID,
-          required: true,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_work_space_id'),
@@ -220,47 +210,36 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           options: [
             {
               text: translate('username_password'),
-              value: BASIC_AUTH,
+              value: TlsAuthType.BasicAuth,
             },
             { text: translate('certificate'), value: 'ServerClientCertAuth' },
+            { text: translate('certificate_pfx'), value: 'ServerClientCertAuth_Pfx' },
             {
               text: translate('no_authentication'),
               value: 'ServerCertAuth',
             },
           ],
-          required: false,
           infoText: translate('info_text_tls_authentication'),
-        },
-        {
-          label: translate('reject_unauthorized'),
-          key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED,
-          required: false,
-          type: 'drop-down',
-          optionsType: 'standardBool',
-          infoText: translate('info_text_reject_unauthorized'),
         },
         {
           label: translate('username_from_connector'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.USERNAME_BASIC_AUTH,
-          required: true,
           type: 'input',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== BASIC_AUTH,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
           infoText: translate('info_text_username_con'),
         },
         {
           label: translate('password_from_connector'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.PASSWORD_BASIC_AUTH,
-          required: true,
           type: 'password',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== BASIC_AUTH,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
           infoText: translate('info_text_password_con'),
         },
         {
           label: translate('private_key'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY,
           type: 'file-path',
-          required: true,
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== 'ServerClientCertAuth',
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth,
           infoText: translate('info_text_private_key'),
           /**
            * Moves file to right position and renames it
@@ -280,7 +259,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.KEY);
 
-              repositoryData[fieldKey] = await copyPemFileToTargetDir(file.path, fieldKey, keyFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, keyFilename);
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
@@ -291,8 +270,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('client_certificate'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE,
           type: 'file-path',
-          required: true,
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== 'ServerClientCertAuth',
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth,
           infoText: translate('info_text_client_certificate'),
           /**
            * Moves file to right position and renames it
@@ -315,12 +293,40 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
 
-              repositoryData[fieldKey] = await copyPemFileToTargetDir(file.path, fieldKey, certFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, certFilename);
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
             }
           },
+        },
+        {
+          label: translate('pfx_file'),
+          key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE,
+          type: 'file-path',
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
+          infoText: translate('info_text_pfx_file'),
+          /**
+           * Moves file to right position and renames it
+           * @param e
+           */
+          onChange: async (e: Event) => {
+            validateP12AndMove(e, repositoryData);
+          },
+        },
+        {
+          label: translate('pfx_file_password'),
+          key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD,
+          type: 'password',
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
+          infoText: translate('info_text_pfx_file_password'),
+        },
+        {
+          label: translate('reject_unauthorized'),
+          key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('info_text_reject_unauthorized'),
         },
       ],
     },
@@ -346,13 +352,11 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
               value: PROXY_AUTH_TYPES.PROXY_CLIENT_CERT,
             },
           ],
-          required: false,
           infoText: translate('info_text_proxy_auth_type'),
         },
         {
           label: translate('proxy_username'),
           key: PROXY_SETTINGS_CONFIG.PROXY_USERNAME,
-          required: true,
           type: 'input',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
           infoText: translate('info_text_proxy_username'),
@@ -360,7 +364,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('proxy_password'),
           key: PROXY_SETTINGS_CONFIG.PROXY_PASSWORD,
-          required: true,
           type: 'password',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
           infoText: translate('info_text_proxy_password'),
@@ -369,7 +372,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('proxy_client_certificate'),
           key: PROXY_SETTINGS_CONFIG.PROXY_CERTIFICATE_PATH,
           type: 'file-path',
-          required: true,
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.PROXY_CLIENT_CERT,
           infoText: translate('info_text_proxy_client_certificate'),
           /**
@@ -388,7 +390,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
 
-              repositoryData[fieldKey] = await copyPemFileToTargetDir(file.path, fieldKey, certFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, certFilename);
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
@@ -398,7 +400,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('proxy_ignore_list'),
           key: PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST,
-          required: false,
           type: 'input',
           infoText: translate('info_text_proxy_ignore_list'),
         },
@@ -413,7 +414,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: CHECK_UPDATES_AUTOMATICALLY_CONFIG,
           type: 'drop-down',
           optionsType: 'standardBool',
-          required: true,
           infoText: translate('info_text_check_updates_automatically'),
         },
       ],
@@ -432,4 +432,76 @@ export function getFormColumnsFlat(repositoryData: TRepositoryData): Record<stri
   });
 
   return formSectionsFlat;
+}
+
+export async function validateP12AndMove(e: Event, repositoryData: TRepositoryData) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files && input.files[0];
+  if (file === null) {
+    throw new UserfacingError('Invalid File', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1114);
+  }
+
+  const pfxFilename = file?.name.toString();
+
+  const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE;
+  try {
+    const newPassword = await Swal.fire({
+      title: translate('pfx_file_password_swal'),
+      input: 'password',
+      inputAttributes: {
+        autocapitalize: 'off',
+      },
+      showCancelButton: true,
+      confirmButtonText: translate('save'),
+      cancelButtonText: translate('cancel'),
+      allowOutsideClick: false,
+    });
+
+    if (!newPassword.isConfirmed) {
+      return false;
+    }
+
+    const isP12Valid = window.api.isP12Valid(file.path, <string>newPassword.value);
+    if (isP12Valid === P12_VALIDITY_TYPE.VALID) {
+      repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
+      repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, pfxFilename);
+      return;
+    }
+    if (isP12Valid === P12_VALIDITY_TYPE.CERT_OUTDATED) {
+      input.value = '';
+      repositoryData[fieldKey] = '';
+
+      Swal.fire({
+        title: 'Fehler',
+        text: translate('pfx_cert_outdated'),
+        icon: 'error',
+      });
+      return;
+    }
+    if (isP12Valid === P12_VALIDITY_TYPE.WRONG_PASSWORD) {
+      input.value = '';
+      repositoryData[fieldKey] = '';
+
+      Swal.fire({
+        title: 'Fehler',
+        text: translate('pfx_password_fail'),
+        icon: 'error',
+      });
+      return;
+    }
+    /*
+     * Shows a Swal if the p12 cert is invalid
+     * */
+    input.value = '';
+    repositoryData[fieldKey] = '';
+
+    Swal.fire({
+      title: 'Fehler',
+      text: translate('pfx_wrong_cert_format'),
+      icon: 'error',
+    });
+  } catch (err) {
+    input.value = '';
+    repositoryData[fieldKey] = '';
+  }
 }
