@@ -40,11 +40,11 @@ export function getCaCertsWithFilenames(isConnector: boolean): { name: string; c
     }));
 }
 
-export function getClientCertAndPrivateKeyFilePath(filename: string): string {
+export function getUploadedFilePath(filename: string): string {
   return window.api.pathJoin(PathProvider.configPath, filename);
 }
 
-export const copyPemFileToTargetDir = async (
+export const copyUploadedFileToTargetDir = async (
   filePath: string,
   fieldName: string,
   filename: string,
@@ -53,6 +53,8 @@ export const copyPemFileToTargetDir = async (
   const allowedFiles = [
     ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY,
     ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE,
+    ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD,
+    ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE,
     PROXY_SETTINGS_CONFIG.PROXY_CERTIFICATE_PATH,
   ];
 
@@ -65,13 +67,14 @@ export const copyPemFileToTargetDir = async (
     });
     throw new errs.AuthenticatorError(`Error: selected file ${filePath} is not in PEM-Format`);
   }
-  const targetFileName = getClientCertAndPrivateKeyFilePath(filename);
+  const targetFileName = getUploadedFilePath(filename);
 
   try {
     window.api.copyFileSync(filePath, targetFileName);
     logger.info(filePath + ' copied to ' + PathProvider.configPath);
     return targetFileName;
   } catch (err) {
+    // todo add swal warning
     throw new errs.AuthenticatorError(
       `Error '${err}' occurred while copying file ${filePath} to ${PathProvider.configPath}`,
     );

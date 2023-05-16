@@ -12,6 +12,8 @@
  * permissions and limitations under the Licence.
  */
 
+import { P12_VALIDITY_TYPE } from '../../../../src/constants';
+
 jest.mock('sweetalert2', () => ({
   fire: jest.fn().mockReturnValue({ isConfirmed: true }),
 }));
@@ -28,17 +30,21 @@ import { clearSampleData, setSampleData } from '../../../utils/config-sample-dat
 import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
 import { PathProvider } from '@/renderer/service/path-provider';
 import { getHomedir } from '@/renderer/modules/connector/common/utils';
-import { copyPemFileToTargetDir, getClientCertAndPrivateKeyFilePath } from '@/renderer/utils/read-tls-certificates';
+import { copyUploadedFileToTargetDir, getUploadedFilePath } from '@/renderer/utils/read-tls-certificates';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { checkPemFileFormat, checkPemFileFormatSilent } from '@/renderer/utils/pem-file-validator';
 import { PEM_TYPES } from '@/renderer/utils/pem-file-validator';
 import { getCaCertsWithFilenames } from '@/renderer/utils/read-tls-certificates';
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
 import { TestStatus } from '@/renderer/modules/settings/services/test-runner';
+import { preloadApi } from '../../../../src/main/preload-api';
 
 PathProvider.setSystemUserTempPath(getHomedir());
 const TEST_FILE_PATH_TO_KEY = process.cwd() + '/tests/resources/certs/example/example-key.cer';
 const TEST_FILE_PATH = process.cwd() + '/tests/resources/certs/example/example-cer.cer';
+const TEST_FILE_PATH_PFX = process.cwd() + '/tests/resources/certs/example/cs0001.p12';
+const TEST_FILE_PATH_INVALID_PFX = process.cwd() + '/tests/resources/certs/example/cs0001_ECC.p12';
+const TEST_FILE_PATH_OUTDATED_PFX = process.cwd() + '/tests/resources/certs/example/smcb-idp-expired.p12';
 
 const contentKey = fs.readFileSync(TEST_FILE_PATH_TO_KEY);
 const contentCert = fs.readFileSync(TEST_FILE_PATH);
@@ -98,16 +104,16 @@ describe('settings page validation', () => {
   it('validation that uploading key and cert files keep their names', async function () {
     fs.mkdirSync(PathProvider.configPath, { recursive: true });
     expect(
-      await copyPemFileToTargetDir(TEST_FILE_PATH, ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY, 'example-cer.cer'),
-    ).toBe(getClientCertAndPrivateKeyFilePath('example-cer.cer'));
+      await copyUploadedFileToTargetDir(TEST_FILE_PATH, ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY, 'example-cer.cer'),
+    ).toBe(getUploadedFilePath('example-cer.cer'));
 
     expect(
-      await copyPemFileToTargetDir(TEST_FILE_PATH, ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE, 'example-cer.cer'),
-    ).toBe(getClientCertAndPrivateKeyFilePath('example-cer.cer'));
+      await copyUploadedFileToTargetDir(TEST_FILE_PATH, ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE, 'example-cer.cer'),
+    ).toBe(getUploadedFilePath('example-cer.cer'));
   });
 
   it('validation that invalid uploading key and cert files throws an error', async function () {
-    await expect(copyPemFileToTargetDir(TEST_FILE_PATH, 'wrong entry option', 'example-cer.cer')).rejects.toThrow(
+    await expect(copyUploadedFileToTargetDir(TEST_FILE_PATH, 'wrong entry option', 'example-cer.cer')).rejects.toThrow(
       `Error: selected file ${TEST_FILE_PATH} is not in PEM-Format`,
     );
   });
@@ -145,5 +151,27 @@ describe('settings page validation', () => {
   it('Certs Validity Function Test', async function () {
     const resp = await certsValidityTest();
     expect(resp.status).toBe(TestStatus.success);
+  });
+  it('validation that uploading pfx-file keep their name', async function () {
+    fs.mkdirSync(PathProvider.configPath, { recursive: true });
+    expect(
+      await copyUploadedFileToTargetDir(
+        TEST_FILE_PATH_PFX,
+        ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE,
+        'cs0001.p12',
+      ),
+    ).toBe(getUploadedFilePath('cs0001.p12'));
+  });
+  it('validation that valid uploading pfx-file is successful', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, '123456')).toBe(P12_VALIDITY_TYPE.VALID);
+  });
+  it('validation that outdated uploading pfx-file throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_OUTDATED_PFX, '00')).toBe(P12_VALIDITY_TYPE.CERT_OUTDATED);
+  });
+  it('validation that uploading a pfx-file with wrong password throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, 'wrong password')).toBe(P12_VALIDITY_TYPE.WRONG_PASSWORD);
+  });
+  it('validation that invalid uploading pfx-file throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_INVALID_PFX, '123456')).toBe(P12_VALIDITY_TYPE.CERT_INVALID);
   });
 });

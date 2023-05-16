@@ -20,6 +20,8 @@ import { FileStorageRepository, TRepositoryData } from '../../src/renderer/modul
 import ConnectorConfig from '../../src/renderer/modules/connector/connector_impl/connector-config';
 import { PROCESS_ENVS } from '../../src/constants';
 import { logger } from '../../src/renderer/service/logger';
+import { PathProvider } from '../../src/renderer/service/path-provider';
+import { PRODUCT_NAME } from '@/constants';
 
 describe('configMapperByGroup and error handling response', () => {
   beforeEach(() => {
@@ -48,7 +50,7 @@ describe('configMapperByGroup and error handling response', () => {
   it('should load the config properly', function () {
     const fileStorageRepository = new FileStorageRepository();
     fileStorageRepository.clear();
-    let data: TRepositoryData = fileStorageRepository.load();
+    const data: TRepositoryData = fileStorageRepository.load();
 
     logger.info('data:' + data);
   });
@@ -65,6 +67,10 @@ describe('config file location test', () => {
   afterEach(() => {
     process.env = env;
   });
+  const existsSyncMock = jest.fn();
+  (global as any).window.api.existsSync = existsSyncMock;
+  const isFile = jest.fn();
+  (global as any).window.api.isFile = isFile;
 
   // When AUTHCONFIGPATH and COMPUTERNAME but not CLIENTNAME are set, the config-file should be located in AUTHCONFIGPATH + \\ + COMPUTERNAME
   it('test FileStorageRepository-getConfigPath-COMPUTERNAME', async () => {
@@ -72,9 +78,13 @@ describe('config file location test', () => {
     PROCESS_ENVS.COMPUTERNAME = 'COMPUTERNAME1';
     PROCESS_ENVS.AUTHCONFIGPATH = 'PATH1';
 
-    let path = FileStorageRepository.getConfigPath();
-    expect(path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
-    expect(path).toContain(PROCESS_ENVS.COMPUTERNAME);
+    existsSyncMock.mockReturnValue(true);
+    isFile.mockReturnValue(true);
+
+    const config = FileStorageRepository.getConfigPath();
+    expect(config.path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
+    expect(config.path).toContain(PROCESS_ENVS.COMPUTERNAME);
+    expect(config.localEnv).toBeFalsy();
   });
 
   // When AUTHCONFIGPATH and CLIENTNAME are set, the config-file should be located in AUTHCONFIGPATH + \\ + CLIENTNAME
@@ -84,9 +94,66 @@ describe('config file location test', () => {
     PROCESS_ENVS.COMPUTERNAME = 'COMPUTERNAME1';
     PROCESS_ENVS.AUTHCONFIGPATH = 'PATH1';
 
-    let path = FileStorageRepository.getConfigPath();
+    existsSyncMock.mockReturnValue(true);
+    isFile.mockReturnValue(true);
 
-    expect(path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
-    expect(path).toContain(PROCESS_ENVS.CLIENTNAME);
+    const config = FileStorageRepository.getConfigPath();
+
+    expect(config.path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
+    expect(config.path).toContain(PROCESS_ENVS.CLIENTNAME);
+    expect(config.localEnv).toBeFalsy();
+  });
+
+  // When AUTHCONFIGPATH and VIEWCLIENT_MACHINE_NAME are set, the config-file should be located in AUTHCONFIGPATH + \\ + VIEWCLIENT_MACHINE_NAME
+  it('test FileStorageRepository-getConfigPath-VIEWCLIENT_MACHINE_NAME', async () => {
+    //process.env.NODE_ENV = 'development';
+    PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME = 'NW001';
+    PROCESS_ENVS.COMPUTERNAME = 'COMPUTERNAME1';
+    PROCESS_ENVS.AUTHCONFIGPATH = 'PATH1';
+
+    existsSyncMock.mockReturnValue(true);
+    isFile.mockReturnValue(true);
+
+    const config = FileStorageRepository.getConfigPath();
+
+    expect(config.path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
+    expect(config.path).toContain(PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME);
+    expect(config.localEnv).toBeFalsy();
+  });
+
+  // When AUTHCONFIGPATH and CLIENTNAME are set and the path to the config.json did not exist then the local env has to be used
+  it('test FileStorageRepository-getConfigPath-NotExists', async () => {
+    process.env.NODE_ENV = 'development';
+    PROCESS_ENVS.CLIENTNAME = 'NW001';
+    PROCESS_ENVS.COMPUTERNAME = 'COMPUTERNAME1';
+    PROCESS_ENVS.AUTHCONFIGPATH = 'PATH1';
+
+    existsSyncMock.mockReturnValue(true);
+    isFile.mockReturnValue(false);
+    const sendSync = jest.fn();
+    (global as any).window.api.sendSync = sendSync;
+    sendSync.mockReturnValue('userData');
+
+    const config = FileStorageRepository.getConfigPath();
+
+    expect(config.path).toEqual('userData');
+    expect(config.localEnv).toBeTruthy();
+  });
+
+  it("should return the expected config path. When TEMP-Path contains 'temp' in configPath should be only left part of string", () => {
+    const expectedPath = 'C:\\Users\\username\\AppData\\Roaming\\' + PRODUCT_NAME;
+    const getSystemUserTempPathSpy = jest
+      .spyOn(PathProvider, 'getSystemUserTempPath')
+      .mockReturnValue('C:\\Users\\username\\AppData\\Local\\Temp');
+    const pathJoinSpy = jest.spyOn(window.api, 'pathJoin').mockReturnValue(expectedPath);
+
+    const actualPath = PathProvider.configPath;
+
+    expect(getSystemUserTempPathSpy).toHaveBeenCalled();
+    expect(pathJoinSpy).toHaveBeenCalledWith('c:\\users\\username\\appdata\\local\\', PRODUCT_NAME);
+    expect(actualPath).toEqual('C:\\Users\\username\\AppData\\Roaming\\' + PRODUCT_NAME);
+
+    getSystemUserTempPathSpy.mockRestore();
+    pathJoinSpy.mockRestore();
   });
 });

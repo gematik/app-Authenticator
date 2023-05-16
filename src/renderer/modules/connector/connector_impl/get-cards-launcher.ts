@@ -22,7 +22,7 @@ import { checkGetCards } from '@/renderer/modules/connector/connector_impl/looku
 import { TCardData } from '@/renderer/modules/connector/type-definitions';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
-import { ConnectorError } from '@/renderer/errors/errors';
+import { ConnectorHint } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 
 const executeService = async (endpoint: string, cardType: ECardTypes) => {
@@ -62,10 +62,9 @@ export const launch = async (cardType: ECardTypes): Promise<Partial<TCardData>> 
     };
   } catch (err) {
     if (err.code === ERROR_CODES.AUTHCL_1105) {
-      logger.debug('Error getting card from connector: ', err.message);
       const foundCards = err.data.foundCards;
       const cardType = err.data.cardType;
-      throw new ConnectorError(
+      throw new ConnectorHint(
         ERROR_CODES.AUTHCL_1105,
         'Konnektor Hinweis-Fehler',
         `Mehrere ${cardType.toUpperCase()}-Karten als gesteckt gefunden!`,

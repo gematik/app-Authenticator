@@ -20,6 +20,9 @@ import { PRODUCT_NAME } from '@/constants';
 import fs from 'fs';
 import { clearSampleData } from '../utils/config-sample-data';
 
+// as connector works slowly, we need at least 10 seconds to be sure
+jest.setTimeout(10000);
+
 /**
  * Solve crypto problem
  */

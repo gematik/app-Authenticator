@@ -48,30 +48,10 @@ abstract class MockJWSOptions {
 
   abstract getPayload(): string;
 
-  abstract getProtectedHeader(flowType: string): object | string;
+  abstract getProtectedHeader(): object | string;
 }
 
 export { MockJWSOptions };
-
-export class MockOgrJWSOptions extends MockJWSOptions {
-  constructor(cardType: ECardTypes, challenge: string | undefined, ...args: any) {
-    super(cardType, challenge, args);
-  }
-
-  getProtectedHeader(): object {
-    return {
-      format: 'compact',
-      fields: {
-        x5c: [this.getCert()],
-        alg: FinalConstants.RSASSA_PKCS1_USING_SHA256,
-      },
-    };
-  }
-
-  getPayload(): string {
-    return JSON.stringify({ challenge: this._challenge, sid: this._params[0] });
-  }
-}
 
 export class MockCIdpJWSOptions extends MockJWSOptions {
   constructor(cardType: ECardTypes, challenge: string | undefined) {

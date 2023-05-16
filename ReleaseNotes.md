@@ -2,6 +2,27 @@
 
 # Release Authenticator
 
+## Version 4.2.0 (2023-05-15)
+
+added:
+
+- Support P12-Files (RSA) for TLS-Authentication
+- Log more necessary details on Mock Mode
+- Read VMWare Env. Variables "VIEWCLIENT_MACHINE_NAME" from registry feature
+- Cancel feature for the ongoing function test
+- Make function tests without updating the config file on the fly
+
+fixed:
+
+- Logging for multi-card-scenarios reduced + bugfix
+- Support for "wandernde session" repaired (Refresh)
+- User-Agent added for auto-redirect calls
+- Remove wrong error log on Multi-Card found event
+- Construction of certificate path on upload process fixed
+- Default values for Settings form
+- The old auth flow process "OGR Flow" has been removed
+
+
 ## Version 4.1.0 (2023-04-07)
 
 added:

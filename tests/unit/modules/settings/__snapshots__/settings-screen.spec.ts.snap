@@ -137,7 +137,6 @@ exports[`settings screen render  1`] = `
                   class="settings-input"
                   id="form-connector.entryOption.hostname"
                   placeholder=""
-                  required=""
                   type="input"
                 />
               </div>
@@ -177,7 +176,6 @@ exports[`settings screen render  1`] = `
                   class="settings-input"
                   id="form-connector.entryOption.port"
                   placeholder=""
-                  required=""
                   type="input"
                 />
               </div>
@@ -217,7 +215,6 @@ exports[`settings screen render  1`] = `
                   class="settings-input"
                   id="form-connector.contextParameter.mandantId"
                   placeholder=""
-                  required=""
                   type="input"
                 />
               </div>
@@ -257,7 +254,6 @@ exports[`settings screen render  1`] = `
                   class="settings-input"
                   id="form-connector.contextParameter.clientId"
                   placeholder=""
-                  required=""
                   type="input"
                 />
               </div>
@@ -297,7 +293,6 @@ exports[`settings screen render  1`] = `
                   class="settings-input"
                   id="form-connector.contextParameter.workplaceId"
                   placeholder=""
-                  required=""
                   type="input"
                 />
               </div>
@@ -347,7 +342,12 @@ exports[`settings screen render  1`] = `
                   <option
                     value="ServerClientCertAuth"
                   >
-                    Zertifikat
+                    Zertifikat PEM-Format
+                  </option>
+                  <option
+                    value="ServerClientCertAuth_Pfx"
+                  >
+                    Zertifikat P12-Datei (RSA only)
                   </option>
                   <option
                     value="ServerCertAuth"
@@ -360,6 +360,12 @@ exports[`settings screen render  1`] = `
               <!--v-if-->
             </div>
           </div>
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
+          <!--v-if-->
           <div
             class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
           >
@@ -410,10 +416,6 @@ exports[`settings screen render  1`] = `
               <!--v-if-->
             </div>
           </div>
-          <!--v-if-->
-          <!--v-if-->
-          <!--v-if-->
-          <!--v-if-->
           
         </div>
       </div>
@@ -581,7 +583,6 @@ exports[`settings screen render  1`] = `
                 <select
                   class="settings-input"
                   id="form-checkUpdatesAutomatically"
-                  required=""
                 >
                   
                   <option
@@ -625,7 +626,7 @@ exports[`settings screen render  1`] = `
               id="btnFeatureTest"
               type="button"
             >
-              Funktionstest (inkl. Speichern)
+              Funktionstest
             </button>
             <br />
           </div>

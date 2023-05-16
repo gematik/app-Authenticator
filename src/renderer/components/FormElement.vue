@@ -83,10 +83,10 @@ y
             v-if="!model[name] || iterable"
             :id="`form-${name}`"
             :disabled="disabled"
-            type="file"
             :required="required && !iterable"
+            accept=".pem,.p12,.cer"
             title=""
-            accept=".pem"
+            type="file"
             @change="onFileChange"
           />
           <button v-if="model[name]" type="button" @click="clearValue">

@@ -14,7 +14,7 @@
 
 import Swal from 'sweetalert2';
 
-import { IPC_UPDATE_ENV, IPC_WARN_USER } from '@/constants';
+import { IPC_WARN_USER } from '@/constants';
 import { TUserWarnObject } from '@/@types/common-types';
 import i18n from '@/renderer/i18n';
 import { logger } from '@/renderer/service/logger';
@@ -49,10 +49,4 @@ window.addEventListener('click', (e) => {
     logger.info('Opening a new instance blocked!');
     e.preventDefault();
   }
-});
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-window.api.on(IPC_UPDATE_ENV, (_: Event, _args: string) => {
-  logger.info('Reloading window due to env variable changes');
-  window.location.reload();
 });

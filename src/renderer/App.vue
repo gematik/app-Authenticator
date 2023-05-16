@@ -24,8 +24,31 @@
 import BaseTemplate from '@/renderer/components/BaseTemplate.vue';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 import { SettingsProvider } from '@/renderer/modules/settings/SettingsProvider';
+import { IPC_UPDATE_ENV, updateProcessEnvs } from '@/constants';
+import { logger } from '@/renderer/service/logger';
+import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
+import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
 
 const configFileStoreRepo = new FileStorageRepository();
+
+/**
+ * Event listener for Environment variables change.
+ * We should update config store and connector's config store.
+ * This should stay under App.vue as we need to call the load() function of the right repository class.
+ */
+window.api.on(IPC_UPDATE_ENV, () => {
+  logger.info('Reloading window due to env variable changes');
+
+  updateProcessEnvs();
+
+  // re-load content
+  configFileStoreRepo.load(true);
+
+  // put data in connector module
+
+  ConnectorConfig.updateConnectorParameters();
+  clearEndpoints();
+});
 </script>
 
 <style>

@@ -40,7 +40,7 @@
           <FormElement
             v-for="config in formSection.columns"
             :key="config.key"
-            :required="config.required"
+            :required="!!config.required"
             :label="config.label"
             :model="configValues"
             :name="config.key"
@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRaw } from 'vue';
+import { computed, defineComponent, ref, toRaw } from 'vue';
 import { useStore } from 'vuex';
 import Swal from 'sweetalert2';
 
@@ -103,6 +103,7 @@ import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
 import { cancelActiveUpdateProcess, checkNewUpdate } from '@/renderer/service/auto-updater-service';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
+import { IPC_UPDATE_ENV } from '@/constants';
 
 const translate = i18n.global.tc;
 
@@ -113,21 +114,29 @@ export default defineComponent({
     TestResultModal,
   },
   setup() {
-    const { save, load, clear } = useSettings();
+    const { save, load, clear, setWithoutSave } = useSettings();
     useStore();
-    let configValues: TRepositoryData = reactive(load());
+    const configValues = ref<TRepositoryData>({ ...load() });
+
     let isDev = false;
     /* @if MOCK_MODE == 'ENABLED' */
     if (process.env.NODE_ENV === 'development') {
       isDev = true;
     }
     /* @endif */
-    const formSections = computed<IConfigSection[]>(() => getFormSections(configValues));
-    const formColumnsFlat = getFormColumnsFlat(configValues);
+
+    window?.api?.on(IPC_UPDATE_ENV, () => {
+      setTimeout(() => {
+        configValues.value = load();
+      }, 500);
+    });
+
+    const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
+    const formColumnsFlat = getFormColumnsFlat(configValues.value);
 
     function resetData() {
       clear();
-      configValues = {};
+      configValues.value = {};
     }
 
     /**
@@ -136,8 +145,8 @@ export default defineComponent({
      */
     function validateData(): boolean {
       let isFormValid = true;
-      for (const key in configValues) {
-        const val = configValues[key];
+      for (const key in configValues.value) {
+        const val = configValues.value[key];
         const regex = formColumnsFlat[key]?.validationRegex;
 
         // no need to check boolean
@@ -153,7 +162,7 @@ export default defineComponent({
       return isFormValid;
     }
 
-    async function saveConfigValues(showConfirmModals = true) {
+    async function saveConfigValues() {
       // can't save if there is no config
       if (!Object.keys(configValues).length) {
         return;
@@ -169,37 +178,35 @@ export default defineComponent({
         return false;
       }
       // confirm prompt
-      if (showConfirmModals) {
-        const saveConfirm = await Swal.fire({
-          title: translate('settings_will_be_saved'),
-          text: translate('are_you_sure'),
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'OK',
-          cancelButtonText: translate('cancel'),
-        });
+      const saveConfirm = await Swal.fire({
+        title: translate('settings_will_be_saved'),
+        text: translate('are_you_sure'),
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: translate('cancel'),
+      });
 
-        if (!saveConfirm.isConfirmed) {
-          return false;
-        }
+      if (!saveConfirm.isConfirmed) {
+        return false;
       }
 
       // call check update automatically if the settings has been changed
-      if (configValues[CHECK_UPDATES_AUTOMATICALLY_CONFIG]) {
+      if (configValues.value[CHECK_UPDATES_AUTOMATICALLY_CONFIG]) {
         checkNewUpdate(true);
       } else {
         cancelActiveUpdateProcess();
       }
 
       try {
-        save(toRaw(configValues));
+        save(toRaw(configValues.value));
       } catch (err) {
         logger.error('Config file could not be saved: ', err.message);
 
         await Swal.fire({
           title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
           text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
-            configPath: FileStorageRepository.getConfigPath(),
+            configPath: FileStorageRepository.getConfigPath().path,
           }),
           icon: 'error',
         });
@@ -208,38 +215,45 @@ export default defineComponent({
       }
 
       // put data in connector module
-      ConnectorConfig.updateConnectorParameters();
-      clearEndpoints();
+      updateAppState();
 
-      if (showConfirmModals) {
-        Swal.fire({
-          title: translate('settings_saved_successfully'),
-          timer: 1000,
-          showConfirmButton: false,
-          icon: 'success',
-        });
-      }
+      Swal.fire({
+        title: translate('settings_saved_successfully'),
+        timer: 1000,
+        showConfirmButton: false,
+        icon: 'success',
+      });
     }
 
+    /**
+     * Run all tests and returns results
+     */
     async function runAndFormatTestCases(): Promise<TestResult[]> {
-      await saveConfigValues(false);
-      Swal.fire({
+      // set config
+      setWithoutSave(configValues.value);
+      updateAppState();
+
+      const cancelPromise = Swal.fire({
         title: translate('funktion_test'),
         text: translate('funktion_test_processing'),
         allowEscapeKey: false,
         allowOutsideClick: false,
         showConfirmButton: false,
+        showClass: { popup: 'swal2-show-loading-above-buttons', backdrop: 'swal2-backdrop-show' },
+        hideClass: { popup: '', backdrop: '' },
+        showCancelButton: true,
+        cancelButtonText: translate('cancel'),
         willOpen: () => {
           Swal.showLoading();
         },
       });
 
       return new Promise((resolve) => {
-        setTimeout(() => {
-          runTestsCases().then((results) => {
-            Swal.close();
-            resolve(results);
-          });
+        setTimeout(async () => {
+          const results = await runTestsCases(undefined, cancelPromise);
+          Swal.close();
+          resolve(results);
+          updateAppState(true);
         }, 10);
       });
     }
@@ -252,6 +266,15 @@ export default defineComponent({
           icon: 'success',
         });
       }
+    }
+
+    /**
+     * Update connector Config
+     */
+    async function updateAppState(reloadFromConfigFile = false) {
+      reloadFromConfigFile && load(true);
+      ConnectorConfig.updateConnectorParameters();
+      clearEndpoints();
     }
 
     return {
@@ -267,16 +290,17 @@ export default defineComponent({
   data() {
     return {
       showModal: false,
-      showSpinner: false,
       functionTestResults: [] as TestResult[],
     };
   },
   methods: {
     async startFunctionTests() {
-      this.showSpinner = true;
       this.functionTestResults = await this.runAndFormatTestCases();
-      this.showSpinner = false;
-      this.showModal = true;
+
+      // if user cancels the process results can be empty and in that case we won't open the results modal
+      if (this.functionTestResults.length) {
+        this.showModal = true;
+      }
     },
     async closeModal() {
       this.showModal = false;

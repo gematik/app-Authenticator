@@ -34,6 +34,8 @@ class ConnectorConfig {
     secureProtocol: 'TLSv1_2_method',
     keyFile: 'not-defined',
     certFile: 'not-defined',
+    pfxFile: 'not-defined',
+    pfxPassword: 'not-defined',
     username: 'not-defined',
     password: 'not-defined',
     rejectUnauthorized: false,
@@ -55,7 +57,6 @@ class ConnectorConfig {
   public authSignParameter: TAuthSignParameter = {
     signatureType: 'urn:ietf:rfc:3447',
     signatureCidpSchemes: 'RSASSA-PSS',
-    signatureKeycloackSchemes: 'RSASSA-PKCS1-v1_5',
     base64data: 'YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=',
   };
 

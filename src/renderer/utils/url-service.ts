@@ -31,10 +31,6 @@ export function validateLauncherArguments(args: TOidcProtocol2UrlSpec): void {
     error = 'Invalid launch parameters provided';
     message = `Key: challenge_path. Value: ${args.challenge_path}`;
     logger.error(`${ERROR_CODES.AUTHCL_0001}: ${error}`, message);
-  } else if (args.authz_path && !COMMON_USED_REGEXES.URL.test(args.authz_path!)) {
-    error = 'Invalid launch parameters provided';
-    message = `Key: challenge_path. Value: ${args.authz_path}`;
-    logger.error(`${ERROR_CODES.AUTHCL_0001}: ${error}`, message);
   } else {
     return;
   }

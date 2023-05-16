@@ -20,6 +20,7 @@ import util from 'util';
 import path from 'path';
 import { Options } from 'got';
 import { TClientRes } from '@/main/services/http-client';
+import { P12_VALIDITY_TYPE } from '@/constants';
 
 export declare global {
   interface Window {
@@ -50,6 +51,7 @@ export declare global {
       getProcessCwd: () => string;
       getProcessEnvs: () => Record<string, string>;
       createLogZipFile: () => Promise<boolean>;
+      isP12Valid: (p12Path: string, password: string) => P12_VALIDITY_TYPE;
     };
   }
 }

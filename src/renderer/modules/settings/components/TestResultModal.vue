@@ -98,9 +98,20 @@ export default defineComponent({
       required: true,
     },
   },
+  mounted() {
+    document.addEventListener('keydown', this.onKeyDown);
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown);
+  },
   methods: {
     openFachportalURL() {
       window.api.openExternal(Fachportal_URL);
+    },
+    onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        this.closeModal();
+      }
     },
   },
 });

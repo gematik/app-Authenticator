@@ -24,6 +24,8 @@ export const ENTRY_OPTIONS_CONFIG_GROUP = {
   TLS_REJECT_UNAUTHORIZED: 'connector.entryOption.tlsRejectUnauthorized',
   TLS_PRIVATE_KEY: 'connector.entryOption.keyFile',
   TLS_CERTIFICATE: 'connector.entryOption.certFile',
+  TLS_PFX_CERTIFICATE: 'connector.entryOption.pfxFile',
+  TLS_PFX_PASSWORD: 'connector.entryOption.pfxPassword',
   USERNAME_BASIC_AUTH: 'connector.entryOption.username',
   PASSWORD_BASIC_AUTH: 'connector.entryOption.password',
 };

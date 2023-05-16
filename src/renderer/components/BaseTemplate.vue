@@ -13,7 +13,6 @@
   -->
 
 <script lang="ts" setup>
-import AuthFlowProcess from '@/renderer/modules/auth-service/event-listeners/AuthFlowProcess.vue';
 import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/GemIdpAuthFlowProcess.vue';
 import { computed } from 'vue';
 import { IS_DEV, PROCESS_ENVS } from '@/constants';
@@ -58,7 +57,6 @@ const buildVersion = computed(() => {
       <div id="lblVersion" class="text-sm cursor-default" :title="buildVersion">{{ $t('version', { version }) }}</div>
     </div>
 
-    <AuthFlowProcess />
     <GemIdpAuthFlowProcess />
   </div>
 </template>

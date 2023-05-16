@@ -15,7 +15,14 @@
 import dot from 'dot-object';
 import { APP_NAME, CONFIG_FILE_NAME, IPC_GET_PATH, PROCESS_ENVS, PRODUCT_NAME } from '@/constants';
 import { logger } from '@/renderer/service/logger';
-import { CHECK_UPDATES_AUTOMATICALLY_CONFIG, PROXY_SETTINGS_CONFIG } from '@/config';
+import {
+  CHECK_UPDATES_AUTOMATICALLY_CONFIG,
+  ENTRY_OPTIONS_CONFIG_GROUP,
+  PROXY_SETTINGS_CONFIG,
+  TLS_AUTH_TYPE_CONFIG,
+} from '@/config';
+import { TlsAuthType } from '@/@types/common-types';
+import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 
 export interface TRepositoryData {
   [key: string]: number | string | boolean;
@@ -29,54 +36,79 @@ let storedData: TRepositoryData = {};
 export interface ISettingsRepository {
   save(data: TRepositoryData): void;
 
-  load(): TRepositoryData;
+  load(forceReload?: boolean): TRepositoryData;
 
   clear(): void;
 
   exist(): boolean;
+
+  /**
+   * This only updates the cached config and does not change the config.json
+   * This is relevant for making function tests on the fly
+   */
+  setWithoutSave(data: TRepositoryData): void;
 }
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: true,
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
+  [TLS_AUTH_TYPE_CONFIG]: TlsAuthType.ServerCertAuth,
+
+  /* @if MOCK_MODE == 'ENABLED' */
+  [MOCK_CONNECTOR_CONFIG]: false,
+  /* @endif */
 };
 
 export class FileStorageRepository implements ISettingsRepository {
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
 
-  public static getConfigPath(): string {
+  public static getConfigPath(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
     const computerName = PROCESS_ENVS.COMPUTERNAME;
     const authConfigPath = PROCESS_ENVS.AUTHCONFIGPATH;
+    const viewClientMachineName = PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME;
 
     logger.info('configPath:');
     logger.info('  -  AUTHCONFIGPATH:' + authConfigPath);
     logger.info('  -  CLIENTNAME:' + clientName);
     logger.info('  -  COMPUTERNAME:' + computerName);
+    logger.info('  -  VIEWCLIENT_MACHINE_NAME:' + viewClientMachineName);
 
     // Abhängig von folgenden Umgebungsvariablen wird die Lokalität der zu verwendenden config.json in folgender Reihenfolge bestimmt:
-    // 1. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable CLIENTNAME
+    // 1. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable ViewClient_Machine_Name (VMWARE)
+    //    => config.json im Folder: AUTHCONFIGPATH + //ViewClient_Machine_Name//config.json
+    // 2. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable CLIENTNAME (CITRIX)
     //    => config.json im Folder: AUTHCONFIGPATH + //CLIENTNAME//config.json
-    // 2. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable COMPUTERNAME
+    // 3. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable COMPUTERNAME
     //    => config.json im Folder: AUTHCONFIGPATH + //COMPUTERNAME//config.json
-    // 3. Für alle anderen Fälle :
+    // 4. Für alle anderen Fälle (auch im Fehlerfall das der AUTHCONFIGPATH nicht existiert!):
     //    => config.json im Installationsverzeichnis der exe ( wie bisher )
 
+    //wenn keine config.json in dem viewClientMachineName, clientName oder computerName Pfad existiert, dann wird die lokale config benutzt
+    let configPath = '';
     if (authConfigPath) {
-      if (clientName) {
+      if (viewClientMachineName) {
+        logger.info(' - config über ViewClient_Machine_Name');
+        configPath = window.api.pathJoin(authConfigPath.toString(), viewClientMachineName.toString());
+      } else if (clientName) {
         logger.info(' - config über CLIENTNAME');
-        return window.api.pathJoin(authConfigPath.toString(), clientName.toString());
-      } else {
-        if (computerName) {
-          logger.info(' - config über COMPUTERNAME');
-          return window.api.pathJoin(authConfigPath.toString(), computerName.toString());
-        }
+        configPath = window.api.pathJoin(authConfigPath.toString(), clientName.toString());
+      } else if (computerName) {
+        logger.info(' - config über COMPUTERNAME');
+        configPath = window.api.pathJoin(authConfigPath.toString(), computerName.toString());
       }
+      const testPath = window.api.pathJoin(configPath, '/', CONFIG_FILE_NAME);
+      if (window.api.existsSync(testPath) && window.api.isFile(testPath)) {
+        return { path: configPath, localEnv: false };
+      }
+
+      logger.info(' - config Pfad nicht valide!');
     }
 
     logger.info(' - config über Anwendungsverzeichnis');
-    return window.api.sendSync(IPC_GET_PATH, 'userData') as string;
+    return { path: window.api.sendSync(IPC_GET_PATH, 'userData') as string, localEnv: true };
   }
 
   private static path(): string {
@@ -84,9 +116,9 @@ export class FileStorageRepository implements ISettingsRepository {
       return FileStorageRepository._path;
     }
 
-    let path = FileStorageRepository.getConfigPath();
-
-    if (!PROCESS_ENVS.AUTHCONFIGPATH) {
+    const config = FileStorageRepository.getConfigPath();
+    let path = config.path;
+    if (config.localEnv) {
       path = path.replace('Roaming', 'Local');
 
       //C:\Users\USERNAME\AppData\Local\authenticator -> C:\Users\USERNAME\AppData\Local\gematik Authenticator
@@ -115,30 +147,46 @@ export class FileStorageRepository implements ISettingsRepository {
 
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
-
     const unFlatted = dot.object({ ...data });
+    /* @if MOCK_MODE == 'ENABLED' */
+    FileStorageRepository.printConfig();
+    /* @endif */
     return window.api.writeFileSync(FileStorageRepository.path(), JSON.stringify(unFlatted));
   }
 
-  load(): TRepositoryData {
-    if (Object.keys(storedData).length) {
+  /**
+   * todo be sure that config file exists, and has a right format. If not, throw error
+   */
+  load(forceReload = false): TRepositoryData {
+    if (!forceReload && Object.keys(storedData).length) {
       return storedData;
     }
 
+    // forceReload happens when env vars get changed,
+    // that means we need to re calculate the path
+    if (forceReload) {
+      FileStorageRepository._path = null;
+    }
+
     if (!window.api.existsSync(FileStorageRepository.path())) {
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE };
     }
 
     const buffer = window.api.readFileSync(FileStorageRepository.path(), FileStorageRepository.encoding);
     const string = buffer.toString();
     const json = JSON.parse(string);
 
-    const data = dot.dot(json);
+    const data = {
+      ...INITIAL_STATE,
+      ...dot.dot(json),
+    };
     storedData = data;
 
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
-
+    /* @if MOCK_MODE == 'ENABLED' */
+    FileStorageRepository.printConfig();
+    /* @endif */
     return data;
   }
 
@@ -153,4 +201,24 @@ export class FileStorageRepository implements ISettingsRepository {
   exist(): boolean {
     return window.api.existsSync(FileStorageRepository.path());
   }
+
+  /**
+   * This only updates the cached config and does not change the config.json
+   * @param data
+   */
+  setWithoutSave(data: TRepositoryData): void {
+    storedData = data;
+  }
+
+  /* @if MOCK_MODE == 'ENABLED' */
+  private static printConfig() {
+    logger.info('print settings:');
+    for (const item in storedData) {
+      if (!item.toLowerCase().includes('password')) {
+        logger.info('  - ' + item + ':' + storedData[item]);
+      }
+    }
+  }
+
+  /* @endif */
 }

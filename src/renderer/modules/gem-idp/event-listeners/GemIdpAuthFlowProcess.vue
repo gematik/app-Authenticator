@@ -31,7 +31,7 @@ import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMulti
 
 import {
   AUTH_RE_TRY_TIMEOUT,
-  IPC_CENTRAL_IDP_AUTH_START_EVENT,
+  IPC_START_AUTH_FLOW_EVENT,
   LOGIN_CANCELLED_BY_USER,
   LOGIN_NOT_SUCCESSFUL,
   LOGIN_VIA_SMART_CARD_SUCCESSFUL,
@@ -58,6 +58,7 @@ import {
   alertWithCancelButton,
   closeSwal,
   createRedirectDeeplink,
+  userAgent,
 } from '@/renderer/utils/utils';
 import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
 import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/utils/url-service';
@@ -104,7 +105,7 @@ export default defineComponent({
     },
   },
   created() {
-    window.api.on(IPC_CENTRAL_IDP_AUTH_START_EVENT, this.startAuthenticationFlow);
+    window.api.on(IPC_START_AUTH_FLOW_EVENT, this.startAuthenticationFlow);
   },
   methods: {
     async showMultiCardSelectDialogModal(): Promise<void> {
@@ -154,9 +155,6 @@ export default defineComponent({
         this.clearStores();
         return;
       }
-
-      // todo remove after removing the ogr flow
-      this.$store.commit('connectorStore/setFlowType', IPC_CENTRAL_IDP_AUTH_START_EVENT);
 
       // get idp host from challenge_path
       this.parseAndSetIdpHost();
@@ -381,12 +379,11 @@ export default defineComponent({
 
           try {
             const selectedCard: any = await this.showMultiCardSelectDialogModal();
-            logger.debug('Selected Card:', selectedCard.CardHandle);
-            logger.debug('- CardHandle:', selectedCard.SlotId);
-            logger.debug('- CardHolderName:', selectedCard.CardHolderName);
-            logger.debug('- Iccsn:', selectedCard.Iccsn);
-            logger.debug('- CardType:', selectedCard.CardType);
-            logger.debug('- SlotId:', selectedCard.SlotId);
+            logger.debug('Selected Card:');
+            logger.debug('- CardHandle:' + selectedCard.CardHandle);
+            logger.debug('- Iccsn:' + selectedCard.Iccsn);
+            logger.debug('- CardType:' + selectedCard.CardType);
+            logger.debug('- SlotId:' + selectedCard.SlotId);
             this.showMultiCardSelectModal = false;
 
             const cardData = {
@@ -540,7 +537,7 @@ export default defineComponent({
      */
     async getRedirectUriWithToken(error: UserfacingError | null = null): Promise<TAuthFlowEndState> {
       /**
-       * send signed challenge to keycloak
+       * send signed challenge to idp
        * this never throws error!
        */
       const accessData: TAccessDataResponse = await this.$store.dispatch('gemIdpServiceStore/getRedirectUriWithToken');
@@ -631,14 +628,14 @@ export default defineComponent({
 
     /**
      * open client with received url
-     * OR parse the authz_path and open the redirect url with custom error
+     * OR parse the challenge_path and open the redirect url with custom error
      * @param authFlowEndState
      */
     async openClientIfNeeded(authFlowEndState: TAuthFlowEndState): Promise<void> {
       let url: string | null = authFlowEndState.url;
       const caughtErrorObject = this.$store.state.gemIdpServiceStore.caughtAuthFlowError;
 
-      // if there is no url, we parse the authz_path and get the redirect url
+      // if there is no url, we parse the challengePath and get the redirect url
       const challengePath = this.$store.state.gemIdpServiceStore.challengePath;
       let state = '';
       if (!authFlowEndState.isSuccess && !url && challengePath) {
@@ -684,6 +681,9 @@ export default defineComponent({
                   https: {
                     certificateAuthority: getIdpTlsCertificates(),
                     rejectUnauthorized: true,
+                  },
+                  headers: {
+                    'User-Agent': userAgent + this.$store.state.gemIdpServiceStore.clientId,
                   },
                 },
               })

@@ -20,26 +20,25 @@ import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { logger } from '@/renderer/service/logger';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 
-const getAuthSignature = async (endpoint: string, cardHandle: string, flowType: string) => {
+const getAuthSignature = async (endpoint: string, cardHandle: string) => {
   const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
   const response = await authSigner.runSoapRequest(
     ConnectorConfig.contextParameters,
     endpointMapped,
     cardHandle,
     ConnectorConfig.authSignParameter,
-    flowType,
   );
   return cardHandleParser(response.toString(), XML_TAG_NAMES.TAG_BASE64SIGNATURE);
 };
 
-export const launch = async (cardHandle: string, flowType: string): Promise<string> => {
+export const launch = async (cardHandle: string): Promise<string> => {
   try {
     const authSignatureEndpoint = await connectorSdsRequest.getServiceEndpointTls(
       XML_TAG_NAMES.TAG_AUTH_SIGNATURE_SERVICE,
     );
     logger.debug(`Using signature service endpoint ${authSignatureEndpoint} to send SDS requests to connector.`);
 
-    return await getAuthSignature(authSignatureEndpoint, cardHandle, flowType);
+    return await getAuthSignature(authSignatureEndpoint, cardHandle);
   } catch (err) {
     logger.error('Error getting signature from connector', err.message);
     throw checkSoapError(err?.response?.body) || err;

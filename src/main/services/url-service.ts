@@ -14,12 +14,7 @@
 
 import { BrowserWindow } from 'electron';
 import { URL } from 'url';
-import {
-  CUSTOM_PROTOCOL_NAME,
-  IPC_CENTRAL_IDP_AUTH_START_EVENT,
-  IPC_OGR_IDP_START_EVENT,
-  IPC_WARN_USER,
-} from '@/constants';
+import { CUSTOM_PROTOCOL_NAME, IPC_START_AUTH_FLOW_EVENT, IPC_WARN_USER } from '@/constants';
 import { ERROR_CODES } from '@/error-codes';
 import { TOidcProtocol2UrlSpec, TUserWarnObject } from '@/@types/common-types';
 import { logger } from '@/main/services/logging';
@@ -30,10 +25,8 @@ export function parseLauncherArguments(link: string): TParsedLauncherArguments {
   try {
     const parsedLink = new URL(link);
 
-    const authzPath = parseUrlFor('authz_path', parsedLink.search) || '';
     const challengePath = parseUrlFor('challenge_path', parsedLink.search) || '';
     return {
-      authz_path: decodeURLRecursively(authzPath), // Authorization Path from Idp
       challenge_path: decodeURLRecursively(challengePath), // Challenge Path from Smart IDP or RP
     };
   } catch (err) {
@@ -46,7 +39,7 @@ export function parseLauncherArguments(link: string): TParsedLauncherArguments {
  * @param needle
  * @param searchParams
  */
-export function parseUrlFor(needle: 'authz_path' | 'challenge_path', searchParams: string): string | null {
+export function parseUrlFor(needle: 'challenge_path', searchParams: string): string | null {
   if (searchParams.startsWith(`?${needle}`)) {
     return searchParams.replace(`?${needle}=`, '');
   }
@@ -86,13 +79,8 @@ export const startAuthFlow = (url: string, mainWindow: BrowserWindow | null, ser
   try {
     const args = parseLauncherArguments(url);
 
-    if (args) {
-      // authz_path triggers the keycloak event and in any other case we start the gem cidp flow
-      const eventName = args.authz_path ? IPC_OGR_IDP_START_EVENT : IPC_CENTRAL_IDP_AUTH_START_EVENT;
-
-      if (mainWindow) {
-        mainWindow.webContents.send(eventName, { ...args, serverMode });
-      }
+    if (args && mainWindow) {
+      mainWindow.webContents.send(IPC_START_AUTH_FLOW_EVENT, { ...args, serverMode });
     }
   } catch (e) {
     const warnData: TUserWarnObject = {

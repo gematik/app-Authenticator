@@ -14,16 +14,17 @@
 
 import store from '@/renderer/store';
 import got from 'got';
-import { KeycloakPluginError } from '@/renderer/errors/errors';
-import { TOidcProtocol2UrlSpec } from '@/@types/common-types';
+import { CentralIdpError } from '../../../../../src/renderer/errors/errors';
 
 const MOCK_AUTH_REQUEST_PARAMS = {
-  authz_path: 'http://Authorization:8083/test/auth?var1=1&var2=2',
   challenge_path: 'http://login:8083/test/auth?var1=1&var2=2',
 };
 
 const MOCK_AUTH_RESPONSE_PROMPT_DATA = {
-  response: { data: { error: 'Missing SMC-B token.' }, headers: { error_uri: 'error_uri' } },
+  response: {
+    data: '"{"error":"invalid_request","gematik_error_text":"client_id ist ungültig","gematik_timestamp":1678188405,"gematik_uuid":"eded25c9-86c0-45f0-bdfe-b861edd42e8f","gematik_code":"2012"}"',
+    headers: { error_uri: 'error_uri' },
+  },
 };
 
 jest.spyOn(got, 'get').mockImplementation(() => {
@@ -37,18 +38,14 @@ jest.spyOn(got, 'get').mockImplementation(() => {
 
 describe('auth service sendAuthRequest action', () => {
   beforeEach(() => {
-    store.commit('authServiceStore/resetStore');
+    store.commit('gemIdpServiceStore/resetStore');
   });
 
   it('[Negative] sends auth request and gets challenge Data ', async () => {
-    store.commit('authServiceStore/setAuthRequestPath', MOCK_AUTH_REQUEST_PARAMS as TOidcProtocol2UrlSpec);
-    expect(store.state.authServiceStore.authRequestPath).toEqual(MOCK_AUTH_REQUEST_PARAMS.authz_path);
+    store.commit('gemIdpServiceStore/setChallengePath', MOCK_AUTH_REQUEST_PARAMS.challenge_path);
 
-    await expect(store.dispatch('authServiceStore/getChallengeData')).rejects.toThrow(
-      new KeycloakPluginError('Could not get challenge data for authentication', {
-        error: MOCK_AUTH_RESPONSE_PROMPT_DATA.response.data.error,
-        url: MOCK_AUTH_RESPONSE_PROMPT_DATA.response.headers['error_uri'],
-      }),
+    await expect(store.dispatch('gemIdpServiceStore/getChallengeData')).rejects.toThrow(
+      new CentralIdpError('Could not get challenge data for authentication'),
     );
   });
 });

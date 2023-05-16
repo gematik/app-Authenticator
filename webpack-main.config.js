@@ -14,6 +14,7 @@
 
 const webpack = require('webpack');
 const { resolve } = require('path');
+const path = require('path');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -52,6 +53,15 @@ module.exports = {
           loader: 'ts',
           target: 'ES2020',
         },
+      },
+      {
+        test: /\.[ts|vue]/,
+        loader: 'preprocess-loader',
+        exclude:
+          process.env.MOCK_MODE === 'ENABLED'
+            ? []
+            : [path.resolve(__dirname, './src/modules/connector/connector-mock/')],
+        options: { DEBUG: false, ppOptions: { type: 'vue' } },
       },
     ],
   },

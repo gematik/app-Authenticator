@@ -22,6 +22,13 @@ export class AuthenticatorError extends Error {
   }
 }
 
+export class AuthenticatorHint extends Error {
+  constructor(hint: string) {
+    super(hint);
+    logger.info(hint);
+  }
+}
+
 export class UserfacingError extends AuthenticatorError {
   name = 'UserfacingError';
   title: string;
@@ -56,14 +63,18 @@ export class ConnectorError extends AuthenticatorError {
   }
 }
 
-export class KeycloakPluginError extends AuthenticatorError {
-  name = 'IdentifyProvider';
-  error: string;
+export class ConnectorHint extends AuthenticatorHint {
+  name = 'ConnectorHint';
+  code: string;
+  error?: string;
+  description?: string;
   data?: any;
 
-  constructor(error: string, data?: unknown) {
-    super(window.api.utilFormat('error: %s; data: %s', error, data || ''));
-    this.error = error;
+  constructor(code: string, hint?: string, description?: string, data?: unknown) {
+    super(window.api.utilFormat('code: %s; hint: %s; description: %s', code, hint, description));
+    this.code = code;
+    this.error = hint;
+    this.description = description;
     this.data = data;
   }
 }
