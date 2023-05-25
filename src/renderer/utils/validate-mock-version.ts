@@ -21,6 +21,5 @@ const MOCK_VERSION = PROCESS_ENVS.MOCK_MODE;
  */
 
 export function validateMockVersion(): boolean {
-  const isMock = MOCK_VERSION === 'ENABLED';
-  return isMock;
+  return MOCK_VERSION === 'ENABLED';
 }
