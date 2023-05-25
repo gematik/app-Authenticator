@@ -2,6 +2,15 @@
 
 # Release Authenticator
 
+## Version 4.2.1 - HotFix (2023-05-25)
+
+fixed:
+
+- Defining Mock-Mode logic fixed 
+- Log level issue fixed
+- Allowed Protocol types issue fixed
+
+
 ## Version 4.2.0 (2023-05-15)
 
 added:

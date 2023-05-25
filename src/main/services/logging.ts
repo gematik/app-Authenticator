@@ -19,10 +19,11 @@ import winston from 'winston';
 import 'winston-daily-rotate-file';
 import { IS_DEV } from '@/constants';
 import { zip } from 'zip-a-folder';
+import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
 
 const { combine, printf, simple, timestamp, splat } = winston.format;
 
-const logLevel = IS_DEV || process.env.MOCK_MODE ? 'debug' : 'info';
+const logLevel = IS_DEV || validateMockVersion() ? 'debug' : 'info';
 
 // get directory path and create it if missing
 export const logDirectoryPath = path.join(os.tmpdir(), 'authenticator-logging');
