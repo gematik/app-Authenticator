@@ -21,7 +21,7 @@ fixed:
 - Log level issue fixed
 - Allowed Protocol types issue fixed
 
-## Version 4.2.0 (2023-05-15)
+## Version 4.2.0 (2023-05-25)
 
 added:
 
