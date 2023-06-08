@@ -18,7 +18,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env'), override: false }
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import path from 'path';
 
-import { CUSTOM_PROTOCOL_NAME, IPC_FOCUS_TO_AUTHENTICATOR } from '@/constants';
+import { CUSTOM_PROTOCOL_NAME, IPC_FOCUS_TO_AUTHENTICATOR, IPC_MINIMIZE_THE_AUTHENTICATOR } from '@/constants';
 import appConfigFactory from '../../app-config';
 import { handleDeepLink } from '@/main/services/url-service';
 
@@ -131,6 +131,13 @@ async function createWindow() {
       // focus to app
       mainWindow.focus();
     }
+  });
+  /**
+   * minimize the authenticator app
+   * We use this functionality if the authenticator is finish successfully
+   */
+  ipcMain.on(IPC_MINIMIZE_THE_AUTHENTICATOR, () => {
+    mainWindow?.minimize();
   });
 
   if (IS_DEV) {

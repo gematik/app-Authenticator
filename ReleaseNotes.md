@@ -2,14 +2,40 @@
 
 # Release Authenticator
 
+## Version 4.3.0 (2023-06-08)
+
+added:
+
+- Packages and dependencies were updated
+
+fixed:
+
+- Bugfix in back- and foreground function of the Authenticator
+- Bugfix function test while using TLS certificates
+
+## Version 4.2.1 - HotFix (2023-05-15)
+
+fixed:
+
+- Defining Mock-Mode logic fixed
+- Log level issue fixed
+- Allowed Protocol types issue fixed
+
 ## Version 4.2.1 - HotFix (2023-05-25)
 
 fixed:
 
-- Defining Mock-Mode logic fixed 
+- Defining Mock-Mode logic fixed
 - Log level issue fixed
 - Allowed Protocol types issue fixed
 
+## Version 4.2.1 - HotFix (2023-05-25)
+
+fixed:
+
+- Defining Mock-Mode logic fixed
+- Log level issue fixed
+- Allowed Protocol types issue fixed
 
 ## Version 4.2.0 (2023-05-15)
 
@@ -31,7 +57,6 @@ fixed:
 - Default values for Settings form
 - The old auth flow process "OGR Flow" has been removed
 
-
 ## Version 4.1.0 (2023-04-07)
 
 added:
@@ -50,9 +75,11 @@ fixed:
 ## Version 4.0.0 (2023-03-22)
 
 added:
+
 - new Button to create a ZIP-File of the authenticator created log-files
 - Multi-SMC-B support with User-Dialog for selecting the desired SMC-B for the Auth. Flow
-- Improved handling of HBAs with active transport Pin. A new Error-Message will be displayed that should help with identifying active transport pins and what to do with them.
+- Improved handling of HBAs with active transport Pin. A new Error-Message will be displayed that should help with
+  identifying active transport pins and what to do with them.
 - Tooltips for Settings Dialog
 - Localhost as interface / entry point removed
 - Link to “Wissensdatenbank” in function test dialog
@@ -63,6 +90,7 @@ added:
 - function test logging of not valid certificates
 
 fixed:
+
 - User Certificates get no longer lost after update
 - UX : Spinner in connection tests + Insert Card + Pin
 - citrix "wandernde sessions"

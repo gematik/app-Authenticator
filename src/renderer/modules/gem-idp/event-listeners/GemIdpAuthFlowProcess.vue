@@ -32,6 +32,7 @@ import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMulti
 import {
   AUTH_RE_TRY_TIMEOUT,
   IPC_START_AUTH_FLOW_EVENT,
+  IPC_MINIMIZE_THE_AUTHENTICATOR,
   LOGIN_CANCELLED_BY_USER,
   LOGIN_NOT_SUCCESSFUL,
   LOGIN_VIA_SMART_CARD_SUCCESSFUL,
@@ -658,6 +659,7 @@ export default defineComponent({
 
         if (authFlowEndState.isSuccess) {
           await alertLoginResultWithIconAndTimer('success', LOGIN_VIA_SMART_CARD_SUCCESSFUL, SHOW_DIALOG_DURATION);
+          window.api.send(IPC_MINIMIZE_THE_AUTHENTICATOR);
         } else if (!url.includes('error=') && caughtErrorObject) {
           const definedError = caughtErrorObject.oauthErrorType || OAUTH2_ERROR_TYPE.SERVER_ERROR;
           url = `${url}?error=${definedError}&error_details=${caughtErrorObject.errorDescription}${state}`;

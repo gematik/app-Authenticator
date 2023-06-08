@@ -66,6 +66,11 @@ export const IPC_CANCEL_UPDATE = 'IPC_CANCEL_UPDATE';
 export const IPC_FOCUS_TO_AUTHENTICATOR = 'IPC_FOCUS_TO_AUTHENTICATOR';
 
 /**
+ * Event name for  minimizing the authenticator app
+ */
+export const IPC_MINIMIZE_THE_AUTHENTICATOR = 'IPC_MINIMIZE_THE_AUTHENTICATOR';
+
+/**
  * Our logging system works in the main task, not in the browser.
  * That's why we use ipc bridge and those events to send logs to file
  */
