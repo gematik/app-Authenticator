@@ -215,9 +215,9 @@ export default defineComponent({
       }
 
       // put data in connector module
-      updateAppState();
+      await updateAppState();
 
-      Swal.fire({
+      await Swal.fire({
         title: translate('settings_saved_successfully'),
         timer: 1000,
         showConfirmButton: false,
@@ -231,7 +231,7 @@ export default defineComponent({
     async function runAndFormatTestCases(): Promise<TestResult[]> {
       // set config
       setWithoutSave(configValues.value);
-      updateAppState();
+      await updateAppState();
 
       const cancelPromise = Swal.fire({
         title: translate('funktion_test'),
@@ -253,7 +253,7 @@ export default defineComponent({
           const results = await runTestsCases(undefined, cancelPromise);
           Swal.close();
           resolve(results);
-          updateAppState(true);
+          await updateAppState(true);
         }, 10);
       });
     }
@@ -273,6 +273,7 @@ export default defineComponent({
      */
     async function updateAppState(reloadFromConfigFile = false) {
       reloadFromConfigFile && load(true);
+      window.api.setAppConfigInPreload(toRaw(configValues.value));
       ConnectorConfig.updateConnectorParameters();
       clearEndpoints();
     }

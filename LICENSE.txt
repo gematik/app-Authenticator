@@ -317,7 +317,7 @@ Drittsoftwareanteile:
 
 
     Komponente: Electron
-    Version: 23.2.0
+    Version: 23.2.4
     Lizenz: MIT
 
     Komponente: @intlify/vue-i18n-loader
@@ -369,11 +369,11 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: sweetalert2
-    Version: 11.7.3
+    Version: 11.7.11
     Lizenz: MIT
 
     Komponente: vue
-    Version: 3.2.47
+    Version: 3.3.4
     Lizenz: MIT
 
     Komponente: vue-i18n
@@ -381,7 +381,7 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: vue-router
-    Version: 4.1.6
+    Version: 4.2.2
     Lizenz: MIT
 
     Komponente: vuex
@@ -389,7 +389,7 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: winston
-    Version: 3.8.2
+    Version: 3.9.0
     Lizenz: MIT
 
     Komponente: winston-daily-rotate-file
