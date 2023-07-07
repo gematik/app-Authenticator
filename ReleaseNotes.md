@@ -2,6 +2,23 @@
 
 # Release Authenticator
 
+## Version 4.4.0
+
+added:
+
+- Support for the new cardType parameter in Challenge Path
+- Using the OS Truststore for auto redirect call
+
+deprecated:
+
+- Using the Person_ID and Institution_ID information for defining cardType in scope parameter of Challenge Path
+
+bugfix:
+
+- Solve Jest bug with node 18
+- The Authenticator appears in the foreground when multiple cards are found
+- Fixed multiple instance issue
+
 ## Version 4.3.0 (2023-06-08)
 
 added:

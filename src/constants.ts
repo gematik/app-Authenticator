@@ -44,8 +44,19 @@ export const IPC_START_AUTH_FLOW_EVENT = 'IPC_START_AUTH_FLOW_EVENT';
  */
 export const IPC_GET_PATH = 'IPC_GET_PATH';
 
+/**
+ * This sets the user agent in the main process
+ */
+export const IPC_SET_USER_AGENT = 'IPC_SET_USER_AGENT';
+
+/**
+ * @deprecated remove this logic completely and use cardType parameter instead
+ */
 export const SCOPE_ADDITION_HBA = ' Person_ID';
 
+/**
+ * @deprecated remove this logic completely and use cardType parameter instead
+ */
 export const SCOPE_ADDITION_SMCB = ' Institutions_ID';
 
 export const IPC_GET_APP_PATH = 'IPC_GET_APP_PATH';

@@ -15,9 +15,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  globals: {
-    window: {},
-  },
+  globals: {},
   transform: {
     '^.+\\.vue$': 'vue-jest',
     '^.+\\.(xml|txt|pem)$': 'jest-raw-loader',
@@ -27,7 +25,15 @@ module.exports = {
     '^.+\\.(png|jpg|svg)$': 'jest-transform-stub',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  watchPathIgnorePatterns: ['<rootDir>/jest.json', '<rootDir>/node_modules'],
+  watchPathIgnorePatterns: [
+    '<rootDir>/jest.json',
+    '<rootDir>/node_modules',
+    '<rootDir>/reports',
+    '<rootDir>/jenkins-jest-test-report.xml',
+    '<rootDir>/junit.xml',
+    '<rootDir>/test-report.xml',
+    '<rootDir>/dist_electron',
+  ],
   moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node'],
   testMatch: ['<rootDir>/tests/**/*.spec.ts'],
   modulePathIgnorePatterns: ['__snapshots__'],

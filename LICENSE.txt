@@ -317,97 +317,70 @@ Drittsoftwareanteile:
 
 
     Komponente: Electron
-    Version: 23.2.4
-    Lizenz: MIT
-
-    Komponente: @intlify/vue-i18n-loader
-    Version: 4.2.0
     Lizenz: MIT
 
     Komponente: got
-    Version: 11.8.6
     Lizenz: MIT
 
     Komponente: base64url
-    Version: 3.0.1
     Lizenz: MIT
 
     Komponente: hpagent
-    Version: 1.2.0
     Lizenz: MIT
 
     Komponente: http-status-codes
-    Version: 2.2.0
     Lizenz: MIT
 
-    Komponente:dot-object
-    Version: 2.1.4
+    Komponente: dot-object
     Lizenz: MIT
 
     Komponente: jsonwebtoken
-    Version: 9.0.0
     Lizenz: MIT
 
     Komponente: node-forge
-    Version: 1.3.1
     Lizenz: Apache-2.0
 
     Komponente: node-jose
-    Version: 2.2.0
     Lizenz: Apache-2.0
 
     Komponente: query-string
-    Version: 7.1.3
     Lizenz: MIT
 
     Komponente: sax
-    Version: 1.2.4
     Lizenz: ISC
 
     Komponente: stream-browserify
-    Version: 3.0.0
     Lizenz: MIT
 
     Komponente: sweetalert2
-    Version: 11.7.11
     Lizenz: MIT
 
     Komponente: vue
-    Version: 3.3.4
     Lizenz: MIT
 
     Komponente: vue-i18n
-    Version: 9.2.2
     Lizenz: MIT
 
     Komponente: vue-router
-    Version: 4.2.2
     Lizenz: MIT
 
     Komponente: vuex
-    Version: 4.1.0
     Lizenz: MIT
 
     Komponente: winston
-    Version: 3.9.0
     Lizenz: MIT
 
     Komponente: winston-daily-rotate-file
-    Version: 4.7.1
     Lizenz: MIT
 
     Komponente: xml2js
-    Version: 0.5.0
     Lizenz: MIT
 
     Komponente: flatted
-    Version: 3.2.7
     Lizenz: ISC
 
     Komponente: ip-range-check
-    Version: 0.2.0
     Lizenz: MIT
 
     Komponente: zip-a-folder
-    Version: 1.1.5
     Lizenz: MIT

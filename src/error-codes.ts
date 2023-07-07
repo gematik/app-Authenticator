@@ -21,6 +21,7 @@ export const ERROR_CODES = {
   AUTHCL_0006: 'AUTHCL_0006',
   AUTHCL_0007: 'AUTHCL_0007',
   AUTHCL_0008: 'AUTHCL_0008',
+  AUTHCL_0009: 'AUTHCL_0009',
 
   // connector errors begin with 1XXX
   AUTHCL_1001: 'AUTHCL_1001',
@@ -154,6 +155,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_0006]: 'Sie haben den Vorgang abgebrochen',
   [ERROR_CODES.AUTHCL_0007]: 'Invalid Redirect uri or protocol',
   [ERROR_CODES.AUTHCL_0008]: 'You do not have permission to save config file!',
+  [ERROR_CODES.AUTHCL_0009]: 'Auto redirect request failed',
 
   [ERROR_CODES.AUTHCL_1001]: 'Can not get card handle',
   [ERROR_CODES.AUTHCL_1003]: 'Could not read the terminals',

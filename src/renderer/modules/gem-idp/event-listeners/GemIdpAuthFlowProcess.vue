@@ -31,8 +31,9 @@ import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMulti
 
 import {
   AUTH_RE_TRY_TIMEOUT,
-  IPC_START_AUTH_FLOW_EVENT,
   IPC_MINIMIZE_THE_AUTHENTICATOR,
+  IPC_SET_USER_AGENT,
+  IPC_START_AUTH_FLOW_EVENT,
   LOGIN_CANCELLED_BY_USER,
   LOGIN_NOT_SUCCESSFUL,
   LOGIN_VIA_SMART_CARD_SUCCESSFUL,
@@ -64,8 +65,8 @@ import {
 import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
 import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/utils/url-service';
 import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
-import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 import Swal from 'sweetalert2';
+import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -111,6 +112,7 @@ export default defineComponent({
   methods: {
     async showMultiCardSelectDialogModal(): Promise<void> {
       this.showMultiCardSelectModal = true;
+      window.api.focusToApp();
 
       return new Promise((resolve, reject) => {
         this.selectCardPromises = {
@@ -157,6 +159,30 @@ export default defineComponent({
         return;
       }
 
+      /**
+       * todo this logic is deprecated, it has a fallback and will be removed in the future
+       * instead send the cardType parameter in the challenge path
+       */
+      const filteredChallengePath = filterCardTypeFromScope(args.challenge_path as string);
+      let cardType = filteredChallengePath.card_type;
+
+      /**
+       * pop the cardType from challenge path
+       */
+      const cardTypeFromCPath = this.popParamFromChallengePath('cardType', filteredChallengePath.challenge_path);
+
+      // if cardType exists and suits with ECardTypes, we use it
+      if (cardTypeFromCPath) {
+        if (Object.values(ECardTypes).includes(cardTypeFromCPath as ECardTypes)) {
+          // set the card type from challenge_path
+          cardType = cardTypeFromCPath as ECardTypes;
+          logger.info('CardType information extracted from challenge_path parameter cardType: ' + cardType);
+        } else {
+          // parameter isn't compatible with ECardTypes, we take the HBA as default
+          logger.error('Wrong card type provided! We take the HBA as the default value.');
+        }
+      }
+
       // get idp host from challenge_path
       this.parseAndSetIdpHost();
 
@@ -179,9 +205,6 @@ export default defineComponent({
         this.setCaughtError(ERROR_CODES.AUTHCL_0002, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
         return this.openClientIfNeeded({ isSuccess: false, url: '' });
       }
-
-      const filteredChallengePath = filterCardTypeFromScope(args.challenge_path!);
-      const cardType = filteredChallengePath.card_type;
 
       /**
        * Get challenge data from idp.
@@ -263,7 +286,7 @@ export default defineComponent({
       }
 
       const token = jsonwebtoken.decode(this.$store.state.gemIdpServiceStore.challenge);
-      const jwe = await createJwe(signature, idpEncJwk, (token as JwtPayload).exp!); // non-null assert
+      const jwe = await createJwe(signature, idpEncJwk, (token as JwtPayload).exp as number); // non-null assert
       this.$store.commit('gemIdpServiceStore/setJweChallenge', jwe);
     },
 
@@ -581,8 +604,9 @@ export default defineComponent({
       try {
         validateLauncherArguments(args);
         const authReqParameters: TOidcProtocol2UrlSpec = {
-          challenge_path: filterCardTypeFromScope(args.challenge_path!).challenge_path,
+          challenge_path: filterCardTypeFromScope(args.challenge_path as string).challenge_path,
         };
+
         if (authReqParameters.challenge_path) {
           const url = new URL(authReqParameters.challenge_path);
           const clientId = url.searchParams.get('client_id');
@@ -675,26 +699,10 @@ export default defineComponent({
             window.api.openExternal(url);
             break;
           case TCallback.DIRECT:
-            // calls callback url of resource server to complete request, this must be async, do not convert to await!
+            // calls callback url of resource server to complete request
             logger.debug('Try to send: ' + url);
-            await window.api
-              .httpGet(url, {
-                ...{
-                  https: {
-                    certificateAuthority: getIdpTlsCertificates(),
-                    rejectUnauthorized: true,
-                  },
-                  headers: {
-                    'User-Agent': userAgent + this.$store.state.gemIdpServiceStore.clientId,
-                  },
-                },
-              })
-              .then(() => {
-                logger.info('Redirecting automatically flow completed');
-              })
-              .catch((err) => {
-                logger.error('Redirecting automatically request failed!', err.message);
-              });
+            this.sendAutomaticRedirectRequest(url);
+
             break;
           case TCallback.DEEPLINK:
             // eslint-disable-next-line no-case-declarations
@@ -730,6 +738,7 @@ export default defineComponent({
 
         // update challenge path
         const cleanChallengePath = challengePath.replace('&' + paramName + '=' + value, '');
+
         this.$store.commit('gemIdpServiceStore/setChallengePath', cleanChallengePath);
 
         return typeof value === 'string' ? value : null;
@@ -752,6 +761,42 @@ export default defineComponent({
       }
 
       return true;
+    },
+    /**
+     * Sends the request in Browser Context to use TrustStore,
+     * if this doesn't work, tries the same thing in preload context to use own certificates
+     * @param url
+     */
+    async sendAutomaticRedirectRequest(url: string) {
+      const successMessage = 'Redirecting automatically flow completed';
+      try {
+        // send the user agent with the clientId to the main process
+        const customUserAgent = userAgent + this.$store.state.gemIdpServiceStore.clientId;
+        window.api.sendSync(IPC_SET_USER_AGENT, customUserAgent);
+
+        await fetch(url);
+        logger.info(successMessage + ' from browser context');
+      } catch (e) {
+        logger.warn('Redirecting automatically request failed from Browser Context. Retry in Preload Context');
+
+        try {
+          await window.api.httpGet(url, {
+            ...{
+              https: {
+                certificateAuthority: getIdpTlsCertificates(),
+                rejectUnauthorized: true,
+              },
+              headers: {
+                'User-Agent': userAgent + this.$store.state.gemIdpServiceStore.clientId,
+              },
+            },
+          });
+          logger.info(successMessage + ' from preload context');
+        } catch (err) {
+          alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0009, 'error');
+          logger.error('Redirecting automatically request failed!', err.message);
+        }
+      }
     },
   },
 });
