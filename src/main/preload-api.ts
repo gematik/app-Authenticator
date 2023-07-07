@@ -21,6 +21,7 @@ import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER, P12_VALIDITY_TYPE } from
 import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
 import { Options } from 'got';
 import { createLogZip, logger } from '@/main/services/logging';
+
 const forge = require('node-forge');
 /**
  * Config data for preload environment.

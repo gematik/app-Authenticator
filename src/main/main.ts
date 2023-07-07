@@ -18,7 +18,12 @@ require('dotenv').config({ path: path.join(__dirname, '.env'), override: false }
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import path from 'path';
 
-import { CUSTOM_PROTOCOL_NAME, IPC_FOCUS_TO_AUTHENTICATOR, IPC_MINIMIZE_THE_AUTHENTICATOR } from '@/constants';
+import {
+  CUSTOM_PROTOCOL_NAME,
+  IPC_FOCUS_TO_AUTHENTICATOR,
+  IPC_MINIMIZE_THE_AUTHENTICATOR,
+  IPC_SET_USER_AGENT,
+} from '@/constants';
 import appConfigFactory from '../../app-config';
 import { handleDeepLink } from '@/main/services/url-service';
 
@@ -57,6 +62,16 @@ const appConfig = appConfigFactory();
 // call event native listeners
 require('./event-listeners');
 
+/**
+ * The user agent is set by the renderer process.
+ * This changes for the request. That's why we need to update it every time.
+ */
+let customUserAgent = '';
+ipcMain.on(IPC_SET_USER_AGENT, (event, userAgent) => {
+  customUserAgent = userAgent;
+  event.returnValue = true;
+});
+
 async function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -83,7 +98,13 @@ async function createWindow() {
   // change http request headers to bypass CORS
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     (details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => {
-      callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
+      callback({
+        requestHeaders: {
+          Origin: '*',
+          ...details.requestHeaders,
+          'User-Agent': customUserAgent,
+        },
+      });
     },
   );
 
@@ -153,17 +174,6 @@ async function createWindow() {
   });
 }
 
-// register url schemas
-if (IS_DEV && process.platform === PLATFORM_WIN32) {
-  logger.info('Register URL schemas for platform WIN32.');
-  // Set the path of electron.exe and your app.
-  // These two additional parameters are only available on Windows.
-  // Setting this is required to get this working in dev mode.
-  app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME, process.execPath, [path.resolve(process.argv[1])]);
-} else {
-  app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME);
-}
-
 // Force single application instance
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -171,56 +181,70 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on('second-instance', (_e: any, argv: any) => {
-    handleDeepLink(argv, mainWindow);
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      handleDeepLink(argv, mainWindow);
+    }
   });
-}
 
-/**
- * never allows open new windows
- */
-app.on('web-contents-created', (event, contents) => {
-  contents.setWindowOpenHandler(() => {
-    return { action: 'deny' };
-  });
-});
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS, it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== PLATFORM_DARWIN) {
-    logger.info('Application quit because of all windows are closed');
-    app.quit();
-  }
-});
-
-app.on('activate', async () => {
-  // On macOS, it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) await createWindow();
-});
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  logger.info('Application is ready');
-  await createWindow();
-});
-
-// Exit cleanly on request from parent process in development mode.
-if (IS_DEV) {
-  if (process.platform === PLATFORM_WIN32) {
-    process.on('message', (data) => {
-      if (data === 'graceful-exit') {
-        logger.info('Application quit because of graceful exit');
-        app.quit();
-      }
-    });
+  // register url schemas
+  if (IS_DEV && process.platform === PLATFORM_WIN32) {
+    logger.info('Register URL schemas for platform WIN32.');
+    // Set the path of electron.exe and your app.
+    // These two additional parameters are only available on Windows.
+    // Setting this is required to get this working in dev mode.
+    app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME, process.execPath, [path.resolve(process.argv[1])]);
   } else {
-    process.on('SIGTERM', () => {
-      logger.info('Application quit because of sigterm');
-      app.quit();
+    app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME);
+  }
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on('ready', async () => {
+    logger.info('Application is ready');
+    await createWindow();
+  });
+
+  /**
+   * never allows open new windows
+   */
+  app.on('web-contents-created', (event, contents) => {
+    contents.setWindowOpenHandler(() => {
+      return { action: 'deny' };
     });
+  });
+
+  // Quit when all windows are closed.
+  app.on('window-all-closed', () => {
+    // On macOS, it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== PLATFORM_DARWIN) {
+      logger.info('Application quit because of all windows are closed');
+      app.quit();
+    }
+  });
+
+  app.on('activate', async () => {
+    // On macOS, it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) await createWindow();
+  });
+
+  // Exit cleanly on request from parent process in development mode.
+  if (IS_DEV) {
+    if (process.platform === PLATFORM_WIN32) {
+      process.on('message', (data) => {
+        if (data === 'graceful-exit') {
+          logger.info('Application quit because of graceful exit');
+          app.quit();
+        }
+      });
+    } else {
+      process.on('SIGTERM', () => {
+        logger.info('Application quit because of sigterm');
+        app.quit();
+      });
+    }
   }
 }

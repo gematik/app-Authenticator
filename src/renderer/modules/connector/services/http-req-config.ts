@@ -22,6 +22,7 @@ import { logger } from '@/renderer/service/logger';
 import { buildCaChainsConnector } from '@/renderer/modules/connector/common/utils';
 import { getConfig } from '@/renderer/utils/get-configs';
 import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
+import { PROCESS_ENVS } from '@/constants';
 
 /**
  * @param endpoint
@@ -80,14 +81,21 @@ export const httpReqConfig = (headers?: OutgoingHttpHeaders): OptionsOfTextRespo
   };
 };
 
-//TODO: Klaeren ob ähnliche Struktur wie Konnektor-farm (KSP) auch in Krankenhaeusern vorhanden ist. Settings muss ggf. dafuer aufgebohrt werden.
 function mappingPath(path: string): string {
   const konnFarmHost = 'ksp.ltuzd.telematik-test';
   const keyKonnektorKonnFarm = 'konnektor_konnFarm';
-  const defaultKonnektorKonnfarm = '/kon23';
-  // Todo : Hier auch andere Konnektoren der Farm ermöglichen / nicht hardcoden !!! z.B. '/kon23';
+
+  let conFarmPath = '/kon23';
+
+  if (PROCESS_ENVS.CONNECTOR_PATH) {
+    conFarmPath = '/' + PROCESS_ENVS.CONNECTOR_PATH;
+  }
+
+  logger.debug('PROCESS_ENVS.CONNECTOR_PATH:' + PROCESS_ENVS.CONNECTOR_PATH);
+  logger.debug('conFarmPath:' + conFarmPath);
+
   if (ConnectorConfig.tlsEntryOptions.hostname.includes(konnFarmHost)) {
-    return getConfig(keyKonnektorKonnFarm, defaultKonnektorKonnfarm).value + path;
+    return getConfig(keyKonnektorKonnFarm, conFarmPath).value + path;
   }
   return path;
 }

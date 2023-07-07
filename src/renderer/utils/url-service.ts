@@ -41,22 +41,34 @@ export function validateLauncherArguments(args: TOidcProtocol2UrlSpec): void {
 }
 
 /**
+ * @deprecated use popParamFromChallengePath instead
  * @param challengePath
  */
 export function filterCardTypeFromScope(challengePath: string): { card_type: ECardTypes; challenge_path: string } {
   let cardType, url;
+  const warningForDeprecatedParameter =
+    'Sending Card Type in scope is deprecated. Please use only the cardType parameter in challenge_path instead.';
+
   if (challengePath.includes(SCOPE_ADDITION_HBA)) {
     cardType = ECardTypes.HBA;
     url = challengePath.replace(SCOPE_ADDITION_HBA, '').trimEnd();
     logger.warn('scope hba replaced');
+
+    logger.warn(warningForDeprecatedParameter);
   } else if (challengePath.includes(SCOPE_ADDITION_SMCB)) {
     cardType = ECardTypes.SMCB;
     url = challengePath.replace(SCOPE_ADDITION_SMCB, '').trimEnd();
     logger.warn('scope smcb replaced');
+
+    logger.warn(warningForDeprecatedParameter);
   } else {
     cardType = ECardTypes.HBA;
     url = challengePath;
-    logger.warn('No CardType found, use the default cardType "HBA"');
+    logger.warn('No CardType found in scope, use the default cardType "HBA"');
+
+    if (!challengePath.includes('cardType=')) {
+      logger.warn('No cardType info found in challenge_path and in scope, please add it to the challenge_path');
+    }
   }
   logger.info('cardType = ' + cardType);
   return { card_type: cardType, challenge_path: url };

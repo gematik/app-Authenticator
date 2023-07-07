@@ -53,6 +53,7 @@ module.exports = {
     'prefer-const': 'error',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
   overrides: [
     {
