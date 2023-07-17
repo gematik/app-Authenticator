@@ -2,6 +2,12 @@
 
 # Release Authenticator
 
+## Version 4.4.1
+
+bugfix:
+
+- Added CA Certificate for IDP internet endpoint to Authenticator truststore (RU & PU)
+
 ## Version 4.4.0
 
 added:
