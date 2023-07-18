@@ -6,7 +6,7 @@
 
 bugfix:
 
-- Added CA Certificate for IDP internet endpoint to Authenticator truststore (RU & PU)
+- Added CA Certificates for IDP internet and TI endpoint to Authenticator truststore (RU & PU)
 
 ## Version 4.4.0
 
