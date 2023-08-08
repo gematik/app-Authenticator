@@ -2,6 +2,23 @@
 
 # Release Authenticator
 
+## Version 4.5.0
+
+added:
+
+- Support of windows server ( >= 2016 )
+- P12-Certificates support combination of ECC & RSA 
+- New error message, if HBA smart card is in use
+
+bugfix:
+ 
+- Clean deinstallation of authenticator
+- Increased timeout of PU IDP TI
+
+security:
+
+- Updated packages 
+
 ## Version 4.4.1
 
 bugfix:

@@ -43,8 +43,13 @@ PathProvider.setSystemUserTempPath(getHomedir());
 const TEST_FILE_PATH_TO_KEY = process.cwd() + '/tests/resources/certs/example/example-key.cer';
 const TEST_FILE_PATH = process.cwd() + '/tests/resources/certs/example/example-cer.cer';
 const TEST_FILE_PATH_PFX = process.cwd() + '/tests/resources/certs/example/cs0001.p12';
-const TEST_FILE_PATH_INVALID_PFX = process.cwd() + '/tests/resources/certs/example/cs0001_ECC.p12';
+const TEST_FILE_PATH_ONLY_ECC_PFX = process.cwd() + '/tests/resources/certs/example/cs0001_ECC.p12';
 const TEST_FILE_PATH_OUTDATED_PFX = process.cwd() + '/tests/resources/certs/example/smcb-idp-expired.p12';
+const TEST_FILE_PATH_INVALID_AND_EMPTY_PFX =
+  process.cwd() + '/tests/resources/certs/example/cert_invalid_and_empty.p12';
+const TEST_FILE_PATH_RSA_AND_ECC_PFX = process.cwd() + '/tests/resources/certs/example/cs0001_RSA_ECC.p12';
+const TEST_FILE_PATH_WITH_TOO_MANY_PFX = process.cwd() + '/tests/resources/certs/example/cert_with_more_than_one_rsa';
+const TEST_FILE_PATH_EMPTY_PFX = process.cwd() + '/tests/resources/certs/example/cert_empty';
 
 const contentKey = fs.readFileSync(TEST_FILE_PATH_TO_KEY);
 const contentCert = fs.readFileSync(TEST_FILE_PATH);
@@ -166,12 +171,32 @@ describe('settings page validation', () => {
     await expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, '123456')).toBe(P12_VALIDITY_TYPE.VALID);
   });
   it('validation that outdated uploading pfx-file throws an error', async function () {
-    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_OUTDATED_PFX, '00')).toBe(P12_VALIDITY_TYPE.CERT_OUTDATED);
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_OUTDATED_PFX, '00')).toBe(P12_VALIDITY_TYPE.INVALID_CERTIFICATE);
   });
   it('validation that uploading a pfx-file with wrong password throws an error', async function () {
     await expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, 'wrong password')).toBe(P12_VALIDITY_TYPE.WRONG_PASSWORD);
   });
   it('validation that invalid uploading pfx-file throws an error', async function () {
-    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_INVALID_PFX, '123456')).toBe(P12_VALIDITY_TYPE.CERT_INVALID);
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_ONLY_ECC_PFX, '123456')).toBe(
+      P12_VALIDITY_TYPE.INVALID_CERTIFICATE,
+    );
+  });
+  it('validation that an invalid/empty uploading pfx-file throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_INVALID_AND_EMPTY_PFX, '')).toBe(
+      P12_VALIDITY_TYPE.PROCESSING_EXCEPTION,
+    );
+  });
+  it('validation that an pfx-file with one valid and invalid certs throws a hint', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_RSA_AND_ECC_PFX, '123456')).toBe(
+      P12_VALIDITY_TYPE.ONE_VALID_AND_INVALID_CERTIFICATES,
+    );
+  });
+  it('validation that an pfx-file with more than one valid certs throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_WITH_TOO_MANY_PFX, '123456')).toBe(
+      P12_VALIDITY_TYPE.TOO_MANY_CERTIFICATES,
+    );
+  });
+  it('validation that an empty pfx-file throws an error', async function () {
+    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_EMPTY_PFX, '123456')).toBe(P12_VALIDITY_TYPE.NO_CERT_FOUND);
   });
 });

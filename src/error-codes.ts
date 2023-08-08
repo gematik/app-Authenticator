@@ -35,6 +35,7 @@ export const ERROR_CODES = {
   AUTHCL_1014: 'AUTHCL_1014',
   AUTHCL_1015: 'AUTHCL_1015',
   AUTHCL_1016: 'AUTHCL_1016',
+  AUTHCL_1018: 'AUTHCL_1018',
   AUTHCL_1020: 'AUTHCL_1020',
   AUTHCL_1021: 'AUTHCL_1021',
   AUTHCL_1047: 'AUTHCL_1047',
@@ -82,6 +83,7 @@ export const CONNECTOR_ERROR_CODES = {
   E4014: '4014', // Für den Mandanten ist der Arbeitsplatz nicht dem Clientsystem zugeordnet
   E4015: '4015', // Kartenterminal ist weder lokal noch entfernt vom Arbeitsplatz aus zugreifbar
   E4016: '4016', // Kartenterminal ist nicht lokal vom Arbeitsplatz aus zugreifbar
+  E4018: '4018', // Smart card Session already in use
   E4020: '4020', // Kartenterminal ist weder lokal noch entfernt über irgendeinen dem Clientsystem zugeordneten Arbeitsplatz aus zugreifbar
   E4021: '4021', // Es sind nicht alle Pflichtparameter mandantId, clientSystemId, workplaceId gefüllt
   E4047: '4047', // Card handle ungültig, wrong card or missing pin vs.
@@ -104,6 +106,7 @@ export const MAPPED_CONNECTOR_FATAL_ERRORS = {
   [CONNECTOR_ERROR_CODES.E4014]: ERROR_CODES.AUTHCL_1014,
   [CONNECTOR_ERROR_CODES.E4015]: ERROR_CODES.AUTHCL_1015,
   [CONNECTOR_ERROR_CODES.E4016]: ERROR_CODES.AUTHCL_1016,
+  [CONNECTOR_ERROR_CODES.E4018]: ERROR_CODES.AUTHCL_1018,
   [CONNECTOR_ERROR_CODES.E4020]: ERROR_CODES.AUTHCL_1020,
   [CONNECTOR_ERROR_CODES.E4021]: ERROR_CODES.AUTHCL_1021,
   [CONNECTOR_ERROR_CODES.E4049]: ERROR_CODES.AUTHCL_1049,
@@ -115,6 +118,7 @@ export const MAPPED_CONNECTOR_FATAL_ERRORS = {
  * We have more explanation in translation file about error codes for such kind of errors
  */
 export const USER_FACING_WARNINGS = [
+  ERROR_CODES.AUTHCL_1018,
   ERROR_CODES.AUTHCL_1105,
   ERROR_CODES.AUTHCL_1104,
   ERROR_CODES.AUTHCL_1103,
@@ -169,6 +173,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_1015]:
     'ConErr: 4015 => Kartenterminal ist weder lokal noch entfernt vom Arbeitsplatz aus zugreifbar',
   [ERROR_CODES.AUTHCL_1016]: 'ConErr: 4016 => Kartenterminal ist nicht lokal vom Arbeitsplatz aus zugreifbar',
+  [ERROR_CODES.AUTHCL_1018]: 'Smart card Session already in use',
   [ERROR_CODES.AUTHCL_1020]:
     'ConErr: 4020 => Kartenterminal ist weder lokal noch entfernt über irgendeinen dem Clientsystem zugeordneten Arbeitsplatz aus zugreifbar',
   [ERROR_CODES.AUTHCL_1021]:
