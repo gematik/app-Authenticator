@@ -64,13 +64,17 @@
   "client_certificate": "Client-Zertifikat im PEM-Format",
   "certificate_pfx": "Zertifikat P12-Datei (RSA only)",
   "pfx_file": "Zertifikat im P12-Format (RSA only)",
-  "info_text_pfx_file":
-  "Das Zertifikat, welches für die Authentifizierung bei der Verbindung zum Konnektor verwendet wird. (P12-Format)",
+  "info_text_pfx_file": "Das Zertifikat, welches für die Authentifizierung bei der Verbindung zum Konnektor verwendet wird. (P12-Format)",
   "pfx_file_password": "Passwort des P12-Zertifikats",
   "pfx_file_password_swal": "Geben Sie das Passwort der ausgewählten P12-Datei ein",
-  "pfx_wrong_cert_format": "Die P12-Datei ist ungültig oder nicht im RSA-Format",
-  "pfx_cert_outdated": "Das P12-Zertifikat ist abgelaufen",
+  "pfx_cert_invalid": "In der P12-Datei ist kein valides Zertifikat im RSA-Format",
   "pfx_password_fail": "Das eingegebene Passwort ist falsch",
+  "pfx_no_cert": "In der P12-Datei ist kein Zertifikat vorhanden",
+  "pfx_with_invalid_certs": "P12 nicht valide",
+  "pfx_repair_swal": "Wir haben mehrere Zertifikate gefunden wobei nur eins valide ist. Sollen die invaliden Zertifikate gelöscht werden?",
+  "pfx_confirm_repair": "P12-Datei reparieren",
+  "pfx_to_many_certificates": "Es existiert mehr als ein valides Zertifikat in der P12-Datei",
+  "pfx_processing_error": "Es ist ein Fehler beim Verarbeiten der P12-Datei aufgetreten.",
   "settings_saved_info": "Die Änderungen sind erst wirksam nach dem Speichern",
   "settings_saved_successfully": "Einstellungen wurden erfolgreich gespeichert",
   "funktion_test": "Funktionstest",
@@ -131,6 +135,10 @@
     "AUTHCL_1103": {
       "title": "PIN-Eingabe",
       "text": "Entweder ist die {cardType}-Karte gesperrt oder die PIN-Eingabe ist fehlgeschlagen. Fehlercode (AUTHCL_1103)"
+    },
+    "AUTHCL_1018": {
+      "title": "HBA-Smardcard-Sitzung wird bereits verwendet",
+      "text": "Aktuell verwenden mehrere Anwendungen dieselbe Client-ID und HBA. Zur Problemlösung wird die Neuanlage einer weiteren Client-ID vorgeschlagen. Bitte wenden Sie sich dazu an Ihrem Techniker (DVO oder Administrator). In dringenden Fälle ziehen Sie bitte Ihren HBA und starten den Anmeldeprozess erneut. Beachten Sie bitte, dass eine erneute Pin-Eingabe erforderlich ist. Fehlercode (AUTHCL_1018)"
     },
     "AUTHCL_1120": {
       "title": "Transport-Pin",

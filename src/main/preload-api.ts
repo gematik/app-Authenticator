@@ -21,6 +21,7 @@ import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER, P12_VALIDITY_TYPE } from
 import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
 import { Options } from 'got';
 import { createLogZip, logger } from '@/main/services/logging';
+import { findValidCertificate, getP12ValidityType } from '@/main/services/p12-certificate-service';
 
 const forge = require('node-forge');
 /**
@@ -93,33 +94,29 @@ export const preloadApi = {
   },
   /**
    * Check if the p12 file is valid
-   * @param p12Path
-   * @param password
+   * @param p12Path file path to p12
+   * @param password p12 file password
    */
   isP12Valid(p12Path: string, password: string): P12_VALIDITY_TYPE {
     try {
-      // Read the p12 file
-      const p12File = fs.readFileSync(p12Path, 'binary');
-      // Load the PKCS #12 file using forge
-      const p12Asn1 = forge.asn1.fromDer(p12File);
-      const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, password);
-      // Extract key and certificate information
-      const bags = p12.getBags({ bagType: forge.pki.oids.certBag });
-      const certBag = bags[forge.pki.oids.certBag][0];
-      const certificate = certBag.cert;
-      if (certificate.validity.notAfter > new Date()) {
-        return P12_VALIDITY_TYPE.VALID;
-      } else {
-        logger.info('Certificate is outdated');
-        return P12_VALIDITY_TYPE.CERT_OUTDATED;
-      }
+      return getP12ValidityType(p12Path, password);
     } catch (error) {
       if (error.message.includes('PKCS#12 MAC could not be verified. Invalid password?')) {
         logger.info('Password is incorrect: ', error);
         return P12_VALIDITY_TYPE.WRONG_PASSWORD;
       }
-      logger.info('Certificate is invalid: ', error);
-      return P12_VALIDITY_TYPE.CERT_INVALID;
+      logger.info('Exception by processing certificate validation: ', error);
+      return P12_VALIDITY_TYPE.PROCESSING_EXCEPTION;
     }
+  },
+  extractValidCertificate(p12Path: string, password: string): string {
+    const certificate = findValidCertificate(p12Path, password);
+    const newP12 = forge.pkcs12.toPkcs12Asn1(certificate.privateKey.key, [certificate.certificate.cert], password);
+    const derData = forge.asn1.toDer(newP12).getBytes();
+    // Save the updated P12 file
+
+    const newFilePath = path.join(os.tmpdir(), path.basename(p12Path));
+    fs.writeFileSync(newFilePath, derData, 'binary');
+    return newFilePath;
   },
 };

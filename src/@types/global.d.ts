@@ -52,6 +52,7 @@ export declare global {
       getProcessEnvs: () => Record<string, string>;
       createLogZipFile: () => Promise<boolean>;
       isP12Valid: (p12Path: string, password: string) => P12_VALIDITY_TYPE;
+      extractValidCertificate: (p12Path: string, password: string) => string;
     };
   }
 }

@@ -311,7 +311,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
            * @param e
            */
           onChange: async (e: Event) => {
-            validateP12AndMove(e, repositoryData);
+            await validateP12AndMove(e, repositoryData);
           },
         },
         {
@@ -460,44 +460,53 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
     if (!newPassword.isConfirmed) {
       return false;
     }
-
-    const isP12Valid = window.api.isP12Valid(file.path, <string>newPassword.value);
-    if (isP12Valid === P12_VALIDITY_TYPE.VALID) {
-      repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
-      repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, pfxFilename);
-      return;
+    let sourcePath = file.path;
+    let errorText = '';
+    const isP12Valid = window.api.isP12Valid(sourcePath, <string>newPassword.value);
+    switch (isP12Valid) {
+      case P12_VALIDITY_TYPE.INVALID_CERTIFICATE:
+        errorText = 'pfx_cert_invalid';
+        break;
+      case P12_VALIDITY_TYPE.WRONG_PASSWORD:
+        errorText = 'pfx_password_fail';
+        break;
+      case P12_VALIDITY_TYPE.NO_CERT_FOUND:
+        errorText = 'pfx_no_cert';
+        break;
+      case P12_VALIDITY_TYPE.ONE_VALID_AND_INVALID_CERTIFICATES:
+        // eslint-disable-next-line no-case-declarations
+        const value = await Swal.fire({
+          title: translate('pfx_with_invalid_certs'),
+          text: translate('pfx_repair_swal'),
+          cancelButtonText: translate('cancel'),
+          confirmButtonText: translate('pfx_confirm_repair'),
+          showCancelButton: true,
+        });
+        if (value.isConfirmed) {
+          sourcePath = window.api.extractValidCertificate(sourcePath, <string>newPassword.value);
+          repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
+          repositoryData[fieldKey] = await copyUploadedFileToTargetDir(sourcePath, fieldKey, pfxFilename);
+          return;
+        }
+        input.value = '';
+        repositoryData[fieldKey] = '';
+        return;
+      case P12_VALIDITY_TYPE.TOO_MANY_CERTIFICATES:
+        errorText = 'pfx_to_many_certificates';
+        break;
+      case P12_VALIDITY_TYPE.PROCESSING_EXCEPTION:
+        errorText = 'pfx_processing_error';
+        break;
+      case P12_VALIDITY_TYPE.VALID:
+        repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
+        repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, pfxFilename);
+        return;
     }
-    if (isP12Valid === P12_VALIDITY_TYPE.CERT_OUTDATED) {
-      input.value = '';
-      repositoryData[fieldKey] = '';
-
-      Swal.fire({
-        title: 'Fehler',
-        text: translate('pfx_cert_outdated'),
-        icon: 'error',
-      });
-      return;
-    }
-    if (isP12Valid === P12_VALIDITY_TYPE.WRONG_PASSWORD) {
-      input.value = '';
-      repositoryData[fieldKey] = '';
-
-      Swal.fire({
-        title: 'Fehler',
-        text: translate('pfx_password_fail'),
-        icon: 'error',
-      });
-      return;
-    }
-    /*
-     * Shows a Swal if the p12 cert is invalid
-     * */
     input.value = '';
     repositoryData[fieldKey] = '';
-
     Swal.fire({
-      title: 'Fehler',
-      text: translate('pfx_wrong_cert_format'),
+      title: translate('error_info'),
+      text: translate(errorText),
       icon: 'error',
     });
   } catch (err) {

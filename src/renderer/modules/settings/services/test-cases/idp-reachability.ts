@@ -78,7 +78,7 @@ async function callIdp(url: string): Promise<number> {
       lookup: 250,
       connect: 500,
       secureConnect: 1000,
-      socket: 1000,
+      socket: 2000,
       send: 10000,
       response: 1000,
     },
