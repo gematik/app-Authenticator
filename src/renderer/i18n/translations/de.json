@@ -128,6 +128,10 @@
       "title": "Konfigurationsdatei konnte nicht gespeichert werden!",
       "text": "Bitte stellen Sie sicher, dass das Konfigurationsverzeichnis ({configPath}) existiert und es beschreibbar ist."
     },
+    "AUTHCL_1101": {
+      "title": "Überprüfung des Pin-Status ist fehlgeschlagen",
+      "text": "Bitte stecken Sie die Karte erneut in den Kartenslot Ihres Kartenterminals. Fehlercode (AUTHCL_1101)"
+    },
     "AUTHCL_1104": {
       "title": "Remote PIN-Eingabe für {cardType}-Karte nicht möglich.",
       "text": "Fehlercode (AUTHCL_1104)"
