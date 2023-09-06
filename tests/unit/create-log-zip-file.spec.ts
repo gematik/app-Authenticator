@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { createLogZip, getUniqueDateString } from '../../src/main/services/logging';
+import { createLogZip, getUniqueDateString } from '@/main/services/logging';
 import path from 'path';
 
 describe('test zip-a-folder', () => {

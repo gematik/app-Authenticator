@@ -16,8 +16,7 @@
  * @jest-environment node
  */
 import * as envVarsUpdater from '@/main/services/env-vars-updater';
-import { readRegistryForKey } from '@/main/services/env-vars-updater';
-import { UP_TO_DATE_PROCESS_ENVS } from '../../src/main/services/env-vars-updater';
+import { readRegistryForKey, UP_TO_DATE_PROCESS_ENVS } from '@/main/services/env-vars-updater';
 
 describe('test env-vars-updater', () => {
   beforeEach(() => {

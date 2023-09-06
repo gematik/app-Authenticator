@@ -40,6 +40,7 @@ exports[`home screen render with loading spinner 1`] = `
       <img
         alt="settings icon"
         class="inline pr-[8px]"
+        src="[object Object]"
       />
       Einstellungen öffnen
     </button>
@@ -82,6 +83,7 @@ exports[`home screen render with settings button 1`] = `
       <img
         alt="settings icon"
         class="inline pr-[8px]"
+        src="[object Object]"
       />
       Einstellungen öffnen
     </button>

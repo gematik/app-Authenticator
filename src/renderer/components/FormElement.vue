@@ -11,8 +11,6 @@
   - language governing permissions and limitations under the License.ee the Licence for the specific language governing
   - permissions and limitations under the Licence.
   -->
-y
-
 <template>
   <div
     v-if="hide !== true"

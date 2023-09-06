@@ -12,12 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { P12_VALIDITY_TYPE } from '../../../../src/constants';
-
-jest.mock('sweetalert2', () => ({
-  fire: jest.fn().mockReturnValue({ isConfirmed: true }),
-}));
-
+import { P12_VALIDITY_TYPE } from '@/constants';
 import Swal from 'sweetalert2';
 import fs from 'fs';
 
@@ -30,14 +25,20 @@ import { clearSampleData, setSampleData } from '../../../utils/config-sample-dat
 import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
 import { PathProvider } from '@/renderer/service/path-provider';
 import { getHomedir } from '@/renderer/modules/connector/common/utils';
-import { copyUploadedFileToTargetDir, getUploadedFilePath } from '@/renderer/utils/read-tls-certificates';
+import {
+  copyUploadedFileToTargetDir,
+  getCaCertsWithFilenames,
+  getUploadedFilePath,
+} from '@/renderer/utils/read-tls-certificates';
 import { UserfacingError } from '@/renderer/errors/errors';
-import { checkPemFileFormat, checkPemFileFormatSilent } from '@/renderer/utils/pem-file-validator';
-import { PEM_TYPES } from '@/renderer/utils/pem-file-validator';
-import { getCaCertsWithFilenames } from '@/renderer/utils/read-tls-certificates';
+import { checkPemFileFormat, checkPemFileFormatSilent, PEM_TYPES } from '@/renderer/utils/pem-file-validator';
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
 import { TestStatus } from '@/renderer/modules/settings/services/test-runner';
-import { preloadApi } from '../../../../src/main/preload-api';
+import { preloadApi } from '@/main/preload-api';
+
+jest.mock('sweetalert2', () => ({
+  fire: jest.fn().mockReturnValue({ isConfirmed: true }),
+}));
 
 PathProvider.setSystemUserTempPath(getHomedir());
 const TEST_FILE_PATH_TO_KEY = process.cwd() + '/tests/resources/certs/example/example-key.cer';
