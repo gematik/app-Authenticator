@@ -16,12 +16,11 @@
  * @jest-environment jsdom
  */
 import { setSampleData } from '../utils/config-sample-data';
-import { FileStorageRepository, TRepositoryData } from '../../src/renderer/modules/settings/repository';
-import ConnectorConfig from '../../src/renderer/modules/connector/connector_impl/connector-config';
-import { PROCESS_ENVS } from '../../src/constants';
-import { logger } from '../../src/renderer/service/logger';
-import { PathProvider } from '../../src/renderer/service/path-provider';
-import { PRODUCT_NAME } from '@/constants';
+import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
+import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
+import { PROCESS_ENVS, PRODUCT_NAME } from '@/constants';
+import { logger } from '@/renderer/service/logger';
+import { PathProvider } from '@/renderer/service/path-provider';
 
 describe('configMapperByGroup and error handling response', () => {
   beforeEach(() => {

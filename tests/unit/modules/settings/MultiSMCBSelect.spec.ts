@@ -16,7 +16,7 @@ import { mount } from '@vue/test-utils';
 import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMultiCardModal.vue';
 import store from '@/renderer/store';
 import i18n from '@/renderer/i18n';
-import { ECardTypes } from '../../../../src/renderer/modules/connector/ECardTypes';
+import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 describe('multi-smcb select SelectSmcbModal', () => {
   it('render ', async function () {

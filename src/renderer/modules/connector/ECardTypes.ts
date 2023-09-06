@@ -11,6 +11,7 @@
  * language governing permissions and limitations under the License.ee the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+export const CARD_TYPE_MULTI = 'multi';
 
 export enum ECardTypes {
   HBA = 'HBA',

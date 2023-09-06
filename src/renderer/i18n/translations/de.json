@@ -124,37 +124,77 @@
     "technical_error_code": "Bitte kontaktieren Sie Ihren Support. Fehlercode ({code})",
     "technical_error_details": "{error} \\nFehlercode ({code})",
     "technical_error_wiki_link": "Lösungsweg zu diesem Fehlercode",
+    "AUTHCL_0001": {
+      "title": "Ungültigen IDP-Parameter empfangen",
+      "text": "Bitte kontaktieren Sie den Support der von Ihnen genutzten Webanwendung. Fehlercode (AUTHCL_0001)"
+    },
+    "AUTHCL_0002": {
+      "title": "Fehler beim Zugriff auf IDP",
+      "text": "Bitte kontaktieren Sie Ihren DVO, Administrator oder Support der genutzten Webanwendung. Lassen Sie überprüfen, ob Ihre Proxy- und VPN-Einstellungen richtig konfiguriert sind. Wenn es sich um einen IDP Fehler handelt, werden die Parameter error und error_description zurückgegeben. Führen Sie bitte zusätzlich den Funktionstest des Authenticators zur weiteren Fehlereingrenzung aus. Fehlercode (AUTHCL_0002)"
+    },
+    "AUTHCL_0005": {
+      "title": "Validierung der Autorisierung fehlgeschlagen",
+      "text": "Bitte kontaktieren Sie den Support der von Ihnen genutzten Webanwendung. Wahrscheinlich liegt ein Verbindungs- oder Systemfehler beim IDP-Anbieter vor. Fehlercode (AUTHCL_0005)"
+    },
+    "AUTHCL_0007": {
+      "title": "Ungültige Redirect-URI/Protokoll",
+      "text": "Ihre Webanwendung liefert keine gültige redirect URI zurück. Bitten wenden Sie sich an den Support der von Ihnen genutzten Webanwendung. Fehlercode (AUTHCL_0007)"
+    },
     "AUTHCL_0008": {
-      "title": "Konfigurationsdatei konnte nicht gespeichert werden!",
-      "text": "Bitte stellen Sie sicher, dass das Konfigurationsverzeichnis ({configPath}) existiert und es beschreibbar ist."
+      "title": "Konfigurationsdatei konnte nicht gespeichert werden",
+      "text": "Bitte stellen Sie sicher, dass das Konfigurationsverzeichnis ({configPath}) existiert und Sie Schreibrechte darauf haben. Fehlercode (AUTHCL_0008)"
     },
-    "AUTHCL_1104": {
-      "title": "Remote PIN-Eingabe für {cardType}-Karte nicht möglich.",
-      "text": "Fehlercode (AUTHCL_1104)"
+    "AUTHCL_0009": {
+      "title": "Automatische Weiterleitung fehlgeschlagen",
+      "text": "Der Authenticator konnte die Webadresse nicht aufrufen. Bitte kontaktieren Sie Ihren DVO oder Administrator und lassen Sie sicherstellen, dass der TrustStore Ihres Betriebssystems die Webadresse aufrufen kann. Fehlercode (AUTHCL_0009)"
     },
-    "AUTHCL_1103": {
-      "title": "PIN-Eingabe",
-      "text": "Entweder ist die {cardType}-Karte gesperrt oder die PIN-Eingabe ist fehlgeschlagen. Fehlercode (AUTHCL_1103)"
+    "AUTHCL_1001": {
+      "title": "Karte konnte nicht abgerufen werden",
+      "text": "Bitte überprüfen Sie die Netzwerkverbindung Ihres Kartenterminals sowie dass mindestens eine SmartCard im Kartenterminal steckt. Fehlercode (AUTHCL_1001)"
+    },
+    "AUTHCL_1003": {
+      "title": "Kartenterminal nicht erkannt",
+      "text": "Bitte überprüfen Sie die Netzwerkverbindung Ihres Kartenterminals sowie die dazugehörigen Konnektoreinstellungen. Es muss mindestens ein Kartenterminal aktiviert und verbunden sein. Fehlercode (AUTHCL_1003)"
     },
     "AUTHCL_1018": {
       "title": "HBA-Smardcard-Sitzung wird bereits verwendet",
       "text": "Aktuell verwenden mehrere Anwendungen dieselbe Client-ID und HBA. Zur Problemlösung wird die Neuanlage einer weiteren Client-ID vorgeschlagen. Bitte wenden Sie sich dazu an Ihrem Techniker (DVO oder Administrator). In dringenden Fälle ziehen Sie bitte Ihren HBA und starten den Anmeldeprozess erneut. Beachten Sie bitte, dass eine erneute Pin-Eingabe erforderlich ist. Fehlercode (AUTHCL_1018)"
     },
+    "AUTHCL_1101": {
+      "title": "Überprüfung des Pin-Status ist fehlgeschlagen",
+      "text": "Bitte stecken Sie die Karte erneut in den Kartenslot Ihres Kartenterminals. Fehlercode (AUTHCL_1101)"
+    },
+    "AUTHCL_1102": {
+      "title": "PIN-Eingabe falsch oder Prozess wurde durch den Nutzer abgebrochen",
+      "text": "Die PIN wurde falsch eingegeben oder ist nicht verifiziert. Bitte wiederholen Sie den Vorgang. Fehlercode (AUTHCL_1102)"
+    },
+    "AUTHCL_1103": {
+      "title": "Ungültiger PIN-Status",
+      "text": "Entweder ist die {cardType}-Karte gesperrt oder nicht zugelassen. Stellen Sie sicher, dass die Karte bereits entsperrt wurde. Sollte dies bereits der Fall sein, ist diese Karte nicht mehr zugelassen und es muss eine neue Karte beantragt werden. Fehlercode (AUTHCL_1103)"
+    },
+    "AUTHCL_1104": {
+      "title": "Remote PIN-Eingabe für {cardType}-Karte nicht möglich.",
+      "text": "Die remote PIN-Eingabe für Ihre SmartCard ist nicht möglich. Kontaktieren Sie bitte Ihren DVO oder Administrator und lassen Sie die in Ihrem Kartenterminal vorgenommenen Konfigurationen überprüfen. Fehlercode (AUTHCL_1104)"
+    },
+    "AUTHCL_1107": {
+      "title": "Abrufen des Kartenzertifikats ist fehlgeschlagen",
+      "text": "Stellen Sie sicher, dass Sie mit dem Konnektor verbunden sind und die Karten richtig gesteckt sind. Fehlercode (AUTHCL_1107)"
+    },
+    "AUTHCL_1108": {
+      "title": "Beim Signieren der Challenge ist ein Fehler aufgetreten",
+      "text": "Das Signieren der Challenge ist fehlgeschlagen. Bitte nehmen Sie Kontakt zum Authenticator-Team über authenticator[at]gematik.de auf. Fehlercode (AUTHCL_1108)"
+    },
     "AUTHCL_1120": {
-      "title": "Transport-Pin",
+      "title": "Transport-Pin noch aktiv",
       "text": "Sie haben Ihre {cardType}-Karte noch nicht entsperrt. Aktivieren Sie zunächst Ihre {cardType}-Karte mit Hilfe Ihres Praxis- bzw. Krankenhausinformationssystems in dem Sie die Transport-PIN Ihres Ausweises in einen selbstgewählten PIN umwandeln. Fehlercode (AUTHCL_1120)"
     },
     "AUTHCL_2001": {
       "title": "Keine Karte vorgefunden",
-      "text": "Bitte {cardType}-Karte in das dafür vorgesehene Kartenterminal stecken"
+      "text": "Bitte {cardType}-Karte in das dafür vorgesehene Kartenterminal stecken."
     },
     "AUTHCL_2002": {
-      "title": "PIN-Eingabe",
+      "title": "PIN-Eingabe durchführen",
       "text": "Bitte PIN für {cardType}-Karte im zugehörigen Kartenterminal eingeben."
-    },
-    "AUTHCL_0002": {
-      "title": "Fehler beim Zugriff auf IDP",
-      "text": "Entweder ist der IDP nicht erreichbar oder die Parameter sind fehlerhaft. Fehlercode: (AUTHCL_0002)"
     }
   }
 }

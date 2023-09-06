@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { handleDeepLink, parseLauncherArguments } from '../../../../src/main/services/url-service';
+import { handleDeepLink, parseLauncherArguments } from '@/main/services/url-service';
 
 const GEM_IDP_ARGV = [
   'C:\\Users\\xxxx\\Desktop\\repos\\authenticator\\node_modules\\electron\\dist\\electron.exe',
