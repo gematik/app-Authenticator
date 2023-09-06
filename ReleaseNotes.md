@@ -2,22 +2,39 @@
 
 # Release Authenticator
 
+## Version 4.6.0
+
+added:
+
+- Implemented a new card type "MULTI" to login via HBA & SMC-B with one click
+- The Authenticator now handles multiple authentication requests properly
+- User-friendly error messages with hinds to solve the problem
+
+bugfix:
+
+- The deinstallation process now works in all known cases
+
+security:
+
+- Include a security.md file
+- Updated the packages
+
 ## Version 4.5.0
 
 added:
 
 - Support of windows server ( >= 2016 )
-- P12-Certificates support combination of ECC & RSA 
+- P12-Certificates support combination of ECC & RSA
 - New error message, if HBA smart card is in use
 
 bugfix:
- 
+
 - Clean deinstallation of authenticator
 - Increased timeout of PU IDP TI
 
 security:
 
-- Updated packages 
+- Updated packages
 
 ## Version 4.4.1
 

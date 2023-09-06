@@ -19,9 +19,9 @@
 import { ipcRenderer } from 'electron';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { HttpsProxyAgent } from 'hpagent';
-import { preloadApi } from '../../src/main/preload-api';
+import { preloadApi } from '@/main/preload-api';
 import { SAMPLE_CONFIG_DATA } from '../utils/config-sample-data';
-import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '../../src/config';
+import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
 import fs from 'fs';
 
 describe('proxyResolver', () => {

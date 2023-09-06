@@ -17,8 +17,8 @@ import {
   parseErrorMessageToIDPError,
   parseOauthError,
   parseUrlToIdpError,
-} from '../../../../src/renderer/utils/utils';
-import { OAUTH2_ERROR_TYPE } from '../../../../src/renderer/modules/gem-idp/type-definitions';
+} from '@/renderer/utils/utils';
+import { OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 
 describe('Test util functions', () => {
   it('test parseOauthError function', async () => {
