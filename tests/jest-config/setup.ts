@@ -20,7 +20,7 @@ import { PRODUCT_NAME } from '@/constants';
 import fs from 'fs';
 import { clearSampleData } from '../utils/config-sample-data';
 
-// as connector works slowly, we need at least 10 seconds to be sure
+// as the connector works slowly, we need at least 10 seconds to be sure
 jest.setTimeout(10000);
 
 /**
@@ -51,6 +51,7 @@ jest.mock('sweetalert2', () => ({
   fire: () => Promise.resolve({ isConfirmed: true }),
 }));
 
+// @ts-ignore
 Object.defineProperty(window, 'api', {
   value: preloadApi,
 });
@@ -66,3 +67,17 @@ Object.defineProperty(FileStorageRepository, '_path', { value: TEST_CONFIG_FILE_
 
 // clear test config file
 clearSampleData();
+
+// @ts-ignore
+global.setImmediate = jest.fn().mockImplementation((callback: any) => callback());
+
+/**
+ * Fail a test with a reason.
+ * @param reason
+ */
+function fail(reason = 'fail was called in a test.') {
+  throw new Error(reason);
+}
+
+// @ts-ignore
+global.fail = fail;

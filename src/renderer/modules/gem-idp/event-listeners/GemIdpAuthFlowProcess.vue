@@ -49,7 +49,7 @@ import {
   MAPPED_CONNECTOR_FATAL_ERRORS,
   USER_FACING_WARNINGS,
 } from '@/error-codes';
-import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
+import { CARD_TYPE_MULTI, ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { TAuthFlowEndState, TOidcProtocol2UrlSpec } from '@/@types/common-types';
 import createJwe from '@/renderer/modules/gem-idp/sign-feature/create-jwe';
 import {
@@ -87,13 +87,19 @@ export default defineComponent({
         /* do nothing here */
       },
       isAuthProcessActive: false,
-      selectedCardType: 'HBA',
+      selectedCardType: 'HBA', // this is for multi card select modal
+      currentCardType: null as null | ECardTypes, // this is the current flow's card type
       multiCardList: [],
       showMultiCardSelectModal: false,
       selectCardPromises: {} as {
         resolve: () => void;
         reject: () => void;
       },
+      // awaiting auth flow requests
+      authQueue: [] as {
+        event: Event;
+        args: TOidcProtocol2UrlSpec;
+      }[],
     };
   },
   computed: {
@@ -107,9 +113,18 @@ export default defineComponent({
     },
   },
   created() {
-    window.api.on(IPC_START_AUTH_FLOW_EVENT, this.startAuthenticationFlow);
+    window.api.on(IPC_START_AUTH_FLOW_EVENT, this.createQueue);
   },
   methods: {
+    async createQueue(event: Event, args: TOidcProtocol2UrlSpec) {
+      if (this.isAuthProcessActive) {
+        this.authQueue.push({ event, args });
+        logger.info('Auth process is already active, adding to queue');
+        return;
+      } else {
+        await this.startAuthenticationFlow(event, args);
+      }
+    },
     async showMultiCardSelectDialogModal(): Promise<void> {
       this.showMultiCardSelectModal = true;
       window.api.focusToApp();
@@ -127,7 +142,8 @@ export default defineComponent({
       });
     },
 
-    clearStores() {
+    async finishAndStartNextFlow() {
+      // first clear the stores
       this.$store.commit('connectorStore/resetStore');
       this.$store.commit('gemIdpServiceStore/resetStore');
 
@@ -137,9 +153,16 @@ export default defineComponent({
 
       // clear class state
       this.isAuthProcessActive = false;
+
+      // start next flow if there is one
+      const nextFlow = this.authQueue.shift();
+      if (nextFlow) {
+        await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+      }
     },
     async startAuthenticationFlow(_: Event, args: TOidcProtocol2UrlSpec): Promise<void> {
       let error: UserfacingError | null = null;
+
       // go to home page
       await this.$router.push('/');
 
@@ -148,14 +171,14 @@ export default defineComponent({
       // get callback param from challenge path and remove it from challenge path
       const callback = this.popParamFromChallengePath('callback', args.challenge_path);
       if (!this.setCallback(callback)) {
-        !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0007));
-        this.clearStores();
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0007));
+        this.finishAndStartNextFlow();
         return;
       }
 
       // stop the process if parameters are not valid!
       if (!this.validateParamsAndSetState(args)) {
-        this.clearStores();
+        this.finishAndStartNextFlow();
         return;
       }
 
@@ -171,9 +194,24 @@ export default defineComponent({
        */
       const cardTypeFromCPath = this.popParamFromChallengePath('cardType', filteredChallengePath.challenge_path);
 
-      // if cardType exists and suits with ECardTypes, we use it
       if (cardTypeFromCPath) {
-        if (Object.values(ECardTypes).includes(cardTypeFromCPath as ECardTypes)) {
+        // if cardType is MULTI, that means we have to process the auth flow for both card types
+        if (CARD_TYPE_MULTI === cardTypeFromCPath.toLowerCase()) {
+          // start with HBA, and the  SMCB will be processed after the HBA
+          cardType = ECardTypes.HBA;
+
+          // replace the cardType parameter with SMCB and add it to the queue
+          this.createQueue(new Event(''), {
+            ...args,
+            challenge_path: filteredChallengePath.challenge_path.replace(
+              'cardType=' + CARD_TYPE_MULTI,
+              'cardType=' + ECardTypes.SMCB,
+            ),
+          });
+        }
+
+        // if cardType exists and suits with ECardTypes, we use it
+        else if (Object.values(ECardTypes).includes(cardTypeFromCPath as ECardTypes)) {
           // set the card type from challenge_path
           cardType = cardTypeFromCPath as ECardTypes;
           logger.info('CardType information extracted from challenge_path parameter cardType: ' + cardType);
@@ -182,6 +220,9 @@ export default defineComponent({
           logger.error('Wrong card type provided! We take the HBA as the default value.');
         }
       }
+
+      // save card type to component state
+      this.currentCardType = cardType;
 
       // get idp host from challenge_path
       this.parseAndSetIdpHost();
@@ -252,7 +293,7 @@ export default defineComponent({
       await this.openClientIfNeeded(authFlowEndState);
 
       this.isAuthProcessActive = false;
-      this.clearStores();
+      await this.finishAndStartNextFlow();
     },
     async getCardData(cardType: ECardTypes): Promise<void> {
       // Init Card and get CardHandle
@@ -301,7 +342,7 @@ export default defineComponent({
       } catch (err) {
         await this.handleErrors(err);
 
-        !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_1003));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1003));
         this.setCaughtError(ERROR_CODES.AUTHCL_1003, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
       }
     },
@@ -356,7 +397,7 @@ export default defineComponent({
       } catch (err) {
         await this.handleErrors(err);
 
-        !this.errorShown && (await alertTechnicErrorAndThrow(ERROR_CODES.AUTHCL_1108, err.message));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1108));
         this.setCaughtError(ERROR_CODES.AUTHCL_1108, err.message, OAUTH2_ERROR_TYPE.SERVER_ERROR);
       }
     },
@@ -368,7 +409,7 @@ export default defineComponent({
       } catch (err) {
         await this.handleErrors(err);
 
-        !this.errorShown && (await alertTechnicErrorAndThrow(ERROR_CODES.AUTHCL_1107, err.message));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1107));
         this.setCaughtError(ERROR_CODES.AUTHCL_1107, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
       }
     },
@@ -449,7 +490,7 @@ export default defineComponent({
           return this.getCardHandle(cardType);
         }
 
-        !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_1001));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1001));
         this.setCaughtError(ERROR_CODES.AUTHCL_1001, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
         throw err;
       }
@@ -462,7 +503,7 @@ export default defineComponent({
       );
     },
     /**
-     * Checks PIM Status. On blocked and rejected cases throws error
+     * Checks PIN Status. On blocked and rejected cases throws error
      * @param cardType
      */
     async checkPinStatus(cardType: ECardTypes): Promise<void> {
@@ -502,7 +543,7 @@ export default defineComponent({
         }
       } catch (err) {
         await this.handleErrors(err);
-        !this.errorShown && (await alertTechnicErrorAndThrow(ERROR_CODES.AUTHCL_1101, err.message));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1101));
         this.setCaughtError(ERROR_CODES.AUTHCL_1101, err.message, OAUTH2_ERROR_TYPE.ACCESS_DENIED);
       }
     },
@@ -522,7 +563,7 @@ export default defineComponent({
       } catch (err) {
         await this.handleErrors(err);
 
-        !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_1102));
+        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1102));
         this.setCaughtError(ERROR_CODES.AUTHCL_1102, undefined, OAUTH2_ERROR_TYPE.ACCESS_DENIED);
         this.isAuthProcessActive = false;
         if (typeof pinVerifyModalClose === 'function') {
@@ -540,7 +581,7 @@ export default defineComponent({
 
         // Error AUTHCL_0013 means something went wrong with Auth Response validation
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0005) {
-          !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0005));
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0005));
           this.setCaughtError(ERROR_CODES.AUTHCL_0005, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
         } else {
           // IdP error occurred, warn the user
@@ -619,7 +660,7 @@ export default defineComponent({
         // focus to app to show the error
         window.api.focusToApp();
 
-        !this.errorShown && alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0001);
+        !this.errorShown && alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0001);
         this.setCaughtError(
           ERROR_CODES.AUTHCL_0001,
           'Invalid launcher parameters received.',
@@ -676,8 +717,8 @@ export default defineComponent({
 
       if (url) {
         if (!validateRedirectUriProtocol(url)) {
-          !this.errorShown && (await alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0007));
-          this.clearStores();
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0007));
+          await this.finishAndStartNextFlow();
           return;
         }
 
@@ -691,6 +732,9 @@ export default defineComponent({
         if (!authFlowEndState.isSuccess && !url.includes('error_uri')) {
           url = `${url}&error_uri=` + WIKI_ERRORCODES_URL;
         }
+
+        // add cardType to url in any case
+        url = `${url}&cardType=${this.currentCardType}`;
 
         url = encodeURI(url);
         switch (this.$store.state.gemIdpServiceStore.callback) {
@@ -714,7 +758,7 @@ export default defineComponent({
       }
 
       // reset the store in any case
-      this.clearStores();
+      await this.finishAndStartNextFlow();
     },
     /**
      * To get .well-known information from the IdP, we need to parse the challengePath
@@ -793,7 +837,7 @@ export default defineComponent({
           });
           logger.info(successMessage + ' from preload context');
         } catch (err) {
-          alertTechnicErrorWithIconOptional(ERROR_CODES.AUTHCL_0009, 'error');
+          await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0009);
           logger.error('Redirecting automatically request failed!', err.message);
         }
       }

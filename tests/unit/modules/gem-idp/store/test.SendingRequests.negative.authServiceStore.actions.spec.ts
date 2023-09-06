@@ -14,7 +14,7 @@
 
 import store from '@/renderer/store';
 import got from 'got';
-import { CentralIdpError } from '../../../../../src/renderer/errors/errors';
+import { CentralIdpError } from '@/renderer/errors/errors';
 
 const MOCK_AUTH_REQUEST_PARAMS = {
   challenge_path: 'http://login:8083/test/auth?var1=1&var2=2',

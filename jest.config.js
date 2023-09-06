@@ -14,16 +14,19 @@
 
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
   globals: {},
   transform: {
-    '^.+\\.vue$': 'vue-jest',
-    '^.+\\.(xml|txt|pem)$': 'jest-raw-loader',
+    '^.+\\.vue$': '@vue/vue3-jest',
+    '^.+\\.(xml|txt|pem)$': '@glen/jest-raw-loader',
   },
-  moduleDirectories: ['node_modules', 'src', '.'],
+  moduleDirectories: ['node_modules', 'src', __dirname],
   moduleNameMapper: {
     '^.+\\.(png|jpg|svg)$': 'jest-transform-stub',
     '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons'],
   },
   watchPathIgnorePatterns: [
     '<rootDir>/jest.json',
