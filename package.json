@@ -86,7 +86,7 @@
     "jest-sonar-reporter": "^2.0.0",
     "jest-transform-stub": "^2.0.0",
     "patch-package": "^8.0.0",
-    "postcss": "^8.4.24",
+    "postcss": "^8.4.31",
     "postcss-loader": "^7.3.3",
     "postcss-preset-env": "9.1.0",
     "preprocess-loader": "^0.3.0",
