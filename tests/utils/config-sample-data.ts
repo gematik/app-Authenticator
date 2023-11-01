@@ -12,7 +12,12 @@
  * permissions and limitations under the Licence.
  */
 
-import { CONTEXT_PARAMETERS_CONFIG_GROUP, ENTRY_OPTIONS_CONFIG_GROUP, TLS_AUTH_TYPE_CONFIG } from '@/config';
+import {
+  CONTEXT_PARAMETERS_CONFIG_GROUP,
+  ENTRY_OPTIONS_CONFIG_GROUP,
+  PROXY_SETTINGS_CONFIG,
+  TLS_AUTH_TYPE_CONFIG,
+} from '@/config';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 
@@ -30,6 +35,7 @@ export const SAMPLE_CONFIG_DATA = {
   [TLS_AUTH_TYPE_CONFIG]: 'ServerCertAuth',
 
   [MOCK_CONNECTOR_CONFIG]: false,
+  [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
 };
 
 /**

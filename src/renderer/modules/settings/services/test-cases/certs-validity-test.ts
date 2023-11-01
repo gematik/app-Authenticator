@@ -18,7 +18,7 @@ import i18n from '@/renderer/i18n';
 import { getCaCertsWithFilenames } from '@/renderer/utils/read-tls-certificates';
 import { checkPemFileFormatSilent, PEM_TYPES } from '@/renderer/utils/pem-file-validator';
 
-const translate = i18n.global.tc;
+const translate = i18n.global.t;
 
 export async function certsValidityTest(): Promise<TestResult> {
   try {

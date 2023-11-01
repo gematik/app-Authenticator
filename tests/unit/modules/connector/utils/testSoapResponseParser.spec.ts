@@ -16,7 +16,7 @@ import soapRespParser from '@/renderer/modules/connector/common/soap-response-xm
 import { printTestTitle, readResourceFile, TestCategory } from '../../../../TestInfo';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
-describe(TestCategory.positivTest, () => {
+describe('SoapResponseParser parses correctly for', () => {
   printTestTitle(__filename);
 
   it(TestCategory.utilTest + ': cardHandle', async () => {

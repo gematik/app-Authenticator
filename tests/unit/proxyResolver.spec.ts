@@ -25,6 +25,11 @@ import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
 import fs from 'fs';
 
 describe('proxyResolver', () => {
+  beforeEach(() => {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+    });
+  });
   it('createHttpsProxyAgentWithHttpProxy', async function () {
     jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('http://192.168.1.1');
     const proxyAgent = await createProxyAgent('https://Server.com');
@@ -100,7 +105,9 @@ describe('proxyResolver', () => {
 
     preloadApi.setCaChainIdpInPreload(ca);
 
+    //Mock the frontend answer which proxy server we have to use for our connection
     jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('https://192.168.1.1');
+
     const proxyAgent = (await createProxyAgent('https://Server.com')) as HttpsProxyAgent;
 
     expect(proxyAgent.options.ca).toBe(ca);
@@ -175,5 +182,61 @@ describe('proxyResolver', () => {
     )) as HttpsProxyAgent;
 
     expect(proxyAgent).toBeDefined();
+  });
+
+  it('performs proxy creation with a matching asterisk entry in the proxyIgnoreList for the destination address', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: '213.95.83.*',
+    });
+
+    jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('http://192.168.1.1');
+    const proxyAgent = (await createProxyAgent(
+      'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
+    )) as HttpsProxyAgent;
+
+    expect(proxyAgent).toBeUndefined();
+  });
+
+  it('performs proxy creation with a matching CIDR entry in the proxyIgnoreList for the destination address', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: '213.95.83.0/24',
+    });
+
+    jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('http://192.168.1.1');
+    const proxyAgent = (await createProxyAgent(
+      'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
+    )) as HttpsProxyAgent;
+
+    expect(proxyAgent).toBeUndefined();
+  });
+  it('performs proxy creation with a matching IP-List entry in the proxyIgnoreList for the destination address', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: '213.95.83.121;213.95.83.122;213.95.83.123;213.95.83.120',
+    });
+    jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('http://192.168.1.1');
+    const proxyAgent = (await createProxyAgent(
+      'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
+    )) as HttpsProxyAgent;
+
+    expect(proxyAgent).toBeUndefined();
+  });
+  it('useManualProxySetting', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: 'https://192.169.0.1',
+      [PROXY_SETTINGS_CONFIG.PROXY_PORT]: '8888',
+    });
+
+    const proxyAgent = await createProxyAgent('https://Server.com');
+
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBe('https://192.169.0.1:8888/');
   });
 });

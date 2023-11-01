@@ -53,6 +53,13 @@ describe('FileStorageRepository', () => {
     });
   });
 
+  it('should return true if the config file exists', () => {
+    const data: TRepositoryData = { key: 'value', booleanVal: 'true' };
+    settingsRepo.save(data);
+    const configValues = settingsRepo.load(true);
+    expect(configValues.booleanVal).toBe(true);
+  });
+
   describe('setWithoutSave', () => {
     it('should update the cached config', () => {
       const data: TRepositoryData = { key: 'value' };

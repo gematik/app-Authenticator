@@ -21,7 +21,7 @@ import { findAvailableCardTerminals } from '@/renderer/modules/connector/connect
 import { ERROR_CODES } from '@/error-codes';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
-describe(TestCategory.positivTest, () => {
+describe('SoapResponse JsonParser', () => {
   printTestTitle(__filename);
 
   it(TestCategory.utilTest + 'test find cardHandle over json parser ', async () => {

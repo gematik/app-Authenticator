@@ -21,7 +21,7 @@ import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 
 let endpoints = new Map();
-describe(TestCategory.positivTest, () => {
+describe('Utils test collection', () => {
   printTestTitle(__filename);
   it(TestCategory.utilTest + ': uuid', async () => {
     const uuidV4Regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;

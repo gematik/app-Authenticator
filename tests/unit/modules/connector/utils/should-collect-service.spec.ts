@@ -19,7 +19,7 @@ function determineMapServiceEndpointTls(sds: string) {
   return handleSds(sds);
 }
 
-describe(TestCategory.positivTest, () => {
+describe('Collect services for different connectors', () => {
   it(TestCategory.utilTest + ': koco-PTV3', async () => {
     const sdsSecunet = readResourceFile('connSds', 'koco-PTV3.xml');
     const mapServiceEndpointTls = determineMapServiceEndpointTls(sdsSecunet);

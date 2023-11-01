@@ -120,11 +120,6 @@ export function printSpecialCardRequired(filename: string, info: string, cardTyp
 }
 
 export class TestCategory {
-  static positivTest = 'Positivtest';
-  static negativTest = 'Negativtest';
-  static connectorTest = 'Konnektor-Test';
-  static connectorTestKOPS = 'Konnektor-Test-KOPS';
-  static connectorTestFARM = 'Konnektor-Test-Konnektor-Farm';
   static utilTest = 'Utils-Test';
 }
 

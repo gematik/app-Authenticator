@@ -18,9 +18,9 @@ import { UserfacingError } from '@/renderer/errors/errors';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import i18n from '@/renderer/i18n';
 import { IdpError, OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
+import packageJson from '../../../package.json';
 
-const translate = i18n.global.tc;
-const packageJson = require('../../../package.json');
+const translate = i18n.global.t;
 
 function openUrlOnclick() {
   if (!WIKI_ERRORCODES_URL.includes('https')) return;

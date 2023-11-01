@@ -1,5 +1,6 @@
 import { P12_VALIDITY_TYPE } from '@/constants';
 import fs from 'fs';
+
 const forge = require('node-forge');
 
 export function findValidCertificate(
@@ -13,8 +14,8 @@ export function findValidCertificate(
   const certsAndKeys = getCertsAndKeys(p12);
   const certs = certsAndKeys.certs;
   const keys = certsAndKeys.keys;
-  const keyToCert = getValidCertsWithKey(certs, keys).keyToCert;
-  return { certificate: certs[0], privateKey: keyToCert };
+  const result = getValidCertsWithKey(certs, keys);
+  return { certificate: result.certToKey, privateKey: result.keyToCert };
 }
 
 export function getP12ValidityType(p12Path: string, password: string): P12_VALIDITY_TYPE {
@@ -107,12 +108,11 @@ function privateKeyToCert(keys: KeyBag[], cert: Cert): KeyBag | undefined {
     return false;
   }
 
-  const foundKey = keys.find(findMatchingKey);
-
-  return foundKey;
+  return keys.find(findMatchingKey);
 }
 
 function getValidCertsWithKey(certs: any[], keys: any[]) {
+  let certToKey = null;
   let keyToCert = null;
   let countValidCerts = 0;
   for (const cert of certs) {
@@ -123,7 +123,8 @@ function getValidCertsWithKey(certs: any[], keys: any[]) {
     }
     if (!keyToCert) {
       keyToCert = result;
+      certToKey = cert;
     }
   }
-  return { keyToCert, countValidCerts };
+  return { certToKey, keyToCert, countValidCerts };
 }

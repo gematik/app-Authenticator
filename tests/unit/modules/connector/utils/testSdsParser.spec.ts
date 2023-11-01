@@ -21,7 +21,7 @@ let endpoints = new Map();
 /**
  *  nur noch endpointTls wird benötigt.
  */
-xdescribe(TestCategory.positivTest, () => {
+xdescribe('SdsParser parses correctly for different Endpoints', () => {
   printTestTitle(__filename);
   it(TestCategory.utilTest + ': Endpoint secunet-PTV4', async () => {
     const sdsSecunet = readResourceFile('connSds', 'secunet-PTV4.xml');

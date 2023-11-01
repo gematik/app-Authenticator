@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2023 gematik GmbH
+  - Copyrig^^ht 2023 gematik GmbH
   -
   - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
   - Sourcecode must be in compliance with the EUPL.
@@ -26,12 +26,7 @@
             class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
             :class="{ 'pl-[23px]': formSection.icon }"
           >
-            <img
-              v-if="formSection.icon"
-              :src="require(`/src/assets/${formSection.icon}`)"
-              class="object-none pr-[10px]"
-              alt="form icon"
-            />
+            <img v-if="formSection.icon" :src="formSection.icon" class="object-none pr-[10px]" alt="form icon" />
             <h3 :id="`lblTitle-${index}`" class="">
               {{ formSection.title }}
             </h3>
@@ -64,7 +59,7 @@
 
         <div class="w-3/3">
           <div>
-            <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="startFunctionTests">
+            <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="runAndFormatTestCases">
               {{ $t('connection_test') }}
             </button>
             <br />
@@ -81,22 +76,24 @@
       </div>
     </form>
   </div>
-  <TestResultModal v-if="showModal" :function-test-results="functionTestResults" :close-modal="closeModal" />
+  <TestResultModal
+    v-if="showModal"
+    :function-test-results="functionTestResults"
+    :close-modal="closeModal"
+    :save-settings="saveConfigValues"
+  />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref, toRaw } from 'vue';
-import { useStore } from 'vuex';
-import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
 
+import Swal from 'sweetalert2';
 import FormElement from '@/renderer/components/FormElement.vue';
-import { IConfigSection } from '@/@types/common-types';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
-import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
 import { useSettings } from '@/renderer/modules/settings/useSettings';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 import { runTestsCases, TestResult } from '@/renderer/modules/settings/services/test-runner';
-import i18n from '@/renderer/i18n';
 import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
 import TestResultModal from '@/renderer/modules/settings/components/TestResultModal.vue';
 import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
@@ -104,8 +101,8 @@ import { cancelActiveUpdateProcess, checkNewUpdate } from '@/renderer/service/au
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
 import { IPC_UPDATE_ENV } from '@/constants';
-
-const translate = i18n.global.tc;
+import { IConfigSection } from '@/@types/common-types';
+import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
 
 export default defineComponent({
   name: 'SettingsScreen',
@@ -114,9 +111,14 @@ export default defineComponent({
     TestResultModal,
   },
   setup() {
+    const translate = useI18n().t;
+
     const { save, load, clear, setWithoutSave } = useSettings();
-    useStore();
     const configValues = ref<TRepositoryData>({ ...load() });
+    const functionTestResults = ref<TestResult[]>([]);
+    const showModal = ref<boolean>(false);
+    const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
+    const formColumnsFlat = getFormColumnsFlat(configValues.value);
 
     let isDev = false;
     /* @if MOCK_MODE == 'ENABLED' */
@@ -130,9 +132,6 @@ export default defineComponent({
         configValues.value = load();
       }, 500);
     });
-
-    const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
-    const formColumnsFlat = getFormColumnsFlat(configValues.value);
 
     function resetData() {
       clear();
@@ -191,7 +190,7 @@ export default defineComponent({
         return false;
       }
 
-      // call check update automatically if the settings has been changed
+      // call check update automatically if the settings have been changed
       if (configValues.value[CHECK_UPDATES_AUTOMATICALLY_CONFIG]) {
         checkNewUpdate(true);
       } else {
@@ -200,13 +199,14 @@ export default defineComponent({
 
       try {
         save(toRaw(configValues.value));
+        closeModal();
       } catch (err) {
         logger.error('Config file could not be saved: ', err.message);
 
         await Swal.fire({
           title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
           text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
-            configPath: FileStorageRepository.getConfigPath().path,
+            configPath: FileStorageRepository.getPath(),
           }),
           icon: 'error',
         });
@@ -226,9 +226,9 @@ export default defineComponent({
     }
 
     /**
-     * Run all tests and returns results
+     * Run all tests and return results
      */
-    async function runAndFormatTestCases(): Promise<TestResult[]> {
+    const runAndFormatTestCases = async (): Promise<void> => {
       // set config
       setWithoutSave(configValues.value);
       await updateAppState();
@@ -248,15 +248,19 @@ export default defineComponent({
         },
       });
 
-      return new Promise((resolve) => {
-        setTimeout(async () => {
-          const results = await runTestsCases(undefined, cancelPromise);
-          Swal.close();
-          resolve(results);
-          await updateAppState(true);
-        }, 10);
-      });
-    }
+      functionTestResults.value = await runTestsCases(undefined, cancelPromise);
+
+      // close loading modal
+      Swal.close();
+
+      // revert config to previous state (config before test run)
+      await updateAppState(true);
+
+      // if user cancels the process results can be empty, and in that case, we won't open the results modal
+      if (functionTestResults.value.length) {
+        showModal.value = true;
+      }
+    };
 
     async function createZipWithLogData() {
       const isSelected = await window.api.createLogZipFile();
@@ -278,34 +282,22 @@ export default defineComponent({
       clearEndpoints();
     }
 
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
     return {
       resetData,
       saveConfigValues,
       runAndFormatTestCases,
       createZipWithLogData,
+      closeModal,
+      functionTestResults,
+      showModal,
       configValues,
       isDev,
       formSections,
     };
-  },
-  data() {
-    return {
-      showModal: false,
-      functionTestResults: [] as TestResult[],
-    };
-  },
-  methods: {
-    async startFunctionTests() {
-      this.functionTestResults = await this.runAndFormatTestCases();
-
-      // if user cancels the process results can be empty and in that case we won't open the results modal
-      if (this.functionTestResults.length) {
-        this.showModal = true;
-      }
-    },
-    async closeModal() {
-      this.showModal = false;
-    },
   },
 });
 </script>

@@ -384,3 +384,9 @@ Drittsoftwareanteile:
 
     Komponente: zip-a-folder
     Lizenz: MIT
+
+    Komponente: ip-matching
+    Lizenz: MIT
+
+    Komponente: uuid
+    Lizenz: MIT

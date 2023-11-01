@@ -18,14 +18,20 @@ import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
 
 /**
  * Starts the auto update if it is allowed
+ * Warning: This function is only available in production mode
+ * @param checkUpdate
  */
 export const checkNewUpdate = (checkUpdate?: boolean) => {
-  // if the given value is UNDEFINED or NULL check the config
+  // This option is disabled in mock mode
+  /* @if MOCK_MODE != 'ENABLED' */
+
+  // if the given value is UNDEFINED or NULL, check the config
   checkUpdate = checkUpdate ?? !!getConfig(CHECK_UPDATES_AUTOMATICALLY_CONFIG).value;
 
   if (checkUpdate) {
     window.api.send(IPC_CHECK_UPDATE);
   }
+  /* @endif */
 };
 
 /**
@@ -36,7 +42,7 @@ export const cancelActiveUpdateProcess = () => {
 };
 
 /**
- * Check every 24 hour
+ * Check every 24 hours for new updates
  */
 setInterval(() => {
   checkNewUpdate();

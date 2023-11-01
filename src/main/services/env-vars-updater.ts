@@ -31,6 +31,7 @@ let FOUND_ENV_VARS: Record<string, string> = {};
 const WATCHED_ENV_VAR_KEYS = ['CLIENTNAME', 'AUTHCONFIGPATH', 'VIEWCLIENT_MACHINE_NAME'];
 
 const REGISTRY_KEY_SYSTEM_ENV = 'HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment';
+const REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION = 'HKLM\\SOFTWARE\\Citrix\\Ica\\Session';
 
 /**
  * interval for checking new env vars
@@ -60,18 +61,31 @@ async function getVolatileEnv(): Promise<string> {
  */
 export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<void> => {
   FOUND_ENV_VARS = {};
-
-  let keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
-  checkEnvVarsChange('AUTHCONFIGPATH', keyValuePairsFromRegistryAsString);
-
-  keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
-  checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
-  checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
+  let keyValuePairsFromRegistryAsString;
+  try {
+    keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
+    checkEnvVarsChange('AUTHCONFIGPATH', keyValuePairsFromRegistryAsString);
+  } catch (e) {
+    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+  }
+  try {
+    keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
+    checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
+    checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
+  } catch (e) {
+    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+  }
+  try {
+    keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+    checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
+  } catch (e) {
+    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+  }
 
   let hasVarsChanged = false;
   WATCHED_ENV_VAR_KEYS.forEach((envVar) => {
     const previousVal = UP_TO_DATE_PROCESS_ENVS[envVar];
-    if (FOUND_ENV_VARS[envVar] !== previousVal) {
+    if (FOUND_ENV_VARS[envVar] !== previousVal?.toUpperCase()) {
       const newValue = FOUND_ENV_VARS[envVar];
       logger.info(`Env variable change detected: ${envVar} changed from ${previousVal} to ${newValue}`);
       UP_TO_DATE_PROCESS_ENVS[envVar] = newValue;

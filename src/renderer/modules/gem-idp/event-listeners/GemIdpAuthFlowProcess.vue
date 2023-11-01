@@ -55,7 +55,6 @@ import createJwe from '@/renderer/modules/gem-idp/sign-feature/create-jwe';
 import {
   alertDefinedErrorWithDataOptional,
   alertLoginResultWithIconAndTimer,
-  alertTechnicErrorAndThrow,
   alertTechnicErrorWithIconOptional,
   alertWithCancelButton,
   closeSwal,
@@ -67,6 +66,8 @@ import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/u
 import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 import Swal from 'sweetalert2';
 import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
+import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
+import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -87,7 +88,7 @@ export default defineComponent({
         /* do nothing here */
       },
       isAuthProcessActive: false,
-      selectedCardType: 'HBA', // this is for multi card select modal
+      selectedCardType: ECardTypes.HBA, // this is for multi card select modal
       currentCardType: null as null | ECardTypes, // this is the current flow's card type
       multiCardList: [],
       showMultiCardSelectModal: false,
@@ -190,7 +191,7 @@ export default defineComponent({
       let cardType = filteredChallengePath.card_type;
 
       /**
-       * pop the cardType from challenge path
+       * pop the cardType from the challenge path
        */
       const cardTypeFromCPath = this.popParamFromChallengePath('cardType', filteredChallengePath.challenge_path);
 
@@ -204,7 +205,7 @@ export default defineComponent({
           this.createQueue(new Event(''), {
             ...args,
             challenge_path: filteredChallengePath.challenge_path.replace(
-              'cardType=' + CARD_TYPE_MULTI,
+              'cardType=' + cardTypeFromCPath,
               'cardType=' + ECardTypes.SMCB,
             ),
           });
@@ -269,9 +270,9 @@ export default defineComponent({
         await this.getCardTerminals();
         await this.getCardData(cardType);
 
-        // there is a case that user does not enter the pin and instead cancel the auth process  in the app,
-        // in that case we stop the process and open the browser with fail message
-        // after PIN Verify timeouts, process keeps on, and we stop it here!
+        // there is a case that user does not enter the pin and instead cancel the auth process in the app,
+        // in that case we stop the process and open the browser with a fail message
+        // after PIN Verify timeouts, a process keeps on, and we stop it here!
         if (!this.isAuthProcessActive) {
           return;
         }
@@ -493,6 +494,14 @@ export default defineComponent({
         !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1001));
         this.setCaughtError(ERROR_CODES.AUTHCL_1001, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
         throw err;
+      } finally {
+        if (cardType === ECardTypes.HBA && this.$store.state.connectorStore.cards?.HBA?.iccsn) {
+          // Get userId for selected Card
+          ConnectorConfig.setContextParameters({
+            ...ConnectorConfig.contextParameters,
+            userId: getUserIdForCard(this.$store.state.connectorStore.cards.HBA.iccsn),
+          });
+        }
       }
     },
 
@@ -648,11 +657,13 @@ export default defineComponent({
           challenge_path: filterCardTypeFromScope(args.challenge_path as string).challenge_path,
         };
 
-        if (authReqParameters.challenge_path) {
-          const url = new URL(authReqParameters.challenge_path);
-          const clientId = url.searchParams.get('client_id');
-          this.$store.commit('gemIdpServiceStore/setClientId', clientId);
+        if (!authReqParameters.challenge_path) {
+          throw new Error('Missing challenge_path parameter!');
         }
+
+        const url = new URL(authReqParameters.challenge_path);
+        const clientId = url.searchParams.get('client_id');
+        this.$store.commit('gemIdpServiceStore/setClientId', clientId);
         this.$store.commit('gemIdpServiceStore/setChallengePath', authReqParameters.challenge_path);
 
         return true;

@@ -19,7 +19,7 @@ import { TUserWarnObject } from '@/@types/common-types';
 import i18n from '@/renderer/i18n';
 import { logger } from '@/renderer/service/logger';
 
-const translate = i18n.global.tc;
+const translate = i18n.global.t;
 
 /**
  * Listener for main process warnings

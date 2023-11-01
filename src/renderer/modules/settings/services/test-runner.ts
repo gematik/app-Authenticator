@@ -16,16 +16,14 @@ import { connectorReachabilityTest } from '@/renderer/modules/settings/services/
 import { connectorSmcbReadabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-smcb-readability';
 import { idpReachabilityTest } from '@/renderer/modules/settings/services/test-cases/idp-reachability';
 import { logger } from '@/renderer/service/logger';
+import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
+import { SweetAlertResult } from 'sweetalert2';
+import i18n from '@/renderer/i18n';
 
 /* @if MOCK_MODE == 'ENABLED' */
 import { getConfig } from '@/renderer/utils/get-configs';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 /* @endif */
-import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
-import { SweetAlertResult } from 'sweetalert2';
-import i18n from '@/renderer/i18n';
-
-const translate = i18n.global.tc;
 
 const allTestCases: TestFunction[] = [
   connectorReachabilityTest,
@@ -47,6 +45,7 @@ export async function runTestsCases(
   cancelPromise?: Promise<SweetAlertResult<Awaited<unknown>>>,
 ): Promise<TestResult[]> {
   const results: TestResult[] = [];
+  const translate = i18n.global.t;
   logger.info('start test cases');
 
   for (const testCase of testCases) {
@@ -59,8 +58,8 @@ export async function runTestsCases(
 
     try {
       /**
-       * This promise actually only waits for the test and returns the test result
-       * But if the user clicks the cancel button, the promise rejects and stops the whole process
+       * This promise actually only waits for the test and returns the test result,
+       * but if the user clicks the cancel button, the promise rejects and stops the whole process
        */
       const restResults: TestResult | TestResult[] = await new Promise((resolve, reject): void => {
         testCase().then((testCaseResult) => {

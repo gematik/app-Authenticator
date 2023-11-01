@@ -13,6 +13,7 @@
  */
 
 import { ipcRenderer } from 'electron';
+import { matches } from 'ip-matching';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 import { IPC_GET_PROXY } from '@/constants';
 import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
@@ -21,14 +22,22 @@ import dns from 'dns';
 import { logger } from '@/main/services/logging';
 import { APP_CA_CHAIN_IDP, APP_CONFIG_DATA } from '@/main/preload-api';
 
-const ipRangeCheck = require('ip-range-check');
-
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
 
 export async function createProxyAgent(url: string): TReturnType {
-  const proxyUrl = (await ipcRenderer.sendSync(IPC_GET_PROXY, url)) as string;
-
+  let proxyUrl;
+  //default behavior is always the os setting, also when nothing is set
+  const useOsSetting = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS];
+  if (useOsSetting || useOsSetting === undefined) {
+    proxyUrl = (await ipcRenderer.sendSync(IPC_GET_PROXY, url)) as string;
+  } else {
+    const host = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_ADDRESS] as string;
+    const port = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PORT];
+    proxyUrl = host + ':' + port;
+  }
+  logger.debug('proxy url is:' + proxyUrl);
   const ignoreProxyForUrl = await isUrlInProxyIgnoreList(url);
+  logger.debug('ignore destination url:' + ignoreProxyForUrl);
 
   if (proxyUrl && !ignoreProxyForUrl) {
     const proxy = new URL(proxyUrl);
@@ -68,7 +77,7 @@ const isUrlInProxyIgnoreList = async (url: string): Promise<boolean> => {
     for (const proxyIgnoreEntry of proxyIgnoreEntries) {
       const ipAddress = await geIpAddress(url);
       if (ipAddress) {
-        const isUrlInIpRange = ipRangeCheck(ipAddress, proxyIgnoreEntry);
+        const isUrlInIpRange = matches(ipAddress, proxyIgnoreEntry);
         logger.debug(
           'ProxyIgnoreEntry:' +
             proxyIgnoreEntry +
@@ -77,7 +86,9 @@ const isUrlInProxyIgnoreList = async (url: string): Promise<boolean> => {
             ', is url in proxy ignore range:' +
             isUrlInIpRange,
         );
-        return isUrlInIpRange;
+        if (isUrlInIpRange) {
+          return isUrlInIpRange;
+        }
       }
     }
   }

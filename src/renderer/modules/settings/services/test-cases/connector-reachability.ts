@@ -17,7 +17,7 @@ import { launch as getCardTerminals } from '@/renderer/modules/connector/connect
 import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
 
-const translate = i18n.global.tc;
+const translate = i18n.global.t;
 
 export async function connectorReachabilityTest(): Promise<TestResult> {
   try {

@@ -49,7 +49,7 @@ describe('settings save config', () => {
   });
 
   it('catches the save error', async function () {
-    const wrapper = await mount(SettingsScreen, {
+    const wrapper = mount(SettingsScreen, {
       global: {
         plugins: [store, i18n],
       },
@@ -67,7 +67,7 @@ describe('settings save config', () => {
 
     expect(Swal.fire).toHaveBeenNthCalledWith(2, {
       icon: 'error',
-      text: 'Bitte stellen Sie sicher, dass das Konfigurationsverzeichnis () existiert und Sie Schreibrechte darauf haben. Fehlercode (AUTHCL_0008)',
+      text: `Bitte stellen Sie sicher, dass das Konfigurationsverzeichnis (${FileStorageRepository.getPath()}) existiert und Sie Schreibrechte darauf haben. Fehlercode (AUTHCL_0008)`,
       title: 'Konfigurationsdatei konnte nicht gespeichert werden',
     });
   });

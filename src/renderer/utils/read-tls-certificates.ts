@@ -60,8 +60,8 @@ export const copyUploadedFileToTargetDir = async (
 
   if (!allowedFiles.includes(fieldName)) {
     await Swal.fire({
-      title: i18n.global.tc('warning'),
-      text: i18n.global.tc('selected_file_is_not_compatible_with', { filePath, fieldName }),
+      title: i18n.global.t('warning'),
+      text: i18n.global.t('selected_file_is_not_compatible_with', { filePath, fieldName }),
       icon: 'warning',
       showCancelButton: true,
     });

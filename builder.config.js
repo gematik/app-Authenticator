@@ -47,6 +47,7 @@ module.exports = {
     oneClick: false,
     perMachine: true,
     allowToChangeInstallationDirectory: false,
+    createDesktopShortcut: false,
     license: 'LICENSE.txt',
     include: 'build/installer.nsh',
     installerLanguages: ['de_DE'],

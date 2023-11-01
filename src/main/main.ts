@@ -126,7 +126,10 @@ async function createWindow() {
     // this file is the bundled version of the src/renderer/template.html
     await mainWindow.loadFile(path.join(__dirname, 'index.html'));
   }
-
+  // todo fix this for macOS's production
+  if (process.platform === PLATFORM_WIN32) {
+    setupEnvReadInterval(mainWindow);
+  }
   handleDeepLink(process.argv, mainWindow);
 
   // Emitted when the window is closed.
@@ -137,8 +140,6 @@ async function createWindow() {
     mainWindow = null;
     logger.info('Application window closed. Bye bye.');
   });
-
-  setupEnvReadInterval(mainWindow);
 
   /**
    * focus to authenticator app
@@ -185,6 +186,12 @@ if (!gotTheLock) {
     if (mainWindow) {
       handleDeepLink(argv, mainWindow);
     }
+  });
+
+  // Deeplink event listener for MacOS
+  app.on('open-url', (e, argv) => {
+    e.preventDefault();
+    handleDeepLink([argv], mainWindow);
   });
 
   // register url schemas

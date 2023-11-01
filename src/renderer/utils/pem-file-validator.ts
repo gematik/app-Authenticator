@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 
-const translate = i18n.global.tc;
+const translate = i18n.global.t;
 
 export enum PEM_TYPES {
   KEY = 'key',

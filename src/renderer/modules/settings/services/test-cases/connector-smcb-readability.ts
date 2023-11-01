@@ -17,12 +17,11 @@ import { launch as getCards } from '@/renderer/modules/connector/connector_impl/
 import { ConnectorError } from '@/renderer/errors/errors';
 import { logger } from '@/renderer/service/logger';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
-import i18n from '@/renderer/i18n';
 import { ERROR_CODES } from '@/error-codes';
-
-const translate = i18n.global.tc;
+import i18n from '@/renderer/i18n';
 
 export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
+  const translate = i18n.global.t;
   try {
     const cardSmcbInfo = await getCards(ECardTypes.SMCB);
     return {

@@ -20,7 +20,7 @@ function determinePtv(sds: string) {
   return handlePtv(sds);
 }
 
-describe(TestCategory.positivTest, () => {
+describe('Determine PTV versions', () => {
   it(TestCategory.utilTest + ': PRODUCT_TYPE_VERSION von koco-PTV3', async () => {
     const sdsSecunet = readResourceFile('connSds', 'koco-PTV3.xml');
     const ptv = determinePtv(sdsSecunet);

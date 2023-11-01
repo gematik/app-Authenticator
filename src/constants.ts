@@ -66,7 +66,7 @@ export const IPC_GET_PROXY = 'IPC_GET_PROXY';
 export const IPC_WARN_USER = 'IPC_WARN_USER';
 
 /**
- * Start check new update process
+ * Start check a new update process
  */
 export const IPC_CHECK_UPDATE = 'IPC_CHECK_UPDATE';
 export const IPC_CANCEL_UPDATE = 'IPC_CANCEL_UPDATE';
@@ -189,3 +189,5 @@ export enum P12_VALIDITY_TYPE {
   'TOO_MANY_CERTIFICATES',
   'PROCESSING_EXCEPTION',
 }
+
+export const STORAGE_CONFIG_KEYS = { HBA_CARD_USER_ID: 'userIdForCard-' };

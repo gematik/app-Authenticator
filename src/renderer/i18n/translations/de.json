@@ -10,6 +10,7 @@
   "version": "Version { version }",
   "managing_director": "Geschäftsführer",
   "save": "Speichern",
+  "save_changes": "Änderung speichern",
   "file_selected": "Datei Ausgewählt",
   "welcome_to_our_authenticator_app": "Sichere Anmeldung in der Telematikinfrastruktur",
   "cancel": "Abbrechen",
@@ -115,6 +116,12 @@
   "proxy_password": "Passwort",
   "proxy_client_certificate": "Client-Zertifikat",
   "proxy_ignore_list": "kein Proxy für:",
+  "use_os_proxy_settings": "Betriebssystem Einstellungen benutzen",
+  "info_text_use_os_proxy_settings": "Bei Aktivierung dieser Funktion werden automatisch die Proxy-Einstellungen des Betriebssystems verwendet.",
+  "proxy_address": "Adresse",
+  "info_text_proxy_address": "Die Adresse unter welcher der Proxy erreichbar ist.",
+  "proxy_port": "Port",
+  "info_text_proxy_port": "Der Port unter welcher der Proxy erreichbar ist.",
   "select_smcb_header": "Bitte wählen Sie eine SMC-B aus:",
   "select_smcb": "( Es befinden sich mehrere SMC-Bs in den verbundenen Kartenterminals )",
   "readability_test_Multi_SMCBs": "Mehrere SMC-Bs im Karten-Terminal gefunden",
@@ -170,7 +177,7 @@
     },
     "AUTHCL_1103": {
       "title": "Ungültiger PIN-Status",
-      "text": "Entweder ist die {cardType}-Karte gesperrt oder nicht zugelassen. Stellen Sie sicher, dass die Karte bereits entsperrt wurde. Sollte dies bereits der Fall sein, ist diese Karte nicht mehr zugelassen und es muss eine neue Karte beantragt werden. Fehlercode (AUTHCL_1103)"
+      "text": "Entweder ist die {cardType}-Karte gesperrt oder nicht zugelassen. Stellen Sie sicher, dass die Karte bereits entsperrt wurde. Sollte dies bereits der Fall sein, ist diese Karte nicht mehr zugelassen und es muss eine neue Karte beantragt werden. Weitere Informationen finden Sie über den Button 'Lösungsweg zu zu diesem Fehlercode'. Fehlercode (AUTHCL_1103)"
     },
     "AUTHCL_1104": {
       "title": "Remote PIN-Eingabe für {cardType}-Karte nicht möglich.",
