@@ -64,7 +64,7 @@ class ConnectorConfig {
     mandantId: 'mandant1',
     clientId: 'client1',
     workplaceId: 'workplace1',
-    userId: 'user1',
+    userId: '',
   };
 
   public certReaderParameter = {

@@ -23,21 +23,23 @@ import {
 } from '@/config';
 import { COMMON_USED_REGEXES, P12_VALIDITY_TYPE } from '@/constants';
 import { TRepositoryData } from '@/renderer/modules/settings/repository';
-import i18n from '@/renderer/i18n';
 import { AuthenticatorError, UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 import { checkPemFileFormat, PEM_TYPES } from '@/renderer/utils/pem-file-validator';
 import { copyUploadedFileToTargetDir } from '@/renderer/utils/read-tls-certificates';
 import Swal from 'sweetalert2';
+import i18n from '@/renderer/i18n';
+import ConnectorIcon from '@/assets/icon-connector.svg';
 
 /* @if MOCK_MODE == 'ENABLED' */
 import {
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
+
 /* @endif */
 
-const translate = i18n.global.tc;
+const translate = i18n.global.t;
 
 export function getFormSections(repositoryData: TRepositoryData): IConfigSection[] {
   let mocked = false;
@@ -167,7 +169,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
     {
       title: translate('connector_settings'),
       hide: mocked,
-      icon: 'icon-connector.svg',
+      icon: ConnectorIcon,
       columns: [
         {
           label: translate('host'),
@@ -398,6 +400,28 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           },
         },
         {
+          label: translate('use_os_proxy_settings'),
+          key: PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('info_text_use_os_proxy_settings'),
+        },
+        {
+          label: translate('proxy_address'),
+          key: PROXY_SETTINGS_CONFIG.PROXY_ADDRESS,
+          type: 'input',
+          hide: repositoryData[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS] === true,
+          infoText: translate('info_text_proxy_address'),
+        },
+        {
+          label: translate('proxy_port'),
+          key: PROXY_SETTINGS_CONFIG.PROXY_PORT,
+          type: 'input',
+          validationRegex: COMMON_USED_REGEXES.NUMBER,
+          hide: repositoryData[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS] === true,
+          infoText: translate('info_text_proxy_port'),
+        },
+        {
           label: translate('proxy_ignore_list'),
           key: PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST,
           type: 'input',
@@ -440,7 +464,6 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
   if (file === null) {
     throw new UserfacingError('Invalid File', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1114);
   }
-
   const pfxFilename = file?.name.toString();
 
   const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE;

@@ -12,7 +12,7 @@ exports[`configMapperByGroup and error handling response should set context para
 {
   "clientId": "Client-System-y",
   "mandantId": "Mandant-y",
-  "userId": "user1",
+  "userId": "",
   "workplaceId": "Arbeitsplatz-y",
 }
 `;

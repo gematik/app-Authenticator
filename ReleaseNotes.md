@@ -2,13 +2,37 @@
 
 # Release Authenticator
 
+## Version 4.7.0
+
+### added
+- Introduced XenDesktop support
+- Added asterisks support for the Proxy setting "kein Proxy für"
+- Introduced manual proxy settings
+- Integrated VueJs 3 across the entire project
+- Introduced a Save button after functional tests
+- Opted out of creating a desktop icon during installation
+- Made the app MacOS compatible (for development only)
+- Prevented auto-updates on mock-versions
+
+### bugfix
+- Streamlined "environment variables check" for more efficient handling
+- Enhanced logic for retrieving the config path
+- Refined deeplink validation mechanism
+- Ensured case sensitivity handling for card types
+- Correctly parsed string boolean values to actual booleans
+- Removed redundant vue.config.js file from the project
+
+### security
+- Each HBA now has a unique UserID
+
+
 ## Version 4.6.0
 
 added:
 
 - Implemented a new card type "MULTI" to login via HBA & SMC-B with one click
 - The Authenticator now handles multiple authentication requests properly
-- User-friendly error messages with hinds to solve the problem
+- User-friendly error messages with hints to solve the problem
 
 bugfix:
 

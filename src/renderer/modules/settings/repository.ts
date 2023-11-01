@@ -52,6 +52,7 @@ export interface ISettingsRepository {
 export const INITIAL_STATE = {
   [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: true,
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
+  [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
   [TLS_AUTH_TYPE_CONFIG]: TlsAuthType.ServerCertAuth,
 
@@ -64,7 +65,7 @@ export class FileStorageRepository implements ISettingsRepository {
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
 
-  public static getConfigPath(): { path: string; localEnv: boolean } {
+  public static getConfigDir(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
     const computerName = PROCESS_ENVS.COMPUTERNAME;
     const authConfigPath = PROCESS_ENVS.AUTHCONFIGPATH;
@@ -78,13 +79,13 @@ export class FileStorageRepository implements ISettingsRepository {
 
     // Abhängig von folgenden Umgebungsvariablen wird die Lokalität der zu verwendenden config.json in folgender Reihenfolge bestimmt:
     // 1. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable ViewClient_Machine_Name (VMWARE)
-    //    => config.json im Folder: AUTHCONFIGPATH + //ViewClient_Machine_Name//config.json
+    //    → config.json im Folder: AUTHCONFIGPATH + //ViewClient_Machine_Name//config.json
     // 2. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable CLIENTNAME (CITRIX)
-    //    => config.json im Folder: AUTHCONFIGPATH + //CLIENTNAME//config.json
+    //    → config.json im Folder: AUTHCONFIGPATH + //CLIENTNAME//config.json
     // 3. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable COMPUTERNAME
-    //    => config.json im Folder: AUTHCONFIGPATH + //COMPUTERNAME//config.json
+    //    → config.json im Folder: AUTHCONFIGPATH + //COMPUTERNAME//config.json
     // 4. Für alle anderen Fälle (auch im Fehlerfall das der AUTHCONFIGPATH nicht existiert!):
-    //    => config.json im Installationsverzeichnis der exe ( wie bisher )
+    //    → config.json im Installationsverzeichnis der exe ( wie bisher )
 
     //wenn keine config.json in dem viewClientMachineName, clientName oder computerName Pfad existiert, dann wird die lokale config benutzt
     let configPath = '';
@@ -111,12 +112,12 @@ export class FileStorageRepository implements ISettingsRepository {
     return { path: window.api.sendSync(IPC_GET_PATH, 'userData') as string, localEnv: true };
   }
 
-  private static path(): string {
+  public static getPath(): string {
     if (FileStorageRepository._path) {
       return FileStorageRepository._path;
     }
 
-    const config = FileStorageRepository.getConfigPath();
+    const config = FileStorageRepository.getConfigDir();
     let path = config.path;
     if (config.localEnv) {
       path = path.replace('Roaming', 'Local');
@@ -151,7 +152,7 @@ export class FileStorageRepository implements ISettingsRepository {
     /* @if MOCK_MODE == 'ENABLED' */
     FileStorageRepository.printConfig();
     /* @endif */
-    return window.api.writeFileSync(FileStorageRepository.path(), JSON.stringify(unFlatted));
+    return window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted));
   }
 
   /**
@@ -162,19 +163,25 @@ export class FileStorageRepository implements ISettingsRepository {
       return storedData;
     }
 
-    // forceReload happens when env vars get changed,
-    // that means we need to re calculate the path
+    // forceReload happens when env vars get changed;
+    // that means we need to recalculate the path
     if (forceReload) {
       FileStorageRepository._path = null;
     }
 
-    if (!window.api.existsSync(FileStorageRepository.path())) {
+    if (!window.api.existsSync(FileStorageRepository.getPath())) {
       return { ...INITIAL_STATE };
     }
 
-    const buffer = window.api.readFileSync(FileStorageRepository.path(), FileStorageRepository.encoding);
+    const buffer = window.api.readFileSync(FileStorageRepository.getPath(), FileStorageRepository.encoding);
     const string = buffer.toString();
-    const json = JSON.parse(string);
+
+    // convert string to json and convert string booleans to booleans
+    const json = JSON.parse(string, (key, value) => {
+      if (value === 'true') return true;
+      if (value === 'false') return false;
+      return value;
+    });
 
     const data = {
       ...INITIAL_STATE,
@@ -193,13 +200,13 @@ export class FileStorageRepository implements ISettingsRepository {
   clear(): void {
     storedData = {};
 
-    if (window.api.existsSync(FileStorageRepository.path())) {
-      window.api.unlinkSync(FileStorageRepository.path());
+    if (window.api.existsSync(FileStorageRepository.getPath())) {
+      window.api.unlinkSync(FileStorageRepository.getPath());
     }
   }
 
   exist(): boolean {
-    return window.api.existsSync(FileStorageRepository.path());
+    return window.api.existsSync(FileStorageRepository.getPath());
   }
 
   /**

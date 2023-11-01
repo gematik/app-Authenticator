@@ -15,16 +15,14 @@
 import { createI18n } from 'vue-i18n';
 
 import de from './translations/de.json';
-// import en from './translations/en';
 
-// Ready translated locale messages
 const messages = {
-  // en,
   de,
 };
 
 // Create VueI18n instance with options
 export default createI18n({
+  legacy: false,
   locale: 'de', // navigator.language.substr(0, 2),
   fallbackLocale: 'de',
   messages, // set locale messages

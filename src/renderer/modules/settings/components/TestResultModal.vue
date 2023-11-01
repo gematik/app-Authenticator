@@ -70,6 +70,13 @@
             <button
               class="bg-blue-500 text-white active:bg-blue-600 font-bold text-xs px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
               type="button"
+              @click="saveSettings"
+            >
+              {{ $t('save_changes') }}
+            </button>
+            <button
+              class="bg-blue-500 text-white active:bg-blue-600 font-bold text-xs px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+              type="button"
               @click="closeModal"
             >
               {{ $t('close_dlg') }}
@@ -94,6 +101,10 @@ export default defineComponent({
       required: true,
     },
     closeModal: {
+      type: Function,
+      required: true,
+    },
+    saveSettings: {
       type: Function,
       required: true,
     },

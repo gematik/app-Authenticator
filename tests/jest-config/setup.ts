@@ -62,7 +62,7 @@ const TEST_CONFIG_FILE_NAME = 'test-config.json';
 const TEST_CONFIG_FILE_PATH = path.join(TEST_CONFIG_DIR_PATH, PRODUCT_NAME, TEST_CONFIG_FILE_NAME);
 fs.mkdirSync(path.join(TEST_CONFIG_DIR_PATH, PRODUCT_NAME), { recursive: true });
 
-jest.spyOn(FileStorageRepository as any, 'path').mockReturnValue(TEST_CONFIG_FILE_PATH);
+jest.spyOn(FileStorageRepository as any, 'getPath').mockReturnValue(TEST_CONFIG_FILE_PATH);
 Object.defineProperty(FileStorageRepository, '_path', { value: TEST_CONFIG_FILE_PATH });
 
 // clear test config file

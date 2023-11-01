@@ -46,11 +46,14 @@ export const TLS_AUTH_TYPE_CONFIG = 'connector.tlsAuthType';
 export const CHECK_UPDATES_AUTOMATICALLY_CONFIG = 'checkUpdatesAutomatically';
 
 export const PROXY_SETTINGS_CONFIG = {
+  USE_OS_SETTINGS: 'proxy.useOsSettings',
   AUTH_TYPE: 'proxy.proxySettingsType',
   PROXY_USERNAME: 'proxy.proxySettingsUsername',
   PROXY_PASSWORD: 'proxy.proxySettingsPassword',
   PROXY_CERTIFICATE_PATH: 'proxy.proxySettingsCertificatePath',
   PROXY_IGNORE_LIST: 'proxy.proxyIgnoreList',
+  PROXY_ADDRESS: 'proxy.proxySettingsAddress',
+  PROXY_PORT: 'proxy.proxySettingsPort',
 };
 
 export enum PROXY_AUTH_TYPES {

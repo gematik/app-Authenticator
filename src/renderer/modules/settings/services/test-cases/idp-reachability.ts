@@ -16,12 +16,11 @@ import { TestResult, TestStatus } from '@/renderer/modules/settings/services/tes
 import { PathProvider } from '@/renderer/service/path-provider';
 import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
-import i18n from '@/renderer/i18n';
 import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
-
-const translate = i18n.global.tc;
+import i18n from '@/renderer/i18n';
 
 export async function idpReachabilityTest(): Promise<TestResult[]> {
+  const translate = i18n.global.t;
   const results: TestResult[] = [];
   let idpList: Record<string, string> = {};
 

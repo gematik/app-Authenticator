@@ -17,7 +17,7 @@ import { printTestTitle, readResourceFile, TestCategory } from '../../../../Test
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
 let endpoints: Map<string, string>;
-describe(TestCategory.positivTest, () => {
+describe('SdsParser for TLS parses correctly for different Endpoints', () => {
   printTestTitle(__filename);
   it(TestCategory.utilTest + ': Endpoint secunet-PTV4', async () => {
     const sdsSecunet = readResourceFile('connSds', 'secunet-PTV4.xml');
