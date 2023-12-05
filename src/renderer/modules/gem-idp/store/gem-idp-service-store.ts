@@ -27,6 +27,7 @@ import {
   TGemIdpServiceStore,
 } from '@/renderer/modules/gem-idp/store/gem-idp-service-store.d';
 import { parseErrorMessageToIDPError, parseUrlToIdpError, userAgent } from '@/renderer/utils/utils';
+import { removePathFromChallenge } from '@/renderer/utils/parse-idp-url';
 import { TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 import { StatusCodes } from 'http-status-codes';
 import { TClientRes } from '@/main/services/http-client';
@@ -127,6 +128,16 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
   actions: {
     async getDiscoveryDocument(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<void> {
       try {
+        await context.dispatch('setOpenIdConfiguration');
+      } catch (err) {
+        const challengePath = context.state.challengePath;
+        const parseAndSetIdpHost = removePathFromChallenge(challengePath);
+        context.commit('setIdpHost', parseAndSetIdpHost);
+        await context.dispatch('setOpenIdConfiguration');
+      }
+    },
+    async setOpenIdConfiguration(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<void> {
+      try {
         const res = await window.api.httpGet(context.state.idpHost + IDP_ENDPOINTS.OPENID_CONFIGURATION, {
           ...httpsReqConfig(),
           headers: {
@@ -202,7 +213,7 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
           error_uri: response?.headers?.error_uri,
         });
 
-        // When the idp sends a exception as a redirect parse message search parameter to idp Error
+        // When the idp sends an exception as a redirect parse message search parameter to idp Error
         let parsedIdpError;
         if (response.statusCode == StatusCodes.MOVED_TEMPORARILY && !response.data) {
           parsedIdpError = parseUrlToIdpError(err.message);

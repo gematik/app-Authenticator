@@ -3,6 +3,11 @@ import { FileStorageRepository, INITIAL_STATE, TRepositoryData } from '@/rendere
 describe('FileStorageRepository', () => {
   let settingsRepo: FileStorageRepository;
 
+  beforeAll(() => {
+    jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+    jest.spyOn(FileStorageRepository as any, 'readFromCm').mockReturnValue({});
+  });
+
   beforeEach(() => {
     settingsRepo = new FileStorageRepository();
   });

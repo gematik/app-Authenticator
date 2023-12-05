@@ -68,6 +68,7 @@ import Swal from 'sweetalert2';
 import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
+import { removeLastPartOfChallengePath } from '@/renderer/utils/parse-idp-url';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -162,6 +163,11 @@ export default defineComponent({
       }
     },
     async startAuthenticationFlow(_: Event, args: TOidcProtocol2UrlSpec): Promise<void> {
+      logger.info('\n\n\n');
+      logger.info('###############################################');
+      logger.info('#### New Authentication Flow is started! ######');
+      logger.info('###############################################');
+
       let error: UserfacingError | null = null;
 
       // go to home page
@@ -772,14 +778,13 @@ export default defineComponent({
       await this.finishAndStartNextFlow();
     },
     /**
-     * To get .well-known information from the IdP, we need to parse the challengePath
+     * To gets the .well-known information from the IdP, we need to parse the challengePath
      * and get the host name of it
      */
     parseAndSetIdpHost() {
       const challengePath = this.$store.state.gemIdpServiceStore.challengePath;
-      const parsedChallengePath = new URL(challengePath || '');
-      const host = parsedChallengePath.protocol + '//' + parsedChallengePath.host;
-      this.$store.commit('gemIdpServiceStore/setIdpHost', host);
+      const parseAndSetIdpHost = removeLastPartOfChallengePath(challengePath);
+      this.$store.commit('gemIdpServiceStore/setIdpHost', parseAndSetIdpHost);
     },
     /**
      * Returns a parameter from challenge path and removes the parameter from challenge path

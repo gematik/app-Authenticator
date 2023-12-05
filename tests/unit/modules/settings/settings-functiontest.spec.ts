@@ -43,7 +43,7 @@ describe('settings function test', () => {
     const fsr = new FileStorageRepository();
     fsr.save(SAMPLE_CONFIG_DATA);
 
-    expect(fsr.load()).toStrictEqual(SAMPLE_CONFIG_DATA);
+    expect(fsr.load()).toStrictEqual(dot.dot(SAMPLE_CONFIG_DATA));
 
     fsr.clear();
     fsr.save(SAMPLE_CONFIG_DATA);

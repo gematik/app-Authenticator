@@ -36,6 +36,8 @@ import {
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
+import { getMatch } from 'ip-matching';
+import { logger } from '@/renderer/service/logger';
 
 /* @endif */
 
@@ -229,6 +231,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
           infoText: translate('info_text_username_con'),
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.BasicAuth,
         },
         {
           label: translate('password_from_connector'),
@@ -236,6 +239,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'password',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
           infoText: translate('info_text_password_con'),
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.BasicAuth,
         },
         {
           label: translate('private_key'),
@@ -308,6 +312,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
           infoText: translate('info_text_pfx_file'),
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.ServerClientCertAuth_Pfx,
           /**
            * Moves file to right position and renames it
            * @param e
@@ -362,6 +367,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
           infoText: translate('info_text_proxy_username'),
+          required: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] === PROXY_AUTH_TYPES.BASIC_AUTH,
         },
         {
           label: translate('proxy_password'),
@@ -369,6 +375,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'password',
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.BASIC_AUTH,
           infoText: translate('info_text_proxy_password'),
+          required: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] === PROXY_AUTH_TYPES.BASIC_AUTH,
         },
         {
           label: translate('proxy_client_certificate'),
@@ -410,6 +417,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('proxy_address'),
           key: PROXY_SETTINGS_CONFIG.PROXY_ADDRESS,
           type: 'input',
+          required: true,
           hide: repositoryData[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS] === true,
           infoText: translate('info_text_proxy_address'),
         },
@@ -417,6 +425,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('proxy_port'),
           key: PROXY_SETTINGS_CONFIG.PROXY_PORT,
           type: 'input',
+          required: true,
           validationRegex: COMMON_USED_REGEXES.NUMBER,
           hide: repositoryData[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS] === true,
           infoText: translate('info_text_proxy_port'),
@@ -425,6 +434,39 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('proxy_ignore_list'),
           key: PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST,
           type: 'input',
+          validateInput: (value) => {
+            try {
+              // Split the input string into an array of individual addresses
+              const ipAddresses = value.split(';').map((ip) => ip.trim());
+              // Validate each individual IP address and keep track of invalid addresses
+              const invalidAddresses: string[] = [];
+              const isIPValid = ipAddresses.every((ip) => {
+                try {
+                  const result = getMatch(ip);
+                  return !!result;
+                } catch (error) {
+                  // Add the invalid address to the list
+                  invalidAddresses.push(ip);
+                  return false;
+                }
+              });
+
+              // Shows an error message if some given ip address is invalid and when which of them
+              if (!isIPValid) {
+                const invalidIPAddress = `${invalidAddresses.join(', ')}`;
+                Swal.fire({
+                  title: translate('error_info'),
+                  text: i18n.global.t('invalid_ip_address', { invalidIPAddress }),
+                  icon: 'error',
+                });
+                return false;
+              }
+              return true;
+            } catch (error) {
+              logger.error('Error validating IP for Proxy Ignore-List:', error);
+              return false;
+            }
+          },
           infoText: translate('info_text_proxy_ignore_list'),
         },
       ],

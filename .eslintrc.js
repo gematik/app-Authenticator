@@ -54,6 +54,7 @@ module.exports = {
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    'no-control-regex': 'off',
   },
   overrides: [
     {

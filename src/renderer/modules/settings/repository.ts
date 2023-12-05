@@ -13,16 +13,27 @@
  */
 
 import dot from 'dot-object';
-import { APP_NAME, CONFIG_FILE_NAME, IPC_GET_PATH, PROCESS_ENVS, PRODUCT_NAME } from '@/constants';
+import {
+  APP_NAME,
+  CONFIG_FILE_NAME,
+  IPC_GET_PATH,
+  IPC_READ_CREDENTIALS,
+  IPC_SAVE_CREDENTIALS,
+  PROCESS_ENVS,
+  PRODUCT_NAME,
+} from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_SETTINGS_CONFIG,
+  SENSITIVE_CONFIG_KEYS_LIST,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
 import { TlsAuthType } from '@/@types/common-types';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
+import { ERROR_CODES } from '@/error-codes';
+import { UserfacingError } from '@/renderer/errors/errors';
 
 export interface TRepositoryData {
   [key: string]: number | string | boolean;
@@ -62,8 +73,25 @@ export const INITIAL_STATE = {
 };
 
 export class FileStorageRepository implements ISettingsRepository {
+  static get isNewInstallation(): boolean {
+    return this._isNewInstallation;
+  }
+  static set isNewInstallation(value: boolean) {
+    this._isNewInstallation = value;
+  }
+
+  static get usesCredentialManager(): boolean {
+    return this._usesCredentialManager;
+  }
+
+  static set usesCredentialManager(value: boolean) {
+    this._usesCredentialManager = value;
+  }
+
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
+  private static _usesCredentialManager = false;
+  private static _isNewInstallation = false;
 
   public static getConfigDir(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
@@ -85,7 +113,7 @@ export class FileStorageRepository implements ISettingsRepository {
     // 3. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable COMPUTERNAME
     //    → config.json im Folder: AUTHCONFIGPATH + //COMPUTERNAME//config.json
     // 4. Für alle anderen Fälle (auch im Fehlerfall das der AUTHCONFIGPATH nicht existiert!):
-    //    → config.json im Installationsverzeichnis der exe ( wie bisher )
+    //    → config.json im Installationsverzeichnis der exe (wie bisher)
 
     //wenn keine config.json in dem viewClientMachineName, clientName oder computerName Pfad existiert, dann wird die lokale config benutzt
     let configPath = '';
@@ -100,12 +128,7 @@ export class FileStorageRepository implements ISettingsRepository {
         logger.info(' - config über COMPUTERNAME');
         configPath = window.api.pathJoin(authConfigPath.toString(), computerName.toString());
       }
-      const testPath = window.api.pathJoin(configPath, '/', CONFIG_FILE_NAME);
-      if (window.api.existsSync(testPath) && window.api.isFile(testPath)) {
-        return { path: configPath, localEnv: false };
-      }
-
-      logger.info(' - config Pfad nicht valide!');
+      return { path: configPath, localEnv: false };
     }
 
     logger.info(' - config über Anwendungsverzeichnis');
@@ -138,7 +161,7 @@ export class FileStorageRepository implements ISettingsRepository {
 
     FileStorageRepository._path = path;
 
-    logger.info(' - config.json path:' + path);
+    logger.info(' - config.json path: ' + path);
     return path;
   }
 
@@ -148,11 +171,100 @@ export class FileStorageRepository implements ISettingsRepository {
 
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
-    const unFlatted = dot.object({ ...data });
+
+    const { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail } = FileStorageRepository.decideToSaveToCM();
+    const nonSensitiveData = FileStorageRepository.filterSensitiveData(data);
+    let dataToSaveConfigFile: TRepositoryData = saveAllToConfigFileOnFail ? data : nonSensitiveData;
+
+    // save to credential manager
+    if (shouldSaveToCM) {
+      const savedToCMSuccessfully = FileStorageRepository.saveToCm(data);
+
+      if (!savedToCMSuccessfully && showWarningOnFail) {
+        throw new UserfacingError('Could not save to credential manager', '', ERROR_CODES.AUTHCL_0010);
+      }
+
+      if (savedToCMSuccessfully) {
+        dataToSaveConfigFile = nonSensitiveData;
+      }
+    } else {
+      dataToSaveConfigFile = data;
+    }
+
+    const unFlatted = dot.object({ ...dataToSaveConfigFile });
+    window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted));
+
+    logger.info('Saved config changes under: ', FileStorageRepository.getPath());
+
     /* @if MOCK_MODE == 'ENABLED' */
     FileStorageRepository.printConfig();
     /* @endif */
-    return window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted));
+  }
+
+  static saveToCm(data?: TRepositoryData): boolean {
+    return window.api.sendSync(IPC_SAVE_CREDENTIALS, data) as boolean;
+  }
+
+  static readFromCm(): Partial<TRepositoryData> {
+    return (window.api.sendSync(IPC_READ_CREDENTIALS) as Partial<TRepositoryData>) || {};
+  }
+
+  static decideToSaveToCM(): {
+    shouldSaveToCM: boolean;
+    showWarningOnFail: boolean;
+    saveAllToConfigFileOnFail: boolean;
+  } {
+    let shouldSaveToCM;
+    let showWarningOnFail;
+    let saveAllToConfigFileOnFail;
+
+    const isCentralConfiguration = PROCESS_ENVS.AUTHCONFIGPATH;
+
+    // If it's a new installation
+    if (FileStorageRepository._isNewInstallation) {
+      shouldSaveToCM = true;
+      showWarningOnFail = true;
+      saveAllToConfigFileOnFail = false;
+    } else {
+      if (isCentralConfiguration) {
+        if (FileStorageRepository._usesCredentialManager) {
+          shouldSaveToCM = true;
+          saveAllToConfigFileOnFail = false;
+          showWarningOnFail = true;
+        } else {
+          shouldSaveToCM = false;
+          saveAllToConfigFileOnFail = true;
+          showWarningOnFail = true;
+        }
+      } else {
+        if (FileStorageRepository._usesCredentialManager) {
+          saveAllToConfigFileOnFail = false;
+          showWarningOnFail = true;
+          shouldSaveToCM = true;
+        } else {
+          saveAllToConfigFileOnFail = true;
+          showWarningOnFail = false;
+          shouldSaveToCM = true;
+        }
+      }
+    }
+
+    return { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail };
+  }
+  /**
+   * This function filters sensitive data from the config data
+   * @param data
+   */
+  static filterSensitiveData(data: TRepositoryData): TRepositoryData {
+    const nonSensitiveData: TRepositoryData = {};
+
+    for (const key in data) {
+      if (!SENSITIVE_CONFIG_KEYS_LIST.includes(key)) {
+        nonSensitiveData[key] = data[key];
+      }
+    }
+
+    return nonSensitiveData;
   }
 
   /**
@@ -169,7 +281,13 @@ export class FileStorageRepository implements ISettingsRepository {
       FileStorageRepository._path = null;
     }
 
+    const sensitiveDataFromCredentialsManager = FileStorageRepository.readFromCm();
+
+    // set usesCredentialManager if sensitiveDataFromCredentialsManager is not empty
+    FileStorageRepository._usesCredentialManager = !!Object.keys(sensitiveDataFromCredentialsManager).length;
+
     if (!window.api.existsSync(FileStorageRepository.getPath())) {
+      FileStorageRepository._isNewInstallation = true;
       return { ...INITIAL_STATE };
     }
 
@@ -177,15 +295,21 @@ export class FileStorageRepository implements ISettingsRepository {
     const string = buffer.toString();
 
     // convert string to json and convert string booleans to booleans
-    const json = JSON.parse(string, (key, value) => {
+    const json = JSON.parse(string, (_, value) => {
       if (value === 'true') return true;
       if (value === 'false') return false;
       return value;
     });
 
+    const dottedData = {
+      ...dot.dot(json),
+      // get sensitive data from credential manager
+      ...sensitiveDataFromCredentialsManager,
+    };
+
     const data = {
       ...INITIAL_STATE,
-      ...dot.dot(json),
+      ...dottedData,
     };
     storedData = data;
 

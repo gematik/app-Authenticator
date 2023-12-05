@@ -120,8 +120,9 @@ describe('config file location test', () => {
     expect(config.localEnv).toBeFalsy();
   });
 
-  // When AUTHCONFIGPATH and CLIENTNAME are set and the path to the config.json did not exist then the local env has to be used
-  it('test FileStorageRepository-getConfigPath-NotExists', async () => {
+  // When AUTHCONFIGPATH and CLIENTNAME are set but no config.json was found, the specified path should still be used.
+  // Because then the user has to create a new config-file which should be saved in the specified path
+  it('test FileStorageRepository-getConfig-NotExists', async () => {
     process.env.NODE_ENV = 'development';
     PROCESS_ENVS.CLIENTNAME = 'NW001';
     PROCESS_ENVS.COMPUTERNAME = 'COMPUTERNAME1';
@@ -129,14 +130,12 @@ describe('config file location test', () => {
 
     existsSyncMock.mockReturnValue(true);
     isFile.mockReturnValue(false);
-    const sendSync = jest.fn();
-    (global as any).window.api.sendSync = sendSync;
-    sendSync.mockReturnValue('userData');
 
     const config = FileStorageRepository.getConfigDir();
 
-    expect(config.path).toEqual('userData');
-    expect(config.localEnv).toBeTruthy();
+    expect(config.path).toContain(PROCESS_ENVS.AUTHCONFIGPATH);
+    expect(config.path).toContain(PROCESS_ENVS.CLIENTNAME);
+    expect(config.localEnv).toBeFalsy();
   });
 
   it("should return the expected config path. When TEMP-Path contains 'temp' in configPath should be only left part of string", () => {

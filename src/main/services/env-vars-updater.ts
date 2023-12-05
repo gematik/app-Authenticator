@@ -61,30 +61,33 @@ async function getVolatileEnv(): Promise<string> {
  */
 export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<void> => {
   FOUND_ENV_VARS = {};
-  let keyValuePairsFromRegistryAsString;
   try {
-    keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
+    const keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
     checkEnvVarsChange('AUTHCONFIGPATH', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+    logger.debug('Error when reading the registry key for AUTHCONFIGPATH: ' + REGISTRY_KEY_SYSTEM_ENV);
   }
   try {
-    keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
-    checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
+    const keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
     checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+    logger.debug('Error when reading the registry key for volatile envs');
   }
   try {
-    keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+    const keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
     checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registrykey: ' + REGISTRY_KEY_SYSTEM_ENV);
+    logger.debug('Error when reading the registry key for CLIENTNAME: ' + REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
   }
 
   let hasVarsChanged = false;
   WATCHED_ENV_VAR_KEYS.forEach((envVar) => {
     const previousVal = UP_TO_DATE_PROCESS_ENVS[envVar];
+
+    if (!FOUND_ENV_VARS[envVar]) {
+      logger.debug(`Env variable change ignored for ${envVar} as it is empty`);
+      return;
+    }
     if (FOUND_ENV_VARS[envVar] !== previousVal?.toUpperCase()) {
       const newValue = FOUND_ENV_VARS[envVar];
       logger.info(`Env variable change detected: ${envVar} changed from ${previousVal} to ${newValue}`);
@@ -138,7 +141,7 @@ export const readRegistryForKey = (regKey: string): Promise<string> => {
 };
 
 /**
- * find the Windows-Session-ID of the running authenticar-executable
+ * find the Windows-Session-ID of the running authenticator-executable
  */
 export const querySessionID = (): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -193,12 +196,12 @@ export const checkEnvVarsChange = (variable: string, data: string) => {
       if (line.includes(variable)) {
         const regex = new RegExp(`${variable}\\s+\\w+\\s+(\\S+)`);
         const match = line.match(regex);
-        const newValue = match && match[1];
+        const newValue = match?.[1] && match[1];
 
-        //when  AUTHCONFIGPATH dont exists ignore it
-        if (variable === 'AUTHCONFIGPATH' && newValue && !fs.existsSync(path.join(newValue || ''))) {
+        // when  authconfigpath doesn't exist ignore it
+        if (variable === 'AUTHCONFIGPATH' && newValue && !fs.existsSync(path.join(newValue))) {
           FOUND_ENV_VARS[variable] = '';
-          logger.debug('The AUTHCONFIGPATH is ignored because it does not exist:' + newValue);
+          logger.debug('The AUTHCONFIGPATH is ignored because it does not exist: ', newValue);
         } else {
           FOUND_ENV_VARS[variable] = newValue || '';
         }

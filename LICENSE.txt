@@ -390,3 +390,6 @@ Drittsoftwareanteile:
 
     Komponente: uuid
     Lizenz: MIT
+
+    Komponente: keytar
+    Lizenz: MIT

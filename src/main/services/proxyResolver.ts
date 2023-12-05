@@ -30,29 +30,38 @@ export async function createProxyAgent(url: string): TReturnType {
   const useOsSetting = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS];
   if (useOsSetting || useOsSetting === undefined) {
     proxyUrl = (await ipcRenderer.sendSync(IPC_GET_PROXY, url)) as string;
+    logger.info('Proxy url picked from os settings');
   } else {
     const host = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_ADDRESS] as string;
     const port = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PORT];
     proxyUrl = host + ':' + port;
+    logger.info('Proxy url picked from config');
   }
   logger.debug('proxy url is:' + proxyUrl);
   const ignoreProxyForUrl = await isUrlInProxyIgnoreList(url);
   logger.debug('ignore destination url:' + ignoreProxyForUrl);
 
   if (proxyUrl && !ignoreProxyForUrl) {
+    logger.info('Proxy url exists and is not ignored');
+
     const proxy = new URL(proxyUrl);
     const destinationUrl = new URL(url);
     const isSecure = destinationUrl.protocol === 'https:';
     const proxyBasicAuthSettings = getProxyBasicAuthSettings();
 
     // set username and password for basic auth
-    proxy.username = typeof proxyBasicAuthSettings?.username === 'string' ? proxyBasicAuthSettings.username : '';
-    proxy.password = typeof proxyBasicAuthSettings?.password === 'string' ? proxyBasicAuthSettings.password : '';
+    if (proxyBasicAuthSettings?.username && proxyBasicAuthSettings?.password) {
+      logger.info('App uses basic auth for proxy');
+
+      proxy.username = proxyBasicAuthSettings.username;
+      proxy.password = proxyBasicAuthSettings.password;
+    }
 
     const caIdp = APP_CA_CHAIN_IDP.length === 0 ? undefined : APP_CA_CHAIN_IDP;
 
     const proxyCertificate = getProxyCertificate();
     if (isSecure) {
+      logger.info('Proxy url is an https secure url');
       return new HttpsProxyAgent({
         proxy,
         ca: caIdp,
@@ -61,6 +70,7 @@ export async function createProxyAgent(url: string): TReturnType {
       });
     }
 
+    logger.info('Proxy url is an http url or no url');
     return new HttpProxyAgent({
       proxy,
       proxyRequestOptions: {
@@ -72,37 +82,54 @@ export async function createProxyAgent(url: string): TReturnType {
 
 const isUrlInProxyIgnoreList = async (url: string): Promise<boolean> => {
   const proxyIgnoreList = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST] as string;
-  if (proxyIgnoreList) {
-    const proxyIgnoreEntries = proxyIgnoreList.split(';');
-    for (const proxyIgnoreEntry of proxyIgnoreEntries) {
-      const ipAddress = await geIpAddress(url);
-      if (ipAddress) {
-        const isUrlInIpRange = matches(ipAddress, proxyIgnoreEntry);
-        logger.debug(
-          'ProxyIgnoreEntry:' +
-            proxyIgnoreEntry +
-            ', ipAddress for Url:' +
-            ipAddress +
-            ', is url in proxy ignore range:' +
-            isUrlInIpRange,
-        );
-        if (isUrlInIpRange) {
-          return isUrlInIpRange;
-        }
-      }
+
+  if (!proxyIgnoreList?.trim()) {
+    return false;
+  }
+
+  const ipAddress = await getIpAddress(url);
+
+  if (!ipAddress) {
+    logger.info('Could not resolve ip address for the proxy ignore list');
+    return false;
+  }
+
+  const proxyIgnoreEntries = proxyIgnoreList.split(';');
+  for (const proxyIgnoreEntry of proxyIgnoreEntries) {
+    const isUrlInIpRange = matches(ipAddress, proxyIgnoreEntry);
+    if (isUrlInIpRange) {
+      logger.info('Url is in proxy ignore list');
+      logger.debug(
+        'ProxyIgnoreEntry:' +
+          proxyIgnoreEntry +
+          ', ipAddress for Url:' +
+          ipAddress +
+          ', is url in proxy ignore range:' +
+          isUrlInIpRange,
+      );
+      return isUrlInIpRange;
     }
   }
   return false;
 };
 
-async function geIpAddress(href: string) {
-  let resVal = undefined;
-  dns.lookup(new URL(href).host, (err, address) => {
-    resVal = err ? false : address;
-    return resVal;
+async function getIpAddress(href: string): Promise<string | false> {
+  return new Promise((resolve, reject) => {
+    // timeout for dns lookup, if it takes longer than 200ms, reject with false
+    const timer = setTimeout(() => {
+      resolve(false);
+    }, 200);
+
+    dns.lookup(new URL(href).host, (err, address) => {
+      clearTimeout(timer); // Clear the timer if DNS lookup completes
+      if (err) {
+        reject(false); // Reject with false on error
+        logger.debug('Error while resolving ip address for url:' + href + ', error:' + err);
+      } else {
+        resolve(address); // Resolve with the address on success
+      }
+    });
   });
-  await new Promise((resolve) => setTimeout(resolve, 100));
-  return resVal;
 }
 
 const getProxyBasicAuthSettings = (): void | { password: string; username: string } => {

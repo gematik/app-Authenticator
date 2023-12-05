@@ -38,8 +38,11 @@ const buildVersion = computed(() => {
         <router-link id="navLogin" to="/" class="mr-[16px]">
           {{ $t('registration') }}
         </router-link>
-        <router-link id="navSettings" to="/settings">
+        <router-link id="navSettings" to="/settings" class="mr-[16px]">
           {{ $t('settings') }}
+        </router-link>
+        <router-link id="navHelp" to="/help">
+          {{ $t('help') }}
         </router-link>
       </div>
       <img src="@/assets/logo_gematik.svg" class="object-contain" alt="logo" />

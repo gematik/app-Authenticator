@@ -1,5 +1,5 @@
 <!--
-  - Copyrig^^ht 2023 gematik GmbH
+  - Copyright 2023 gematik GmbH
   -
   - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
   - Sourcecode must be in compliance with the EUPL.
@@ -45,6 +45,7 @@
             :options="config.options"
             :hide="config.hide"
             :validation-regex="config.validationRegex"
+            :validate-input="config.validateInput"
             :on-element-change="config.onChange"
             :info-text="config.infoText"
           />
@@ -103,6 +104,8 @@ import { logger } from '@/renderer/service/logger';
 import { IPC_UPDATE_ENV } from '@/constants';
 import { IConfigSection } from '@/@types/common-types';
 import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
+import { UserfacingError } from '@/renderer/errors/errors';
+import { alertDefinedErrorWithDataOptional } from '@/renderer/utils/utils';
 
 export default defineComponent({
   name: 'SettingsScreen',
@@ -201,15 +204,20 @@ export default defineComponent({
         save(toRaw(configValues.value));
         closeModal();
       } catch (err) {
-        logger.error('Config file could not be saved: ', err.message);
-
-        await Swal.fire({
-          title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
-          text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
-            configPath: FileStorageRepository.getPath(),
-          }),
-          icon: 'error',
-        });
+        // for credential manager we show another error
+        if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0010) {
+          logger.error("Couldn't save to credential manager");
+          await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0010);
+        } else {
+          logger.error('Config file could not be saved: ', err.message);
+          await Swal.fire({
+            title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
+            text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
+              configPath: FileStorageRepository.getPath(),
+            }),
+            icon: 'error',
+          });
+        }
 
         return false;
       }
@@ -219,8 +227,11 @@ export default defineComponent({
 
       await Swal.fire({
         title: translate('settings_saved_successfully'),
-        timer: 1000,
-        showConfirmButton: false,
+        text: translate('settings_saved_config_path_value', {
+          configPath: FileStorageRepository.getPath(),
+        }),
+        timer: 3000,
+        showConfirmButton: true,
         icon: 'success',
       });
     }

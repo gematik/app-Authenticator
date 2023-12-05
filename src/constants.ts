@@ -22,6 +22,8 @@ export const ALLOWED_DEEPLINK_PROTOCOLS = ['tim'];
  */
 export const CUSTOM_PROTOCOL_NAME = 'authenticator';
 
+export const CREDENTIALS_MANAGER_SERVICE_NAME = 'Gematik_Authenticator';
+
 /**
  * Additional Information in the request header user-agent to the idp
  */
@@ -43,6 +45,9 @@ export const IPC_START_AUTH_FLOW_EVENT = 'IPC_START_AUTH_FLOW_EVENT';
  * Event name for redirecting the http request
  */
 export const IPC_GET_PATH = 'IPC_GET_PATH';
+
+export const IPC_READ_CREDENTIALS = 'IPC_READ_CREDENTIALS';
+export const IPC_SAVE_CREDENTIALS = 'IPC_SAVE_CREDENTIALS';
 
 /**
  * This sets the user agent in the main process
@@ -124,13 +129,25 @@ export const WIKI_ERRORCODES_URL = 'https://wiki.gematik.de/x/-A3OGw';
 /**
  * URL zum Authenticator-Sharepoint
  */
-export const SharePoint_URL =
+export const SHAREPOINT_URL =
   'https://gematikde.sharepoint.com/:f:/s/EXTAuthenticator/Eufh1_mbmhhImVH1ZDhgKOwBZogXt6S9PxgT7WkAY20tkA?e=1S8IR5';
+/**
+ * URL zur Authenticator GitHub Release Übersicht
+ */
+export const GITHUB_URL = 'https://github.com/gematik/app-Authenticator/releases';
+/**
+ * URL zum Installationshandbuch des Authenticators
+ */
+export const MANUAL_URL = 'https://wiki.gematik.de/x/UTlCH';
 /**
  * URL zum Authenticator-Fachportal
  */
-export const Fachportal_URL =
+export const FACHPORTAL_URL =
   'https://fachportal.gematik.de/hersteller-anbieter/komponenten-dienste/authenticator#c6684';
+/**
+ * URL zum Authenticator Voraussetzungs- und Kriterienkatalog
+ */
+export const CRITERIA_CATALOGUE_URL = 'https://wiki.gematik.de/x/FpTRHQ';
 /**
  *
  */
@@ -190,4 +207,6 @@ export enum P12_VALIDITY_TYPE {
   'PROCESSING_EXCEPTION',
 }
 
-export const STORAGE_CONFIG_KEYS = { HBA_CARD_USER_ID: 'userIdForCard-' };
+export const STORAGE_CONFIG_KEYS = {
+  HBA_CARD_USER_ID: 'userIdForCard-',
+};

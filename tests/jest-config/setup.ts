@@ -81,3 +81,26 @@ function fail(reason = 'fail was called in a test.') {
 
 // @ts-ignore
 global.fail = fail;
+
+export const mockKeyTar = async (
+  setPasswordWasSuccessful = true,
+  deletePasswordWasSuccessful = true,
+  findCredentials = [],
+) => {
+  jest.mock('keytar', () => ({
+    findCredentials: jest.fn().mockResolvedValue(findCredentials),
+    setPassword: jest.fn().mockResolvedValue(setPasswordWasSuccessful),
+    deletePassword: jest.fn().mockResolvedValue(deletePasswordWasSuccessful),
+  }));
+};
+
+// mock window.api.existsSync and return true
+export const mockExistsSync = (value = false) => {
+  // @ts-ignore
+  jest.spyOn(window.api, 'existsSync').mockReturnValue(value);
+};
+
+export const mockReadFileSync = (data = {}) => {
+  // @ts-ignore return stored data in buffer
+  jest.spyOn(window.api, 'readFileSync').mockReturnValue(Buffer.from(JSON.stringify(data), 'utf-8'));
+};

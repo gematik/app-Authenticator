@@ -16,10 +16,17 @@ exports[`base template screen render with settings button 1`] = `
         Anmeldung
       </router-link>
       <router-link
+        class="mr-[16px]"
         id="navSettings"
         to="/settings"
       >
         Einstellungen
+      </router-link>
+      <router-link
+        id="navHelp"
+        to="/help"
+      >
+        Hilfe
       </router-link>
     </div>
     <img
@@ -55,7 +62,7 @@ exports[`base template screen render with settings button 1`] = `
     <div
       class="text-sm cursor-default"
       id="lblVersion"
-      title="4.7.0"
+      title="4.8.0"
     >
       Version dev 
     </div>

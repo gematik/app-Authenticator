@@ -62,6 +62,7 @@ export interface IConfig {
   hide?: boolean;
   validationRegex?: RegExp;
   onChange?: (...args: any[]) => void;
+  validateInput?: (value: string) => boolean;
   infoText?: string;
 }
 

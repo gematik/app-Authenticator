@@ -20,6 +20,7 @@ import {
 } from '@/config';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
+import dotObject from 'dot-object';
 
 export const SAMPLE_CONFIG_DATA = {
   [CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]: 'Mandant-y',
@@ -37,6 +38,8 @@ export const SAMPLE_CONFIG_DATA = {
   [MOCK_CONNECTOR_CONFIG]: false,
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
 };
+
+export const SAMPLE_CONFIG_DATA_STRUCTURED = dotObject.object(SAMPLE_CONFIG_DATA);
 
 /**
  * Be aware, test file path is not same with production config file!

@@ -18,11 +18,17 @@
 import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
 import { MOCK_CONNECTOR_CERTS_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { setSampleData } from '../../../../utils/config-sample-data';
+import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 
 const CERT_HEADER = '-----BEGIN CERTIFICATE-----';
 const CERT_FOOTER = '-----END CERTIFICATE-----';
 
 describe('reading mock certificates', () => {
+  beforeAll(() => {
+    jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+    jest.spyOn(FileStorageRepository as any, 'readFromCm').mockReturnValue({});
+  });
+
   it('no path defined', async function () {
     expect(() => {
       readMockCertificate(MOCK_CONNECTOR_CERTS_CONFIG.SMCB_KEY);
