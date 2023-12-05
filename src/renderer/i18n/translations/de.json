@@ -3,12 +3,21 @@
   "disabled": "Deaktiviert",
   "registration": "Anmeldung",
   "settings": "Einstellungen",
+  "help": "Hilfe",
   "settings_please_enter_valid_data": "Bitte geben Sie einen korrekten Eingabewert ein!",
   "imprint": "Impressum",
   "imprint_no_support_hint": "Wir bieten keinen telefonischen Support an. ",
   "imprint_support_hint": "Bei technischen Problemen wenden Sie sich bitte an Ihren IT-Dienstleister oder direkt an den Hersteller bzw. Anbieter.",
   "version": "Version { version }",
   "managing_director": "Geschäftsführer",
+  "header_requirement": "Voraussetzung zur Nutzung",
+  "header_error_codes": "Übersicht der Errorcodes",
+  "header_manual": "Handbuch zum Authenticator",
+  "header_github": "Releases und Code",
+  "text_critieria_catalogue": "Die notwendigen Voraussetzungen zur Nutzung des Authenticators finden Sie in unserem {url}",
+  "text_manual": "Eine ausführliche Step-by-Step Anleitung zur Einrichtung des Authenticators finden Sie in unserem {url}",
+  "text_error_codes": "Eine Auflistung der im Authenticator angezeigten Errorcodes sowie eine genauere Beschreibung finden Sie zusätzlich in unserer {url}",
+  "text_github": "Unsere veröffentlichten Versionen sowie Code finden Sie auf unserer {url}",
   "save": "Speichern",
   "save_changes": "Änderung speichern",
   "file_selected": "Datei Ausgewählt",
@@ -78,6 +87,7 @@
   "pfx_processing_error": "Es ist ein Fehler beim Verarbeiten der P12-Datei aufgetreten.",
   "settings_saved_info": "Die Änderungen sind erst wirksam nach dem Speichern",
   "settings_saved_successfully": "Einstellungen wurden erfolgreich gespeichert",
+  "settings_saved_config_path_value": "Sie finden diese unter: {configPath} ",
   "funktion_test": "Funktionstest",
   "funktion_test_processing": "Einen Moment warten, Funktionstests werden nun durchgeführt...",
   "function_test_finished": "Funktionstest abgeschlossen",
@@ -126,6 +136,7 @@
   "select_smcb": "( Es befinden sich mehrere SMC-Bs in den verbundenen Kartenterminals )",
   "readability_test_Multi_SMCBs": "Mehrere SMC-Bs im Karten-Terminal gefunden",
   "value_is_not_valid": "Wert ist nicht gültig!",
+  "invalid_ip_address": "Ungültige IP-Adresse: {invalidIPAddress}",
   "errors": {
     "technical_error": "Technischer Fehler",
     "technical_error_code": "Bitte kontaktieren Sie Ihren Support. Fehlercode ({code})",
@@ -154,6 +165,11 @@
     "AUTHCL_0009": {
       "title": "Automatische Weiterleitung fehlgeschlagen",
       "text": "Der Authenticator konnte die Webadresse nicht aufrufen. Bitte kontaktieren Sie Ihren DVO oder Administrator und lassen Sie sicherstellen, dass der TrustStore Ihres Betriebssystems die Webadresse aufrufen kann. Fehlercode (AUTHCL_0009)"
+    },
+
+    "AUTHCL_0010": {
+      "title": "Speichern der Zugangsdaten fehlgeschlagen",
+      "text": "Der Authenticator konnte die Zugangsdaten nicht in den Credential Manager speichern. Bitte kontaktieren Sie Ihren DVO oder Administrator und lassen Sie sicherstellen, dass der Credential Manager Ihres Betriebssystems die Zugangsdaten speichern kann. Fehlercode (AUTHCL_0010)"
     },
     "AUTHCL_1001": {
       "title": "Karte konnte nicht abgerufen werden",

@@ -160,6 +160,11 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    validateInput: {
+      type: Function,
+      required: false,
+      default: undefined,
+    },
     hide: {
       type: Boolean,
       required: false,
@@ -269,7 +274,9 @@ export default defineComponent({
       return [];
     },
     validate() {
-      if (this.model[this.name] && this.validationRegex && !this.validationRegex.test(this.model[this.name])) {
+      if (this.model[this.name] && this.validateInput) {
+        this.isValid = this.validateInput(this.model[this.name]);
+      } else if (this.model[this.name] && this.validationRegex && !this.validationRegex.test(this.model[this.name])) {
         this.isValid = false;
       } else {
         this.isValid = true;
@@ -285,7 +292,10 @@ export default defineComponent({
 }
 
 .inner-box-shadow {
-  box-shadow: inset -1px 0 0 #e4e7ec, inset 1px 0 0 #e4e7ec, inset 0 -1px 0 #e4e7ec;
+  box-shadow:
+    inset -1px 0 0 #e4e7ec,
+    inset 1px 0 0 #e4e7ec,
+    inset 0 -1px 0 #e4e7ec;
 }
 
 .settings-input {

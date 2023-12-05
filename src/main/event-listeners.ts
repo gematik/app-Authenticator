@@ -18,11 +18,14 @@ import {
   IPC_GET_APP_PATH,
   IPC_GET_PATH,
   IPC_GET_PROXY,
+  IPC_READ_CREDENTIALS,
   IPC_READ_MAIN_PROCESS_ENVS,
+  IPC_SAVE_CREDENTIALS,
   IPC_SELECT_FOLDER,
 } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { UP_TO_DATE_PROCESS_ENVS } from '@/main/services/env-vars-updater';
+import { getSensitiveConfigValues, saveSensitiveConfigValues } from '@/main/services/credentials-manager';
 
 ipcMain.on(IPC_GET_PATH, (event, name) => {
   event.returnValue = app.getPath(name);
@@ -50,10 +53,11 @@ ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.WARN, (_event, args) => logger.warn(args));
  * Get OS's proxy
  */
 ipcMain.on(IPC_GET_PROXY, async (event, url) => {
-  const session = BrowserWindow.getFocusedWindow()?.webContents.session;
+  const session = BrowserWindow.getAllWindows()[0].webContents.session;
 
   let proxy = '';
   if (session) {
+    logger.info('Session found for resolving proxy');
     const res = await session.resolveProxy(url);
 
     logger.debug('Proxy resolved:' + res);
@@ -66,7 +70,17 @@ ipcMain.on(IPC_GET_PROXY, async (event, url) => {
       }
       proxy = ('HTTPS' === type ? 'https' : 'http') + '://' + proxyUrl;
     }
+  } else {
+    logger.info('No session found for resolving proxy');
   }
   logger.debug('Proxy for Url:' + url + ' is:' + proxy);
   event.returnValue = proxy;
+});
+
+ipcMain.on(IPC_READ_CREDENTIALS, async (event) => {
+  event.returnValue = await getSensitiveConfigValues();
+});
+
+ipcMain.on(IPC_SAVE_CREDENTIALS, async (event, data) => {
+  event.returnValue = await saveSensitiveConfigValues(data);
 });

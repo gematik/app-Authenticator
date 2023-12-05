@@ -91,7 +91,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { TestResult } from '@/renderer/modules/settings/services/test-runner';
-import { Fachportal_URL } from '@/constants';
+import { FACHPORTAL_URL } from '@/constants';
 
 export default defineComponent({
   name: 'TestResultModal',
@@ -117,7 +117,7 @@ export default defineComponent({
   },
   methods: {
     openFachportalURL() {
-      window.api.openExternal(Fachportal_URL);
+      window.api.openExternal(FACHPORTAL_URL);
     },
     onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {

@@ -86,6 +86,7 @@ async function createWindow() {
     backgroundColor: '#F8F9FC',
     autoHideMenuBar: true,
     webPreferences: {
+      devTools: IS_DEV || IS_MOCK,
       sandbox: false, // necessary for us after version 20 as we use NodeJS features in the preload.ts
       webSecurity: appConfig.webSecurity,
       allowRunningInsecureContent: appConfig.webSecurity,

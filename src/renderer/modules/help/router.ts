@@ -12,16 +12,15 @@
  * permissions and limitations under the Licence.
  */
 
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import HomeRouters from '@/renderer/modules/home/router';
-import SettingsRouters from '@/renderer/modules/settings/router';
-import HelpRouters from '@/renderer/modules/help/router';
+import { RouteRecordRaw } from 'vue-router';
+import { HelpScreen } from './index';
 
-const routes: Array<RouteRecordRaw> = [...HomeRouters, ...SettingsRouters, ...HelpRouters];
+const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/help',
+    name: 'Help',
+    component: HelpScreen,
+  },
+];
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes,
-});
-
-export default router;
+export default routes;

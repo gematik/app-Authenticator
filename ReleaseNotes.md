@@ -2,9 +2,26 @@
 
 # Release Authenticator
 
+## Version 4.8.0
+
+### added
+- Deactivation of OS proxy settings now requires mandatory Proxy Address and Port fields entries
+- IP Validation added for Proxy Ignore List in Settings Page
+- Sensitive data is now stored using the Credential Manager
+- New Help page with informative links for better understanding
+
+### bugfix
+- SMC-B flow crash after successful HBA flow issue fixed
+- Improved URL parsing mechanism for accurate identification of host and path in IDP service
+- Config.json storage path adjusted for specified ENV parameters
+- Empty environment variable changes are now ignored
+- Function tests now include only PU IDP endpoints
+- Enhanced logic for IDP domain name definition
+
 ## Version 4.7.0
 
 ### added
+
 - Introduced XenDesktop support
 - Added asterisks support for the Proxy setting "kein Proxy für"
 - Introduced manual proxy settings
@@ -15,6 +32,7 @@
 - Prevented auto-updates on mock-versions
 
 ### bugfix
+
 - Streamlined "environment variables check" for more efficient handling
 - Enhanced logic for retrieving the config path
 - Refined deeplink validation mechanism
@@ -23,8 +41,8 @@
 - Removed redundant vue.config.js file from the project
 
 ### security
-- Each HBA now has a unique UserID
 
+- Each HBA now has a unique UserID
 
 ## Version 4.6.0
 

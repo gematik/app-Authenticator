@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import { SharePoint_URL } from '@/constants';
+import { SHAREPOINT_URL } from '@/constants';
 
 export default {
   name: 'MockVersionHint',
   methods: {
     openSharePointURL() {
-      window.api.openExternal(SharePoint_URL);
+      window.api.openExternal(SHAREPOINT_URL);
     },
   },
 };

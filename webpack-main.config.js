@@ -44,6 +44,10 @@ module.exports = {
       '@': resolve(__dirname, 'src'),
     },
   },
+  externals: {
+    keytar: 'commonjs keytar',
+  },
+
   module: {
     rules: [
       {

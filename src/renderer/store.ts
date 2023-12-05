@@ -26,10 +26,11 @@ export type TRootStore = {
 };
 
 export default createStore({
-  state: (): TRootStore =>
-    ({
+  state: (): TRootStore => {
+    return {
       showLoadingSpinner: false,
-    } as TRootStore),
+    } as TRootStore;
+  },
   mutations: {
     setShowLoadingSpinner(state, newState: boolean) {
       state.showLoadingSpinner = newState;
