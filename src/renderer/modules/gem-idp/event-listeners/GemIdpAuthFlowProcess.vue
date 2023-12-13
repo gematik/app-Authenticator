@@ -84,6 +84,7 @@ export default defineComponent({
   },
   data() {
     return {
+      stepCounter: 0,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       rejectPendingCardActionTimeout: (_error: UserfacingError) => {
         /* do nothing here */
@@ -119,6 +120,7 @@ export default defineComponent({
   },
   methods: {
     async createQueue(event: Event, args: TOidcProtocol2UrlSpec) {
+      this.logStep('createQueue');
       if (this.isAuthProcessActive) {
         this.authQueue.push({ event, args });
         logger.info('Auth process is already active, adding to queue');
@@ -128,6 +130,7 @@ export default defineComponent({
       }
     },
     async showMultiCardSelectDialogModal(): Promise<void> {
+      this.logStep('showMultiCardSelectDialogModal');
       this.showMultiCardSelectModal = true;
       window.api.focusToApp();
 
@@ -145,6 +148,10 @@ export default defineComponent({
     },
 
     async finishAndStartNextFlow() {
+      this.logStep('finishAndStartNextFlow');
+
+      this.stepCounter = 0;
+
       // first clear the stores
       this.$store.commit('connectorStore/resetStore');
       this.$store.commit('gemIdpServiceStore/resetStore');
@@ -303,6 +310,8 @@ export default defineComponent({
       await this.finishAndStartNextFlow();
     },
     async getCardData(cardType: ECardTypes): Promise<void> {
+      this.logStep('getCardData');
+
       // Init Card and get CardHandle
       await this.getCardHandle(cardType);
 
@@ -343,6 +352,7 @@ export default defineComponent({
      * Throws only for connector connection errors
      */
     async getCardTerminals(): Promise<void> {
+      this.logStep('getCardTerminals');
       try {
         await this.$store.dispatch('connectorStore/getCardTerminals');
         logger.info('getTerminals finished');
@@ -359,6 +369,7 @@ export default defineComponent({
      * @param e
      */
     async handleErrors(e: ConnectorError | UserfacingError | Error): Promise<void> {
+      this.logStep('handleErrors');
       // focus to app to show the error
       window.api.focusToApp();
 
@@ -383,6 +394,7 @@ export default defineComponent({
       }
     },
     async signChallengeForCardType(cardType: ECardTypes): Promise<void> {
+      this.logStep('signChallengeForCardType');
       try {
         const certificate = this.$store.state.connectorStore?.cards[cardType]?.certificate;
         const challenge = this.$store.state.gemIdpServiceStore?.challenge;
@@ -409,6 +421,7 @@ export default defineComponent({
       }
     },
     async getCardCertificate(cardType: ECardTypes): Promise<void> {
+      this.logStep('getCardCertificate');
       // get card certificate
       try {
         await this.$store.dispatch('connectorStore/getCardCertificate', cardType);
@@ -426,6 +439,7 @@ export default defineComponent({
      * @param cardType
      */
     async getCardHandle(cardType: ECardTypes): Promise<void> {
+      this.logStep('getCardHandle');
       try {
         /**
          * Get Card Handle
@@ -512,6 +526,7 @@ export default defineComponent({
     },
 
     onUserCancelledCardInsert() {
+      this.logStep('onUserCancelledCardInsert');
       // user has clicked the cancel, we throw an error! This is reject function of cardInsertReTryTimeout Promise
       this.rejectPendingCardActionTimeout(
         new UserfacingError(this.$t(LOGIN_CANCELLED_BY_USER), '', ERROR_CODES.AUTHCL_0006),
@@ -522,6 +537,7 @@ export default defineComponent({
      * @param cardType
      */
     async checkPinStatus(cardType: ECardTypes): Promise<void> {
+      this.logStep('checkPinStatus');
       try {
         const isPinStatusVerified = await this.$store.dispatch('connectorStore/checkPinStatus', cardType);
 
@@ -568,6 +584,7 @@ export default defineComponent({
      * @param cardType
      */
     async verifyPin(cardType: string): Promise<void> {
+      this.logStep('verifyPin');
       try {
         // ask user for enter pin
         await this.$store.dispatch('connectorStore/verifyPin', cardType);
@@ -588,6 +605,7 @@ export default defineComponent({
       }
     },
     async getChallengeDataFromIdp(): Promise<boolean> {
+      this.logStep('getChallengeDataFromIdp');
       try {
         return await this.$store.dispatch('gemIdpServiceStore/getChallengeData');
       } catch (err) {
@@ -616,6 +634,7 @@ export default defineComponent({
      * @returns URL
      */
     async getRedirectUriWithToken(error: UserfacingError | null = null): Promise<TAuthFlowEndState> {
+      this.logStep('getRedirectUriWithToken');
       /**
        * send signed challenge to idp
        * this never throws error!
@@ -657,6 +676,7 @@ export default defineComponent({
     },
 
     validateParamsAndSetState(args: TOidcProtocol2UrlSpec): boolean {
+      this.logStep('validateParamsAndSetState');
       try {
         validateLauncherArguments(args);
         const authReqParameters: TOidcProtocol2UrlSpec = {
@@ -687,6 +707,7 @@ export default defineComponent({
       }
     },
     setCaughtError(errorCode: string, errorDescription?: string, errorType?: OAUTH2_ERROR_TYPE) {
+      this.logStep('setCaughtError');
       this.$store.commit('gemIdpServiceStore/setErrorShown');
 
       if (!this.$store.state.gemIdpServiceStore.caughtAuthFlowError) {
@@ -703,6 +724,7 @@ export default defineComponent({
      * @param secs
      */
     cardInsertReTryTimeout(secs: number) {
+      this.logStep('cardInsertReTryTimeout');
       return new Promise<void>((resolve, reject) => {
         this.rejectPendingCardActionTimeout = reject;
         setTimeout(() => resolve(), secs);
@@ -715,6 +737,8 @@ export default defineComponent({
      * @param authFlowEndState
      */
     async openClientIfNeeded(authFlowEndState: TAuthFlowEndState): Promise<void> {
+      this.logStep('openClientIfNeeded');
+
       let url: string | null = authFlowEndState.url;
       const caughtErrorObject = this.$store.state.gemIdpServiceStore.caughtAuthFlowError;
 
@@ -782,6 +806,7 @@ export default defineComponent({
      * and get the host name of it
      */
     parseAndSetIdpHost() {
+      this.logStep('parseAndSetIdpHost');
       const challengePath = this.$store.state.gemIdpServiceStore.challengePath;
       const parseAndSetIdpHost = removeLastPartOfChallengePath(challengePath);
       this.$store.commit('gemIdpServiceStore/setIdpHost', parseAndSetIdpHost);
@@ -792,6 +817,7 @@ export default defineComponent({
      * @param paramName
      */
     popParamFromChallengePath(paramName: string, challengePath?: string): string | null {
+      this.logStep('popParamFromChallengePath');
       if (challengePath && challengePath.includes(paramName)) {
         const parsedPath = parse(challengePath);
         const value = parsedPath[paramName];
@@ -807,6 +833,7 @@ export default defineComponent({
       return '';
     },
     setCallback(callbackValue: string | null): boolean {
+      this.logStep('setCallback');
       this.$store.commit('gemIdpServiceStore/setCallback', TCallback.OPEN_TAB);
 
       if (callbackValue) {
@@ -828,6 +855,7 @@ export default defineComponent({
      * @param url
      */
     async sendAutomaticRedirectRequest(url: string) {
+      this.logStep('sendAutomaticRedirectRequest');
       const successMessage = 'Redirecting automatically flow completed';
       try {
         // send the user agent with the clientId to the main process
@@ -857,6 +885,11 @@ export default defineComponent({
           logger.error('Redirecting automatically request failed!', err.message);
         }
       }
+    },
+    logStep(log: string) {
+      logger.info('\n');
+      logger.info('### Step ' + this.stepCounter + ': ' + log + ' ###');
+      this.stepCounter++;
     },
   },
 });
