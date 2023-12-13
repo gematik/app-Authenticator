@@ -12,6 +12,13 @@
  * permissions and limitations under the Licence.
  */
 
+/* @if MOCK_MODE == 'ENABLED' */
+import {
+  MOCK_CONNECTOR_CERTS_CONFIG,
+  MOCK_CONNECTOR_CONFIG,
+} from '@/renderer/modules/connector/connector-mock/mock-config';
+
+/* @endif */
 import { IConfig, IConfigSection, TlsAuthType } from '@/@types/common-types';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
@@ -30,16 +37,9 @@ import { copyUploadedFileToTargetDir } from '@/renderer/utils/read-tls-certifica
 import Swal from 'sweetalert2';
 import i18n from '@/renderer/i18n';
 import ConnectorIcon from '@/assets/icon-connector.svg';
-
-/* @if MOCK_MODE == 'ENABLED' */
-import {
-  MOCK_CONNECTOR_CERTS_CONFIG,
-  MOCK_CONNECTOR_CONFIG,
-} from '@/renderer/modules/connector/connector-mock/mock-config';
-import { getMatch } from 'ip-matching';
 import { logger } from '@/renderer/service/logger';
 
-/* @endif */
+import { getMatch } from 'ip-matching';
 
 const translate = i18n.global.t;
 

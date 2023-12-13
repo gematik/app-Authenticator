@@ -2,15 +2,24 @@
 
 # Release Authenticator
 
+## Version 4.8.1
+
+### bugfix
+
+- Fixed Proxy Validation
+- Fixed Logging issue
+
 ## Version 4.8.0
 
 ### added
+
 - Deactivation of OS proxy settings now requires mandatory Proxy Address and Port fields entries
 - IP Validation added for Proxy Ignore List in Settings Page
 - Sensitive data is now stored using the Credential Manager
 - New Help page with informative links for better understanding
 
 ### bugfix
+
 - SMC-B flow crash after successful HBA flow issue fixed
 - Improved URL parsing mechanism for accurate identification of host and path in IDP service
 - Config.json storage path adjusted for specified ENV parameters

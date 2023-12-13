@@ -23,13 +23,16 @@ describe('test winston logger', () => {
   const loggedText = 'Tests log has been successfully written!';
 
   beforeAll(async () => {
+    // delete log file if exists
+    if (fs.existsSync(getLogFilePath())) {
+      fs.unlinkSync(getLogFilePath());
+    }
+
     // write the log
-    await logger.info(loggedText);
+    logger.info(loggedText);
 
     // wait for log file changes
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
+    await sleep();
   });
 
   it('creates log file properly', function () {
@@ -46,21 +49,42 @@ describe('test winston logger', () => {
     try {
       throw new Error('some error text');
     } catch (e) {
-      await logger.error('Error: ', e, { more: 'even more data' });
+      logger.error('Error: ', e, { more: 'even more data' });
       const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
-      logger.info('getLogFilePath:' + fs.readFileSync(getLogFilePath()));
-      logger.info('logFileContent:' + logFileContent);
 
       expect(logFileContent.includes('Stack: Error: some error text')).toBeTruthy();
     }
   });
 
   it('logs data properly', async function () {
-    await logger.error('Some important data: ', { code: 'nice code' });
+    logger.error('Some important data: ', { code: 'nice code' });
+
+    // wait a second for the log file to be written
+    await sleep();
     const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
-    setTimeout(() => {
-      expect(logFileContent.includes('Data: {"code":"nice code"}')).toBeTruthy();
-    });
+
+    expect(logFileContent.includes('Data: {\n' + '  "code": "nice code"\n' + '}')).toBeTruthy();
+  });
+
+  it('logs array properly', async function () {
+    logger.error('Some important data: ', ['test', 'test2', 'test3']);
+
+    // wait a second for the log file to be written
+    await sleep();
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+
+    expect(logFileContent.includes('  Data: [\n' + '  "test",\n' + '  "test2",\n' + '  "test3"\n' + ']')).toBeTruthy();
+  });
+
+  it('logs second string properly', async function () {
+    const string = 'string';
+    logger.error('Some important data: ', string);
+
+    // wait a second for the log file to be written
+    await sleep();
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+
+    expect(logFileContent.includes('Data: ' + string)).toBeTruthy();
   });
 });
 
@@ -77,3 +101,5 @@ function getLogFilePath(): string {
 function zeroFill(i: number): string {
   return (i < 10 ? '0' : '') + i;
 }
+
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
