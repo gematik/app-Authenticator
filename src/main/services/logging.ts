@@ -20,8 +20,9 @@ import 'winston-daily-rotate-file';
 import { IS_DEV } from '@/constants';
 import { zip } from 'zip-a-folder';
 import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
+import { TransformableInfo } from 'logform';
 
-const { combine, printf, simple, timestamp, splat } = winston.format;
+const { combine, printf, simple } = winston.format;
 
 const logLevel = IS_DEV || validateMockVersion() ? 'debug' : 'info';
 
@@ -48,20 +49,22 @@ const { createLogger } = winston;
  * Custom formatter
  */
 const myFormat = printf((info) => {
-  // electron bridge breaks the data structure, we try to log it here properly
-  let message = info.message;
-  if (Array.isArray(info.message) && info.message.length > 1) {
-    message = info.message[0] + '\n  Data: ';
-    message += JSON.stringify(info.message.splice(0, 1));
+  const date = new Date();
+  const timestamp = date.toLocaleDateString('de') + ' ' + date.toLocaleTimeString('de');
+
+  // if the message is not an array, it is probably main process logging and should be logged as usual
+  if (!Array.isArray(info.message)) {
+    return `${timestamp} [${info.level}]: ${info.message}${renderExtraData(info)}`;
   }
 
-  return `${info.timestamp} [${info.level}]: ${message}${renderExtraData(info)}`;
+  // electron bridge breaks the data structure, we try to log it here properly
+  return `${timestamp} [${info.level}]: ${info.message[0]}${renderExtraData(info, info.message.slice(1))}`;
 });
 
 export const logger = createLogger({
   level: logLevel,
   exitOnError: false,
-  format: combine(splat(), timestamp(), simple(), myFormat),
+  format: myFormat,
   transports: [transport],
 });
 
@@ -77,31 +80,36 @@ if (IS_DEV) {
 /**
  * Render extra data with error details
  * @param info
+ * @param restMessages
  */
-const renderExtraData = (info: any) => {
+const renderExtraData = (info: TransformableInfo, restMessages: any[] = []) => {
   const cleanInfo = { ...info };
   delete cleanInfo.message;
+  // @ts-ignore
   delete cleanInfo.level;
   delete cleanInfo.timestamp;
 
-  // return if there is no data
-  if (!Object.keys(cleanInfo).length) {
-    return '';
-  }
-
   // extract error and print pretty
-  let error = '';
+  let logText = '';
   if (cleanInfo.stack) {
-    error = `\n  Stack: ${cleanInfo.stack}`;
+    logText = `\n  Stack: ${cleanInfo.stack}`;
     delete cleanInfo.stack;
   }
 
-  // return if there is no left data
-  if (!Object.keys(cleanInfo).length) {
-    return error;
-  }
+  const symbolForOriginalData = Symbol.for('splat');
+  const splatData = restMessages.concat(info[symbolForOriginalData]);
 
-  return `\n  Data: ${JSON.stringify(cleanInfo)}${error}`;
+  splatData?.forEach((data: any) => {
+    if (typeof data === 'object' || Array.isArray(data)) {
+      logText += `\n  Data: ${JSON.stringify(data, null, 2)}`;
+      return;
+    } else if (typeof data === 'string' || typeof data === 'number') {
+      logText += `\n  Data: ${data}`;
+      return;
+    }
+  });
+
+  return logText;
 };
 
 /**

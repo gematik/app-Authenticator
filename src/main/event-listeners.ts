@@ -44,9 +44,13 @@ ipcMain.on(IPC_SELECT_FOLDER, (event) => {
 });
 
 // Logger events
-ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.ERROR, (_event, args) => logger.error(args));
+// @ts-ignore
+ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.ERROR, (_event, args) => logger.error(...args));
+// @ts-ignore
 ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.DEBUG, (_event, args) => logger.debug(args));
+// @ts-ignore
 ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.INFO, (_event, args) => logger.info(args));
+// @ts-ignore
 ipcMain.on(IPC_ERROR_LOG_EVENT_TYPES.WARN, (_event, args) => logger.warn(args));
 
 /**
