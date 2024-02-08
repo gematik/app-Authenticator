@@ -312,7 +312,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
           infoText: translate('info_text_pfx_file'),
-          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.ServerClientCertAuth_Pfx,
+          required: false, // repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.ServerClientCertAuth_Pfx,
           /**
            * Moves file to right position and renames it
            * @param e
