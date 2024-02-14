@@ -12,14 +12,11 @@
  * permissions and limitations under the Licence.
  */
 
-import { PROCESS_ENVS } from '@/constants';
-
-const MOCK_VERSION = PROCESS_ENVS.MOCK_MODE;
-
 /**
- * checks if current Version is Mock-Version
+ * @fileoverview Utility functions.
  */
 
-export function validateMockVersion(): boolean {
-  return MOCK_VERSION === 'ENABLED';
-}
+/**
+ * Returns true if the current platform is macOS.
+ */
+export const isMacOS = process.platform === 'darwin';

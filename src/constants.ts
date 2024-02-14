@@ -16,6 +16,8 @@ export const CONFIG_FILE_NAME = 'config.json';
 
 export const ALLOWED_DEEPLINK_PROTOCOLS = ['tim'];
 
+export const LOG_DIRECTORY_NAME = 'authenticator-logging';
+
 /**
  * App's slug name
  * This will be used for to open the app with parameters from the browser or any other platform.
@@ -126,6 +128,9 @@ export const APP_NAME = 'authenticator';
  * URL zu den Authenticator-Fehlercodes (Komplettübersicht)
  */
 export const WIKI_ERRORCODES_URL = 'https://wiki.gematik.de/x/-A3OGw';
+
+export const WIKI_CONSENT_DECLARATION_URL = 'https://wiki.gematik.de/x/GijaI';
+
 /**
  * URL zum Authenticator-Sharepoint
  */
@@ -170,8 +175,14 @@ export const updateProcessEnvs = () => {
 
 /**
  * check if env is dev
+ * @deprecated IS_DEV only cen be used with MOCK_MODE == 'ENABLED' check
  */
 export const IS_DEV = process.env.NODE_ENV === 'test' || PROCESS_ENVS.NODE_ENV === 'development';
+
+/**
+ * check if env is dev
+ * @deprecated IS_TEST only cen be used with MOCK_MODE == 'ENABLED' check
+ */
 export const IS_TEST = process.env.NODE_ENV === 'test';
 
 /**
@@ -209,4 +220,15 @@ export enum P12_VALIDITY_TYPE {
 
 export const STORAGE_CONFIG_KEYS = {
   HBA_CARD_USER_ID: 'userIdForCard-',
+  SAVED_USER_CONSENT_PAIRS: 'savedUserConsentPairs',
+  MIGRATIONS: {
+    CREDENTIAL_MANAGER_STANDALONE: 'migrateCredentialManagerForStandalone',
+  },
 };
+
+export const MACOS_PATHS = {
+  LOGGING_DIR: '/Library/Logs/', // we add user's home path to end of this path e.x. /Users/x/Library...
+  CERTS_DIR: '/Library/Application Support/' + PRODUCT_NAME,
+};
+
+export const MACOS_DS_STORE_FILE_NAME = '.DS_Store';

@@ -12,13 +12,15 @@
  * permissions and limitations under the Licence.
  */
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 import {
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
+import { getMatch } from 'ip-matching';
+import isFQDN from 'validator/lib/isFQDN';
 
-/* @endif */
 import { IConfig, IConfigSection, TlsAuthType } from '@/@types/common-types';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
@@ -26,6 +28,7 @@ import {
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_AUTH_TYPES,
   PROXY_SETTINGS_CONFIG,
+  TIMEOUT_PARAMETER_CONFIG,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
 import { COMMON_USED_REGEXES, P12_VALIDITY_TYPE } from '@/constants';
@@ -39,20 +42,18 @@ import i18n from '@/renderer/i18n';
 import ConnectorIcon from '@/assets/icon-connector.svg';
 import { logger } from '@/renderer/service/logger';
 
-import { getMatch } from 'ip-matching';
-
 const translate = i18n.global.t;
 
 export function getFormSections(repositoryData: TRepositoryData): IConfigSection[] {
   let mocked = false;
-  /* @if MOCK_MODE == 'ENABLED' */
+  // #!if MOCK_MODE === 'ENABLED'
   if (repositoryData[MOCK_CONNECTOR_CONFIG]) {
     mocked = true;
   }
-  /* @endif */
+  // #!endif
 
   return [
-    /* @if MOCK_MODE == 'ENABLED' */
+    // #!if MOCK_MODE === 'ENABLED'
     {
       title: 'Mock Konnektor',
       hide: false,
@@ -167,7 +168,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         },
       ],
     },
-    /* @endif */
+    // #!endif
     {
       title: translate('connector_settings'),
       hide: mocked,
@@ -420,6 +421,27 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           required: true,
           hide: repositoryData[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS] === true,
           infoText: translate('info_text_proxy_address'),
+          // check if url is valid, and show warning if it isn't valid
+          validateInput(value) {
+            if (COMMON_USED_REGEXES.URL.test(value)) {
+              return true;
+            }
+
+            if (isFQDN(value)) {
+              return true;
+            }
+
+            try {
+              return !!getMatch(value);
+            } catch (e) {
+              Swal.fire({
+                title: translate('error_info'),
+                text: i18n.global.t('invalid_proxy_address', { value }),
+                icon: 'error',
+              });
+              return false;
+            }
+          },
         },
         {
           label: translate('proxy_port'),
@@ -437,23 +459,31 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           validateInput: (value) => {
             try {
               // Split the input string into an array of individual addresses
-              const ipAddresses = value.split(';').map((ip) => ip.trim());
+              const entries = value.split(';').map((entry) => entry.trim());
               // Validate each individual IP address and keep track of invalid addresses
-              const invalidAddresses: string[] = [];
-              const isIPValid = ipAddresses.every((ip) => {
+              const invalidEntries: string[] = [];
+              const isEntriesValid = entries.every((entry) => {
                 try {
-                  const result = getMatch(ip);
-                  return !!result;
+                  const isIPValid = !!getMatch(entry);
+                  if (!isIPValid) {
+                    invalidEntries.push(entry);
+                  }
+                  return isIPValid;
                 } catch (error) {
-                  // Add the invalid address to the list
-                  invalidAddresses.push(ip);
-                  return false;
+                  const isFQDNValid = isFQDN(entry, {
+                    allow_wildcard: true,
+                  });
+
+                  if (!isFQDNValid) {
+                    invalidEntries.push(entry);
+                  }
+                  return isFQDNValid;
                 }
               });
 
               // Shows an error message if some given ip address is invalid and when which of them
-              if (!isIPValid) {
-                const invalidIPAddress = `${invalidAddresses.join(', ')}`;
+              if (!isEntriesValid) {
+                const invalidIPAddress = `${invalidEntries.join(', ')}`;
                 Swal.fire({
                   title: translate('error_info'),
                   text: i18n.global.t('invalid_ip_address', { invalidIPAddress }),
@@ -468,6 +498,19 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             }
           },
           infoText: translate('info_text_proxy_ignore_list'),
+        },
+      ],
+    },
+    {
+      title: translate('timout_settings'),
+      hide: false,
+      columns: [
+        {
+          label: translate('time_out_value'),
+          key: TIMEOUT_PARAMETER_CONFIG,
+          type: 'number',
+          placeholder: '10000',
+          infoText: translate('info_text_timeout_for_developers'),
         },
       ],
     },

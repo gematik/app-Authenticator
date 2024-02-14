@@ -12,8 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { IPC_ERROR_LOG_EVENT_TYPES, IS_DEV } from '@/constants';
-import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
+import { IPC_ERROR_LOG_EVENT_TYPES } from '@/constants';
 
 //TODO: @Rene: bitte im Rahmen von authcl-448 diese Function loeschen
 export function getCallerInfo(err: any): string {
@@ -30,19 +29,27 @@ export function getCallerInfo(err: any): string {
 
 export const logger = {
   error: (...args: unknown[]) => {
-        (IS_DEV || validateMockVersion()) && console.error(...args); // eslint-disable-line
+    // #!if MOCK_MODE === 'ENABLED'
+    console.error(...args); // eslint-disable-line
+    // #!endif
     window?.api?.send(IPC_ERROR_LOG_EVENT_TYPES.ERROR, args);
   },
   debug: (...args: unknown[]) => {
-        (IS_DEV || validateMockVersion()) && console.debug(...args); // eslint-disable-line
+    // #!if MOCK_MODE === 'ENABLED'
+    console.debug(...args); // eslint-disable-line
+    // #!endif
     window?.api?.send(IPC_ERROR_LOG_EVENT_TYPES.DEBUG, args);
   },
   warn: (...args: unknown[]) => {
-        (IS_DEV || validateMockVersion()) && console.warn(...args); // eslint-disable-line
+    // #!if MOCK_MODE === 'ENABLED'
+    console.warn(...args); // eslint-disable-line
+    // #!endif
     window?.api?.send(IPC_ERROR_LOG_EVENT_TYPES.WARN, args);
   },
   info: (...args: unknown[]) => {
-        (IS_DEV || validateMockVersion()) && console.info(...args); // eslint-disable-line
+    // #!if MOCK_MODE === 'ENABLED'
+    console.info(...args); // eslint-disable-line
+    // #!endif
     window?.api?.send(IPC_ERROR_LOG_EVENT_TYPES.INFO, args);
   },
 };

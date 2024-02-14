@@ -24,6 +24,7 @@ export async function connectorReachabilityTest(): Promise<TestResult> {
     const cardTerminals = await getCardTerminals();
     logger.debug(`Cardterminal Informationen - ${JSON.stringify(cardTerminals)}`);
     return {
+      title: translate('function_test_general'),
       name: translate('accessibility_of_the_connector'),
       status: TestStatus.success,
       details: translate('accessibility_of_the_connector_successful'),
@@ -31,6 +32,7 @@ export async function connectorReachabilityTest(): Promise<TestResult> {
   } catch (err) {
     logger.debug(err.message);
     return {
+      title: translate('function_test_general'),
       name: translate('accessibility_of_the_connector'),
       status: TestStatus.failure,
       details: translate('error_info') + `${err.message}`,

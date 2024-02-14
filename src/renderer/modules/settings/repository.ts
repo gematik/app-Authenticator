@@ -67,9 +67,9 @@ export const INITIAL_STATE = {
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
   [TLS_AUTH_TYPE_CONFIG]: TlsAuthType.ServerCertAuth,
 
-  /* @if MOCK_MODE == 'ENABLED' */
+  // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
-  /* @endif */
+  // #!endif
 };
 
 export class FileStorageRepository implements ISettingsRepository {
@@ -192,13 +192,13 @@ export class FileStorageRepository implements ISettingsRepository {
     }
 
     const unFlatted = dot.object({ ...dataToSaveConfigFile });
-    window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted));
+    window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted, null, 2));
 
     logger.info('Saved config changes under: ', FileStorageRepository.getPath());
 
-    /* @if MOCK_MODE == 'ENABLED' */
+    // #!if MOCK_MODE === 'ENABLED'
     FileStorageRepository.printConfig();
-    /* @endif */
+    // #!endif
   }
 
   static saveToCm(data?: TRepositoryData): boolean {
@@ -206,6 +206,11 @@ export class FileStorageRepository implements ISettingsRepository {
   }
 
   static readFromCm(): Partial<TRepositoryData> {
+    // on macos ignore credential manager
+    if (window.api.isMacOS()) {
+      return {};
+    }
+
     return (window.api.sendSync(IPC_READ_CREDENTIALS) as Partial<TRepositoryData>) || {};
   }
 
@@ -219,6 +224,14 @@ export class FileStorageRepository implements ISettingsRepository {
     let saveAllToConfigFileOnFail;
 
     const isCentralConfiguration = PROCESS_ENVS.AUTHCONFIGPATH;
+
+    // on macos ignore credential manager
+    if (window.api.isMacOS()) {
+      shouldSaveToCM = false;
+      showWarningOnFail = false;
+      saveAllToConfigFileOnFail = true;
+      return { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail };
+    }
 
     // If it's a new installation
     if (FileStorageRepository._isNewInstallation) {
@@ -237,15 +250,9 @@ export class FileStorageRepository implements ISettingsRepository {
           showWarningOnFail = true;
         }
       } else {
-        if (FileStorageRepository._usesCredentialManager) {
-          saveAllToConfigFileOnFail = false;
-          showWarningOnFail = true;
-          shouldSaveToCM = true;
-        } else {
-          saveAllToConfigFileOnFail = true;
-          showWarningOnFail = false;
-          shouldSaveToCM = true;
-        }
+        saveAllToConfigFileOnFail = false;
+        showWarningOnFail = true;
+        shouldSaveToCM = true;
       }
     }
 
@@ -315,9 +322,9 @@ export class FileStorageRepository implements ISettingsRepository {
 
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
-    /* @if MOCK_MODE == 'ENABLED' */
+    // #!if MOCK_MODE === 'ENABLED'
     FileStorageRepository.printConfig();
-    /* @endif */
+    // #!endif
     return data;
   }
 
@@ -341,7 +348,7 @@ export class FileStorageRepository implements ISettingsRepository {
     storedData = data;
   }
 
-  /* @if MOCK_MODE == 'ENABLED' */
+  // #!if MOCK_MODE === 'ENABLED'
   private static printConfig() {
     logger.info('print settings:');
     for (const item in storedData) {
@@ -351,5 +358,5 @@ export class FileStorageRepository implements ISettingsRepository {
     }
   }
 
-  /* @endif */
+  // #!endif
 }

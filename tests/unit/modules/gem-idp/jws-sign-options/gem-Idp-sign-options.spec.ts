@@ -31,10 +31,14 @@ const jwsCIdpUtils = new GemIdpJwsOptions(CHALLENGE_MOCK, CERTIFICATE_MOCK, ECar
 
 describe('sign challenge utils', () => {
   it('creates sha256 hash', async () => {
-    expect(jwsCIdpUtils.sha256Encode('a-test-string-to-hash')).toMatchSnapshot();
+    expect(await jwsCIdpUtils.sha256Encode('a-test-string-to-hash')).toBe(
+      'y+lxwUCAeUZJ4WjURP9rKlMJWvFIpUPwojhTIer3rKA=',
+    );
   });
   it('creates signing input string', async () => {
-    expect(jwsCIdpUtils.createSigningInputString(BASE64_HEADER_MOCK, BASE64_PAYLOAD_MOCK)).toMatchSnapshot();
+    expect(await jwsCIdpUtils.createSigningInputString(BASE64_HEADER_MOCK, BASE64_PAYLOAD_MOCK)).toBe(
+      'FBKctWr0SvX3UKy1yxvJJA0D0D3Kz9ZoZmWW3MEq7z8=',
+    );
   });
   it('creates header and payload string', async () => {
     const erg = { protectedHeader: PROTECTEDHEADER_MOCK, payload: PAYLOAD_MOCK };

@@ -21,6 +21,8 @@ import { SAMPLE_CONFIG_DATA } from '../../../utils/config-sample-data';
 import { CONTEXT_PARAMETERS_CONFIG_GROUP, ENTRY_OPTIONS_CONFIG_GROUP, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { getConfig } from '@/renderer/utils/get-configs';
 
+jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+
 describe('settings function test', () => {
   pathProvider.PathProvider.setSystemUserTempPath(getHomedir());
 

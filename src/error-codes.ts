@@ -23,6 +23,7 @@ export const ERROR_CODES = {
   AUTHCL_0008: 'AUTHCL_0008',
   AUTHCL_0009: 'AUTHCL_0009',
   AUTHCL_0010: 'AUTHCL_0010',
+  AUTHCL_0011: 'AUTHCL_0011',
 
   // connector errors begin with 1XXX
   AUTHCL_1001: 'AUTHCL_1001',
@@ -163,6 +164,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_0008]: 'You do not have permission to save config file!',
   [ERROR_CODES.AUTHCL_0009]: 'Auto redirect request failed',
   [ERROR_CODES.AUTHCL_0010]: 'Failed to save to credentials manager',
+  [ERROR_CODES.AUTHCL_0011]: 'User declined the consent',
 
   [ERROR_CODES.AUTHCL_1001]: 'Can not get card handle',
   [ERROR_CODES.AUTHCL_1003]: 'Could not read the terminals',

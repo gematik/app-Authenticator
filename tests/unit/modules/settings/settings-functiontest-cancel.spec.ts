@@ -9,6 +9,7 @@ describe('runTestsCases cancellation', () => {
     const fakeTestFunction = async () => {
       await sleep(1000);
       return {
+        title: '',
         name: 'fakeTest',
         status: TestStatus.success,
         details: 'Fake test passed',
@@ -25,11 +26,12 @@ describe('runTestsCases cancellation', () => {
     const results = await runTestsCases(testCases, cancelPromise);
     expect(results).toHaveLength(2);
     expect(results).toEqual([
-      { details: 'Fake test passed', name: 'fakeTest', status: 'success' },
+      { details: 'Fake test passed', name: 'fakeTest', status: 'success', title: '' },
       {
         details: 'Der Funktionstest wurde vom Benutzer abgebrochen.',
         name: 'Funktionstest abgebrochen',
         status: 'failure',
+        title: '',
       },
     ]);
   });

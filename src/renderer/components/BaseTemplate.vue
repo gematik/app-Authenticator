@@ -17,13 +17,22 @@ import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/Ge
 import { computed } from 'vue';
 import { IS_DEV, PROCESS_ENVS } from '@/constants';
 
-const version = IS_DEV ? 'dev ' : PROCESS_ENVS.VERSION ?? 'Unbekannt';
+let version = PROCESS_ENVS.VERSION ?? 'Unbekannt';
+
+// #!if MOCK_MODE === 'ENABLED'
+if (IS_DEV) {
+  version = 'dev ';
+}
+// #!endif
 
 const buildVersion = computed(() => {
+  // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     const packageJson = require('../../../package.json');
     return packageJson.version;
   }
+  // #!endif
+
   if (PROCESS_ENVS.BRANCH_NAME && PROCESS_ENVS.BRANCH_NAME !== PROCESS_ENVS.TAG_NAME && PROCESS_ENVS.BUILD_NUMBER) {
     return `${PROCESS_ENVS.BRANCH_NAME}-${PROCESS_ENVS.BUILD_NUMBER}`;
   }

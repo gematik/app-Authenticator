@@ -22,6 +22,8 @@ import { PROCESS_ENVS, PRODUCT_NAME } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import { PathProvider } from '@/renderer/service/path-provider';
 
+jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+
 describe('configMapperByGroup and error handling response', () => {
   beforeEach(() => {
     // clear local storage

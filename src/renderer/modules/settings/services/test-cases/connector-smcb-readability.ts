@@ -25,6 +25,7 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
   try {
     const cardSmcbInfo = await getCards(ECardTypes.SMCB);
     return {
+      title: translate('function_test_general'),
       name: translate('smcb_availability'),
       status: TestStatus.success,
       details: `SMC-B in Slot ${cardSmcbInfo.slotNr} vom CardTerminal ${cardSmcbInfo.ctId} gefunden!`,
@@ -36,6 +37,7 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
     if (err.code === ERROR_CODES.AUTHCL_1105) {
       logger.debug('Multiple SMCBs found, no error');
       return {
+        title: 'function_test_general',
         name: translate('smcb_availability'),
         status: TestStatus.success,
         details: translate('readability_test_Multi_SMCBs'),
@@ -47,6 +49,7 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
         ? translate('error_info') + `${err.code}, ${err.description} `
         : translate('error_info') + `${err.message} `;
     return {
+      title: translate('function_test_general'),
       name: translate('smcb_availability'),
       status: TestStatus.failure,
       details: details,

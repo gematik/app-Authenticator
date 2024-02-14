@@ -16,9 +16,9 @@ import { runTestsCases, TestStatus } from '@/renderer/modules/settings/services/
 
 describe('Test connection test', () => {
   it('test startConnectionTests function', async function () {
-    const c1Result = { status: TestStatus.failure, name: 'Failed', details: 'Thats the right way' };
+    const c1Result = { title: 'c1', status: TestStatus.failure, name: 'Failed', details: 'Thats the right way' };
     const c1 = () => Promise.resolve(c1Result);
-    const c2Result = { status: TestStatus.failure, name: 'Failed', details: 'Thats the right way' };
+    const c2Result = { title: 'c2', status: TestStatus.failure, name: 'Failed', details: 'Thats the right way' };
     const c2 = () => Promise.resolve(c2Result);
     const results = await runTestsCases([c1, c2]);
 

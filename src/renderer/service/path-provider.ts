@@ -13,6 +13,7 @@
  */
 
 import {
+  APP_NAME,
   CA_CONNECTOR_DIR_PATH,
   CA_IDP_DIR_PATH,
   DEV_CON_CA_CERT_PATH,
@@ -20,6 +21,7 @@ import {
   IPC_GET_APP_PATH,
   IPC_GET_PATH,
   IS_DEV,
+  MACOS_PATHS,
   PRODUCT_NAME,
 } from '@/constants';
 
@@ -28,6 +30,7 @@ export class PathProvider {
   private static systemUserTempPath: string = (window.api.sendSync(IPC_GET_PATH, 'temp') as string) ?? 'undefined';
   private static processCWD = window.api.getProcessCwd();
   private static _configPath = '';
+  private static _macOsUserAppPath = '';
 
   /**
    * Returns config path
@@ -68,17 +71,40 @@ export class PathProvider {
     return PathProvider.processCWD;
   }
 
+  /**
+   * @Note Only for macOS, can be improved for windows too
+   *
+   * returns /Users/<user>/Library/Application Support/gematik Authenticator
+   */
+  public static getMacOsUserAppPath(): string {
+    if (this._macOsUserAppPath) {
+      return this._macOsUserAppPath;
+    }
+
+    const userData = <string>window.api.sendSync(IPC_GET_PATH, 'userData');
+
+    // change path from .../Application Support/authenticator to .../Application Support/gematik Authenticator
+    return userData.replace(window.api.pathSep() + APP_NAME, window.api.pathSep() + PRODUCT_NAME);
+  }
+
   public static caCertificatePath(isConnector: boolean): string {
+    // #!if MOCK_MODE === 'ENABLED'
     if (IS_DEV) {
       const certsPath = isConnector ? DEV_CON_CA_CERT_PATH : DEV_IDP_CA_CERT_PATH;
       return window.api.pathJoin(PathProvider.getProcessCWD(), certsPath);
     }
+    // #!endif
 
-    const replaceValue = isConnector
-      ? window.api.pathJoin(CA_CONNECTOR_DIR_PATH + window.api.pathSep())
-      : window.api.pathJoin(CA_IDP_DIR_PATH + window.api.pathSep());
+    if (window.api.isMacOS()) {
+      const dirName = isConnector ? CA_CONNECTOR_DIR_PATH : CA_IDP_DIR_PATH;
+      return window.api.pathJoin(MACOS_PATHS.CERTS_DIR, dirName);
+    } else {
+      const replaceValue = isConnector
+        ? window.api.pathJoin(CA_CONNECTOR_DIR_PATH + window.api.pathSep())
+        : window.api.pathJoin(CA_IDP_DIR_PATH + window.api.pathSep());
 
-    const pattern = /app.asar/i;
-    return PathProvider.getAppPath().replace(pattern, replaceValue);
+      const pattern = /app.asar/i;
+      return PathProvider.getAppPath().replace(pattern, replaceValue);
+    }
   }
 }

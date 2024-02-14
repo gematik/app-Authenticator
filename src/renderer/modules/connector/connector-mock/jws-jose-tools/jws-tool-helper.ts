@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { FinalConstants } from '@/renderer/service/jws-sign-options';
 import { MOCK_CONNECTOR_CERTS_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
@@ -77,4 +77,4 @@ export class MockCIdpJWSOptions extends MockJWSOptions {
   }
 }
 
-/* @endif */
+// #!endif

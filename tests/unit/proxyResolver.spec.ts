@@ -239,4 +239,34 @@ describe('proxyResolver', () => {
     // @ts-ignore
     expect(proxyAgent?.proxy?.href).toBe('https://192.169.0.1:8888/');
   });
+
+  it('should ignore basic fqdn', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: 'https://canbeanything.com',
+      [PROXY_SETTINGS_CONFIG.PROXY_PORT]: '8888',
+      [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: 'gematik.de',
+    });
+
+    const proxyAgent = await createProxyAgent('https://gematik.de');
+
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBeUndefined();
+  });
+
+  it('should ignore fqdn with asterix', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: 'https://canbeanything.com',
+      [PROXY_SETTINGS_CONFIG.PROXY_PORT]: '8888',
+      [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: '*.gematik.de',
+    });
+
+    const proxyAgent = await createProxyAgent('https://proxy.gematik.de');
+
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBeUndefined();
+  });
 });

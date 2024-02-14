@@ -48,6 +48,7 @@
             :validate-input="config.validateInput"
             :on-element-change="config.onChange"
             :info-text="config.infoText"
+            :placeholder="config.placeholder"
           />
         </div>
       </div>
@@ -55,8 +56,6 @@
         <button id="btnSaveSettings" class="bt" type="submit" :title="$t('settings_saved_info')">
           {{ $t('save') }}
         </button>
-
-        <button v-if="isDev" class="bt-sec ml-[15px]" type="button" @click="resetData">Remove Settings</button>
 
         <div class="w-3/3">
           <div>
@@ -116,30 +115,18 @@ export default defineComponent({
   setup() {
     const translate = useI18n().t;
 
-    const { save, load, clear, setWithoutSave } = useSettings();
+    const { save, load, setWithoutSave } = useSettings();
     const configValues = ref<TRepositoryData>({ ...load() });
     const functionTestResults = ref<TestResult[]>([]);
     const showModal = ref<boolean>(false);
     const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
     const formColumnsFlat = getFormColumnsFlat(configValues.value);
 
-    let isDev = false;
-    /* @if MOCK_MODE == 'ENABLED' */
-    if (process.env.NODE_ENV === 'development') {
-      isDev = true;
-    }
-    /* @endif */
-
     window?.api?.on(IPC_UPDATE_ENV, () => {
       setTimeout(() => {
         configValues.value = load();
       }, 500);
     });
-
-    function resetData() {
-      clear();
-      configValues.value = {};
-    }
 
     /**
      * Validates the data user try to save.
@@ -245,8 +232,8 @@ export default defineComponent({
       await updateAppState();
 
       const cancelPromise = Swal.fire({
-        title: translate('funktion_test'),
-        text: translate('funktion_test_processing'),
+        title: translate('function_test'),
+        text: translate('function_test_processing'),
         allowEscapeKey: false,
         allowOutsideClick: false,
         showConfirmButton: false,
@@ -298,7 +285,6 @@ export default defineComponent({
     };
 
     return {
-      resetData,
       saveConfigValues,
       runAndFormatTestCases,
       createZipWithLogData,
@@ -306,7 +292,6 @@ export default defineComponent({
       functionTestResults,
       showModal,
       configValues,
-      isDev,
       formSections,
     };
   },

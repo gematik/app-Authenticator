@@ -12,8 +12,8 @@
  * permissions and limitations under the Licence.
  */
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 export const MOCK_CARD_TERMINALS =
   '{"CardTerminal":{"Connected":"true","CtId":"Tx","IPAddress":{"IPV4Address":"22.191.127.173"},"IS_PHYSICAL":"true","MacAddress":"F4:24:2C:54:B4:FC","Name":"Terminal","ProductInformation":{"InformationDate":"2022-01-17T13:32:26.545Z","ProductIdentification":{"ProductCode":"VTerm","ProductVendorID":"EHEX","ProductVersion":{"Local":{"FWVersion":"1.1.0","HWVersion":"1.0.1"}}},"ProductMiscellaneous":{"ProductName":"Virtual Terminal","ProductVendorName":"eHealthExperts"},"ProductTypeInformation":{"ProductType":"eHealth-Kartenterminal","ProductTypeVersion":"1.2.0"}},"Slots":"4","WorkplaceIds":{"WorkplaceId":"Arbeitsplatz-x"}}}';
 export const MOCK_CARD_PIN_STATUS = { statusResult: 'OK', pinStatus: 'VERIFIED' };
-/* @endif */
+// #!endif

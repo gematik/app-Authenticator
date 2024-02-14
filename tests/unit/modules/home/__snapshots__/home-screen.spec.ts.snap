@@ -45,7 +45,45 @@ exports[`home screen render with loading spinner 1`] = `
       Einstellungen öffnen
     </button>
   </div>
-  <!--v-if-->
+  <!-- #!if MOCK_MODE === 'ENABLED' -->
+  <div
+    class="m-10"
+  >
+    <div
+      class="flex row justify-center"
+    >
+      <img
+        alt="error icon"
+        src="[object Object]"
+      />
+    </div>
+    <div
+      class="flex row justify-center text-center text-red-700"
+    >
+      <div>
+        Nutzen Sie die Mock-Version nicht in der Produktivumgebung, da sonst vertrauliche Informationen geloggt werden. Die Produktiv-Version finden Sie im 
+        
+        <button
+          class="text-blue-900"
+        >
+          gematik SharePoint
+        </button>
+        
+        .
+      </div>
+    </div>
+  </div>
+  <div
+    class="m-10 text-center"
+  >
+    <button
+      class="bt ml-[15px]"
+      type="button"
+    >
+      Remove Saved User Consents
+    </button>
+  </div>
+  <!-- #!endif -->
 </div>
 `;
 
@@ -88,6 +126,44 @@ exports[`home screen render with settings button 1`] = `
       Einstellungen öffnen
     </button>
   </div>
-  <!--v-if-->
+  <!-- #!if MOCK_MODE === 'ENABLED' -->
+  <div
+    class="m-10"
+  >
+    <div
+      class="flex row justify-center"
+    >
+      <img
+        alt="error icon"
+        src="[object Object]"
+      />
+    </div>
+    <div
+      class="flex row justify-center text-center text-red-700"
+    >
+      <div>
+        Nutzen Sie die Mock-Version nicht in der Produktivumgebung, da sonst vertrauliche Informationen geloggt werden. Die Produktiv-Version finden Sie im 
+        
+        <button
+          class="text-blue-900"
+        >
+          gematik SharePoint
+        </button>
+        
+        .
+      </div>
+    </div>
+  </div>
+  <div
+    class="m-10 text-center"
+  >
+    <button
+      class="bt ml-[15px]"
+      type="button"
+    >
+      Remove Saved User Consents
+    </button>
+  </div>
+  <!-- #!endif -->
 </div>
 `;

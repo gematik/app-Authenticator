@@ -39,6 +39,10 @@ coverage
 /src/assets/certs-konnektor/ca/pu/rsa/konnektor.pem
 /src/assets/certs-konnektor/ca/pu/rsa/secunet-fullchain.pem
 /src/assets/certs-konnektor/ca/pu/rsa/*.cer
+/src/assets/certs-idp/web.gematik.solutions.cer
+/src/assets/certs-idp/web.gematik.solutions.intermediate.cer
+/src/assets/certs-idp/web.gematik.solutions.root.cer
+
 
 # ignore jest report files
 /reports/
@@ -54,14 +58,20 @@ Release.Jenkinsfile
 Github-Release.Jenkinsfile
 /tests/Integration/
 
-# echte p12 Dateien von unserem Kon23 - derzeit wird geklaert, ob die ins gitHub duerften, deshalb erst einmal hier
+# echte p12 Dateien von unserem Kon23 - derzeit wird geklärt, ob die ins gitHub dürften, deshalb erst einmal hier
 /tests/resources/certs/example/cs0001.p12
 /tests/resources/certs/example/cs0001_ECC.p12
 /tests/resources/certs/example/cs0001_RSA_ECC.p12
 /tests/resources/certs/example/smcb-idp-expired.p12
 /tests/unit/modules/settings/settings-validation.spec.ts
 /tests/unit/modules/settings/formBuilderP12Validity.spec.ts
-# private Schluessel mit Zertifikat
+# private Schlüssel mit Zertifikat
 /tests/resources/certs/example/example-cer.cer
 /tests/resources/certs/example/example-key.cer
 /tests/resources/certs/kops
+
+
+# we don't want to release the credential scripts now
+/credential-distribution/README.md
+/credential-distribution/store-credential.ps1
+

@@ -55,6 +55,18 @@ module.exports = {
       provider: 'github',
     },
   },
+  dmg: {
+    publish: {
+      provider: 'github',
+    },
+  },
+  mac: {
+    target: ['dmg', 'zip'], // zip will be used for auto-update
+    category: 'public.app-category.utilities',
+    artifactName: artifactName('${productName}', '${version}', '${ext}'),
+    icon: './src/assets/logo.png',
+    appId: 'de.gematik.authenticator',
+  },
   directories: {
     buildResources: 'src/assets',
     output: 'release',

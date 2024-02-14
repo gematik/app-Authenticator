@@ -32,7 +32,7 @@ import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { ERROR_CODES } from '@/error-codes';
 import { GemIdpJwsOptions } from '@/renderer/modules/gem-idp/sign-feature/cidp-sign-options';
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 import {
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
@@ -41,7 +41,7 @@ import { MOCK_CARD_PIN_STATUS, MOCK_CARD_TERMINALS } from '@/renderer/modules/co
 import { MockCIdpJWSOptions } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/jws-tool-helper';
 import { MockJwsSignature } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/mock-jws-signature';
 import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
-/* @endif */
+// #!endif
 
 const base64url = require('base64url');
 const PIN_STATUS_VERIFIED = 'VERIFIED';
@@ -110,7 +110,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
 
       const { jwsUtil } = await paramsToSignChallenge(cardType, false, context, challenge);
       let jwsSignature;
-      /* @if MOCK_MODE == 'ENABLED' */
+      // #!if MOCK_MODE === 'ENABLED'
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
         const jwsHelper = new MockCIdpJWSOptions(cardType, challenge);
         try {
@@ -123,7 +123,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
           logger.error('jwsSignature not created: ', err.message);
         }
       } else {
-        /* @endif */
+        // #!endif
         try {
           const cardData = <TCardData>context.state.cards[cardType];
           logger.debug('cardData', JSON.stringify(cardData));
@@ -138,9 +138,9 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
           }
           throw new UserfacingError("JWS Couldn't be created", err.message, ERROR_CODES.AUTHCL_1117);
         }
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
       }
-      /* @endif */
+      // #!endif
 
       if (!jwsSignature || !validateSignedChallenge(jwsSignature)) {
         logger.error('Could not get valid JWS');
@@ -164,7 +164,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       const cardHandle = context.state.cards[cardType]?.cardHandle;
 
       try {
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
         if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
           logger.warn('Mock connector configuration is enabled! Using mocked certificate chain!');
           certificateChain =
@@ -172,12 +172,12 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
               ? readMockCertificate(MOCK_CONNECTOR_CERTS_CONFIG.HBA_CERT, true)
               : readMockCertificate(MOCK_CONNECTOR_CERTS_CONFIG.SMCB_CERT, true);
         } else {
-          /* @endif */
+          // #!endif
           certificateChain = await certificateReaderLauncher(<string>cardHandle);
 
-          /* @if MOCK_MODE == 'ENABLED' */
+          // #!if MOCK_MODE === 'ENABLED'
         }
-        /* @endif */
+        // #!endif
         certificate = certificateChain;
       } catch (err) {
         logger.error(`Get certificate error: ${err.message}`);
@@ -205,30 +205,30 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
      */
     async getCardTerminals(context: ActionContext<TConnectorStore, TRootStore>): Promise<void> {
       let cardTerminals;
-      /* @if MOCK_MODE == 'ENABLED' */
+      // #!if MOCK_MODE === 'ENABLED'
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
         logger.warn('Mock connector configuration is enabled! Using mocked CardTerminals!');
         cardTerminals = MOCK_CARD_TERMINALS;
       } else {
-        /* @endif */
+        // #!endif
         cardTerminals = await getCardTerminalsLauncher();
 
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
       }
-      /* @endif */
+      // #!endif
       context.commit('setTerminals', cardTerminals);
     },
     async getCardHandle(context: ActionContext<TConnectorStore, TRootStore>, cardType: ECardTypes): Promise<void> {
       let cardHandle, response;
 
-      /* @if MOCK_MODE == 'ENABLED' */
+      // #!if MOCK_MODE === 'ENABLED'
       if (!getConfig(MOCK_CONNECTOR_CONFIG).value) {
-        /* @endif */
+        // #!endif
         response = await getCardLauncher(cardType);
         cardHandle = response?.cardHandle;
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
       }
-      /* @endif */
+      // #!endif
 
       logger.debug(`cardHandle for ${cardType.toUpperCase()}-card: ${cardHandle}`);
       if (cardType === ECardTypes.HBA) {
@@ -240,26 +240,26 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
     },
 
     async checkPinStatus(context: ActionContext<TConnectorStore, TRootStore>, cardType: ECardTypes): Promise<boolean> {
-      /* @if MOCK_MODE == 'ENABLED' */
+      // #!if MOCK_MODE === 'ENABLED'
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
         return true;
       }
-      /* @endif */
+      // #!endif
       let pinStatusResult;
       const cardHandle = context.state.cards[cardType]?.cardHandle;
 
       try {
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
         if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
           logger.warn('Mock connector configuration is enabled! Using mocked card PIN status!');
           pinStatusResult = MOCK_CARD_PIN_STATUS;
         } else {
-          /* @endif */
+          // #!endif
           pinStatusResult = await pinChecker.getPinStatus(cardType, <string>cardHandle);
 
-          /* @if MOCK_MODE == 'ENABLED' */
+          // #!if MOCK_MODE === 'ENABLED'
         }
-        /* @endif */
+        // #!endif
         logger.debug(
           `PIN status for ${cardType.toUpperCase()}-card with CardHandle:${cardHandle} is: ${
             pinStatusResult.pinStatus
@@ -284,12 +284,12 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       context: ActionContext<TConnectorStore, TRootStore>,
       cardType: ECardTypes,
     ): Promise<void> {
-      /* @if MOCK_MODE == 'ENABLED' */
+      // #!if MOCK_MODE === 'ENABLED'
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
         context.commit('setHbaCardData', { pinStatus: 'VERIFIED' });
         context.commit('setSmcbCardData', { pinStatus: 'VERIFIED' });
       } else {
-        /* @endif */
+        // #!endif
         const cardData = context.state.cards[cardType];
         try {
           if (cardData?.pinStatus === PIN_STATUS_VERIFIABLE) {
@@ -306,9 +306,9 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
           logger.error(`Cannot VerifyPIN because: ${err.error || err.message}`);
           throw err;
         }
-        /* @if MOCK_MODE == 'ENABLED' */
+        // #!if MOCK_MODE === 'ENABLED'
       }
-      /* @endif */
+      // #!endif
     },
   },
 };

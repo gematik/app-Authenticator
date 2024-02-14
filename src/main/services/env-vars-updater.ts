@@ -59,25 +59,36 @@ async function getVolatileEnv(): Promise<string> {
  *
  * @param mainWindow
  */
+const envVarChangedToEmptyLogged: { [key: string]: boolean } = {};
+let readingRegistryErrorLogged = false;
 export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<void> => {
   FOUND_ENV_VARS = {};
   try {
     const keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SYSTEM_ENV);
     checkEnvVarsChange('AUTHCONFIGPATH', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registry key for AUTHCONFIGPATH: ' + REGISTRY_KEY_SYSTEM_ENV);
+    if (!readingRegistryErrorLogged) {
+      logger.debug('Error when reading the registry key for AUTHCONFIGPATH: ' + REGISTRY_KEY_SYSTEM_ENV);
+      readingRegistryErrorLogged = true;
+    }
   }
   try {
     const keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
     checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registry key for volatile envs');
+    if (!readingRegistryErrorLogged) {
+      logger.debug('Error when reading the registry key for volatile envs');
+      readingRegistryErrorLogged = true;
+    }
   }
   try {
     const keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
     checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
-    logger.debug('Error when reading the registry key for CLIENTNAME: ' + REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+    if (!readingRegistryErrorLogged) {
+      logger.debug('Error when reading the registry key for CLIENTNAME: ' + REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+      readingRegistryErrorLogged = true;
+    }
   }
 
   let hasVarsChanged = false;
@@ -85,7 +96,11 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
     const previousVal = UP_TO_DATE_PROCESS_ENVS[envVar];
 
     if (!FOUND_ENV_VARS[envVar]) {
-      logger.debug(`Env variable change ignored for ${envVar} as it is empty`);
+      if (!envVarChangedToEmptyLogged[envVar]) {
+        logger.debug(`Env variable change ignored for ${envVar} as it is empty`);
+        envVarChangedToEmptyLogged[envVar] = true;
+      }
+
       return;
     }
     if (FOUND_ENV_VARS[envVar] !== previousVal?.toUpperCase()) {
@@ -105,6 +120,7 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
  * updates ( if necessary ) special process-env-variables by reading the Windows registry and reloading of window
  * @param regKey
  */
+let readingErrorIsLogged = false;
 export const readRegistryForKey = (regKey: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const spawn = require('child_process').spawn;
@@ -130,7 +146,17 @@ export const readRegistryForKey = (regKey: string): Promise<string> => {
     bat.on('close', () => {
       // log and return on error case
       if (stderr) {
-        logger.error('## readRegistryForKey, Registry Entry (' + regKey + ') not found:' + stderr.toString());
+        if (!readingErrorIsLogged) {
+          logger.warn(
+            '## readRegistryForKey, Registry Entry (' +
+              regKey +
+              ') not found:' +
+              stderr.toString() +
+              '(If you have not configured the AUTHCONFIGPATH you can ignore this message)',
+          );
+          readingErrorIsLogged = true;
+        }
+
         reject(stderr.toString());
         return;
       }

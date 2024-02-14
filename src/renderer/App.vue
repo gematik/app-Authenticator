@@ -28,6 +28,7 @@ import { IPC_UPDATE_ENV, updateProcessEnvs } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
+import { migrateCredentialsForStandalone } from '@/renderer/service/migrations/migrate-credentials-for-standalone';
 
 const configFileStoreRepo = new FileStorageRepository();
 
@@ -49,6 +50,9 @@ window.api.on(IPC_UPDATE_ENV, () => {
   ConnectorConfig.updateConnectorParameters();
   clearEndpoints();
 });
+
+// migrate credentials for standalone, central config will be ignored
+migrateCredentialsForStandalone();
 </script>
 
 <style>

@@ -60,12 +60,18 @@ module.exports = {
       },
       {
         test: /\.[ts|vue]/,
-        loader: 'preprocess-loader',
-        exclude:
-          process.env.MOCK_MODE === 'ENABLED'
-            ? []
-            : [path.resolve(__dirname, './src/modules/connector/connector-mock/')],
-        options: { DEBUG: false, ppOptions: { type: 'vue' } },
+        loader: 'webpack-preprocessor-loader',
+        options: {
+          debug: process.env.MOCK_MODE === 'ENABLED',
+          directives: {
+            // if you add "// #!no_prod" to the above of the line, it will be removed in the production build
+            no_prod: false,
+          },
+          params: {
+            MOCK_MODE: process.env.MOCK_MODE,
+          },
+          verbose: false,
+        },
       },
     ],
   },

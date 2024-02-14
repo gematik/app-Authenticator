@@ -38,7 +38,7 @@ export default defineComponent({ name: 'HomeScreen', props: { tooltipContent: { 
   background-color: #000e52;
   color: #fff;
   text-align: center;
-  padding: 5px 0;
+  padding: 10px;
   border-radius: 6px;
 
   /* Position the tooltip text */
