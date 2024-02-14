@@ -45,6 +45,10 @@ export const INITIAL_AUTH_STORE_STATE = {
   clientId: '',
   callback: undefined,
   deeplink: '',
+  userConsent: {
+    requested_scopes: {},
+    requested_claims: {},
+  },
 };
 
 const httpsReqConfig = () => ({
@@ -96,6 +100,9 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
     setChallenge(state: TGemIdpServiceStore, challenge: string): void {
       state.challenge = challenge;
     },
+    setUserConsent(state: TGemIdpServiceStore, userConsent: TGemIdpServiceStore['userConsent']): void {
+      state.userConsent = userConsent;
+    },
     setOpenIdConfiguration(state: TGemIdpServiceStore, openIdConfiguration: IOpenIdConfiguration): void {
       state.openIdConfiguration = openIdConfiguration;
     },
@@ -123,6 +130,7 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
       state.callback = undefined;
       state.deeplink = '';
       state.jweChallenge = null;
+      state.userConsent = undefined;
     },
   },
   actions: {
@@ -195,6 +203,7 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
 
         logger.debug('data.challenge ' + result.data.challenge);
         commit('setChallenge', result.data.challenge);
+        commit('setUserConsent', result.data.user_consent);
         logger.info('challenge received successfully!');
 
         return true;

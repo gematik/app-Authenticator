@@ -34,9 +34,12 @@ import '@/main/services/electron-updater';
 import OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
 import BeforeSendResponse = Electron.BeforeSendResponse;
 
+// #!if MOCK_MODE === 'ENABLED'
+/**
+ * @deprecated IS_DEV only cen be used with MOCK_MODE == 'ENABLED' check
+ */
 const IS_DEV = process.env.NODE_ENV === 'development';
-
-const IS_MOCK = process.env.MOCK_MODE === 'ENABLED';
+// #!endif
 
 const PLATFORM_WIN32 = 'win32';
 const PLATFORM_DARWIN = 'darwin';
@@ -49,9 +52,10 @@ logger.info(`Starting ${app.getName()} application...`);
 logger.info(`Program version: ${app.getVersion()}`);
 logger.info(`Electron version: ${process.versions.electron}`);
 logger.info(`Platform: ${process.platform}`);
-if (IS_DEV || IS_MOCK) {
-  logger.info(`Not running in production mode: ${process.env.NODE_ENV}, mock: ${process.env.MOCK_MODE}`);
-}
+
+// #!if MOCK_MODE === 'ENABLED'
+logger.info(`Not running in production mode: ${process.env.NODE_ENV}, mock: ${process.env.MOCK_MODE}`);
+// #!endif
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
@@ -61,6 +65,9 @@ const appConfig = appConfigFactory();
 
 // call event native listeners
 require('./event-listeners');
+
+// on macos open-url get triggered before app ready, so we need to save it and call it later
+let deepLink = '';
 
 /**
  * The user agent is set by the renderer process.
@@ -86,7 +93,9 @@ async function createWindow() {
     backgroundColor: '#F8F9FC',
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: IS_DEV || IS_MOCK,
+      // #!if MOCK_MODE === 'ENABLED'
+      devTools: IS_DEV || process.env.MOCK_MODE === 'ENABLED',
+      // #!endif
       sandbox: false, // necessary for us after version 20 as we use NodeJS features in the preload.ts
       webSecurity: appConfig.webSecurity,
       allowRunningInsecureContent: appConfig.webSecurity,
@@ -119,14 +128,20 @@ async function createWindow() {
     });
   });
 
+  // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     // Load the url of the dev server if in development mode
     await mainWindow.loadURL('http://localhost:3000/');
   } else {
+    // #!endif
+
     // Load the index.html when not in development
     // this file is the bundled version of the src/renderer/template.html
     await mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    // #!if MOCK_MODE === 'ENABLED'
   }
+  // #!endif
+
   // todo fix this for macOS's production
   if (process.platform === PLATFORM_WIN32) {
     setupEnvReadInterval(mainWindow);
@@ -163,10 +178,12 @@ async function createWindow() {
     mainWindow?.minimize();
   });
 
+  // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     mainWindow.maximize();
     mainWindow.webContents.openDevTools();
   }
+  // #!endif
 
   /**
    * Prevent navigating to another websites
@@ -192,9 +209,17 @@ if (!gotTheLock) {
   // Deeplink event listener for MacOS
   app.on('open-url', (e, argv) => {
     e.preventDefault();
-    handleDeepLink([argv], mainWindow);
+
+    // if the app is not ready, save the deep link and call it later
+    if (mainWindow) {
+      handleDeepLink([argv], mainWindow);
+      deepLink = '';
+    } else {
+      deepLink = argv;
+    }
   });
 
+  // #!if MOCK_MODE === 'ENABLED'
   // register url schemas
   if (IS_DEV && process.platform === PLATFORM_WIN32) {
     logger.info('Register URL schemas for platform WIN32.');
@@ -203,8 +228,11 @@ if (!gotTheLock) {
     // Setting this is required to get this working in dev mode.
     app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME, process.execPath, [path.resolve(process.argv[1])]);
   } else {
+    // #!endif
     app.setAsDefaultProtocolClient(CUSTOM_PROTOCOL_NAME);
+    // #!if MOCK_MODE === 'ENABLED'
   }
+  // #!endif
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
@@ -212,6 +240,12 @@ if (!gotTheLock) {
   app.on('ready', async () => {
     logger.info('Application is ready');
     await createWindow();
+
+    // call previously saved deep link, which was called in the open-url event
+    if (deepLink) {
+      handleDeepLink([deepLink], mainWindow);
+      deepLink = '';
+    }
   });
 
   /**
@@ -240,6 +274,7 @@ if (!gotTheLock) {
   });
 
   // Exit cleanly on request from parent process in development mode.
+  // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     if (process.platform === PLATFORM_WIN32) {
       process.on('message', (data) => {
@@ -255,4 +290,5 @@ if (!gotTheLock) {
       });
     }
   }
+  // #!endif
 }

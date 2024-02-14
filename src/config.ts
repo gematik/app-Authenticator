@@ -58,6 +58,8 @@ export const PROXY_SETTINGS_CONFIG = {
   PROXY_PORT: 'proxy.proxySettingsPort',
 };
 
+export const TIMEOUT_PARAMETER_CONFIG = 'timeoutValue';
+
 export enum PROXY_AUTH_TYPES {
   BASIC_AUTH = 'BasicAuth',
   PROXY_CLIENT_CERT = 'ProxyClientCert',

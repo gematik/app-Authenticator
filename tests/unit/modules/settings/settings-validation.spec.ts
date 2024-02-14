@@ -55,6 +55,8 @@ const TEST_FILE_PATH_EMPTY_PFX = process.cwd() + '/tests/resources/certs/example
 const contentKey = fs.readFileSync(TEST_FILE_PATH_TO_KEY);
 const contentCert = fs.readFileSync(TEST_FILE_PATH);
 
+jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+
 const fileStorageRepository = new FileStorageRepository();
 jest.mock('@/renderer/modules/settings/useSettings.ts', () => ({
   useSettings: () => {

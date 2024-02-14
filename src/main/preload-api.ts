@@ -119,4 +119,7 @@ export const preloadApi = {
     fs.writeFileSync(newFilePath, derData, 'binary');
     return newFilePath;
   },
+  isMacOS: (): boolean => {
+    return os.platform() === 'darwin';
+  },
 };

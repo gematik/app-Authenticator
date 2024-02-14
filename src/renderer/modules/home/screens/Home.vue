@@ -20,24 +20,32 @@
     <h2 id="lblMainCenter" class="text-center">{{ $t('welcome_to_our_authenticator_app') }}</h2>
     <LoadingSpinner v-if="$store.state.showLoadingSpinner" />
     <OpenSettings v-if="!settingsSet"></OpenSettings>
-    <MockVersionHint v-if="isMock" />
+    <!-- #!if MOCK_MODE === 'ENABLED' -->
+    <MockVersionHint />
+    <ClearSavedUserConsents />
+    <!-- #!endif -->
   </div>
 </template>
 
 <script lang="ts">
+// #!if MOCK_MODE === 'ENABLED'
+import ClearSavedUserConsents from '@/renderer/modules/home/components/ClearSavedUserConsents.vue';
+import MockVersionHint from '@/renderer/modules/home/components/MockVersionHint.vue';
+// #!endif
 import { computed, defineComponent, onMounted } from 'vue';
 import OpenSettings from '@/renderer/modules/home/components/OpenSettings.vue';
 import { useSettings } from '@/renderer/modules/settings/useSettings';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import LoadingSpinner from '@/renderer/modules/home/components/LoadingSpinner.vue';
 import { checkNewUpdate } from '@/renderer/service/auto-updater-service';
-import MockVersionHint from '@/renderer/modules/home/components/MockVersionHint.vue';
-import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
 
 export default defineComponent({
   name: 'HomeScreen',
   components: {
+    // #!if MOCK_MODE === 'ENABLED'
+    ClearSavedUserConsents,
     MockVersionHint,
+    // #!endif
     LoadingSpinner,
     OpenSettings,
   },
@@ -45,8 +53,6 @@ export default defineComponent({
     const { exist } = useSettings();
 
     const settingsSet = computed(() => exist());
-
-    const isMock = validateMockVersion();
 
     onMounted(() => {
       ConnectorConfig.updateConnectorParameters();
@@ -56,7 +62,6 @@ export default defineComponent({
     });
     return {
       settingsSet,
-      isMock,
     };
   },
 });

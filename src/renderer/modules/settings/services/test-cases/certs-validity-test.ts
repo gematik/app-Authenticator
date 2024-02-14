@@ -17,6 +17,7 @@ import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
 import { getCaCertsWithFilenames } from '@/renderer/utils/read-tls-certificates';
 import { checkPemFileFormatSilent, PEM_TYPES } from '@/renderer/utils/pem-file-validator';
+import { MACOS_DS_STORE_FILE_NAME } from '@/constants';
 
 const translate = i18n.global.t;
 
@@ -26,9 +27,10 @@ export async function certsValidityTest(): Promise<TestResult> {
 
     let totalCerts = 0;
     let notValidCerts = 0;
+    const cleanCerts = certs.filter(({ name }) => name !== MACOS_DS_STORE_FILE_NAME);
 
     await Promise.all(
-      certs.map(async ({ name, cert }) => {
+      cleanCerts.map(async ({ name, cert }) => {
         if (!(await checkPemFileFormatSilent(cert, PEM_TYPES.CERT))) {
           logger.info(notValidCerts, name, 'is not valid');
           notValidCerts++;
@@ -42,12 +44,14 @@ export async function certsValidityTest(): Promise<TestResult> {
 
     if (notValidCerts > 0) {
       return {
+        title: translate('function_test_general'),
         name: translate('certs_validity'),
         status: TestStatus.failure,
         details: translate('certs_validity_failure', { totalCerts: totalCerts, notValidCerts: notValidCerts }),
       };
     } else
       return {
+        title: translate('function_test_general'),
         name: translate('certs_validity'),
         status: TestStatus.success,
         details: translate('certs_validity_successful', { totalCerts: totalCerts }),
@@ -55,6 +59,7 @@ export async function certsValidityTest(): Promise<TestResult> {
   } catch (err) {
     logger.debug(err);
     return {
+      title: translate('function_test_general'),
       name: translate('certs_validity'),
       status: TestStatus.failure,
       details: translate('error_info') + `${err.message}`,

@@ -30,5 +30,5 @@
     "tests/**/*.tsx",
     "node_modules/@types/jest/index.d.ts"
   ],
-  "exclude": ["node_modules", "tests"]
+  "exclude": ["node_modules", "dist_electron", "release"]
 }

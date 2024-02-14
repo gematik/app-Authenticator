@@ -2,6 +2,29 @@
 
 # Release Authenticator
 
+## Version 4.9.0
+
+### added:
+- Migration for credentials from config.json to windows Credential Manager (only Standalone Installation)
+- UserConsent dialog
+- Input validation for proxy settings and allow-list
+- FQDN support for proxy settings
+- Authenticator checksum hash value for prod and mock versions
+- SBOM (Software Bills of Material)
+- Prod and Mock Version now both are signed
+- Customisable timeout option for HTTP requests
+
+### fixed:
+- Using axios as the HTTP client instead of fetch
+- Config.json is now more readable 
+- Log-File is now more readable
+
+### security
+- change Nodejs to Version 20
+- Prod version no longer contains mock codes
+- New signing certificate for Windows
+
+
 ## Version 4.8.1
 
 ### bugfix

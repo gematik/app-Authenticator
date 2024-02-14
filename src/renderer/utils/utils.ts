@@ -170,3 +170,21 @@ export function createRedirectDeeplink(protocol: string, redirectIdp: string): s
   const url = new URL(redirectIdp);
   return `${protocol}://${url.searchParams}`;
 }
+
+/**
+ * Escape HTML special characters
+ * @param str
+ */
+export function escapeHTML(str: string) {
+  return str.replace(/[&<>"']/g, (match: string) => {
+    return (
+      {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      }[match] || match
+    );
+  });
+}

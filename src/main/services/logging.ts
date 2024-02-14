@@ -17,17 +17,24 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
-import { IS_DEV } from '@/constants';
+import { LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
 import { zip } from 'zip-a-folder';
-import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
 import { TransformableInfo } from 'logform';
+import { isMacOS } from '@/main/services/utils';
 
 const { combine, printf, simple } = winston.format;
 
-const logLevel = IS_DEV || validateMockVersion() ? 'debug' : 'info';
+let logLevel = 'info';
+// #!if MOCK_MODE === 'ENABLED'
+logLevel = 'debug';
+// #!endif
 
 // get directory path and create it if missing
-export const logDirectoryPath = path.join(os.tmpdir(), 'authenticator-logging');
+const genLogDirPath = isMacOS
+  ? path.join(os.homedir(), MACOS_PATHS.LOGGING_DIR, LOG_DIRECTORY_NAME)
+  : path.join(os.tmpdir(), LOG_DIRECTORY_NAME);
+
+export const logDirectoryPath = genLogDirPath;
 
 if (!fs.existsSync(logDirectoryPath)) {
   fs.mkdirSync(logDirectoryPath, { recursive: true });
@@ -69,13 +76,14 @@ export const logger = createLogger({
 });
 
 // If we're not in production then **ALSO** log to the terminal
-if (IS_DEV) {
-  logger.add(
-    new winston.transports.Console({
-      format: combine(simple()),
-    }),
-  );
-}
+
+// #!if MOCK_MODE === 'ENABLED'
+logger.add(
+  new winston.transports.Console({
+    format: combine(simple()),
+  }),
+);
+// #!endif
 
 /**
  * Render extra data with error details

@@ -43,7 +43,7 @@ type IConfigValue = string | number | boolean;
 /**
  * read and return single parameter
  * @param key
- * @param defaultValue
+ * @param defaultValue<>
  */
 export const getConfig = (key: string, defaultValue?: IConfigValue): { value: IConfigValue; name: string } => {
   const savedConfigValues = FileStorageRepositoryInstance.load();

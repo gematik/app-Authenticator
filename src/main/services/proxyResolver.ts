@@ -13,14 +13,16 @@
  */
 
 import { ipcRenderer } from 'electron';
-import { matches } from 'ip-matching';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 import { IPC_GET_PROXY } from '@/constants';
 import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
 import fs from 'fs';
-import dns from 'dns';
 import { logger } from '@/main/services/logging';
 import { APP_CA_CHAIN_IDP, APP_CONFIG_DATA } from '@/main/preload-api';
+import isFQDN from 'validator/lib/isFQDN';
+import { matches as ipMatches } from 'ip-matching';
+import micromatch from 'micromatch';
+import * as dns from 'dns';
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
 
@@ -80,37 +82,83 @@ export async function createProxyAgent(url: string): TReturnType {
   }
 }
 
-const isUrlInProxyIgnoreList = async (url: string): Promise<boolean> => {
+const isUrlInProxyIgnoreList = async (proxyUrl: string): Promise<boolean> => {
   const proxyIgnoreList = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST] as string;
 
   if (!proxyIgnoreList?.trim()) {
     return false;
   }
 
-  const ipAddress = await getIpAddress(url);
+  if (!proxyUrl) {
+    logger.info('Could not resolve ip address for the proxy ignore list');
+    return false;
+  }
+
+  const proxyIgnoreEntries = proxyIgnoreList.split(';');
+
+  for (const proxyIgnoreEntry of proxyIgnoreEntries) {
+    // if this is a fqdn and it matches the proxy url, return true
+    if (isFQDN(proxyIgnoreEntry, { allow_wildcard: true }) && isFqdnInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
+      return true;
+    }
+    // if this is an ip address and it matches the proxy url, return true
+    else if (await isIpInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isFqdnInProxyIgnoreList = (proxyUrl: string, proxyIgnoreEntry: string): boolean => {
+  const parsedProxyUrl = new URL(proxyUrl);
+  const host = parsedProxyUrl.host;
+
+  const isUrlInProxyIgnoreListResult = micromatch.isMatch(host, proxyIgnoreEntry);
+
+  logger.info('isUrlInProxyIgnoreListResult' + isUrlInProxyIgnoreListResult);
+  if (isUrlInProxyIgnoreListResult) {
+    logger.info('URL is in proxy ignore list');
+    logger.debug(
+      'ProxyIgnoreEntry:' +
+        proxyIgnoreEntry +
+        ', Address for URL:' +
+        host +
+        ', is proxyURL in proxy ignore range:' +
+        isUrlInProxyIgnoreListResult,
+    );
+    return true;
+  }
+
+  return false;
+};
+
+const isIpInProxyIgnoreList = async (proxyUrl: string, proxyIgnoreEntry: string): Promise<boolean> => {
+  const ipAddress = await getIpAddress(proxyUrl);
 
   if (!ipAddress) {
     logger.info('Could not resolve ip address for the proxy ignore list');
     return false;
   }
 
-  const proxyIgnoreEntries = proxyIgnoreList.split(';');
-  for (const proxyIgnoreEntry of proxyIgnoreEntries) {
-    const isUrlInIpRange = matches(ipAddress, proxyIgnoreEntry);
+  try {
+    const isUrlInIpRange = ipMatches(ipAddress, proxyIgnoreEntry);
     if (isUrlInIpRange) {
-      logger.info('Url is in proxy ignore list');
+      logger.info('IP-address is in proxy ignore list');
       logger.debug(
         'ProxyIgnoreEntry:' +
           proxyIgnoreEntry +
-          ', ipAddress for Url:' +
+          ', IP-Address for URL:' +
           ipAddress +
-          ', is url in proxy ignore range:' +
+          ', is proxyURL in proxy ignore range:' +
           isUrlInIpRange,
       );
       return isUrlInIpRange;
     }
+
+    return false;
+  } catch (e) {
+    return false;
   }
-  return false;
 };
 
 async function getIpAddress(href: string): Promise<string | false> {

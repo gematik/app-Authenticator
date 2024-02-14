@@ -49,6 +49,10 @@ export type TGemIdpServiceStore = {
   challengePath: string;
   idpHost: string;
   challenge: string;
+  userConsent?: {
+    requested_scopes: Record<string, string>;
+    requested_claims: Record<string, string>;
+  };
   jweChallenge: null | IJweChallenge;
   openIdConfiguration?: IOpenIdConfiguration;
   idpEncJwk?: IIdpEncJwk;

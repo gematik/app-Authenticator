@@ -393,3 +393,18 @@ Drittsoftwareanteile:
 
     Komponente: keytar
     Lizenz: MIT
+
+    Komponente: axios
+    Lizenz: MIT
+
+    Komponente: is-fqdn
+    Lizenz: MIT
+
+    Komponente: lodash
+    Lizenz: MIT
+
+    Komponente: micromatch
+    Lizenz: MIT
+
+    Komponente: validator
+    Lizenz: MIT

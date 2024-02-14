@@ -41,6 +41,10 @@ export function getCaCertsWithFilenames(isConnector: boolean): { name: string; c
 }
 
 export function getUploadedFilePath(filename: string): string {
+  if (window.api.isMacOS()) {
+    return window.api.pathJoin(PathProvider.getMacOsUserAppPath(), filename);
+  }
+
   return window.api.pathJoin(PathProvider.configPath, filename);
 }
 

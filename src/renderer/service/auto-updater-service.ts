@@ -23,7 +23,7 @@ import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
  */
 export const checkNewUpdate = (checkUpdate?: boolean) => {
   // This option is disabled in mock mode
-  /* @if MOCK_MODE != 'ENABLED' */
+  // #!if MOCK_MODE !== 'ENABLED'
 
   // if the given value is UNDEFINED or NULL, check the config
   checkUpdate = checkUpdate ?? !!getConfig(CHECK_UPDATES_AUTOMATICALLY_CONFIG).value;
@@ -31,7 +31,7 @@ export const checkNewUpdate = (checkUpdate?: boolean) => {
   if (checkUpdate) {
     window.api.send(IPC_CHECK_UPDATE);
   }
-  /* @endif */
+  // #!endif
 };
 
 /**

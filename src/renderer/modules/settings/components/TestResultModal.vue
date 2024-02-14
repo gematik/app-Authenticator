@@ -17,37 +17,40 @@
     id="test-results-container"
     class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
   >
-    <div class="relative my-6 mx-auto max-w-6xl p-6 min-w-2">
+    <div id="scrollable-content" class="relative my-6 mx-auto max-w-6xl p-6 min-w-2">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
 
-        <div class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-md">
+        <div class="flex items-start p-5 justify-between border-b border-solid border-slate-200 rounded-md">
           <h3 class="text-2xl align-middle font-semibold">{{ $t('function_test_finished') }}</h3>
         </div>
         <!--body-->
+        <div class="relative pb-2 pl-5 pr-5 flex-auto rounded-md w-full">
+          <div v-for="title in uniqueTitles()" :key="title">
+            <div class="flex justify-between pt-5 pb-2 pl-5 border-solid border-slate-200 rounded-md">
+              <h3 class="text-m align-middle font-semibold">{{ title }}</h3>
+            </div>
 
-        <div class="relative p-4 flex-auto rounded-md w-full">
-          <div v-for="item in functionTestResults" :key="item" class="rounded w-full pb-4">
-            <div
-              class="container text-slate-500 p-2 text-lg leading-relaxed rounded-lg"
-              :class="{ 'bg-green-300': item.status === 'success', 'bg-red-100': item.status === 'failure' }"
-            >
-              <div class="grid grid-cols-8 gap-4">
-                <div class="">
-                  <img
-                    v-if="item.status === 'success'"
-                    src="@/assets/Success@2x.png"
-                    class="object-none p-4"
-                    alt="error icon"
-                  />
-                  <img v-else src="@/assets/Error@2x.png" class="object-none p-4" alt="error icon" />
-                </div>
-
-                <div class="col-span-7">
-                  <div :id="item.name" class="font-bold pl-1 pr-1">{{ item.name }}</div>
-                  <div class="text-base pl-1 pr-1 pb-1 break-words">
-                    {{ item.details }}
+            <!-- Filter the test results based on the current title -->
+            <div v-for="item in filteredTestResults(title)" :key="item.title" class="rounded w-full pb-4">
+              <div
+                class="container text-slate-500 p-2 text-lg leading-relaxed rounded-lg"
+                :class="{ 'bg-green-300': item.status === 'success', 'bg-red-100': item.status === 'failure' }"
+              >
+                <div class="grid grid-cols-8 gap-4">
+                  <div class="">
+                    <img
+                      v-if="item.status === 'success'"
+                      src="@/assets/Success@2x.png"
+                      class="object-none p-4"
+                      alt="error icon"
+                    />
+                    <img v-else src="@/assets/Error@2x.png" class="object-none p-4" alt="error icon" />
+                  </div>
+                  <div class="col-span-7">
+                    <div :id="item.name" class="font-bold pl-1 pr-1">{{ item.name }}</div>
+                    <div class="text-base pl-1 pr-1 pb-1 break-words">{{ item.details }}</div>
                   </div>
                 </div>
               </div>
@@ -124,6 +127,12 @@ export default defineComponent({
         this.closeModal();
       }
     },
+    uniqueTitles() {
+      return Array.from(new Set(this.functionTestResults.map((item) => item.title)));
+    },
+    filteredTestResults(title: string) {
+      return this.functionTestResults.filter((item) => item.title === title);
+    },
   },
 });
 </script>
@@ -131,5 +140,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 #test-results-container {
   background: rgba(0, 0, 0, 0.4);
+}
+
+#scrollable-content {
+  max-height: 600px;
+  overflow-y: auto;
 }
 </style>

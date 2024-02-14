@@ -12,24 +12,23 @@
  * permissions and limitations under the Licence.
  */
 
+// #!if MOCK_MODE === 'ENABLED'
+import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
+import { getConfig } from '@/renderer/utils/get-configs';
 import { connectorReachabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-reachability';
 import { connectorSmcbReadabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-smcb-readability';
 import { idpReachabilityTest } from '@/renderer/modules/settings/services/test-cases/idp-reachability';
-import { logger } from '@/renderer/service/logger';
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
+import { logger } from '@/renderer/service/logger';
 import { SweetAlertResult } from 'sweetalert2';
 import i18n from '@/renderer/i18n';
-
-/* @if MOCK_MODE == 'ENABLED' */
-import { getConfig } from '@/renderer/utils/get-configs';
-import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
-/* @endif */
 
 const allTestCases: TestFunction[] = [
   connectorReachabilityTest,
   connectorSmcbReadabilityTest,
-  idpReachabilityTest,
   certsValidityTest,
+  idpReachabilityTest,
 ];
 
 export enum TestStatus {
@@ -37,7 +36,7 @@ export enum TestStatus {
   failure = 'failure',
 }
 
-export type TestResult = { name: string; status: TestStatus; details: string };
+export type TestResult = { title: string; name: string; status: TestStatus; details: string };
 type TestFunction = () => Promise<TestResult> | Promise<TestResult[]>;
 
 export async function runTestsCases(
@@ -49,12 +48,12 @@ export async function runTestsCases(
   logger.info('start test cases');
 
   for (const testCase of testCases) {
-    /* @if MOCK_MODE == 'ENABLED' */
+    // #!if MOCK_MODE === 'ENABLED'
     const isMockModeActive = getConfig(MOCK_CONNECTOR_CONFIG).value;
     if (isMockModeActive && (testCase === connectorReachabilityTest || testCase === connectorSmcbReadabilityTest)) {
       continue;
     }
-    /* @endif */
+    // #!endif
 
     try {
       /**
@@ -81,6 +80,7 @@ export async function runTestsCases(
     } catch (e) {
       logger.info('Function test process interrupted');
       results.push({
+        title: translate(''),
         name: translate('function_test_cancelled'),
         details: translate('function_test_cancelled_by_user_description'),
         status: TestStatus.failure,

@@ -22,14 +22,14 @@ import { IS_TEST } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { TlsAuthType } from '@/@types/common-types';
-import { ENTRY_OPTIONS_CONFIG_GROUP, TLS_AUTH_TYPE_CONFIG } from '@/config';
+import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { APP_CONFIG_DATA } from '@/main/preload-api';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
 
 let gotAdvanced = got;
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 if (!IS_TEST) {
   gotAdvanced = got.extend({
     hooks: {
@@ -55,8 +55,7 @@ if (!IS_TEST) {
     },
   });
 }
-
-/* @endif */
+// #!endif
 
 export enum HTTP_METHODS {
   POST,
@@ -87,11 +86,23 @@ export const httpClient = async (
     // put p12 certificate
     config = {
       ...config,
+      timeout: {
+        ...config.timeout,
+        request: <number>APP_CONFIG_DATA[TIMEOUT_PARAMETER_CONFIG] || 10000,
+      },
       https: {
         ...config.https,
         ...putP12Config(url),
       },
     };
+
+    // #!if MOCK_MODE === 'ENABLED'
+    // add header for https://idp.dev.gematik.solutions/
+    config.headers = {
+      ...config.headers,
+      'X-Authorization': 'FsMxoUGiJZowZ99lg7AfFYZl9/oEZ8jpMvCuMDhbAKE=',
+    };
+    // #!endif
 
     const proxy = await createProxyAgent(url);
     //we don't get debug messages from the ipcRenderer in createProxyAgent, so we log it here

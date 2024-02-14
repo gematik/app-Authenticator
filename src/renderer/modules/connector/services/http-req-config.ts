@@ -12,8 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { HTTPSOptions, OptionsOfTextResponseBody } from 'got';
-import { OutgoingHttpHeaders } from 'http';
+import { Headers, HTTPSOptions, Options } from 'got';
 
 import { TEntryOptions } from '@/renderer/modules/connector/type-definitions';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
@@ -43,11 +42,11 @@ export const getConnectorEndpoint = (endpoint?: string) => {
   return `https://${tlsEntryOptions.hostname}:${tlsEntryOptions.port}${path}`;
 };
 
-export const httpReqConfig = (headers?: OutgoingHttpHeaders): OptionsOfTextResponseBody => {
+export const httpReqConfig = (headers?: Headers): Options => {
   // tlsEntryOptions are always stable
   const tlsEntryOptions: TEntryOptions = ConnectorConfig.tlsEntryOptions;
 
-  const reqConfig: OptionsOfTextResponseBody = {
+  const reqConfig: Options = {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
       accept: '*/*',

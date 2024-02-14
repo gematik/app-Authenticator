@@ -53,6 +53,7 @@ export declare global {
       createLogZipFile: () => Promise<boolean>;
       isP12Valid: (p12Path: string, password: string) => P12_VALIDITY_TYPE;
       extractValidCertificate: (p12Path: string, password: string) => string;
+      isMacOS: () => boolean;
     };
   }
 }

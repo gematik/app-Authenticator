@@ -3,6 +3,7 @@ import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/Ge
 import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
 import store from '@/renderer/store';
+import axios from 'axios';
 
 // Mocking logger functions
 // Mocking logger functions
@@ -23,6 +24,15 @@ jest.mock('@/renderer/service/logger', () => {
 
 // Mocking fetch and window.api.httpGet
 global.fetch = jest.fn();
+
+// mock axios
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 // @ts-ignore
 window.api.httpGet = jest.fn();
@@ -53,7 +63,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
 
     await wrapper.vm.sendAutomaticRedirectRequest(url);
 
-    expect(fetch).toHaveBeenCalledWith(url);
+    expect(axios.get).toHaveBeenCalledWith(url);
     expect(logger.info).toHaveBeenCalledWith('Redirecting automatically flow completed from browser context');
   });
 
@@ -62,15 +72,15 @@ describe('GemIdpAuthFlowProcess.vue', () => {
     const url = 'http://localhost:3000';
 
     // @ts-ignore
-    fetch.mockImplementationOnce(() => {
+    axios.get.mockImplementationOnce(() => {
       throw new Error('Fetch Error');
     });
 
     await wrapper.vm.sendAutomaticRedirectRequest(url);
 
-    expect(fetch).toHaveBeenCalledWith(url);
+    expect(axios.get).toHaveBeenCalledWith(url);
     expect(logger.warn).toHaveBeenCalledWith(
-      'Redirecting automatically request failed from Browser Context. Retry in Preload Context',
+      'Redirecting automatically request failed from Browser Context. Retry in Preload Context. Error: Fetch Error',
     );
     // @ts-ignore
     expect(window.api.httpGet).toHaveBeenCalledWith(url, expect.any(Object));
@@ -82,7 +92,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
     const url = 'http://localhost:3000';
 
     // @ts-ignore
-    fetch.mockImplementationOnce(() => {
+    axios.get.mockImplementationOnce(() => {
       throw new Error('Fetch Error');
     });
 
@@ -93,13 +103,16 @@ describe('GemIdpAuthFlowProcess.vue', () => {
 
     await wrapper.vm.sendAutomaticRedirectRequest(url);
 
-    expect(fetch).toHaveBeenCalledWith(url);
+    expect(axios.get).toHaveBeenCalledWith(url);
     expect(logger.warn).toHaveBeenCalledWith(
-      'Redirecting automatically request failed from Browser Context. Retry in Preload Context',
+      'Redirecting automatically request failed from Browser Context. Retry in Preload Context. Error: Fetch Error',
     );
 
     // @ts-ignore
     expect(window.api.httpGet).toHaveBeenCalledWith(url, expect.any(Object));
-    expect(logger.error).toHaveBeenCalledWith('Redirecting automatically request failed!', 'httpGet Error');
+    expect(logger.error).toHaveBeenCalledWith(
+      'Redirecting automatically request failed! Error message: ',
+      'httpGet Error',
+    );
   });
 });

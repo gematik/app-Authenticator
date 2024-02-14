@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 export const MOCK_CONNECTOR_CONFIG = 'connector.mockConnector';
 export const MOCK_CONNECTOR_CERTS_CONFIG = {
   SMCB_CERT: 'connector.mockSmcbCert',
@@ -20,4 +20,4 @@ export const MOCK_CONNECTOR_CERTS_CONFIG = {
   HBA_CERT: 'connector.mockHbaCert',
   HBA_KEY: 'connector.mockHbaKey',
 } as const;
-/* @endif */
+// #!endif

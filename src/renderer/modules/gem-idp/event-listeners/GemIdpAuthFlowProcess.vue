@@ -24,20 +24,25 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { defineComponent } from 'vue';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
-import { parse } from 'query-string';
-import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMultiCardModal.vue';
+import queryString from 'query-string';
+import isEqual from 'lodash/isEqual';
 
+import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMultiCardModal.vue';
 import {
   AUTH_RE_TRY_TIMEOUT,
   IPC_MINIMIZE_THE_AUTHENTICATOR,
   IPC_SET_USER_AGENT,
   IPC_START_AUTH_FLOW_EVENT,
+  IS_DEV,
   LOGIN_CANCELLED_BY_USER,
   LOGIN_NOT_SUCCESSFUL,
   LOGIN_VIA_SMART_CARD_SUCCESSFUL,
   SHOW_DIALOG_DURATION,
+  STORAGE_CONFIG_KEYS,
+  WIKI_CONSENT_DECLARATION_URL,
   WIKI_ERRORCODES_URL,
 } from '@/constants';
 import { logger } from '@/renderer/service/logger';
@@ -59,6 +64,7 @@ import {
   alertWithCancelButton,
   closeSwal,
   createRedirectDeeplink,
+  escapeHTML,
   userAgent,
 } from '@/renderer/utils/utils';
 import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
@@ -90,6 +96,7 @@ export default defineComponent({
         /* do nothing here */
       },
       isAuthProcessActive: false,
+      userSavedConsent: false,
       selectedCardType: ECardTypes.HBA, // this is for multi card select modal
       currentCardType: null as null | ECardTypes, // this is the current flow's card type
       multiCardList: [],
@@ -117,6 +124,13 @@ export default defineComponent({
   },
   created() {
     window.api.on(IPC_START_AUTH_FLOW_EVENT, this.createQueue);
+
+    // listens for click to save-consent checkbox
+    document.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).id === 'save-consent') {
+        this.userSavedConsent = event.target instanceof HTMLInputElement && event.target.checked;
+      }
+    });
   },
   methods: {
     async createQueue(event: Event, args: TOidcProtocol2UrlSpec) {
@@ -151,6 +165,7 @@ export default defineComponent({
       this.logStep('finishAndStartNextFlow');
 
       this.stepCounter = 0;
+      this.userSavedConsent = false;
 
       // first clear the stores
       this.$store.commit('connectorStore/resetStore');
@@ -314,6 +329,8 @@ export default defineComponent({
 
       // Init Card and get CardHandle
       await this.getCardHandle(cardType);
+
+      await this.showConsentDeclaration();
 
       await this.checkPinStatus(cardType);
 
@@ -765,7 +782,12 @@ export default defineComponent({
 
         if (authFlowEndState.isSuccess) {
           await alertLoginResultWithIconAndTimer('success', LOGIN_VIA_SMART_CARD_SUCCESSFUL, SHOW_DIALOG_DURATION);
-          window.api.send(IPC_MINIMIZE_THE_AUTHENTICATOR);
+
+          // #!if MOCK_MODE === 'ENABLED'
+          if (!IS_DEV) {
+            window.api.send(IPC_MINIMIZE_THE_AUTHENTICATOR);
+          }
+          // #!endif
         } else if (!url.includes('error=') && caughtErrorObject) {
           const definedError = caughtErrorObject.oauthErrorType || OAUTH2_ERROR_TYPE.SERVER_ERROR;
           url = `${url}?error=${definedError}&error_details=${caughtErrorObject.errorDescription}${state}`;
@@ -819,7 +841,7 @@ export default defineComponent({
     popParamFromChallengePath(paramName: string, challengePath?: string): string | null {
       this.logStep('popParamFromChallengePath');
       if (challengePath && challengePath.includes(paramName)) {
-        const parsedPath = parse(challengePath);
+        const parsedPath = queryString.parse(challengePath);
         const value = parsedPath[paramName];
 
         // update challenge path
@@ -862,10 +884,19 @@ export default defineComponent({
         const customUserAgent = userAgent + this.$store.state.gemIdpServiceStore.clientId;
         window.api.sendSync(IPC_SET_USER_AGENT, customUserAgent);
 
-        await fetch(url);
+        await axios.get(url);
+
         logger.info(successMessage + ' from browser context');
       } catch (e) {
-        logger.warn('Redirecting automatically request failed from Browser Context. Retry in Preload Context');
+        logger.debug(
+          `Auto redirect failed with status code ${e?.response?.status} and message '${e.message}'`,
+          e?.response?.data,
+        );
+
+        logger.warn(
+          'Redirecting automatically request failed from Browser Context. Retry in Preload Context. Error: ' +
+            e.message,
+        );
 
         try {
           await window.api.httpGet(url, {
@@ -881,8 +912,10 @@ export default defineComponent({
           });
           logger.info(successMessage + ' from preload context');
         } catch (err) {
+          logger.error('Redirecting automatically request failed! Error message: ', err?.message);
+          logger.debug('Own http-client auto redirect failed e.response: ', err?.response);
+
           await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0009);
-          logger.error('Redirecting automatically request failed!', err.message);
         }
       }
     },
@@ -890,6 +923,86 @@ export default defineComponent({
       logger.info('\n');
       logger.info('### Step ' + this.stepCounter + ': ' + log + ' ###');
       this.stepCounter++;
+    },
+    async showConsentDeclaration(): Promise<boolean> {
+      const cardIccsn = this.$store.state.connectorStore.cards[this.currentCardType!]!.iccsn;
+      const clientId = this.$store.state.gemIdpServiceStore.clientId;
+      const userConsent = this.$store.state.gemIdpServiceStore.userConsent;
+
+      type TSavedConsents = Record<string, Record<string, string>>;
+      const consentPair = clientId + '-' + cardIccsn;
+
+      // if user has already consented for this pair, we skip the consent declaration
+      const savedPairs = localStorage.getItem(STORAGE_CONFIG_KEYS.SAVED_USER_CONSENT_PAIRS);
+      const savedPairsArray: TSavedConsents = savedPairs ? JSON.parse(savedPairs) : {};
+
+      // if user has already consented for this pair and consents are identical, we skip the consent declaration
+      if (savedPairsArray[consentPair] && isEqual(savedPairsArray[consentPair], userConsent?.requested_claims)) {
+        return true;
+      }
+
+      // bring the app to the front
+      window.api.focusToApp();
+
+      const consent = await Swal.fire({
+        title: this.$t('privacy_notice'),
+        html: this.renderConsentItemList(this.$t('consent_claims_title'), userConsent!.requested_claims),
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: this.$t('accept_consent'),
+        cancelButtonText: this.$t('decline_consent'),
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        width: '60%',
+      });
+
+      // user clicked cancel, stop the auth process
+      if (!consent.isConfirmed) {
+        await alertLoginResultWithIconAndTimer('error', LOGIN_CANCELLED_BY_USER, SHOW_DIALOG_DURATION);
+        this.setCaughtError(ERROR_CODES.AUTHCL_0011, 'User declined consent', OAUTH2_ERROR_TYPE.ACCESS_DENIED);
+        throw new UserfacingError(ERROR_CODES.AUTHCL_0011 + ' User declined consent', '', ERROR_CODES.AUTHCL_0011);
+      }
+
+      // user clicked save consent, save the pair to local storage
+      if (this.userSavedConsent) {
+        // get stored pairs from local storage
+        const savedPairs = localStorage.getItem(STORAGE_CONFIG_KEYS.SAVED_USER_CONSENT_PAIRS);
+
+        // parse to array
+        const savedPairsObject: TSavedConsents = savedPairs ? JSON.parse(savedPairs) : {};
+        savedPairsObject[consentPair] = userConsent!.requested_claims;
+
+        // save to local storage
+        localStorage.setItem(STORAGE_CONFIG_KEYS.SAVED_USER_CONSENT_PAIRS, JSON.stringify(savedPairsObject));
+      }
+
+      return true;
+    },
+    renderConsentItemList(title: string, list: Record<string, string>) {
+      let consentItemList = '<h2 style="text-align: left; margin: 10px 0">' + title + '</h2>';
+      consentItemList += '<ul style="text-align: left ;">';
+      for (const value of Object.values(list)) {
+        consentItemList += `<li style="list-style: decimal;">- ${escapeHTML(value)}</li>`;
+      }
+      consentItemList += '</ul>';
+      consentItemList += '<br>';
+
+      // render see more information link
+      consentItemList += '<div style="text-align: left">';
+      consentItemList += this.$t('here_you_find_more_information');
+      consentItemList +=
+        '<a href="#" style="color: #0052cc" onclick="window.api.openExternal(\'' +
+        WIKI_CONSENT_DECLARATION_URL +
+        '\')">';
+      consentItemList += this.$t('privacy_notice');
+
+      consentItemList += '</a><br><br>';
+      consentItemList += '<input id="save-consent" type="checkbox"> ';
+      consentItemList += '<label for="save-consent">' + this.$t('do_not_show_in_advance') + '</label>';
+      consentItemList += '</div>';
+
+      return consentItemList;
     },
   },
 });

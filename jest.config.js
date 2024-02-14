@@ -41,7 +41,6 @@ module.exports = {
   testMatch: ['<rootDir>/tests/**/*.spec.ts'],
   modulePathIgnorePatterns: ['__snapshots__'],
   setupFiles: ['dotenv/config', './tests/jest-config/setup.ts'],
-  testSequencer: './tests/jest-config/test-sequencer.js',
   coverageReporters: ['cobertura', 'lcov', 'text'],
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   testResultsProcessor: './resultsProcessor.js',

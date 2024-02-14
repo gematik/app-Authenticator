@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-/* @if MOCK_MODE == 'ENABLED' */
+// #!if MOCK_MODE === 'ENABLED'
 import { MOCK_CONNECTOR_CERTS_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { getConfig } from '@/renderer/utils/get-configs';
 import { logger } from '@/renderer/service/logger';
@@ -42,4 +42,4 @@ export const readMockCertificate = (configKey: TMockCertificatesValues, cleanCer
   }
 };
 
-/* @endif */
+// #!endif

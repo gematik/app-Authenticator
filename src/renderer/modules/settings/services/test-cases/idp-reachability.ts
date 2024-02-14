@@ -29,6 +29,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
   } catch (e: unknown) {
     if (e instanceof UserfacingError) {
       results.push({
+        title: translate('function_test_idp_reachability'),
         name: translate('missing_idp_test_case_config_file'),
         status: TestStatus.failure,
         details: translate('please_put_the_config_file_to', { filePath: e.data.filePath }),
@@ -46,6 +47,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
       const statusCode = await callIdp(url);
       logger.info(`IDP status code ' + ${statusCode}`);
       results.push({
+        title: translate('function_test_idp_reachability'),
         name: translate('accessibility_of_the_idp', { name: idpName }),
         status: statusCode === 200 ? TestStatus.success : TestStatus.failure,
         details: translate('accessibility_of_the_idp_result', { url: url, statusCode: statusCode }),
@@ -53,6 +55,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
     } catch (err) {
       logger.debug(err.message);
       results.push({
+        title: translate('function_test_idp_reachability'),
         name: translate('accessibility_of_the_idp', { name: idpName }),
         status: TestStatus.failure,
         details: translate('accessibility_of_the_idp_error', { message: err.message, url: url }),
@@ -87,9 +90,20 @@ async function callIdp(url: string): Promise<number> {
 }
 
 function loadAndParseConnectionTestConfig(): any {
-  // TODO: This config file must be stored on a proper location and not in the dist folder
-  // C:\Program Files\gematik Authenticator\resources
-  const filePath = window.api.pathJoin(PathProvider.getAppPath().replace(/app.asar/i, ''), 'test-cases-config.json');
+  let filePath = '';
+  const jsonFileName = 'test-cases-config.json';
+
+  if (window.api.isMacOS()) {
+    filePath = window.api.pathJoin(PathProvider.getMacOsUserAppPath(), jsonFileName);
+
+    // #!if MOCK_MODE === 'ENABLED'
+    filePath = window.api.pathJoin(PathProvider.getAppPath(), 'src/assets/', jsonFileName);
+    // #!endif
+  } else {
+    // TODO: This config file must be stored on a proper location and not in the dist folder
+    // C:\Program Files\gematik Authenticator\resources
+    filePath = window.api.pathJoin(PathProvider.getAppPath().replace(/app.asar/i, ''), jsonFileName);
+  }
 
   if (!window.api.existsSync(filePath)) {
     logger.error('Conf file not found: ' + filePath + '-App-path: ' + PathProvider.getAppPath());
@@ -98,7 +112,7 @@ function loadAndParseConnectionTestConfig(): any {
     });
   }
 
-  logger.info('Conf file found, filepath:' + filePath + ', -app-path:' + PathProvider.getAppPath());
+  logger.info('Conf file found, filepath:' + filePath);
   const buffer = window.api.readFileSync(filePath);
   const decoder = new TextDecoder('utf-8');
   return JSON.parse(decoder.decode(buffer));

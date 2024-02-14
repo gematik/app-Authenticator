@@ -12,11 +12,13 @@
  * permissions and limitations under the Licence.
  */
 
-import { ALLOWED_DEEPLINK_PROTOCOLS, IS_DEV } from '@/constants';
+import { ALLOWED_DEEPLINK_PROTOCOLS } from '@/constants';
 import { logger } from '@/renderer/service/logger';
-import { validateMockVersion } from '@/renderer/utils/validate-mock-version';
 
-const ALLOWED_PROTOCOLS = IS_DEV || validateMockVersion() ? ['http:', 'https:'] : ['https:'];
+let ALLOWED_PROTOCOLS = ['https:'];
+// #!if MOCK_MODE === 'ENABLED'
+ALLOWED_PROTOCOLS = ['http:', 'https:'];
+// #!endif
 
 /**
  * We only allow http and https protocols to prevent possible vulnerabilities

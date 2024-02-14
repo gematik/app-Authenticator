@@ -18,10 +18,11 @@
     - [Building the application](#building-the-application)
     - [Unittests](#unittests)
     - [Stack](#stack)
-3. [Contributing](#contributing)
-4. [License EUPL](#license-eupl)
-5. [FAQ](#faq)
-6. [Support and Feedback](#support-and-feedback)
+3. [Secure Credentials Storage](#storing-credentials-securely)
+4. [Contributing](#contributing)
+5. [License EUPL](#license-eupl)
+6. [FAQ](#faq)
+7. [Support and Feedback](#support-and-feedback)
 
 ## About The Project
 
@@ -91,6 +92,8 @@ This stack based on those technologies:
 * Linter: ESLint
 * Formatter: Prettier
 
+## Storing Credentials Securely
+For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator, see [here](credential-distribution/README.md)
 
 ## License EUPL
 
@@ -105,14 +108,3 @@ Unless required by applicable law or agreed to in writing, software distributed 
 IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
 language governing permissions and limitations under the License.ee the Licence for the specific language governing
 permissions and limitations under the Licence.
-
-## FAQ
-
-Visit our [FAQ page](https://wiki.gematik.de/x/tjdCH) for more information.
-
-## Support and Feedback
-
-For inquiries from application developers regarding the API or suggestions, please use the following email address:
-[authenticator@gematik.de](mailto:authenticator@gematik.de)
-
-

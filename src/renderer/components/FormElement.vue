@@ -288,7 +288,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .form-element-container:last-of-type {
-  @apply rounded-[8px];
+  @apply rounded-bl-[8px];
+  @apply rounded-br-[8px];
 }
 
 .inner-box-shadow {
