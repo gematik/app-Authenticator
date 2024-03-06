@@ -22,13 +22,20 @@ import { TPinStatusResponse, TPinStatusTypes } from '@/renderer/modules/connecto
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 let statusResult: string, pinStatus: TPinStatusTypes;
-export const getPinStatus = async (cardType: ECardTypes, cardHandle: string): Promise<TPinStatusResponse> => {
+export const getPinStatus = async (
+  cardType: ECardTypes,
+  cardHandle: string,
+  returnValue = false,
+): Promise<TPinStatusResponse> => {
   try {
     const pinStatusResp = await pinStatusLauncher(cardType, cardHandle);
     statusResult = cardHandleParser(pinStatusResp, XML_TAG_NAMES.TAG_VERIFY_RESULT);
     logger.debug(`statusResult: ${statusResult}`);
     pinStatus = cardHandleParser(pinStatusResp, XML_TAG_NAMES.TAG_PINSTATUS) as TPinStatusTypes;
     logger.debug(`pinStatus: ${pinStatus}`);
+    if (returnValue) {
+      return { statusResult, pinStatus };
+    }
     if (pinStatus === 'BLOCKED' || pinStatus === 'REJECTED') {
       throw new UserfacingError('Technical error pin status not verified', '', ERROR_CODES.AUTHCL_1103, {
         cardType,

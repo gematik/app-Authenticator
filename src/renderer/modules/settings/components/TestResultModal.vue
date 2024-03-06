@@ -36,7 +36,11 @@
             <div v-for="item in filteredTestResults(title)" :key="item.title" class="rounded w-full pb-4">
               <div
                 class="container text-slate-500 p-2 text-lg leading-relaxed rounded-lg"
-                :class="{ 'bg-green-300': item.status === 'success', 'bg-red-100': item.status === 'failure' }"
+                :class="{
+                  'bg-green-300': item.status === TestStatus.success,
+                  'bg-orange-100': item.status === TestStatus.warning,
+                  'bg-red-100': item.status === TestStatus.failure,
+                }"
               >
                 <div class="grid grid-cols-8 gap-4">
                   <div class="">
@@ -93,7 +97,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { TestResult } from '@/renderer/modules/settings/services/test-runner';
+import { TestResult, TestStatus } from '@/renderer/modules/settings/services/test-runner';
 import { FACHPORTAL_URL } from '@/constants';
 
 export default defineComponent({
@@ -110,6 +114,11 @@ export default defineComponent({
     saveSettings: {
       type: Function,
       required: true,
+    },
+  },
+  computed: {
+    TestStatus() {
+      return TestStatus;
     },
   },
   mounted() {

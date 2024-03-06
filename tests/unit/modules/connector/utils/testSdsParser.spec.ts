@@ -13,7 +13,7 @@
  */
 
 import sdsParser from '@/renderer/modules/connector/common/sds-parser';
-import { printTestTitle, readResourceFile, TestCategory } from '../../../../TestInfo';
+import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
 let endpoints = new Map();

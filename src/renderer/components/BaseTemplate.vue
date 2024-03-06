@@ -44,13 +44,13 @@ const buildVersion = computed(() => {
   <div class="h-full flex flex-col bg-primary text-defaultext">
     <div class="flex flex-row justify-between px-[32px] py-[32px]">
       <div>
-        <router-link id="navLogin" to="/" class="mr-[16px]">
+        <router-link id="navLogin" to="/" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
           {{ $t('registration') }}
         </router-link>
-        <router-link id="navSettings" to="/settings" class="mr-[16px]">
+        <router-link id="navSettings" to="/settings" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
           {{ $t('settings') }}
         </router-link>
-        <router-link id="navHelp" to="/help">
+        <router-link id="navHelp" to="/help" class="p-1.5 rounded-sm operator:hover bg-primary">
           {{ $t('help') }}
         </router-link>
       </div>
@@ -72,3 +72,20 @@ const buildVersion = computed(() => {
     <GemIdpAuthFlowProcess />
   </div>
 </template>
+
+<style lang="scss" scoped>
+#navLogin:hover {
+  background-color: rgb(240, 240, 240);
+  border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
+}
+
+#navSettings:hover {
+  background-color: rgb(240, 240, 240);
+  border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
+}
+
+#navHelp:hover {
+  background-color: rgb(240, 240, 240);
+  border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
+}
+</style>

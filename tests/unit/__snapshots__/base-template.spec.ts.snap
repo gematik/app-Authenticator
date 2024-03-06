@@ -9,20 +9,21 @@ exports[`base template screen render with settings button 1`] = `
   >
     <div>
       <router-link
-        class="mr-[16px]"
+        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
         id="navLogin"
         to="/"
       >
-        Anmeldung
+        Home
       </router-link>
       <router-link
-        class="mr-[16px]"
+        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
         id="navSettings"
         to="/settings"
       >
         Einstellungen
       </router-link>
       <router-link
+        class="p-1.5 rounded-sm operator:hover bg-primary"
         id="navHelp"
         to="/help"
       >
@@ -62,7 +63,7 @@ exports[`base template screen render with settings button 1`] = `
     <div
       class="text-sm cursor-default"
       id="lblVersion"
-      title="4.9.0"
+      title="4.10.0"
     >
       Version dev 
     </div>

@@ -14,67 +14,86 @@
 
 <template>
   <div class="antialiased w-full justify-center">
-    <form class="w-full" @submit.prevent="saveConfigValues">
-      <div
-        v-for="(formSection, index) in formSections"
-        :key="formSection.title"
-        class="w-full"
-        :class="{ 'pt-[32px]': index && !formSection.hide }"
-      >
-        <div v-if="!formSection.hide">
-          <div
-            class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
-            :class="{ 'pl-[23px]': formSection.icon }"
-          >
-            <img v-if="formSection.icon" :src="formSection.icon" class="object-none pr-[10px]" alt="form icon" />
-            <h3 :id="`lblTitle-${index}`" class="">
-              {{ formSection.title }}
-            </h3>
-          </div>
+    <div v-if="isJsonFileInvalid" class="w-full">
+      <div class="w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+        <p class="font-bold">{{ $t(`errors.${ERROR_CODES.AUTHCL_0012}.title`) }}</p>
+        <p>
+          {{ $t(`errors.${ERROR_CODES.AUTHCL_0012}.text`, { path: configFilePath }) }}
+          <br />
+          {{ $t(`see_link_to_understand_how_to_configure_config_properly`) }}:
 
-          <FormElement
-            v-for="config in formSection.columns"
-            :key="config.key"
-            :required="!!config.required"
-            :label="config.label"
-            :model="configValues"
-            :name="config.key"
-            :type="config.type"
-            :options-type="config.optionsType"
-            :iterable="config.iterable"
-            :options="config.options"
-            :hide="config.hide"
-            :validation-regex="config.validationRegex"
-            :validate-input="config.validateInput"
-            :on-element-change="config.onChange"
-            :info-text="config.infoText"
-            :placeholder="config.placeholder"
-          />
-        </div>
-      </div>
-      <div class="flex items-center pt-[32px]">
-        <button id="btnSaveSettings" class="bt" type="submit" :title="$t('settings_saved_info')">
-          {{ $t('save') }}
+          <a href="javascript:void(0)" class="underline text-blue-500" @click="openExternal(WIKI_CONFIGURATION_LINK)">
+            {{ $t('configuration') }}
+          </a>
+        </p>
+        <button class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @click="reloadConfig()">
+          {{ $t('reload') }}
         </button>
-
-        <div class="w-3/3">
-          <div>
-            <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="runAndFormatTestCases">
-              {{ $t('connection_test') }}
-            </button>
-            <br />
-          </div>
-        </div>
-        <div class="w-3/3">
-          <div>
-            <button id="btnLogToZip" class="bt ml-[15px]" type="button" @click="createZipWithLogData">
-              {{ $t('log_to_zip') }}
-            </button>
-            <br />
-          </div>
-        </div>
       </div>
-    </form>
+    </div>
+    <div v-else>
+      <form class="w-full" @submit.prevent="saveConfigValues">
+        <div
+          v-for="(formSection, index) in formSections"
+          :key="formSection.title"
+          class="w-full"
+          :class="{ 'pt-[32px]': index && !formSection.hide }"
+        >
+          <div v-if="!formSection.hide">
+            <div
+              class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
+              :class="{ 'pl-[23px]': formSection.icon }"
+            >
+              <img v-if="formSection.icon" :src="formSection.icon" class="object-none pr-[10px]" alt="form icon" />
+              <h3 :id="`lblTitle-${index}`" class="">
+                {{ formSection.title }}
+              </h3>
+            </div>
+
+            <FormElement
+              v-for="config in formSection.columns"
+              :key="config.key"
+              :required="!!config.required"
+              :label="config.label"
+              :model="configValues"
+              :name="config.key"
+              :type="config.type"
+              :options-type="config.optionsType"
+              :iterable="config.iterable"
+              :options="config.options"
+              :hide="config.hide"
+              :validation-regex="config.validationRegex"
+              :validate-input="config.validateInput"
+              :on-element-change="config.onChange"
+              :info-text="config.infoText"
+              :placeholder="config.placeholder"
+            />
+          </div>
+        </div>
+        <div class="flex items-center pt-[32px]">
+          <button id="btnSaveSettings" class="bt" type="submit" :title="$t('settings_saved_info')">
+            {{ $t('save') }}
+          </button>
+
+          <div class="w-3/3">
+            <div>
+              <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="runAndFormatTestCases">
+                {{ $t('connection_test') }}
+              </button>
+              <br />
+            </div>
+          </div>
+          <div class="w-3/3">
+            <div>
+              <button id="btnLogToZip" class="bt ml-[15px]" type="button" @click="createZipWithLogData">
+                {{ $t('log_to_zip') }}
+              </button>
+              <br />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
   <TestResultModal
     v-if="showModal"
@@ -100,7 +119,7 @@ import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
 import { cancelActiveUpdateProcess, checkNewUpdate } from '@/renderer/service/auto-updater-service';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
-import { IPC_UPDATE_ENV } from '@/constants';
+import { IPC_UPDATE_ENV, WIKI_CONFIGURATION_LINK } from '@/constants';
 import { IConfigSection } from '@/@types/common-types';
 import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
 import { UserfacingError } from '@/renderer/errors/errors';
@@ -117,6 +136,7 @@ export default defineComponent({
 
     const { save, load, setWithoutSave } = useSettings();
     const configValues = ref<TRepositoryData>({ ...load() });
+    const isJsonFileInvalid = ref(FileStorageRepository.isJsonFileInvalid);
     const functionTestResults = ref<TestResult[]>([]);
     const showModal = ref<boolean>(false);
     const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
@@ -191,7 +211,7 @@ export default defineComponent({
         save(toRaw(configValues.value));
         closeModal();
       } catch (err) {
-        // for credential manager we show another error
+        // for credential manager, we show another error
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0010) {
           logger.error("Couldn't save to credential manager");
           await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0010);
@@ -284,6 +304,11 @@ export default defineComponent({
       showModal.value = false;
     };
 
+    const reloadConfig = () => {
+      configValues.value = { ...load() };
+      isJsonFileInvalid.value = FileStorageRepository.isJsonFileInvalid;
+    };
+
     return {
       saveConfigValues,
       runAndFormatTestCases,
@@ -293,6 +318,12 @@ export default defineComponent({
       showModal,
       configValues,
       formSections,
+      ERROR_CODES,
+      isJsonFileInvalid,
+      configFilePath: FileStorageRepository.getPath(),
+      reloadConfig,
+      WIKI_CONFIGURATION_LINK,
+      openExternal: window.api.openExternal,
     };
   },
 });

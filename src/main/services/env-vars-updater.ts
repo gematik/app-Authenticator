@@ -42,7 +42,9 @@ export const setupEnvReadInterval = (mainWindow: BrowserWindow | null) => {
     await readLatestEnvs(mainWindow);
   }, 10000);
 
-  readLatestEnvs(mainWindow).then(() => logger.debug('env loaded'));
+  readLatestEnvs(mainWindow)
+    .then(() => logger.debug('env loaded'))
+    .catch((e) => logger.error('env not loaded', e));
 };
 
 /**
@@ -73,7 +75,13 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
     }
   }
   try {
-    const keyValuePairsFromRegistryAsString = await getVolatileEnv().then((value) => readRegistryForKey(value));
+    const keyValuePairsFromRegistryAsString = await getVolatileEnv()
+      .then((value) => readRegistryForKey(value))
+      .catch(() => {
+        logger.debug('Error when reading the registry key for volatile envs');
+        return '';
+      });
+
     checkEnvVarsChange('VIEWCLIENT_MACHINE_NAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
     if (!readingRegistryErrorLogged) {

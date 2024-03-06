@@ -131,6 +131,9 @@ export const WIKI_ERRORCODES_URL = 'https://wiki.gematik.de/x/-A3OGw';
 
 export const WIKI_CONSENT_DECLARATION_URL = 'https://wiki.gematik.de/x/GijaI';
 
+export const WIKI_CONFIGURATION_LINK =
+  'https://wiki.gematik.de/display/GAKB/Installationshandbuch+Authenticator#InstallationshandbuchAuthenticator-Konfiguration:~:text=komplett%20zu%20beenden.-,Konfiguration,-Es%20gibt%20mehrere';
+
 /**
  * URL zum Authenticator-Sharepoint
  */

@@ -16,7 +16,8 @@
     "baseUrl": "src",
     "types": ["jest", "node"],
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@tests/*": ["../tests/*"],
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "typeRoots": ["src/@types", "node_modules/@types"],

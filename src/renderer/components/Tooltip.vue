@@ -14,7 +14,15 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-export default defineComponent({ name: 'HomeScreen', props: { tooltipContent: { type: String } } });
+export default defineComponent({
+  name: 'HomeScreen',
+  props: {
+    tooltipContent: {
+      type: String,
+      default: '',
+    },
+  },
+});
 </script>
 <template>
   <div class="tooltip">

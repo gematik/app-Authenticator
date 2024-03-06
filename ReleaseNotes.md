@@ -2,6 +2,20 @@
 
 # Release Authenticator
 
+## Version 4.10.0
+### added
+- Hover-Effect to the navigation bar and renaming "Anmeldung" to "Home" for an improved UX
+- New certificate for connectors
+- Functionality test for HBA usage
+- Option to disable IdP TLS verification in Mock Mode
+
+### fixed
+- The "ClientView-Machine-Name"-variable is now being read properly
+- Error handling improved for incorrectly formatted config files
+- Save target directory for certificates has been fixed for central configuration
+- Disable Devtool for production
+- Prevent multiple entries in the Credential Manager
+
 ## Version 4.9.0
 
 ### added:

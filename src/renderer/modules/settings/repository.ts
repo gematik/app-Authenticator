@@ -13,6 +13,11 @@
  */
 
 import dot from 'dot-object';
+import Swal from 'sweetalert2';
+
+// #!if MOCK_MODE === 'ENABLED'
+import { DEVELOPER_OPTIONS, MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
 import {
   APP_NAME,
   CONFIG_FILE_NAME,
@@ -31,9 +36,9 @@ import {
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
 import { TlsAuthType } from '@/@types/common-types';
-import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { ERROR_CODES } from '@/error-codes';
 import { UserfacingError } from '@/renderer/errors/errors';
+import i18n from '@/renderer/i18n';
 
 export interface TRepositoryData {
   [key: string]: number | string | boolean;
@@ -69,6 +74,7 @@ export const INITIAL_STATE = {
 
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
+  [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]: true,
   // #!endif
 };
 
@@ -88,16 +94,25 @@ export class FileStorageRepository implements ISettingsRepository {
     this._usesCredentialManager = value;
   }
 
+  static get isJsonFileInvalid(): boolean {
+    return this._isJsonFileInvalid;
+  }
+
+  static set isJsonFileInvalid(value: boolean) {
+    this._isJsonFileInvalid = value;
+  }
+
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
   private static _usesCredentialManager = false;
   private static _isNewInstallation = false;
+  private static _isJsonFileInvalid = false;
 
   public static getConfigDir(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
     const computerName = PROCESS_ENVS.COMPUTERNAME;
     const authConfigPath = PROCESS_ENVS.AUTHCONFIGPATH;
-    const viewClientMachineName = PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME;
+    const viewClientMachineName = PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME || PROCESS_ENVS.ViewClient_Machine_Name;
 
     logger.info('configPath:');
     logger.info('  -  AUTHCONFIGPATH:' + authConfigPath);
@@ -206,11 +221,6 @@ export class FileStorageRepository implements ISettingsRepository {
   }
 
   static readFromCm(): Partial<TRepositoryData> {
-    // on macos ignore credential manager
-    if (window.api.isMacOS()) {
-      return {};
-    }
-
     return (window.api.sendSync(IPC_READ_CREDENTIALS) as Partial<TRepositoryData>) || {};
   }
 
@@ -224,14 +234,6 @@ export class FileStorageRepository implements ISettingsRepository {
     let saveAllToConfigFileOnFail;
 
     const isCentralConfiguration = PROCESS_ENVS.AUTHCONFIGPATH;
-
-    // on macos ignore credential manager
-    if (window.api.isMacOS()) {
-      shouldSaveToCM = false;
-      showWarningOnFail = false;
-      saveAllToConfigFileOnFail = true;
-      return { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail };
-    }
 
     // If it's a new installation
     if (FileStorageRepository._isNewInstallation) {
@@ -301,12 +303,28 @@ export class FileStorageRepository implements ISettingsRepository {
     const buffer = window.api.readFileSync(FileStorageRepository.getPath(), FileStorageRepository.encoding);
     const string = buffer.toString();
 
-    // convert string to json and convert string booleans to booleans
-    const json = JSON.parse(string, (_, value) => {
-      if (value === 'true') return true;
-      if (value === 'false') return false;
-      return value;
-    });
+    let json: TRepositoryData;
+
+    try {
+      // convert string to json and convert string booleans to booleans
+      json = JSON.parse(string, (_, value) => {
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+        return value;
+      });
+      FileStorageRepository._isJsonFileInvalid = false;
+    } catch (e) {
+      logger.error('Error while parsing config file', e);
+      FileStorageRepository._isJsonFileInvalid = true;
+
+      Swal.fire({
+        icon: 'error',
+        title: i18n.global.t(`errors.${ERROR_CODES.AUTHCL_0012}.title`),
+        text: i18n.global.t(`errors.${ERROR_CODES.AUTHCL_0012}.text`, { path: FileStorageRepository.getPath() }),
+      });
+
+      return {};
+    }
 
     const dottedData = {
       ...dot.dot(json),

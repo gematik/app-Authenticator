@@ -43,6 +43,8 @@ window.api.send = jest.fn();
 // @ts-ignore
 window.api.openExternal = jest.fn();
 
+const PORT = '3000';
+
 describe('GemIdpAuthFlowProcess.vue', () => {
   beforeEach(() => {
     store.commit('gemIdpServiceStore/resetStore');
@@ -59,7 +61,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
       },
     });
 
-    const url = 'http://localhost:3000';
+    const url = 'http://localhost:' + PORT;
 
     await wrapper.vm.sendAutomaticRedirectRequest(url);
 
@@ -69,7 +71,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
 
   it('should retry the request with window.api.httpGet if fetch fails', async () => {
     const wrapper = shallowMount(GemIdpAuthFlowProcess, { global: { plugins: [store] } });
-    const url = 'http://localhost:3000';
+    const url = 'http://localhost:' + PORT;
 
     // @ts-ignore
     axios.get.mockImplementationOnce(() => {
@@ -89,7 +91,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
 
   it('should handle errors in the second request', async () => {
     const wrapper = shallowMount(GemIdpAuthFlowProcess, { global: { plugins: [store] } });
-    const url = 'http://localhost:3000';
+    const url = 'http://localhost:' + PORT;
 
     // @ts-ignore
     axios.get.mockImplementationOnce(() => {

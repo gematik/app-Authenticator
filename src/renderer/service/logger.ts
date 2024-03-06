@@ -22,7 +22,7 @@ export function getCallerInfo(err: any): string {
     return '';
   }
 
-  if (isNaN(caller_line)) return caller_line;
+  if (Number.isNaN(caller_line)) return caller_line;
   const index = caller_line.indexOf('at ');
   return caller_line.slice(index + 2, caller_line.length);
 }

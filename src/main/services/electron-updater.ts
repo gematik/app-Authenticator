@@ -48,9 +48,14 @@ ipcMain.on(IPC_CHECK_UPDATE, () => {
   });
 
   // call updater
-  autoUpdater.checkForUpdates().then((updateStatus) => {
-    logger.info('updateStatus', updateStatus);
-  });
+  autoUpdater
+    .checkForUpdates()
+    .then((updateStatus) => {
+      logger.info('updateStatus', updateStatus);
+    })
+    .catch((err) => {
+      logger.error('Error in auto-updater. ' + err);
+    });
 });
 
 /**

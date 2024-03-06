@@ -12,16 +12,23 @@
  * permissions and limitations under the Licence.
  */
 
-// #!if MOCK_MODE === 'ENABLED'
-export const MOCK_CONNECTOR_CONFIG = 'connector.mockConnector';
-export const MOCK_CONNECTOR_CERTS_CONFIG = {
-  SMCB_CERT: 'connector.mockSmcbCert',
-  SMCB_KEY: 'connector.mockSmcbKey',
-  HBA_CERT: 'connector.mockHbaCert',
-  HBA_KEY: 'connector.mockHbaKey',
-} as const;
+import { getConfig } from '@/renderer/utils/get-configs';
+import { DEVELOPER_OPTIONS } from '@/renderer/modules/connector/connector-mock/mock-config';
+import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 
-export const DEVELOPER_OPTIONS = {
-  IDP_CERTIFICATE_CHECK: 'developer.disableCertificateCheck',
+type ReqConfigType = { https: { certificateAuthority: undefined | string[]; rejectUnauthorized: boolean } };
+
+export const httpsReqConfig = (): ReqConfigType => {
+  let rejectUnauthorized = true;
+
+  // #!if MOCK_MODE === 'ENABLED'
+  rejectUnauthorized = !!getConfig(DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK, true).value;
+  // #!endif
+
+  return {
+    https: {
+      certificateAuthority: getIdpTlsCertificates(),
+      rejectUnauthorized: rejectUnauthorized,
+    },
+  };
 };
-// #!endif

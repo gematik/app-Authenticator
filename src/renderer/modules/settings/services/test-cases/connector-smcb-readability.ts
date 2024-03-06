@@ -28,16 +28,15 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
       title: translate('function_test_general'),
       name: translate('smcb_availability'),
       status: TestStatus.success,
-      details: `SMC-B in Slot ${cardSmcbInfo.slotNr} vom CardTerminal ${cardSmcbInfo.ctId} gefunden!`,
+      details: translate('smcb_found_in_card_terminal', { slotNr: cardSmcbInfo.slotNr, ctId: cardSmcbInfo.ctId }),
     };
   } catch (err) {
     logger.debug(err.message);
-    // @ts-ignore
 
     if (err.code === ERROR_CODES.AUTHCL_1105) {
       logger.debug('Multiple SMCBs found, no error');
       return {
-        title: 'function_test_general',
+        title: translate('function_test_general'),
         name: translate('smcb_availability'),
         status: TestStatus.success,
         details: translate('readability_test_Multi_SMCBs'),

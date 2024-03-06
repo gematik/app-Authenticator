@@ -17,7 +17,7 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
-import { LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
+import { IS_DEV, LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
 import { zip } from 'zip-a-folder';
 import { TransformableInfo } from 'logform';
 import { isMacOS } from '@/main/services/utils';
@@ -78,11 +78,13 @@ export const logger = createLogger({
 // If we're not in production then **ALSO** log to the terminal
 
 // #!if MOCK_MODE === 'ENABLED'
-logger.add(
-  new winston.transports.Console({
-    format: combine(simple()),
-  }),
-);
+if (IS_DEV) {
+  logger.add(
+    new winston.transports.Console({
+      format: combine(simple()),
+    }),
+  );
+}
 // #!endif
 
 /**

@@ -36,6 +36,8 @@
    Delete "$INSTDIR\vk_swiftshader.dll"
    Delete "$INSTDIR\vk_swiftshader_icd.json"
    Delete "$INSTDIR\vulkan-1.dll"
+   Delete "$INSTDIR\dxcompiler.dll"
+   Delete "$INSTDIR\dxil.dll"
    Delete "$INSTDIR\Uninstall gematik Authenticator.exe"
 
    Delete "$INSTDIR\chrome_100_percent.pak"
@@ -54,6 +56,8 @@
    Delete "$INSTDIR\vk_swiftshader.dll"
    Delete "$INSTDIR\vk_swiftshader_icd.json"
    Delete "$INSTDIR\vulkan-1.dll"
+   Delete "$INSTDIR\dxcompiler.dll"
+   Delete "$INSTDIR\dxil.dll"
    Delete "$INSTDIR\Uninstall gematik Authenticator.exe"
 
    Delete "$INSTDIR\chrome_100_percent.pak"
@@ -72,6 +76,8 @@
    Delete "$INSTDIR\vk_swiftshader.dll"
    Delete "$INSTDIR\vk_swiftshader_icd.json"
    Delete "$INSTDIR\vulkan-1.dll"
+   Delete "$INSTDIR\dxcompiler.dll"
+   Delete "$INSTDIR\dxil.dll"
    Delete "$INSTDIR\Uninstall gematik Authenticator.exe"
 
    SetOutPath $TEMP
@@ -84,7 +90,7 @@
   SetOutPath "$INSTDIR\resources\certs-konnektor"
   SetOverwrite ifnewer
   File /r ${PROJECT_DIR}\src\assets\certs-konnektor\ca\pu\rsa\*.pem
-  
+
   CreateDirectory "$INSTDIR\resources\certs-idp"
   CopyFiles /SILENT "$TEMP\${PRODUCT_NAME}\backup\certs-idp\*.*" "$INSTDIR\resources\certs-idp"
   SetOutPath "$INSTDIR\resources\certs-idp"

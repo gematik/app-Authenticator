@@ -20,7 +20,7 @@ import { ipcRenderer } from 'electron';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { HttpsProxyAgent } from 'hpagent';
 import { preloadApi } from '@/main/preload-api';
-import { SAMPLE_CONFIG_DATA } from '../utils/config-sample-data';
+import { SAMPLE_CONFIG_DATA } from '@tests/utils/config-sample-data';
 import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
 import fs from 'fs';
 
@@ -101,7 +101,7 @@ describe('proxyResolver', () => {
 
   it('runs https proxy with ca', async function () {
     const TEST_FILE_PATH = process.cwd() + '/tests/resources/certs/example/example-cer.cer';
-    const ca = [fs.readFileSync(TEST_FILE_PATH, 'utf-8')];
+    const ca = [fs.readFileSync(TEST_FILE_PATH, 'utf8')];
 
     preloadApi.setCaChainIdpInPreload(ca);
 
@@ -151,7 +151,7 @@ describe('proxyResolver', () => {
     jest.spyOn(ipcRenderer, 'sendSync').mockReturnValue('https://192.168.1.1');
     const proxyAgent = (await createProxyAgent('https://Server.com')) as HttpsProxyAgent;
 
-    expect(proxyAgent.options.cert).toBe(fs.readFileSync(TEST_FILE_PATH, 'utf-8'));
+    expect(proxyAgent.options.cert).toBe(fs.readFileSync(TEST_FILE_PATH, 'utf8'));
     expect(proxyAgent.options.requestCert).toBe(true);
   });
   it('performs proxy creation with a matching proxyIgnoreList entry for the destination address', async function () {

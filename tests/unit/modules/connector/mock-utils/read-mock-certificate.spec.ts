@@ -17,7 +17,7 @@
  */
 import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
 import { MOCK_CONNECTOR_CERTS_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
-import { setSampleData } from '../../../../utils/config-sample-data';
+import { setSampleData } from '@tests/utils/config-sample-data';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 
 const CERT_HEADER = '-----BEGIN CERTIFICATE-----';

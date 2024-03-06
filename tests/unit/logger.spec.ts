@@ -41,7 +41,7 @@ describe('test winston logger', () => {
   });
 
   it('writes log properly', function () {
-    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf8');
     expect(logFileContent.includes(loggedText)).toBeTruthy();
   });
 
@@ -50,7 +50,7 @@ describe('test winston logger', () => {
       throw new Error('some error text');
     } catch (e) {
       logger.error('Error: ', e, { more: 'even more data' });
-      const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+      const logFileContent = fs.readFileSync(getLogFilePath(), 'utf8');
 
       expect(logFileContent.includes('Stack: Error: some error text')).toBeTruthy();
     }
@@ -61,7 +61,7 @@ describe('test winston logger', () => {
 
     // wait a second for the log file to be written
     await sleep();
-    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf8');
 
     expect(logFileContent.includes('Data: {\n' + '  "code": "nice code"\n' + '}')).toBeTruthy();
   });
@@ -71,7 +71,7 @@ describe('test winston logger', () => {
 
     // wait a second for the log file to be written
     await sleep();
-    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf8');
 
     expect(logFileContent.includes('  Data: [\n' + '  "test",\n' + '  "test2",\n' + '  "test3"\n' + ']')).toBeTruthy();
   });
@@ -82,7 +82,7 @@ describe('test winston logger', () => {
 
     // wait a second for the log file to be written
     await sleep();
-    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf-8');
+    const logFileContent = fs.readFileSync(getLogFilePath(), 'utf8');
 
     expect(logFileContent.includes('Data: ' + string)).toBeTruthy();
   });

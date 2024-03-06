@@ -18,7 +18,7 @@
       <h1 class="text-black text-[24px]">
         {{ $t('header_requirement') }}
       </h1>
-      <i18n-t keypath="text_critieria_catalogue" tag="div">
+      <i18n-t keypath="text_criteria_catalogue" tag="div">
         <template #url>
           <button class="text-blue-900" @click="openCriteriaCatalogueURL()">Authenticator Kriterienkatalog</button>
         </template>

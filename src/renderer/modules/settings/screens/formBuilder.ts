@@ -14,6 +14,7 @@
 
 // #!if MOCK_MODE === 'ENABLED'
 import {
+  DEVELOPER_OPTIONS,
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
@@ -165,6 +166,19 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
               repositoryData[fieldKey] = '';
             }
           },
+        },
+      ],
+    },
+    {
+      title: 'Developer Options',
+      hide: false,
+      columns: [
+        {
+          label: 'IDP Zertifikatsprüfung',
+          key: DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: 'Zertifikatsprüfung des IDP und die WANDA Applications ein oder auszuschalten.',
         },
       ],
     },

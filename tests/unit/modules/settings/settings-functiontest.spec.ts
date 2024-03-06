@@ -17,7 +17,7 @@ import dot from 'dot-object';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 import * as pathProvider from '@/renderer/service/path-provider';
 import { getHomedir } from '@/renderer/modules/connector/common/utils';
-import { SAMPLE_CONFIG_DATA } from '../../../utils/config-sample-data';
+import { SAMPLE_CONFIG_DATA } from '@tests/utils/config-sample-data';
 import { CONTEXT_PARAMETERS_CONFIG_GROUP, ENTRY_OPTIONS_CONFIG_GROUP, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { getConfig } from '@/renderer/utils/get-configs';
 
