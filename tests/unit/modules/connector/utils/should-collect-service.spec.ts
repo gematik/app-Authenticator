@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { readResourceFile, TestCategory } from '../../../../TestInfo';
+import { readResourceFile, TestCategory } from '@tests/TestInfo';
 import sdsParser from '@/renderer/modules/connector/common/sds-parser';
 
 function determineMapServiceEndpointTls(sds: string) {
@@ -36,6 +36,7 @@ describe('Collect services for different connectors', () => {
       .set('NFDService', 'https://10.11.236.247:443/service/fm/nfdm/nfdservice')
       .set('VSDService', 'https://10.11.236.247:443/service/fmvsdm')
       .set('KVKService', 'https://10.11.236.247:443/service/kvkservice');
+
     expect(mapServiceEndpointTls).toEqual(map);
   });
 

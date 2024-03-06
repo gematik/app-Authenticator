@@ -13,7 +13,7 @@
  */
 
 import soapRespParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
-import { printTestTitle, readResourceFile, TestCategory } from '../../../../TestInfo';
+import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
 describe('SoapResponseParser parses correctly for', () => {

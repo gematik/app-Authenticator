@@ -71,10 +71,10 @@ import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/rendere
 import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/utils/url-service';
 import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 import Swal from 'sweetalert2';
-import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
 import { removeLastPartOfChallengePath } from '@/renderer/utils/parse-idp-url';
+import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -516,7 +516,11 @@ export default defineComponent({
          * We give a second chance to place the card here
          */
         if (err instanceof ConnectorError && err.code === CONNECTOR_ERROR_CODES.E4047) {
-          alertWithCancelButton(ERROR_CODES.AUTHCL_2001, 0, cardType).then(this.onUserCancelledCardInsert);
+          alertWithCancelButton(ERROR_CODES.AUTHCL_2001, 0, cardType)
+            .then(this.onUserCancelledCardInsert)
+            .catch(() => {
+              // do nothing here
+            });
 
           // to close the model after user inserts the card, we store this close function here
           pendingCardActionModalClose = closeSwal();
@@ -565,28 +569,32 @@ export default defineComponent({
           /**
            * If the user clicks cancel the value will be -1
            */
-          alertWithCancelButton(ERROR_CODES.AUTHCL_2002, -1, cardType).then(async (promptRes) => {
-            const connectorState = this.$store.state.connectorStore;
-            const cardData = connectorState.cards[cardType];
+          alertWithCancelButton(ERROR_CODES.AUTHCL_2002, -1, cardType)
+            .then(async (promptRes) => {
+              const connectorState = this.$store.state.connectorStore;
+              const cardData = connectorState.cards[cardType];
 
-            if (!cardData) {
-              return;
-            }
+              if (!cardData) {
+                return;
+              }
 
-            const pinStatus = cardData.pinStatus;
+              const pinStatus = cardData.pinStatus;
 
-            // cancel process and open client
-            if (pinStatus != 'VERIFIED') {
-              this.isAuthProcessActive = false;
+              // cancel process and open client
+              if (pinStatus != 'VERIFIED') {
+                this.isAuthProcessActive = false;
 
-              const authFlowEndState = await this.getRedirectUriWithToken(
-                promptRes.value == -1
-                  ? new UserfacingError(this.$t(LOGIN_CANCELLED_BY_USER), '', ERROR_CODES.AUTHCL_0006)
-                  : null,
-              );
-              await this.openClientIfNeeded(authFlowEndState);
-            }
-          });
+                const authFlowEndState = await this.getRedirectUriWithToken(
+                  promptRes.value == -1
+                    ? new UserfacingError(this.$t(LOGIN_CANCELLED_BY_USER), '', ERROR_CODES.AUTHCL_0006)
+                    : null,
+                );
+                await this.openClientIfNeeded(authFlowEndState);
+              }
+            })
+            .catch(() => {
+              // do nothing here
+            });
           pinVerifyModalClose = closeSwal();
         }
       } catch (err) {
@@ -901,10 +909,7 @@ export default defineComponent({
         try {
           await window.api.httpGet(url, {
             ...{
-              https: {
-                certificateAuthority: getIdpTlsCertificates(),
-                rejectUnauthorized: true,
-              },
+              ...httpsReqConfig(),
               headers: {
                 'User-Agent': userAgent + this.$store.state.gemIdpServiceStore.clientId,
               },

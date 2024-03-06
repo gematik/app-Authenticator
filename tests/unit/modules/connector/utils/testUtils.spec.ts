@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { printTestTitle, readResourceFile, TestCategory } from '../../../../TestInfo';
+import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
 import { checkSoapError, getHomedir } from '@/renderer/modules/connector/common/utils';
 import * as fs from 'fs';
 import sdsParser from '@/renderer/modules/connector/common/sds-parser';

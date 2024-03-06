@@ -29,7 +29,7 @@ export const readMockCertificate = (configKey: TMockCertificatesValues, cleanCer
   }
 
   try {
-    const file = window.api.readFileSync(filePath, 'utf-8');
+    const file = window.api.readFileSync(filePath, 'utf8');
 
     if (!cleanCert) {
       return file;

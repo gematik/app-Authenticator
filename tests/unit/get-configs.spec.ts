@@ -15,7 +15,7 @@
 /**
  * @jest-environment jsdom
  */
-import { setSampleData } from '../utils/config-sample-data';
+import { setSampleData } from '@tests/utils/config-sample-data';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { PROCESS_ENVS, PRODUCT_NAME } from '@/constants';

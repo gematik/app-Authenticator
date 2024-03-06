@@ -21,7 +21,7 @@ import { logger } from '@/main/services/logging';
 import { APP_CA_CHAIN_IDP, APP_CONFIG_DATA } from '@/main/preload-api';
 import isFQDN from 'validator/lib/isFQDN';
 import { matches as ipMatches } from 'ip-matching';
-import micromatch from 'micromatch';
+import { minimatch } from 'minimatch';
 import * as dns from 'dns';
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
@@ -101,9 +101,14 @@ const isUrlInProxyIgnoreList = async (proxyUrl: string): Promise<boolean> => {
     if (isFQDN(proxyIgnoreEntry, { allow_wildcard: true }) && isFqdnInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
       return true;
     }
-    // if this is an ip address and it matches the proxy url, return true
-    else if (await isIpInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
-      return true;
+
+    try {
+      // if this is an ip address, and it matches the proxy url, return true
+      if (await isIpInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
+        return true;
+      }
+    } catch (e) {
+      // if the ip address is not valid, continue with the next entry
     }
   }
   return false;
@@ -113,7 +118,7 @@ const isFqdnInProxyIgnoreList = (proxyUrl: string, proxyIgnoreEntry: string): bo
   const parsedProxyUrl = new URL(proxyUrl);
   const host = parsedProxyUrl.host;
 
-  const isUrlInProxyIgnoreListResult = micromatch.isMatch(host, proxyIgnoreEntry);
+  const isUrlInProxyIgnoreListResult = minimatch(host, proxyIgnoreEntry);
 
   logger.info('isUrlInProxyIgnoreListResult' + isUrlInProxyIgnoreListResult);
   if (isUrlInProxyIgnoreListResult) {
@@ -196,7 +201,7 @@ const getProxyCertificate = (): undefined | string => {
 
   if (isClientCertAuth && clientCertPathExists) {
     try {
-      return fs.readFileSync(proxyCertificatePath, 'utf-8');
+      return fs.readFileSync(proxyCertificatePath, 'utf8');
     } catch (e) {
       return undefined;
     }

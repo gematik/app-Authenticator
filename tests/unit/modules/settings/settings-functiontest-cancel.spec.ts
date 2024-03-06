@@ -28,7 +28,7 @@ describe('runTestsCases cancellation', () => {
     expect(results).toEqual([
       { details: 'Fake test passed', name: 'fakeTest', status: 'success', title: '' },
       {
-        details: 'Der Funktionstest wurde vom Benutzer abgebrochen.',
+        details: 'Der Funktionstest wurde vom Benutzer abgebrochen',
         name: 'Funktionstest abgebrochen',
         status: 'failure',
         title: '',

@@ -35,13 +35,6 @@ coverage
 /src/assets/certs-idp/tu-ca.crt
 /src/assets/certs-idp/dev-idp-ca.crt
 /src/assets/certs-idp/org_ru_chain.pem
-/src/assets/certs-konnektor/ca/pu/rsa/fullchain.pem
-/src/assets/certs-konnektor/ca/pu/rsa/konnektor.pem
-/src/assets/certs-konnektor/ca/pu/rsa/secunet-fullchain.pem
-/src/assets/certs-konnektor/ca/pu/rsa/*.cer
-/src/assets/certs-idp/web.gematik.solutions.cer
-/src/assets/certs-idp/web.gematik.solutions.intermediate.cer
-/src/assets/certs-idp/web.gematik.solutions.root.cer
 
 
 # ignore jest report files
@@ -74,4 +67,15 @@ Github-Release.Jenkinsfile
 # we don't want to release the credential scripts now
 /credential-distribution/README.md
 /credential-distribution/store-credential.ps1
+
+# we don't want to release the certificates
+/src/assets/certs-idp/RCA2_KOMPCA24.pem
+/src/assets/certs-idp/web.gematik.solutions.cer
+/src/assets/certs-idp/web.gematik.solutions.intermediate.cer
+/src/assets/certs-idp/web.gematik.solutions.intermediate copy.cer
+/src/assets/certs-idp/web.gematik.solutions.root.cer
+/src/assets/certs-idp/web.gematik.solutions.root copy.cer
+/src/assets/certs-idp/web.gematik.solutions copy.cer
+/src/assets/certs-idp/R3.cer
+/src/assets/certs-idp/gematik idp test server.cer
 

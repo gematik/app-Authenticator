@@ -12,10 +12,6 @@
  * permissions and limitations under the Licence.
  */
 
-jest.mock('sweetalert2', () => ({
-  fire: jest.fn().mockReturnValue({ isConfirmed: true }),
-}));
-
 import Swal from 'sweetalert2';
 
 import { mount } from '@vue/test-utils';
@@ -23,7 +19,7 @@ import { SettingsScreen } from '@/renderer/modules/settings';
 import i18n from '@/renderer/i18n';
 import store from '@/renderer/store';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
-import { clearSampleData } from '../../../utils/config-sample-data';
+import { clearSampleData } from '@tests/utils/config-sample-data';
 import { PathProvider } from '@/renderer/service/path-provider';
 import { getHomedir } from '@/renderer/modules/connector/common/utils';
 
@@ -54,6 +50,10 @@ describe('settings save config', () => {
         plugins: [store, i18n],
       },
     });
+
+    jest
+      .spyOn(Swal, 'fire')
+      .mockResolvedValue({ isConfirmed: true, value: '123456', isDenied: false, isDismissed: false });
 
     expect(await wrapper.vm.saveConfigValues()).toBe(false);
     expect(Swal.fire).toHaveBeenNthCalledWith(1, {

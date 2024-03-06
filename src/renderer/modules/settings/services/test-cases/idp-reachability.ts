@@ -16,8 +16,8 @@ import { TestResult, TestStatus } from '@/renderer/modules/settings/services/tes
 import { PathProvider } from '@/renderer/service/path-provider';
 import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
-import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 import i18n from '@/renderer/i18n';
+import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
 
 export async function idpReachabilityTest(): Promise<TestResult[]> {
   const translate = i18n.global.t;
@@ -67,15 +67,8 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
 }
 
 async function callIdp(url: string): Promise<number> {
-  const httpsReqConfigIDP = () => ({
-    https: {
-      certificateAuthority: getIdpTlsCertificates(),
-      rejectUnauthorized: true,
-    },
-  });
-
   const { status } = await window.api.httpGet(url, {
-    ...httpsReqConfigIDP(),
+    ...httpsReqConfig(),
     timeout: {
       lookup: 250,
       connect: 500,

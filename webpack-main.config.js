@@ -14,7 +14,6 @@
 
 const webpack = require('webpack');
 const { resolve } = require('path');
-const path = require('path');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 

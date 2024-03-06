@@ -24,6 +24,7 @@ module.exports = {
   moduleNameMapper: {
     '^.+\\.(png|jpg|svg)$': 'jest-transform-stub',
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@tests/(.*)$': '<rootDir>/tests/$1',
   },
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons'],

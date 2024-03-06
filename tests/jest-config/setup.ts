@@ -18,7 +18,7 @@ import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 import path from 'path';
 import { PRODUCT_NAME } from '@/constants';
 import fs from 'fs';
-import { clearSampleData } from '../utils/config-sample-data';
+import { clearSampleData } from '@tests/utils/config-sample-data';
 
 // as the connector works slowly, we need at least 10 seconds to be sure
 jest.setTimeout(10000);
@@ -102,5 +102,5 @@ export const mockExistsSync = (value = false) => {
 
 export const mockReadFileSync = (data = {}) => {
   // @ts-ignore return stored data in buffer
-  jest.spyOn(window.api, 'readFileSync').mockReturnValue(Buffer.from(JSON.stringify(data), 'utf-8'));
+  jest.spyOn(window.api, 'readFileSync').mockReturnValue(Buffer.from(JSON.stringify(data), 'utf8'));
 };

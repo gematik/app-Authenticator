@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { printTestTitle, readResourceFile, TestCategory } from '../../../../TestInfo';
+import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { findSpecificElementInResponseProperties } from '@/renderer/modules/connector/common/soap-response-json-parser';
 import { checkGetCards } from '@/renderer/modules/connector/connector_impl/lookup-get-cards';
@@ -53,7 +53,7 @@ describe('SoapResponse JsonParser', () => {
     const resp = readResourceFile('soap', 'get-cards-response-nocards-found.xml');
 
     await expect(checkGetCards(resp, ECardTypes.SMCB)).rejects.toThrow(
-      new ConnectorError('4047', 'Konnektor Hinweis-Fehler', `keine ${ECardTypes.SMCB.toUpperCase()}-Karten gefunden.`),
+      new ConnectorError('4047', 'Konnektor Hinweis-Fehler', `keine ${ECardTypes.SMCB.toUpperCase()}-Karten gefunden`),
     );
   });
 

@@ -21,7 +21,7 @@ import { SettingsScreen } from '@/renderer/modules/settings';
 import i18n from '@/renderer/i18n';
 import store from '@/renderer/store';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
-import { clearSampleData, setSampleData } from '../../../utils/config-sample-data';
+import { clearSampleData, setSampleData } from '@tests/utils/config-sample-data';
 import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
 import { PathProvider } from '@/renderer/service/path-provider';
 import { getHomedir } from '@/renderer/modules/connector/common/utils';
@@ -93,6 +93,10 @@ describe('settings page validation', () => {
   });
 
   it('validation error blocks saving the form', async function () {
+    jest
+      .spyOn(Swal, 'fire')
+      .mockResolvedValue({ isConfirmed: true, value: '123456', isDenied: false, isDismissed: false });
+
     setSampleData({ [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 'wrong-port-data' });
     const wrapper = await mount(SettingsScreen, {
       global: {

@@ -80,6 +80,14 @@ ipcMain.on(IPC_SET_USER_AGENT, (event, userAgent) => {
 });
 
 async function createWindow() {
+  let devTools = false;
+
+  // #!if MOCK_MODE === 'ENABLED'
+  if (IS_DEV || process.env.MOCK_MODE === 'ENABLED') {
+    devTools = true;
+  }
+  // #!endif
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     title: appConfig.title,
@@ -93,9 +101,7 @@ async function createWindow() {
     backgroundColor: '#F8F9FC',
     autoHideMenuBar: true,
     webPreferences: {
-      // #!if MOCK_MODE === 'ENABLED'
-      devTools: IS_DEV || process.env.MOCK_MODE === 'ENABLED',
-      // #!endif
+      devTools,
       sandbox: false, // necessary for us after version 20 as we use NodeJS features in the preload.ts
       webSecurity: appConfig.webSecurity,
       allowRunningInsecureContent: appConfig.webSecurity,
@@ -131,7 +137,8 @@ async function createWindow() {
   // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     // Load the url of the dev server if in development mode
-    await mainWindow.loadURL('http://localhost:3000/');
+    const port = '3000';
+    await mainWindow.loadURL('http://localhost:' + port + '/');
   } else {
     // #!endif
 

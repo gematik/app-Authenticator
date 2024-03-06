@@ -18,6 +18,8 @@ import Swal from 'sweetalert2';
 import * as errs from '@/renderer/errors/errors';
 import { ENTRY_OPTIONS_CONFIG_GROUP, PROXY_SETTINGS_CONFIG } from '@/config';
 import i18n from '@/renderer/i18n';
+import { FileStorageRepository } from '@/renderer/modules/settings/repository';
+import { PROCESS_ENVS } from '@/constants';
 
 export function readCaCerts(isConnector: boolean): string[] {
   const caCertificatePath = PathProvider.caCertificatePath(isConnector);
@@ -26,7 +28,7 @@ export function readCaCerts(isConnector: boolean): string[] {
   logger.debug('certificates found in ProgramFolder: ' + caCertificatePath, { certsCount: certs?.length });
   return certs
     .filter((fileName) => window.api.isFile(window.api.pathJoin(caCertificatePath, fileName)))
-    .map((fileName) => window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf-8'));
+    .map((fileName) => window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf8'));
 }
 
 export function getCaCertsWithFilenames(isConnector: boolean): { name: string; cert: string }[] {
@@ -36,11 +38,15 @@ export function getCaCertsWithFilenames(isConnector: boolean): { name: string; c
     .filter((fileName) => window.api.isFile(window.api.pathJoin(caCertificatePath, fileName)))
     .map((fileName) => ({
       name: fileName,
-      cert: window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf-8'),
+      cert: window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf8'),
     }));
 }
 
 export function getUploadedFilePath(filename: string): string {
+  if (PROCESS_ENVS.AUTHCONFIGPATH) {
+    return window.api.pathJoin(FileStorageRepository.getConfigDir().path, filename);
+  }
+
   if (window.api.isMacOS()) {
     return window.api.pathJoin(PathProvider.getMacOsUserAppPath(), filename);
   }
@@ -75,7 +81,7 @@ export const copyUploadedFileToTargetDir = async (
 
   try {
     window.api.copyFileSync(filePath, targetFileName);
-    logger.info(filePath + ' copied to ' + PathProvider.configPath);
+    logger.info(filePath + ' copied to ' + targetFileName);
     return targetFileName;
   } catch (err) {
     // todo add swal warning

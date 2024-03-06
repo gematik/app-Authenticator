@@ -40,6 +40,20 @@ export const getSensitiveConfigValues = async () => {
 
 export const saveSensitiveConfigValues = async (data: Record<string, string>): Promise<boolean> => {
   logger.info('Saving sensitive config values');
+
+  // remove all sensitive config values from credential store
+  // we do not want to keep old credentials around, because if a user changes the account name,
+  // we are not able to follow which one is up-to-date one
+  for (const serviceName in SENSITIVE_CONFIG_KEYS) {
+    // find all saved credentials with findCredentials and delete them
+    const credentials = await keyTar.findCredentials(serviceName);
+    if (credentials) {
+      for (const credential of credentials) {
+        await keyTar.deletePassword(serviceName, credential.account);
+      }
+    }
+  }
+
   let allSavedSuccessfully = true;
   for (const serviceName in SENSITIVE_CONFIG_KEYS) {
     const { accountKey, passwordKey, ignoreAccountKey } = SENSITIVE_CONFIG_KEYS[serviceName];
@@ -50,8 +64,6 @@ export const saveSensitiveConfigValues = async (data: Record<string, string>): P
     try {
       if (username && password) {
         await keyTar.setPassword(serviceName, username, password);
-      } else if (username && !password) {
-        await keyTar.deletePassword(serviceName, username);
       }
     } catch (e) {
       logger.info(`Could not save sensitive config values for service ${serviceName}: ${e.message}`);

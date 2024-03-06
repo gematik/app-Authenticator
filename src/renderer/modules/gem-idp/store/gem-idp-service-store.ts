@@ -18,7 +18,6 @@ import jsonwebtoken from 'jsonwebtoken';
 import { TRootStore } from '@/renderer/store';
 import { logger } from '@/renderer/service/logger';
 import { CentralIdpError, UserfacingError } from '@/renderer/errors/errors';
-import getIdpTlsCertificates from '@/renderer/utils/get-idp-tls-certificates';
 import { IDP_ENDPOINTS } from '@/constants';
 import {
   IIdpEncJwk,
@@ -31,6 +30,7 @@ import { removePathFromChallenge } from '@/renderer/utils/parse-idp-url';
 import { TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 import { StatusCodes } from 'http-status-codes';
 import { TClientRes } from '@/main/services/http-client';
+import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
 
 export const INITIAL_AUTH_STORE_STATE = {
   challengePath: '',
@@ -50,13 +50,6 @@ export const INITIAL_AUTH_STORE_STATE = {
     requested_claims: {},
   },
 };
-
-const httpsReqConfig = () => ({
-  https: {
-    certificateAuthority: getIdpTlsCertificates(),
-    rejectUnauthorized: true,
-  },
-});
 
 export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
   namespaced: true,

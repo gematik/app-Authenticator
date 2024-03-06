@@ -13,7 +13,6 @@
  */
 
 const webpack = require('webpack');
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin-next');
 const { VueLoaderPlugin } = require('vue-loader');
@@ -70,10 +69,10 @@ module.exports = {
   mode: IS_DEV ? 'development' : 'production',
   target: ['web'],
   entry: {
-    renderer: path.resolve(__dirname, 'src/renderer/renderer.ts'),
+    renderer: resolve(__dirname, 'src/renderer/renderer.ts'),
   },
   output: {
-    path: path.resolve(__dirname, 'dist_electron'),
+    path: resolve(__dirname, 'dist_electron'),
     filename: '[name].js',
     clean: false,
     assetModuleFilename: '[name][ext]',
@@ -81,7 +80,7 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist_electron'),
+      directory: resolve(__dirname, 'dist_electron'),
     },
     port: 3000,
     open: false,
@@ -95,7 +94,7 @@ module.exports = {
     symlinks: false,
     cacheWithContext: false,
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': resolve(__dirname, 'src'),
     },
     fallback: {
       fs: false,
@@ -117,7 +116,7 @@ module.exports = {
         test: /\.(json5?|ya?ml)$/, // target json, json5, yaml and yml files
         type: 'javascript/auto',
         loader: '@intlify/vue-i18n-loader',
-        include: path.resolve(__dirname, 'src/renderer/i18n/translations'),
+        include: resolve(__dirname, 'src/renderer/i18n/translations'),
       },
       {
         test: /\.(scss|css)$/,
@@ -201,7 +200,7 @@ const CUSTOM_ENVIRONMENT_VARIABLES = ['NODE_ENV', 'BRANCH_NAME', 'TAG_NAME', 'BU
 // start creating .env file after dist_electron created
 setTimeout(() => {
   const filePath = './dist_electron/.env';
-  CUSTOM_ENVIRONMENT_VARIABLES.map((variableName) => {
+  CUSTOM_ENVIRONMENT_VARIABLES.forEach((variableName) => {
     fs.appendFile(filePath, variableName + '=' + process.env[variableName] + '\n', function (err) {
       if (err) throw err;
     });

@@ -12,7 +12,7 @@
  * permissions and limitations under the Licence.
  */
 
-import { readResourceFile, TestCategory } from '../../../../TestInfo';
+import { readResourceFile, TestCategory } from '@tests/TestInfo';
 import textParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 

@@ -12,16 +12,11 @@
  * permissions and limitations under the Licence.
  */
 
-// #!if MOCK_MODE === 'ENABLED'
-export const MOCK_CONNECTOR_CONFIG = 'connector.mockConnector';
-export const MOCK_CONNECTOR_CERTS_CONFIG = {
-  SMCB_CERT: 'connector.mockSmcbCert',
-  SMCB_KEY: 'connector.mockSmcbKey',
-  HBA_CERT: 'connector.mockHbaCert',
-  HBA_KEY: 'connector.mockHbaKey',
-} as const;
+import os from 'os';
 
-export const DEVELOPER_OPTIONS = {
-  IDP_CERTIFICATE_CHECK: 'developer.disableCertificateCheck',
-};
-// #!endif
+/**
+ * a function returns if isMacos
+ */
+export function isMacOS(): boolean {
+  return os.platform() === 'darwin';
+}

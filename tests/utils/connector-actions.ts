@@ -14,7 +14,7 @@
 
 import { HTTP_METHODS, httpClient } from '@/main/services/http-client';
 import { httpReqConfig } from '@/renderer/modules/connector/services';
-import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from '../TestInfo';
+import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from '@tests/TestInfo';
 
 interface ConnectorActionConfig {
   terminal: ETerminalTypes;

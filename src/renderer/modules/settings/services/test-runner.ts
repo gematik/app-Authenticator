@@ -18,6 +18,7 @@ import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mo
 import { getConfig } from '@/renderer/utils/get-configs';
 import { connectorReachabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-reachability';
 import { connectorSmcbReadabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-smcb-readability';
+import { connectorHbaReadabilityTest } from '@/renderer/modules/settings/services/test-cases/connector-hba-readability';
 import { idpReachabilityTest } from '@/renderer/modules/settings/services/test-cases/idp-reachability';
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
 import { logger } from '@/renderer/service/logger';
@@ -27,6 +28,7 @@ import i18n from '@/renderer/i18n';
 const allTestCases: TestFunction[] = [
   connectorReachabilityTest,
   connectorSmcbReadabilityTest,
+  connectorHbaReadabilityTest,
   certsValidityTest,
   idpReachabilityTest,
 ];
@@ -34,6 +36,7 @@ const allTestCases: TestFunction[] = [
 export enum TestStatus {
   success = 'success',
   failure = 'failure',
+  warning = 'warning',
 }
 
 export type TestResult = { title: string; name: string; status: TestStatus; details: string };

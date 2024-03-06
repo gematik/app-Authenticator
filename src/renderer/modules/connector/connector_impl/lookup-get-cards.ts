@@ -28,7 +28,7 @@ export async function checkGetCards(xmlSoapResponse: string, cardType: string): 
     throw new ConnectorError(
       CONNECTOR_ERROR_CODES.E4047,
       'Konnektor Hinweis-Fehler',
-      `keine ${cardType.toUpperCase()}-Karten gefunden.`,
+      `keine ${cardType.toUpperCase()}-Karten gefunden`,
     );
   }
 
