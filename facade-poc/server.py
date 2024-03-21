@@ -6,7 +6,8 @@ app = Flask(__name__)
 # Hardcoded API key
 API_KEY = "TEST-API-KEY"
 HEADER_NAME = "X-API-Key"
-# First endpoint
+
+# Unsecured endpoint
 @app.route('/unsecured', methods=['GET'])
 def unsecured():
     data = {'message': 'This is an unsecured endpoint.'}
@@ -18,10 +19,11 @@ def endpoint2():
     # Check if API key is provided in the request headers
     provided_api_key = request.headers.get(HEADER_NAME)
 
+    # API key is invalid, return send unauthorized
     if provided_api_key != API_KEY:
         return jsonify({'error': 'Unauthorized access. Invalid API key.'}), 401
 
-    # API key is valid, return data
+
     data = {'message': 'This is a secured endpoint.'}
     return jsonify(data)
 
