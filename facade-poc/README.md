@@ -1,5 +1,5 @@
 # Motivation
- This repository shows a simple set up for a facade implementation with re-authentication.
+ This set up shows a simple facade implementation with re-authentication.
 
 ## Components
 * server
@@ -78,7 +78,7 @@ Test for forbidden on unsecured endpoint
 
 `curl https://localhost/unsecured  --insecure`
 
-Test for forbidden on secured endpoint with enriched credentials
+Test for successful request on secured endpoint with enriched credentials
 
 `curl https://localhost/secured  --insecure`
 
