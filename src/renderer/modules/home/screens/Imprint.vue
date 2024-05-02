@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2023 gematik GmbH
+  - Copyright 2024 gematik GmbH
   -
   - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
   - Sourcecode must be in compliance with the EUPL.
@@ -31,7 +31,7 @@
     </p>
     <p class="mt-[15px]">
       Amtsgericht Charlottenburg HRB 96351 B<br />
-      {{ $t('managing_director') }}: Dr. med. Markus Leyck Dieken<br />
+      {{ $t('managing_director') }}: Dr. Florian Hartge<br />
       {{ $t('vat_number') }}: DE241843684
     </p>
 
@@ -40,7 +40,7 @@
     </h1>
     <!-- There seems to be a bug in tailwindcss so we have to set the font family in style -->
     <pre class="whitespace-pre-line font-sans" style="font-family: 'Apercu', serif">
- 
+
       {{ license }}
     </pre>
   </div>

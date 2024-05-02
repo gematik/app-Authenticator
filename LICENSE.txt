@@ -403,7 +403,7 @@ Drittsoftwareanteile:
     Komponente: lodash
     Lizenz: MIT
 
-    Komponente: micromatch
+    Komponente: minimatch
     Lizenz: MIT
 
     Komponente: validator

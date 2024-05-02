@@ -9,6 +9,7 @@ exports[`settings screen render  1`] = `
     class="antialiased w-full justify-center"
   >
     <div>
+      <!--v-if-->
       <form
         class="w-full"
       >
@@ -245,7 +246,7 @@ exports[`settings screen render  1`] = `
                   <input
                     class="settings-input"
                     id="form-connector.entryOption.port"
-                    placeholder=""
+                    placeholder="443"
                     type="input"
                   />
                 </div>
@@ -786,7 +787,7 @@ exports[`settings screen render  1`] = `
         </div>
         
         <div
-          class="flex items-center pt-[32px]"
+          class="flex items-center pt-[26px] sticky bg-primary bottom-0"
         >
           <button
             class="bt"

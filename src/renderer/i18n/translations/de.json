@@ -166,6 +166,9 @@
   "reload": "Neu laden",
   "configuration": "Konfiguration",
   "see_link_to_understand_how_to_configure_config_properly": "Hier finden Sie eine Anleitung, wie Sie die Einstellungen korrekt konfigurieren",
+  "default_config_is_in_use": "Standard(Default)-konfiguration wird verwendet",
+  "you_are_using_default_config": "Sie verwenden die Standard(Default)-konfiguration: {path}",
+  "you_are_using_default_config_if_you_save_changes_will_be_saved_to_specific_path" : "Sie verwenden die Standard(Default)-konfiguration. Wenn Sie Änderungen speichern, werden diese in der spezifischen Konfigurationsdatei gespeichert!",
   "errors": {
     "technical_error": "Technischer Fehler",
     "technical_error_code": "Bitte kontaktieren Sie Ihren Support. Fehlercode ({code})",

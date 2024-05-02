@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -31,6 +31,7 @@ import { logger } from '@/main/services/logging';
 import { setupEnvReadInterval } from '@/main/services/env-vars-updater';
 // import and add event listeners for electron updater
 import '@/main/services/electron-updater';
+import { hasAppRemoteDebuggingFlags } from '@/main/services/utils';
 import OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
 import BeforeSendResponse = Electron.BeforeSendResponse;
 
@@ -151,7 +152,7 @@ async function createWindow() {
 
   // todo fix this for macOS's production
   if (process.platform === PLATFORM_WIN32) {
-    setupEnvReadInterval(mainWindow);
+    await setupEnvReadInterval(mainWindow);
   }
   handleDeepLink(process.argv, mainWindow);
 
@@ -205,7 +206,12 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   logger.info('Application quit because of single instance lock');
   app.quit();
+} else if (hasAppRemoteDebuggingFlags()) {
+  // quit the app if it has remote debugging flags
+  logger.error('Application quit because of debugging flags');
+  app.quit();
 } else {
+  // start the app
   app.on('second-instance', (_e: any, argv: any) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
@@ -214,11 +220,15 @@ if (!gotTheLock) {
   });
 
   // Deeplink event listener for MacOS
-  app.on('open-url', (e, argv) => {
+  app.on('open-url', async (e, argv) => {
     e.preventDefault();
 
     // if the app is not ready, save the deep link and call it later
     if (mainWindow) {
+      if (process.platform === PLATFORM_WIN32) {
+        await setupEnvReadInterval(mainWindow);
+      }
+
       handleDeepLink([argv], mainWindow);
       deepLink = '';
     } else {

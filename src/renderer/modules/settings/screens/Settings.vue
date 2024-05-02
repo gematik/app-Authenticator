@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2023 gematik GmbH
+  - Copyright 2024 gematik GmbH
   -
   - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
   - Sourcecode must be in compliance with the EUPL.
@@ -32,6 +32,17 @@
       </div>
     </div>
     <div v-else>
+      <div
+        v-if="isDefaultConfigFile"
+        class="w-full bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-5"
+        role="alert"
+      >
+        <h2 class="font-bold text-gray-600">{{ $t(`default_config_is_in_use`) }}</h2>
+        <p>
+          {{ $t(`you_are_using_default_config`, { path: configFilePath }) }}
+        </p>
+      </div>
+
       <form class="w-full" @submit.prevent="saveConfigValues">
         <div
           v-for="(formSection, index) in formSections"
@@ -70,7 +81,7 @@
             />
           </div>
         </div>
-        <div class="flex items-center pt-[32px]">
+        <div class="flex items-center pt-[26px] sticky bg-primary bottom-0">
           <button id="btnSaveSettings" class="bt" type="submit" :title="$t('settings_saved_info')">
             {{ $t('save') }}
           </button>
@@ -137,6 +148,7 @@ export default defineComponent({
     const { save, load, setWithoutSave } = useSettings();
     const configValues = ref<TRepositoryData>({ ...load() });
     const isJsonFileInvalid = ref(FileStorageRepository.isJsonFileInvalid);
+    const isDefaultConfigFile = ref(FileStorageRepository.isDefaultConfigFile);
     const functionTestResults = ref<TestResult[]>([]);
     const showModal = ref<boolean>(false);
     const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
@@ -188,7 +200,9 @@ export default defineComponent({
       }
       // confirm prompt
       const saveConfirm = await Swal.fire({
-        title: translate('settings_will_be_saved'),
+        title: FileStorageRepository.isDefaultConfigFile
+          ? translate('you_are_using_default_config_if_you_save_changes_will_be_saved_to_specific_path')
+          : translate('settings_will_be_saved'),
         text: translate('are_you_sure'),
         icon: 'warning',
         showCancelButton: true,
@@ -208,8 +222,13 @@ export default defineComponent({
       }
 
       try {
+        // recalculate the path with the custom path
+        FileStorageRepository.getPath(true);
+
         save(toRaw(configValues.value));
         closeModal();
+
+        isDefaultConfigFile.value = FileStorageRepository.isDefaultConfigFile;
       } catch (err) {
         // for credential manager, we show another error
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0010) {
@@ -324,6 +343,7 @@ export default defineComponent({
       reloadConfig,
       WIKI_CONFIGURATION_LINK,
       openExternal: window.api.openExternal,
+      isDefaultConfigFile,
     };
   },
 });

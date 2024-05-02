@@ -2,6 +2,22 @@
 
 # Release Authenticator
 
+## Version 4.11.0
+
+### added
+- Action-Buttons on the Settings-Screen now stay in the view while scrolling in order to enhance our UX
+- Set default connector port to 443
+- Default-configuration feature
+
+
+### fixed
+- Prioritize the read environment variable logic to read the correct config.json file on startup
+- Clean application files properly after uninstalling
+
+### security
+- Prevent starting Authenticator with remote-debugging parameters
+
+
 ## Version 4.10.0
 ### added
 - Hover-Effect to the navigation bar and renaming "Anmeldung" to "Home" for an improved UX

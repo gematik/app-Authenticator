@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -235,3 +235,14 @@ export const MACOS_PATHS = {
 };
 
 export const MACOS_DS_STORE_FILE_NAME = '.DS_Store';
+
+/**
+ * We close the app if any debugging flags are found in the main process
+ */
+export const START_ARGUMENTS_TO_PREVENT = [
+  '--remote-debugging-port',
+  '--inspect',
+  '--inspect-brk',
+  '--inspect-port',
+  '--remote-allow-origins',
+];
