@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -71,6 +71,7 @@ export const INITIAL_STATE = {
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
   [TLS_AUTH_TYPE_CONFIG]: TlsAuthType.ServerCertAuth,
+  [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: '443',
 
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
@@ -102,11 +103,20 @@ export class FileStorageRepository implements ISettingsRepository {
     this._isJsonFileInvalid = value;
   }
 
+  static get isDefaultConfigFile(): boolean {
+    return this._isDefaultConfigFile;
+  }
+
+  static set isDefaultConfigFile(value: boolean) {
+    this._isDefaultConfigFile = value;
+  }
+
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
   private static _usesCredentialManager = false;
   private static _isNewInstallation = false;
   private static _isJsonFileInvalid = false;
+  private static _isDefaultConfigFile = false;
 
   public static getConfigDir(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
@@ -150,34 +160,48 @@ export class FileStorageRepository implements ISettingsRepository {
     return { path: window.api.sendSync(IPC_GET_PATH, 'userData') as string, localEnv: true };
   }
 
-  public static getPath(): string {
-    if (FileStorageRepository._path) {
+  public static getPath(ignoreDefaultPath = false): string {
+    if (FileStorageRepository._path && !ignoreDefaultPath) {
       return FileStorageRepository._path;
     }
 
     const config = FileStorageRepository.getConfigDir();
-    let path = config.path;
+    let configDirPath = config.path;
     if (config.localEnv) {
-      path = path.replace('Roaming', 'Local');
+      configDirPath = configDirPath.replace('Roaming', 'Local');
 
       //C:\Users\USERNAME\AppData\Local\authenticator -> C:\Users\USERNAME\AppData\Local\gematik Authenticator
-      path = path.replace(window.api.pathSep() + APP_NAME, window.api.pathSep() + PRODUCT_NAME);
+      configDirPath = configDirPath.replace(window.api.pathSep() + APP_NAME, window.api.pathSep() + PRODUCT_NAME);
 
-      if (!window.api.existsSync(path)) {
+      if (!window.api.existsSync(configDirPath)) {
         try {
-          window.api.mkdirSync(path);
+          window.api.mkdirSync(configDirPath);
         } catch (err) {
           logger.error('Config dir could not be created', err.message);
         }
       }
     }
 
-    path += window.api.pathJoin('/', CONFIG_FILE_NAME);
+    let configFilePath = window.api.pathJoin(configDirPath, CONFIG_FILE_NAME);
 
-    FileStorageRepository._path = path;
+    // check if the config file exists
+    if (!ignoreDefaultPath && !!PROCESS_ENVS.AUTHCONFIGPATH && !window.api.existsSync(configFilePath)) {
+      // check if the config file exists in the default path, default path is the 1 level above the current path
+      const defaultConfigFilePath = window.api.pathJoin(window.api.pathDirname(configDirPath), CONFIG_FILE_NAME);
 
-    logger.info(' - config.json path: ' + path);
-    return path;
+      // if the config file exists in the default path, then use the default path
+      if (window.api.existsSync(defaultConfigFilePath)) {
+        configFilePath = defaultConfigFilePath;
+        FileStorageRepository.isDefaultConfigFile = true;
+      }
+    } else {
+      FileStorageRepository.isDefaultConfigFile = false;
+    }
+
+    FileStorageRepository._path = configFilePath;
+
+    logger.info(' - config.json path: ' + configFilePath);
+    return configFilePath;
   }
 
   save(data: TRepositoryData): void {

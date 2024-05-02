@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -18,7 +18,7 @@ import { IncomingHttpHeaders } from 'http';
 import { stringify } from 'flatted';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 
-import { IS_TEST } from '@/constants';
+import { IS_TEST, PROCESS_ENVS } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { TlsAuthType } from '@/@types/common-types';
@@ -100,7 +100,7 @@ export const httpClient = async (
     // add header for https://idp.dev.gematik.solutions/
     config.headers = {
       ...config.headers,
-      'X-Authorization': 'FsMxoUGiJZowZ99lg7AfFYZl9/oEZ8jpMvCuMDhbAKE=',
+      'X-Authorization': PROCESS_ENVS.IDP_DEV_API_KEY,
     };
     // #!endif
 

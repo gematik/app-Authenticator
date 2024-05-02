@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -37,14 +37,20 @@ const REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION = 'HKLM\\SOFTWARE\\Citrix\\Ica\\S
  * interval for checking new env vars
  * @param mainWindow
  */
-export const setupEnvReadInterval = (mainWindow: BrowserWindow | null) => {
+export const setupEnvReadInterval = async (mainWindow: BrowserWindow | null) => {
   setInterval(async () => {
     await readLatestEnvs(mainWindow);
   }, 10000);
+  try {
+    await readLatestEnvs(mainWindow);
 
-  readLatestEnvs(mainWindow)
-    .then(() => logger.debug('env loaded'))
-    .catch((e) => logger.error('env not loaded', e));
+    // On startup, we wait for the ENVS to load; this may take a while because of the event.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    logger.debug('env loaded');
+  } catch (e) {
+    logger.error('env not loaded', e);
+  }
 };
 
 /**

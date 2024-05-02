@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -199,6 +199,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: ENTRY_OPTIONS_CONFIG_GROUP.PORT,
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.NUMBER,
+          placeholder: '443',
           infoText: translate('info_text_port'),
         },
         {

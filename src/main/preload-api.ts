@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -64,6 +64,9 @@ export const preloadApi = {
   pathJoin: path.join,
   pathSep: (): string => {
     return path.sep;
+  },
+  pathDirname: (filePath: string): string => {
+    return path.dirname(filePath);
   },
   focusToApp: (): void => {
     ipcRenderer.send(IPC_FOCUS_TO_AUTHENTICATOR);

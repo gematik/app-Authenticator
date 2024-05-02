@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -39,6 +39,7 @@ export declare global {
       mkdirSync: typeof fs.mkdirSync;
       writeFileSync: typeof fs.writeFileSync;
       pathJoin: typeof path.join;
+      pathDirname: typeof path.dirname;
       pathSep: () => string;
       getTmpDir: typeof os.tmpdir;
       utilFormat: typeof util.format;
