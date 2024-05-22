@@ -2,7 +2,10 @@
   "name": "authenticator",
   "version": "4.11.0",
   "private": true,
-  "author": "Gematik GmbH",
+  "author": {
+    "name": "Gematik GmbH",
+    "email": "info@gematik.de"
+  },
   "description": "Authenticator Desktop Client",
   "main": "dist_electron/main.js",
   "license": "European Union Public License 1.2",

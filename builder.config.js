@@ -39,6 +39,32 @@ module.exports = {
     target: ['nsis'],
     publisherName: PUBLISHER_NAME,
   },
+  linux: {
+    target: ['AppImage', 'deb', 'rpm'],
+    icon: './src/assets/icons/',
+    executableName: appConfig.title.replace(/\W+/g, '-').toLowerCase(),
+    category: 'Utility',
+    synopsis: appConfig.title,
+    description: appConfig.description,
+    extraResources: [
+      {
+        from: 'src/assets/certs-idp',
+        to: './certs-idp',
+      },
+      {
+        from: 'src/assets/certs-konnektor',
+        to: './certs-konnektor',
+      },
+      {
+        from: 'src/assets/test-cases-config.json',
+        to: '.',
+      },
+    ],
+    desktop: {
+      Name: appConfig.title,
+      StartupWMClass: 'authenticator',
+    },
+  },
   files: ['!*', 'dist_electron/*'],
   forceCodeSigning: FORCE_SIGNING,
   nsis: {
@@ -65,7 +91,7 @@ module.exports = {
     category: 'public.app-category.utilities',
     artifactName: artifactName('${productName}', '${version}', '${ext}'),
     icon: './src/assets/logo.png',
-    appId: 'de.gematik.authenticator',
+    appId: appConfig.appId,
   },
   directories: {
     buildResources: 'src/assets',
