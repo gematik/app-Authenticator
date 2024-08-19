@@ -22,8 +22,12 @@ import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-clien
 import { Options } from 'got';
 import { createLogZip, logger } from '@/main/services/logging';
 import { findValidCertificate, getP12ValidityType } from '@/main/services/p12-certificate-service';
+import IpcRendererEvent = Electron.IpcRendererEvent;
 
 const forge = require('node-forge');
+
+type IpcRendererCallback = (event: IpcRendererEvent, ...args: any[]) => void;
+
 /**
  * Config data for preload environment.
  * This will be kept up-to-date with frontend config data
@@ -38,8 +42,8 @@ export const preloadApi = {
   sendSync: (channel: string, data: unknown) => {
     return ipcRenderer.sendSync(channel, data);
   },
-  on: (channel: string, func: any) => {
-    ipcRenderer.on(channel, (event: unknown, ...args: unknown[]) => func(event, ...args));
+  on: (channel: string, func: IpcRendererCallback) => {
+    ipcRenderer.on(channel, (event: IpcRendererEvent, ...args: any[]) => func(event, ...args));
   },
   openExternal: async (url: string) => {
     await shell.openExternal(url);
@@ -62,6 +66,7 @@ export const preloadApi = {
   writeFileSync: fs.writeFileSync,
   utilFormat: util.format,
   pathJoin: path.join,
+  homedir: os.homedir,
   pathSep: (): string => {
     return path.sep;
   },
@@ -114,7 +119,7 @@ export const preloadApi = {
   },
   extractValidCertificate(p12Path: string, password: string): string {
     const certificate = findValidCertificate(p12Path, password);
-    const newP12 = forge.pkcs12.toPkcs12Asn1(certificate.privateKey.key, [certificate.certificate.cert], password);
+    const newP12 = forge.pkcs12.toPkcs12Asn1(certificate.privateKey?.key, [certificate.certificate?.cert], password);
     const derData = forge.asn1.toDer(newP12).getBytes();
     // Save the updated P12 file
 

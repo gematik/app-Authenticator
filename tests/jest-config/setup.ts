@@ -20,6 +20,13 @@ import { PRODUCT_NAME } from '@/constants';
 import fs from 'fs';
 import { clearSampleData } from '@tests/utils/config-sample-data';
 
+/**
+ * TODO: This solves TextEncoder problem for macOs, but it should be fixed in the future
+ */
+jest.mock('mac-ca', () => ({
+  get: jest.fn(() => ['mocked-mac-ca-cert']),
+}));
+
 // as the connector works slowly, we need at least 10 seconds to be sure
 jest.setTimeout(10000);
 
@@ -36,6 +43,14 @@ Object.defineProperty(global, 'crypto', {
 if (typeof global.TextEncoder === 'undefined') {
   const { TextEncoder } = require('util');
   global.TextEncoder = TextEncoder;
+}
+
+/**
+ * Add missing TextDecoder functionality
+ */
+if (typeof global.TextDecoder === 'undefined') {
+  const { TextDecoder } = require('util');
+  global.TextDecoder = TextDecoder;
 }
 
 jest.mock('electron', () => ({

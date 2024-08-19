@@ -17,6 +17,8 @@ import { logger } from '@/renderer/service/logger';
 import textParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
+import { UserfacingError } from '@/renderer/errors/errors';
+import { ERROR_CODES } from '@/error-codes';
 
 let endpoints = new Map();
 let productTypeVersion = '';
@@ -38,15 +40,20 @@ export const getConnectorSdsTls = async (): Promise<string> => {
 };
 
 export const getServiceEndpointTls = async (serviceName: string): Promise<string> => {
-  if (endpoints.size == 0 || productTypeVersion === '') {
-    const url = getConnectorEndpoint();
-    const { data: sds } = await window.api.httpGet(url, { ...httpReqConfig() });
-    extractEndpoints(sds);
-    extractPtv(sds);
-  } else {
-    logger.debug(`reuse endpoints: ${endpoints.size} xEndpoints`);
+  try {
+    if (endpoints.size == 0 || productTypeVersion === '') {
+      const url = getConnectorEndpoint();
+      const { data: sds } = await window.api.httpGet(url, { ...httpReqConfig() });
+      extractEndpoints(sds);
+      extractPtv(sds);
+    } else {
+      logger.debug(`reuse endpoints: ${endpoints.size} xEndpoints`);
+    }
+    return getEndpoint(serviceName);
+  } catch (e) {
+    logger.error('Could not get service endpoint: ', e.message);
+    throw new UserfacingError('Could not get service endpoint', e.message, ERROR_CODES.AUTHCL_1000);
   }
-  return getEndpoint(serviceName);
 };
 
 export function getEndpoint(serviceName: string): string {

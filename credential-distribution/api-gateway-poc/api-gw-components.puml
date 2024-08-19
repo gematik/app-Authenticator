@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/component-diagram
+left to right direction
+
+cloud "TI Provider Zone"{
+    node "Konnektor" {
+      connector.sds -- [Dienstverzeichnisdienst]
+
+      interface auth as " "
+      auth -- [AuthSignatureService]
+
+      interface card as " "
+      card -- [CardService]
+
+      interface cert as " "
+      cert -- [CertificateService]
+
+      interface sysinfo as " "
+      sysinfo -- [SystemInformationService]
+
+      interface encif as " "
+      component encs as "EncryptionService"
+      encif -- encs
+
+      interface phrif as " "
+      component phrs as "PHRService"
+      phrif -- phrs
+
+      interface etcif as " "
+      component etc as "..."
+      etcif -- etc
+
+    }
+
+    node {
+       component apigw as [API Gateway]
+       interface  apigw_auth as " "
+       apigw_auth -- apigw
+    }
+}
+
+cloud "Client Zone" {
+    node client1 as "Client 1" {
+        component auth1 as [Authenticator]
+    }
+    node client2  as "Client 2"  {
+        component auth2 as [Authenticator]
+    }
+    node client3  as "Client 3"  {
+        component auth3 as [Authenticator]
+    }
+}
+
+cloud "TI" {
+    node vpn as "VPN ZugD"
+    interface vpnif as " "
+    vpnif -- vpn
+}
+
+apigw --( connector.sds
+apigw --( auth
+apigw --( card
+apigw --( cert
+apigw --( sysinfo
+
+auth1 --( apigw_auth
+auth2 --( apigw_auth
+auth3 --( apigw_auth
+
+Konnektor -d-( vpnif
+@enduml

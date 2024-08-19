@@ -21,12 +21,15 @@ import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 import { IS_TEST, PROCESS_ENVS } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
-import { TlsAuthType } from '@/@types/common-types';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { APP_CONFIG_DATA } from '@/main/preload-api';
+import { getCasFromTruststore } from '@/main/services/ca-trust-store-service';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
+
+const truststoreCAs = getCasFromTruststore() || [];
 
 let gotAdvanced = got;
 // #!if MOCK_MODE === 'ENABLED'
@@ -55,6 +58,7 @@ if (!IS_TEST) {
     },
   });
 }
+
 // #!endif
 
 export enum HTTP_METHODS {
@@ -82,16 +86,16 @@ export const httpClient = async (
         config.body = envelope;
       }
     }
-
     // put p12 certificate
     config = {
       ...config,
       timeout: {
         ...config.timeout,
-        request: <number>APP_CONFIG_DATA[TIMEOUT_PARAMETER_CONFIG] || 10000,
+        request: <number>APP_CONFIG_DATA[TIMEOUT_PARAMETER_CONFIG] || 30000,
       },
       https: {
         ...config.https,
+        certificateAuthority: [...truststoreCAs, ...(config?.https?.certificateAuthority || [])],
         ...putP12Config(url),
       },
     };
@@ -106,7 +110,7 @@ export const httpClient = async (
 
     const proxy = await createProxyAgent(url);
     //we don't get debug messages from the ipcRenderer in createProxyAgent, so we log it here
-    logger.debug('Proxy for Url:' + url + ' is:', proxy);
+    logger.debug('Proxy for Url: ' + url + ' is:', proxy);
     const client = method === HTTP_METHODS.POST ? gotAdvanced.post : gotAdvanced.get;
     const res = client(url, {
       followRedirect: false, // default false, can be superseded by config.followRedirect
@@ -162,7 +166,7 @@ const putP12Config = (url: string) => {
     return {};
   }
 
-  if (APP_CONFIG_DATA[TLS_AUTH_TYPE_CONFIG] != TlsAuthType.ServerClientCertAuth_Pfx) {
+  if (APP_CONFIG_DATA[TLS_AUTH_TYPE_CONFIG] != TLS_AUTH_TYPE.ServerClientCertAuth_Pfx) {
     return {};
   }
 

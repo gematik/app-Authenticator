@@ -14,6 +14,7 @@
 
 import {
   createRedirectDeeplink,
+  escapeHTML,
   parseErrorMessageToIDPError,
   parseOauthError,
   parseUrlToIdpError,
@@ -118,5 +119,17 @@ describe('Test util functions', () => {
     const url = 'https://testURL?code=test_code&ssotoken=test_ssotoken&StAtE=test_state';
     const deeplink = createRedirectDeeplink('protocol', url);
     expect(deeplink).toBe('protocol://code=test_code&ssotoken=test_ssotoken&StAtE=test_state');
+  });
+
+  it('test the escapeHTML function', async () => {
+    const html = '<div>test</div>';
+    const escapedHtml = escapeHTML(html);
+    expect(escapedHtml).toBe('&lt;div&gt;test&lt;/div&gt;');
+  });
+
+  it('test the escapeHTML function with br exception', async () => {
+    const html = '<div><br>test</br></div>';
+    const escapedHtml = escapeHTML(html, ['br']);
+    expect(escapedHtml).toBe('&lt;div&gt;<br>test</br>&lt;/div&gt;');
   });
 });

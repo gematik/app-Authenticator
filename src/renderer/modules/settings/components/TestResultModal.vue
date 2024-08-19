@@ -54,7 +54,7 @@
                   </div>
                   <div class="col-span-7">
                     <div :id="item.name" class="font-bold pl-1 pr-1">{{ item.name }}</div>
-                    <div class="text-base pl-1 pr-1 pb-1 break-words">{{ item.details }}</div>
+                    <div class="text-base pl-1 pr-1 pb-1 break-words" v-html="escapeHTML(item.details, ['br'])"></div>
                   </div>
                 </div>
               </div>
@@ -99,6 +99,7 @@
 import { defineComponent, PropType } from 'vue';
 import { TestResult, TestStatus } from '@/renderer/modules/settings/services/test-runner';
 import { FACHPORTAL_URL } from '@/constants';
+import { escapeHTML } from '@/renderer/utils/utils';
 
 export default defineComponent({
   name: 'TestResultModal',
@@ -128,6 +129,7 @@ export default defineComponent({
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
+    escapeHTML,
     openFachportalURL() {
       window.api.openExternal(FACHPORTAL_URL);
     },

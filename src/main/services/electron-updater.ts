@@ -17,9 +17,6 @@ import { logger } from '@/main/services/logging';
 import { ipcMain } from 'electron';
 import { IPC_CANCEL_UPDATE, IPC_CHECK_UPDATE } from '@/constants';
 
-// use our own logger for electron auto updater
-autoUpdater.logger = logger;
-
 // on default, autoInstallOnAppQuit is false
 autoUpdater.autoInstallOnAppQuit = false;
 
@@ -37,7 +34,8 @@ ipcMain.on(IPC_CHECK_UPDATE, () => {
   });
 
   autoUpdater.on('error', (err) => {
-    logger.error('Error in auto-updater. ' + err);
+    const firstLine = err.message.split('\n')[0];
+    logger.error('Error during update check:', firstLine);
   });
 
   autoUpdater.on('download-progress', (progressObj) => {
@@ -53,8 +51,8 @@ ipcMain.on(IPC_CHECK_UPDATE, () => {
     .then((updateStatus) => {
       logger.info('updateStatus', updateStatus);
     })
-    .catch((err) => {
-      logger.error('Error in auto-updater. ' + err);
+    .catch(() => {
+      // ignored as error is already logged in the error event
     });
 });
 

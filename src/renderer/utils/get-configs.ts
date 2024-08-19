@@ -13,7 +13,9 @@
  */
 
 import { TConfigObject } from '@/renderer/modules/connector/type-definitions';
-import { FileStorageRepository } from '@/renderer/modules/settings/repository';
+import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
+import { PROXY_AUTH_TYPES } from '@/config';
 
 const FileStorageRepositoryInstance = new FileStorageRepository();
 
@@ -22,12 +24,12 @@ const FileStorageRepositoryInstance = new FileStorageRepository();
  *
  * return values by prefix
  */
-export const getConfigGroup = (configGroup: TConfigObject): any | undefined => {
+export const getConfigGroup = (configGroup: TConfigObject): TRepositoryData | undefined => {
   const savedConfigValues = FileStorageRepositoryInstance.load();
-  const configObject: TConfigObject = {};
+  const configObject: TRepositoryData = {};
 
   Object.keys(configGroup).forEach((key: string) => {
-    const configKey = configGroup[key];
+    const configKey: string = configGroup[key];
     const configValue = savedConfigValues[<string>configKey];
 
     if (configValue) {
@@ -39,7 +41,8 @@ export const getConfigGroup = (configGroup: TConfigObject): any | undefined => {
   return configObject;
 };
 
-type IConfigValue = string | number | boolean;
+type IConfigValue = string | number | boolean | TLS_AUTH_TYPE | undefined | PROXY_AUTH_TYPES;
+
 /**
  * read and return single parameter
  * @param key

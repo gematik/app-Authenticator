@@ -42,8 +42,7 @@
           {{ $t(`you_are_using_default_config`, { path: configFilePath }) }}
         </p>
       </div>
-
-      <form class="w-full" @submit.prevent="saveConfigValues">
+      <form class="w-full" @submit.prevent="saveConfigValues(true)">
         <div
           v-for="(formSection, index) in formSections"
           :key="formSection.title"
@@ -78,6 +77,7 @@
               :on-element-change="config.onChange"
               :info-text="config.infoText"
               :placeholder="config.placeholder"
+              :update-init-value="updateInitValuesFlag"
             />
           </div>
         </div>
@@ -115,10 +115,17 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, toRaw } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { onBeforeRouteLeave } from 'vue-router';
 
 import Swal from 'sweetalert2';
+import {
+  confirmSaveSettingsPrompt,
+  confirmSaveUnsavedSettingsPrompt,
+  invalidDataAlert,
+  settingsSavedSuccessfullyAlert,
+} from '@/renderer/modules/settings/screens/modalDialogs';
 import FormElement from '@/renderer/components/FormElement.vue';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { useSettings } from '@/renderer/modules/settings/useSettings';
@@ -134,7 +141,7 @@ import { IPC_UPDATE_ENV, WIKI_CONFIGURATION_LINK } from '@/constants';
 import { IConfigSection } from '@/@types/common-types';
 import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
 import { UserfacingError } from '@/renderer/errors/errors';
-import { alertDefinedErrorWithDataOptional } from '@/renderer/utils/utils';
+import { alertDefinedErrorWithDataOptional, validateData } from '@/renderer/utils/utils';
 
 export default defineComponent({
   name: 'SettingsScreen',
@@ -144,15 +151,16 @@ export default defineComponent({
   },
   setup() {
     const translate = useI18n().t;
-
     const { save, load, setWithoutSave } = useSettings();
     const configValues = ref<TRepositoryData>({ ...load() });
+    let initialConfigValues: string = JSON.stringify({ ...configValues.value });
     const isJsonFileInvalid = ref(FileStorageRepository.isJsonFileInvalid);
     const isDefaultConfigFile = ref(FileStorageRepository.isDefaultConfigFile);
     const functionTestResults = ref<TestResult[]>([]);
     const showModal = ref<boolean>(false);
     const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
     const formColumnsFlat = getFormColumnsFlat(configValues.value);
+    const updateInitValuesFlag = ref(false);
 
     window?.api?.on(IPC_UPDATE_ENV, () => {
       setTimeout(() => {
@@ -160,77 +168,84 @@ export default defineComponent({
       }, 500);
     });
 
-    /**
-     * Validates the data user try to save.
-     *
-     */
-    function validateData(): boolean {
-      let isFormValid = true;
-      for (const key in configValues.value) {
-        const val = configValues.value[key];
-        const regex = formColumnsFlat[key]?.validationRegex;
-
-        // no need to check boolean
-        if (typeof val === 'boolean') {
-          continue;
+    onMounted(() => {
+      // Prevent data loss of unsaved settings
+      window.onbeforeunload = (event) => {
+        if (hasUnsavedChanges()) {
+          logger.info('Unsaved settings changes detected. Stop app close.');
+          event.preventDefault();
+          handleAppClose();
+          return true;
+        } else {
+          logger.info('No unsaved settings changes detected.');
         }
+      };
+    });
 
-        if (val && regex && !regex.test(String(val))) {
-          isFormValid = false;
-          break;
+    const handleAppClose = async (): Promise<void> => {
+      // Handle case when there are no unsaved changes immediately
+      const userWantsToSaveSettings = await confirmSaveUnsavedSettingsPrompt();
+      if (!userWantsToSaveSettings.isConfirmed) {
+        logger.info('User discarded changes to settings.');
+        configValues.value = JSON.parse(initialConfigValues);
+        updateInitValuesFlag.value = !updateInitValuesFlag.value;
+      } else {
+        const savedSuccessful = await saveConfigValues(false);
+        if (!savedSuccessful) {
+          logger.error('Error while saving settings. Closing app aborted!');
+          return;
         }
       }
-      return isFormValid;
+    };
+
+    const beforeRouteLeaveGuard = async (to: any, from: any, next: any): Promise<void> => {
+      let proceed: boolean = true; // default case: proceed with navigation
+      if (hasUnsavedChanges()) {
+        const saveConfirm = await confirmSaveUnsavedSettingsPrompt();
+        if (saveConfirm.isConfirmed) {
+          // User wants to save the settings before navigating away
+          proceed = await saveConfigValues(false);
+        }
+      }
+      proceed ? next() : next(false);
+    };
+    onBeforeRouteLeave(beforeRouteLeaveGuard);
+
+    /**
+     * Watch if there are unsaved user made settings
+     */
+    const hasUnsavedChanges = (): boolean => {
+      return JSON.stringify(configValues.value) !== initialConfigValues;
+    };
+
+    async function validateConfig() {
+      if (!Object.keys(configValues).length) return false;
+      if (!validateData(configValues.value, formColumnsFlat)) {
+        await invalidDataAlert();
+        return false;
+      }
+      return true;
     }
 
-    async function saveConfigValues() {
-      // can't save if there is no config
-      if (!Object.keys(configValues).length) {
-        return;
-      }
+    async function showSaveSettingsConfirmationDialog() {
+      const saveConfirm = await confirmSaveSettingsPrompt();
+      return saveConfirm.isConfirmed;
+    }
 
-      // validate
-      if (!validateData()) {
-        await Swal.fire({
-          title: translate('settings_please_enter_valid_data'),
-          icon: 'warning',
-          confirmButtonText: 'OK',
-        });
-        return false;
-      }
-      // confirm prompt
-      const saveConfirm = await Swal.fire({
-        title: FileStorageRepository.isDefaultConfigFile
-          ? translate('you_are_using_default_config_if_you_save_changes_will_be_saved_to_specific_path')
-          : translate('settings_will_be_saved'),
-        text: translate('are_you_sure'),
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'OK',
-        cancelButtonText: translate('cancel'),
-      });
-
-      if (!saveConfirm.isConfirmed) {
-        return false;
-      }
-
-      // call check update automatically if the settings have been changed
+    function handleUpdateProcess() {
       if (configValues.value[CHECK_UPDATES_AUTOMATICALLY_CONFIG]) {
         checkNewUpdate(true);
       } else {
         cancelActiveUpdateProcess();
       }
+    }
 
+    async function performSaveOperation() {
       try {
-        // recalculate the path with the custom path
         FileStorageRepository.getPath(true);
-
         save(toRaw(configValues.value));
         closeModal();
-
-        isDefaultConfigFile.value = FileStorageRepository.isDefaultConfigFile;
       } catch (err) {
-        // for credential manager, we show another error
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0010) {
           logger.error("Couldn't save to credential manager");
           await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0010);
@@ -238,28 +253,26 @@ export default defineComponent({
           logger.error('Config file could not be saved: ', err.message);
           await Swal.fire({
             title: translate(`errors.${ERROR_CODES.AUTHCL_0008}.title`),
-            text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, {
-              configPath: FileStorageRepository.getPath(),
-            }),
+            text: translate(`errors.${ERROR_CODES.AUTHCL_0008}.text`, { configPath: FileStorageRepository.getPath() }),
             icon: 'error',
           });
         }
-
         return false;
       }
-
-      // put data in connector module
       await updateAppState();
+      await settingsSavedSuccessfullyAlert();
+      initialConfigValues = JSON.stringify(configValues.value);
+      updateInitValuesFlag.value = !updateInitValuesFlag.value;
+      return true;
+    }
 
-      await Swal.fire({
-        title: translate('settings_saved_successfully'),
-        text: translate('settings_saved_config_path_value', {
-          configPath: FileStorageRepository.getPath(),
-        }),
-        timer: 3000,
-        showConfirmButton: true,
-        icon: 'success',
-      });
+    async function saveConfigValues(needsUserApproval: boolean = true) {
+      if (!(await validateConfig())) return false;
+      if (needsUserApproval) {
+        if (!(await showSaveSettingsConfirmationDialog())) return false;
+      }
+      handleUpdateProcess();
+      return await performSaveOperation();
     }
 
     /**
@@ -299,16 +312,6 @@ export default defineComponent({
       }
     };
 
-    async function createZipWithLogData() {
-      const isSelected = await window.api.createLogZipFile();
-      if (isSelected) {
-        await Swal.fire({
-          title: translate('create_zip_file_successful'),
-          icon: 'success',
-        });
-      }
-    }
-
     /**
      * Update connector Config
      */
@@ -328,14 +331,32 @@ export default defineComponent({
       isJsonFileInvalid.value = FileStorageRepository.isJsonFileInvalid;
     };
 
+    async function createZipWithLogData() {
+      const isSelected = await window.api.createLogZipFile();
+      if (isSelected) {
+        await Swal.fire({
+          title: translate('create_zip_file_successful'),
+          icon: 'success',
+        });
+      }
+    }
+
+    onBeforeUnmount(() => {
+      // remove the event listener when the component is destroyed
+      window.onbeforeunload = null;
+    });
+
     return {
       saveConfigValues,
       runAndFormatTestCases,
       createZipWithLogData,
       closeModal,
+      beforeRouteLeaveGuard,
       functionTestResults,
       showModal,
       configValues,
+      initialConfigValues,
+      updateInitValuesFlag,
       formSections,
       ERROR_CODES,
       isJsonFileInvalid,

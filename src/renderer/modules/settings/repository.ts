@@ -16,7 +16,11 @@ import dot from 'dot-object';
 import Swal from 'sweetalert2';
 
 // #!if MOCK_MODE === 'ENABLED'
-import { DEVELOPER_OPTIONS, MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
+import {
+  DEVELOPER_OPTIONS,
+  MOCK_CONNECTOR_CERTS_CONFIG,
+  MOCK_CONNECTOR_CONFIG,
+} from '@/renderer/modules/connector/connector-mock/mock-config';
 // #!endif
 import {
   APP_NAME,
@@ -30,19 +34,63 @@ import {
 import { logger } from '@/renderer/service/logger';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
+  CONTEXT_PARAMETERS_CONFIG_GROUP,
   ENTRY_OPTIONS_CONFIG_GROUP,
+  PROXY_AUTH_TYPES,
   PROXY_SETTINGS_CONFIG,
   SENSITIVE_CONFIG_KEYS_LIST,
+  TIMEOUT_PARAMETER_CONFIG,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
-import { TlsAuthType } from '@/@types/common-types';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ERROR_CODES } from '@/error-codes';
 import { UserfacingError } from '@/renderer/errors/errors';
 import i18n from '@/renderer/i18n';
 
-export interface TRepositoryData {
-  [key: string]: number | string | boolean;
-}
+export type TRepositoryDataValues = {
+  [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: boolean;
+  [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: PROXY_AUTH_TYPES | boolean;
+  [PROXY_SETTINGS_CONFIG.PROXY_USERNAME]: string;
+  [PROXY_SETTINGS_CONFIG.PROXY_PASSWORD]: string;
+  [PROXY_SETTINGS_CONFIG.PROXY_CERTIFICATE_PATH]: string;
+  [PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST]: string;
+  [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: string;
+  [PROXY_SETTINGS_CONFIG.PROXY_PORT]: string;
+
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: boolean;
+  [ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME]: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: number;
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: boolean;
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.USERNAME_BASIC_AUTH]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.PASSWORD_BASIC_AUTH]?: string;
+
+  [CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID]: string;
+  [CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]: string;
+  [CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID]: string;
+
+  [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE;
+
+  [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: boolean;
+
+  [TIMEOUT_PARAMETER_CONFIG]: number;
+
+  // #!if MOCK_MODE === 'ENABLED'
+  [MOCK_CONNECTOR_CONFIG]?: boolean;
+  [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]?: boolean;
+  [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_CERT]: string;
+  [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_KEY]: string;
+  [MOCK_CONNECTOR_CERTS_CONFIG.HBA_CERT]: string;
+  [MOCK_CONNECTOR_CERTS_CONFIG.HBA_KEY]: string;
+  // #!endif
+
+  [key: string]: number | string | boolean | undefined | TLS_AUTH_TYPE | PROXY_AUTH_TYPES;
+};
+
+export type TRepositoryData = Partial<TRepositoryDataValues>;
 
 /**
  * Holds data in the cache to prevent reading the config file frequently
@@ -70,8 +118,8 @@ export const INITIAL_STATE = {
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
-  [TLS_AUTH_TYPE_CONFIG]: TlsAuthType.ServerCertAuth,
-  [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: '443',
+  [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE.ServerCertAuth,
+  [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 443,
 
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
@@ -83,6 +131,7 @@ export class FileStorageRepository implements ISettingsRepository {
   static get isNewInstallation(): boolean {
     return this._isNewInstallation;
   }
+
   static set isNewInstallation(value: boolean) {
     this._isNewInstallation = value;
   }
@@ -172,14 +221,6 @@ export class FileStorageRepository implements ISettingsRepository {
 
       //C:\Users\USERNAME\AppData\Local\authenticator -> C:\Users\USERNAME\AppData\Local\gematik Authenticator
       configDirPath = configDirPath.replace(window.api.pathSep() + APP_NAME, window.api.pathSep() + PRODUCT_NAME);
-
-      if (!window.api.existsSync(configDirPath)) {
-        try {
-          window.api.mkdirSync(configDirPath);
-        } catch (err) {
-          logger.error('Config dir could not be created', err.message);
-        }
-      }
     }
 
     let configFilePath = window.api.pathJoin(configDirPath, CONFIG_FILE_NAME);
@@ -228,6 +269,17 @@ export class FileStorageRepository implements ISettingsRepository {
       }
     } else {
       dataToSaveConfigFile = data;
+    }
+
+    // create config dir if it does not exist
+    const configDirName = window.api.pathDirname(FileStorageRepository.getPath());
+    if (!window.api.existsSync(configDirName)) {
+      try {
+        window.api.mkdirSync(configDirName, { recursive: true });
+      } catch (err) {
+        logger.error('Config directory could not be created', err.message);
+        throw err;
+      }
     }
 
     const unFlatted = dot.object({ ...dataToSaveConfigFile });
@@ -284,6 +336,7 @@ export class FileStorageRepository implements ISettingsRepository {
 
     return { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail };
   }
+
   /**
    * This function filters sensitive data from the config data
    * @param data
@@ -392,7 +445,7 @@ export class FileStorageRepository implements ISettingsRepository {
 
   // #!if MOCK_MODE === 'ENABLED'
   private static printConfig() {
-    logger.info('print settings:');
+    logger.info('Print settings:');
     for (const item in storedData) {
       if (!item.toLowerCase().includes('password')) {
         logger.info('  - ' + item + ':' + storedData[item]);

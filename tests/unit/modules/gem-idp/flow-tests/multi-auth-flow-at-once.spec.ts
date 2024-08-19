@@ -10,6 +10,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 jest.spyOn(logger, 'warn').mockImplementation(() => {});
 jest.spyOn(logger, 'info').mockImplementation(() => {});
 jest.spyOn(logger, 'debug').mockImplementation(() => {});
+jest.spyOn(logger, 'error').mockImplementation(() => {});
 
 describe('GemIdpAuthFlowProcess multi-auth-flow-at-once.spec.ts', () => {
   const wrapper = shallowMount(GemIdpAuthFlowProcess, {

@@ -21,7 +21,7 @@ import cardHandleParser from '@/renderer/modules/connector/common/soap-response-
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
-import { TCardData } from '@/renderer/modules/connector/type-definitions';
+import { TCardData, TCardTerminal } from '@/renderer/modules/connector/type-definitions';
 
 /**
  * @param endpoint
@@ -34,7 +34,7 @@ export const verifyPin = async (endpoint: string, cardHandle: string, pinType: s
   return await pinVerifier.runSoapRequest(ConnectorConfig.contextParameters, endpointMapped, cardHandle, pinType);
 };
 
-export const launch = async (terminals: Array<any>, cardData: TCardData): Promise<string> => {
+export const launch = async (terminals: TCardTerminal, cardData: TCardData): Promise<string> => {
   let cardServiceEndpoint, statusResult;
   try {
     cardServiceEndpoint = await connectorSdsRequest.getServiceEndpointTls(XML_TAG_NAMES.TAG_CARD_SERVICE);
@@ -61,9 +61,14 @@ export const launch = async (terminals: Array<any>, cardData: TCardData): Promis
   }
 };
 
-export function checkRemotePIN(terminals: Array<any>, card: TCardData): void {
+export function checkRemotePIN(terminals: TCardTerminal | TCardTerminal[], card: TCardData): void {
   logger.debug('Check RemotePIN for CardData ', JSON.stringify(card));
-  const terminalData = Array.from(terminals).filter((item: any) => item.CtId === card.ctId && item.WorkplaceIds === '');
+  if (!Array.isArray(terminals)) {
+    terminals = [terminals];
+  }
+  const terminalData = terminals.filter(
+    (item: TCardTerminal) => item.CtId === card.ctId && item.WorkplaceIds.WorkplaceId === '',
+  );
   if (terminalData.length > 0) {
     logger.warn('Remote VerifyPIN is not supported', terminalData);
     throw new UserfacingError('Remote VerifyPIN is not supported', '', ERROR_CODES.AUTHCL_1104, {

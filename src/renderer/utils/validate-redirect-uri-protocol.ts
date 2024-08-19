@@ -29,7 +29,7 @@ export function validateRedirectUriProtocol(url: string): boolean {
     const parsedUrl = new URL(url);
     return ALLOWED_PROTOCOLS.includes(parsedUrl.protocol);
   } catch (err) {
-    logger.error('Invalid Redirect uri or protocol', err.message);
+    logger.error('Invalid redirect uri or protocol', err.message);
 
     return false;
   }

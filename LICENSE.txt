@@ -397,9 +397,6 @@ Drittsoftwareanteile:
     Komponente: axios
     Lizenz: MIT
 
-    Komponente: is-fqdn
-    Lizenz: MIT
-
     Komponente: lodash
     Lizenz: MIT
 
@@ -407,4 +404,13 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: validator
+    Lizenz: MIT
+
+    Komponente: is-valid-domain
+    Lizenz: MIT
+
+    Komponente: mac-ca
+    Lizenz: BSD-3-Clause
+
+    Komponente: win-ca
     Lizenz: MIT

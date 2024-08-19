@@ -21,8 +21,8 @@ import {
   ENTRY_OPTIONS_CONFIG_GROUP,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
-import { CARD_PIN_TYPES } from '@/renderer/modules/connector/constants';
-import { TlsAuthType } from '@/@types/common-types';
+import { CARD_PIN_TYPES, CRYPT_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 class ConnectorConfig {
@@ -55,8 +55,9 @@ class ConnectorConfig {
   };
 
   public authSignParameter: TAuthSignParameter = {
-    signatureType: 'urn:ietf:rfc:3447',
-    signatureCidpSchemes: 'RSASSA-PSS',
+    signatureType: SIGNATURE_TYPES.ECC,
+    // @deprecated
+    signatureCidpSchemes: 'RSASSA-PSS', // deprecated as it throws an error for ECC and not required at all
     base64data: 'YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=',
   };
 
@@ -69,12 +70,19 @@ class ConnectorConfig {
 
   public certReaderParameter = {
     certificateRef: 'C.AUT',
-    crypt: 'RSA',
+    crypt: CRYPT_TYPES.ECC,
   };
 
-  public tlsAuthType = TlsAuthType.ServerCertAuth;
+  public tlsAuthType = TLS_AUTH_TYPE.ServerCertAuth;
 
-  setTlsAuthType(tlsValue: string): void {
+  public setCardReaderParameter(data: any): void {
+    this.certReaderParameter = {
+      ...this.certReaderParameter,
+      ...data,
+    };
+  }
+
+  setTlsAuthType(tlsValue: TLS_AUTH_TYPE): void {
     this.tlsAuthType = tlsValue;
   }
 
@@ -86,8 +94,11 @@ class ConnectorConfig {
     }
   }
 
-  setAuthSignParameter(data: TAuthSignParameter): void {
-    this.authSignParameter = data;
+  setAuthSignParameter(data: Partial<TAuthSignParameter>): void {
+    this.authSignParameter = {
+      ...this.authSignParameter,
+      ...data,
+    };
   }
 
   setTlsEntryOptions(data: TEntryOptions): void {
@@ -133,7 +144,7 @@ class ConnectorConfig {
 
     this.setAuthSignParameter({ ...this.authSignParameter, ...getConfigGroup(AUTH_SIGN_PARAMETER_CONFIG_GROUP) });
 
-    this.setTlsAuthType(<string>getConfig(TLS_AUTH_TYPE_CONFIG).value);
+    this.setTlsAuthType(<TLS_AUTH_TYPE>getConfig(TLS_AUTH_TYPE_CONFIG).value);
   };
 }
 

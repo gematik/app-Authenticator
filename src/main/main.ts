@@ -13,9 +13,7 @@
  */
 
 // read envs from .env file for production
-require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
-
-import { app, BrowserWindow, ipcMain, protocol } from 'electron';
+import { app, BrowserWindow, Event, ipcMain, protocol } from 'electron';
 import path from 'path';
 
 import {
@@ -32,12 +30,16 @@ import { setupEnvReadInterval } from '@/main/services/env-vars-updater';
 // import and add event listeners for electron updater
 import '@/main/services/electron-updater';
 import { hasAppRemoteDebuggingFlags } from '@/main/services/utils';
+import copyFromResourcesToTarget from '@/main/services/copy-from-resources-to-target';
+
+require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
+
 import OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
 import BeforeSendResponse = Electron.BeforeSendResponse;
 
 // #!if MOCK_MODE === 'ENABLED'
 /**
- * @deprecated IS_DEV only cen be used with MOCK_MODE == 'ENABLED' check
+ * @deprecated IS_DEV only can be used with MOCK_MODE == 'ENABLED' check
  */
 const IS_DEV = process.env.NODE_ENV === 'development';
 // #!endif
@@ -212,7 +214,7 @@ if (!gotTheLock) {
   app.quit();
 } else {
   // start the app
-  app.on('second-instance', (_e: any, argv: any) => {
+  app.on('second-instance', (_e: Event, argv: string[]) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       handleDeepLink(argv, mainWindow);
@@ -255,6 +257,11 @@ if (!gotTheLock) {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', async () => {
+    // copy certs and config files to to target on macos
+    if (process.platform === PLATFORM_DARWIN) {
+      copyFromResourcesToTarget();
+    }
+
     logger.info('Application is ready');
     await createWindow();
 
@@ -279,7 +286,7 @@ if (!gotTheLock) {
     // On macOS, it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== PLATFORM_DARWIN) {
-      logger.info('Application quit because of all windows are closed');
+      logger.info('Application quit because all windows are closed');
       app.quit();
     }
   });

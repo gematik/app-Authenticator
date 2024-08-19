@@ -16,7 +16,7 @@ import { Headers, HTTPSOptions, Options } from 'got';
 
 import { TEntryOptions } from '@/renderer/modules/connector/type-definitions';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
-import { TlsAuthType } from '@/@types/common-types';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { logger } from '@/renderer/service/logger';
 import { buildCaChainsConnector } from '@/renderer/modules/connector/common/utils';
 import { getConfig } from '@/renderer/utils/get-configs';
@@ -62,12 +62,12 @@ export const httpReqConfig = (headers?: Headers): Options => {
     certificateAuthority: buildCaChainsConnector(),
   };
 
-  if (ConnectorConfig.tlsAuthType == TlsAuthType.BasicAuth) {
+  if (ConnectorConfig.tlsAuthType == TLS_AUTH_TYPE.BasicAuth) {
     if (tlsEntryOptions.username && tlsEntryOptions.password) {
       reqConfig.username = tlsEntryOptions.username;
       reqConfig.password = tlsEntryOptions.password;
     } else logger.warn('Missing credentials for Basic Auth');
-  } else if (ConnectorConfig.tlsAuthType == TlsAuthType.ServerClientCertAuth) {
+  } else if (ConnectorConfig.tlsAuthType == TLS_AUTH_TYPE.ServerClientCertAuth) {
     const keyFile = ConnectorConfig.tlsEntryOptions.keyFile;
     const certFile = ConnectorConfig.tlsEntryOptions.certFile;
     agentConfig.key = keyFile && window.api.readFileSync(keyFile);

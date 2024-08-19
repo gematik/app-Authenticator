@@ -2,30 +2,64 @@
 
 # Release Authenticator
 
+## Version 4.12.0
+
+### Added
+
+- ECC support for HBA and SMC-B (starting from G2.1), ECC signing in Mock-Mode, No support for ECC TLS to the connector
+- Improved logging messages for SMC-B card login
+- SMC-B PIN verification without requesting it in the authenticator
+- Use Windows and Mac OS certificate stores for certificate validation
+- Display invalid certificates in function tests
+- Enhanced user experience by indicating unsaved changes in the settings form
+- Automatic copying of test-cases.json and certificates to appropriate locations on macOS
+
+### Fixed
+
+- Implemented hard-coded log steps to avoid duplication
+- Timeout parameter now accepts only positive values
+- Authentication flow now cancels pending second flow if the first flow encounters an error
+- Default timeout parameter set to 30 seconds (30000ms)
+- Reduced auto-update log entries
+- Relevant error messages now displayed when connector connection fails
+- Fixed bug related to directory creation during save actions
+
+### Security
+
+- Replaced dependency `is-fqdn` with `is-valid-domain` to prevent security vulnerabilities
+- Limited exposure of environment variables to only the necessary ones
+- Updated dependencies for enhanced security
+
+
 ## Version 4.11.0
 
-### added
+### Added
+
 - Action-Buttons on the Settings-Screen now stay in the view while scrolling in order to enhance our UX
 - Set default connector port to 443
 - Default-configuration feature
 
 
-### fixed
+### Fixed
+
 - Prioritize the read environment variable logic to read the correct config.json file on startup
 - Clean application files properly after uninstalling
 
-### security
+### Security
+
 - Prevent starting Authenticator with remote-debugging parameters
 
-
 ## Version 4.10.0
-### added
+
+### Added
+
 - Hover-Effect to the navigation bar and renaming "Anmeldung" to "Home" for an improved UX
 - New certificate for connectors
 - Functionality test for HBA usage
 - Option to disable IdP TLS verification in Mock Mode
 
-### fixed
+### Fixed
+
 - The "ClientView-Machine-Name"-variable is now being read properly
 - Error handling improved for incorrectly formatted config files
 - Save target directory for certificates has been fixed for central configuration
@@ -34,7 +68,8 @@
 
 ## Version 4.9.0
 
-### added:
+### Added:
+
 - Migration for credentials from config.json to windows Credential Manager (only Standalone Installation)
 - UserConsent dialog
 - Input validation for proxy settings and allow-list
@@ -44,16 +79,17 @@
 - Prod and Mock Version now both are signed
 - Customisable timeout option for HTTP requests
 
-### fixed:
+### Fixed:
+
 - Using axios as the HTTP client instead of fetch
-- Config.json is now more readable 
+- Config.json is now more readable
 - Log-File is now more readable
 
-### security
+### Security
+
 - change Nodejs to Version 20
 - Prod version no longer contains mock codes
 - New signing certificate for Windows
-
 
 ## Version 4.8.1
 
@@ -64,7 +100,7 @@
 
 ## Version 4.8.0
 
-### added
+### Added
 
 - Deactivation of OS proxy settings now requires mandatory Proxy Address and Port fields entries
 - IP Validation added for Proxy Ignore List in Settings Page
@@ -82,7 +118,7 @@
 
 ## Version 4.7.0
 
-### added
+### Added
 
 - Introduced XenDesktop support
 - Added asterisks support for the Proxy setting "kein Proxy für"
@@ -102,7 +138,7 @@
 - Correctly parsed string boolean values to actual booleans
 - Removed redundant vue.config.js file from the project
 
-### security
+### Security
 
 - Each HBA now has a unique UserID
 
@@ -243,7 +279,7 @@ fixed:
 
 ## Version 3.1.0 (2023-02-06)
 
-### added:
+### Added:
 
 - Support own proxy ignore list
 - Hide the release number info in the Authenticator App and show it only per tooltip
@@ -254,7 +290,7 @@ fixed:
       Authenticator\resources\certs-konnektor)*
       are valid and in the correct file format
 
-### fixed:
+### Fixed:
 
 - Citrix
     - App crashes if the config directory doesn't exist
@@ -275,33 +311,33 @@ fixed:
 - Wrong ProxyAgent for destination address
 - Disabled false http 302 redirect to browser
 
-### security:
+### Security:
 
 - Do not log sensitive data in the mock version
 - Unauthenticated degradation of local availability (z.B.: DoS with CURL)
 
 ## Version 3.0.1 (2022-12-08)
 
-### fixed:
+### Fixed:
 
 - Added userAgent to request headers on IDP
 
 ## Version 3.0.0 (2022-11-30)
 
-### added:
+### Added:
 
 - Central configuration option for decentralized installations
 - Configurable auto-update function
 - Conformance check for certificate-based authentication
 
-### fixed:
+### Fixed:
 
 - Better protection against man-in-the-middle attacks
 - Domain specific error management
 
 ## Version 2.4.0 (2022-10-17)
 
-### added:
+### Added:
 
 - UI/UX Optimization:
     - Removal the scroll function
@@ -311,13 +347,13 @@ fixed:
 - Optimized log output for the error log level
 - Improvement of functional tests
 
-### fixed:
+### Fixed:
 
 - Disabled the option to open a new instance of the authenticator via hotkey
 
 ## Version 2.3.0 (2022-09-15)
 
-### added:
+### Added:
 
 - UI/UX Improvement for the function test and checking the input fields
 - UI/UX Paths of the key and the certificate readable by mouseover
@@ -328,24 +364,24 @@ fixed:
 - Optimized log output: including ISO format for time stamps
 - Add Tailwind to package.json
 
-### fixed:
+### Fixed:
 
 - No permanent caching of the connector.sds
 - missing User-Agent
 - further Bugfixes
 
-### security:
+### Security:
 
 - Scheme validation of the redirect_uri
 
 ## Version 2.2.0 (2022-07-29)
 
-### added:
+### Added:
 
 - Proxy-Agent
 - User-Agent
 
-### fixed:
+### Fixed:
 
 - change of focus
 - Code-Refactoring
@@ -353,7 +389,7 @@ fixed:
 
 ## Version 2.1.0 (2022-07-08)
 
-### added:
+### Added:
 
 - *Organspenderegister-IDP* and central IDP mock mode for developers and testers
 - Extension of the authenticator with a local web server endpoint as an alternative to the deep link
@@ -363,7 +399,7 @@ fixed:
 
 ## Version 2.0.0 (2022-06-20)
 
-### added:
+### Added:
 
 - Central IDP service support: https://idp-ref.app.ti-dienste.de
 - Brainpool curve support (brainpoolP256r1)
@@ -373,7 +409,7 @@ fixed:
 
 ## Version 1.0.1 (2022-03-04)
 
-### added:
+### Added:
 
 - For OGR
     - Improved error handling related to connectors
@@ -384,7 +420,7 @@ fixed:
     - Unnecessary SOAP responses no longer appear in the log
     - Improved designations of the input fields in the settings menu
 
-### fixed:
+### Fixed:
 
 - Remote VerifyPIN
 

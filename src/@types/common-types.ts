@@ -73,9 +73,9 @@ export interface IConfigSection {
   columns: IConfig[];
 }
 
-export const TlsAuthType = {
-  BasicAuth: 'BasicAuth',
-  ServerCertAuth: 'ServerCertAuth',
-  ServerClientCertAuth: 'ServerClientCertAuth',
-  ServerClientCertAuth_Pfx: 'ServerClientCertAuth_Pfx',
-};
+export enum TLS_AUTH_TYPE {
+  BasicAuth = 'BasicAuth',
+  ServerCertAuth = 'ServerCertAuth',
+  ServerClientCertAuth = 'ServerClientCertAuth',
+  ServerClientCertAuth_Pfx = 'ServerClientCertAuth_Pfx',
+}

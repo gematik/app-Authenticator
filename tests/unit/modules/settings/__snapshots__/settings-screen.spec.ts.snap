@@ -60,7 +60,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-connector.mockConnector"
                   >
                     
@@ -78,6 +78,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             <!--v-if-->
@@ -133,7 +138,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-developer.disableCertificateCheck"
                   >
                     
@@ -151,6 +156,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             
@@ -213,6 +223,7 @@ exports[`settings screen render  1`] = `
                 </div>
                 <!--v-if-->
                 <!--v-if-->
+                <!--v-if-->
               </div>
             </div>
             <div
@@ -244,7 +255,7 @@ exports[`settings screen render  1`] = `
               <div>
                 <div>
                   <input
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-connector.entryOption.port"
                     placeholder="443"
                     type="input"
@@ -252,6 +263,11 @@ exports[`settings screen render  1`] = `
                 </div>
                 <!--v-if-->
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             <div
@@ -289,6 +305,7 @@ exports[`settings screen render  1`] = `
                     type="input"
                   />
                 </div>
+                <!--v-if-->
                 <!--v-if-->
                 <!--v-if-->
               </div>
@@ -330,6 +347,7 @@ exports[`settings screen render  1`] = `
                 </div>
                 <!--v-if-->
                 <!--v-if-->
+                <!--v-if-->
               </div>
             </div>
             <div
@@ -369,6 +387,7 @@ exports[`settings screen render  1`] = `
                 </div>
                 <!--v-if-->
                 <!--v-if-->
+                <!--v-if-->
               </div>
             </div>
             <div
@@ -401,7 +420,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-connector.tlsAuthType"
                   >
                     
@@ -429,6 +448,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             <!--v-if-->
@@ -467,7 +491,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-connector.entryOption.tlsRejectUnauthorized"
                   >
                     
@@ -485,6 +509,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             
@@ -536,7 +565,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-proxy.proxySettingsType"
                   >
                     
@@ -559,6 +588,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             <!--v-if-->
@@ -594,7 +628,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-proxy.useOsSettings"
                   >
                     
@@ -612,6 +646,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             <!--v-if-->
@@ -651,6 +690,7 @@ exports[`settings screen render  1`] = `
                     type="input"
                   />
                 </div>
+                <!--v-if-->
                 <!--v-if-->
                 <!--v-if-->
               </div>
@@ -696,7 +736,7 @@ exports[`settings screen render  1`] = `
                   <span
                     class="tooltiptext"
                   >
-                    Hier kann die Dauer des Timeouts zum Verbindungsaufbau in Millisekunden eingetragen werden (Default 10000ms).
+                    Hier kann die Dauer des Timeouts zum Verbindungsaufbau in Millisekunden eingetragen werden (Default 30000ms).
                   </span>
                 </div>
               </div>
@@ -705,10 +745,11 @@ exports[`settings screen render  1`] = `
                   <input
                     class="settings-input"
                     id="form-timeoutValue"
-                    placeholder="10000"
-                    type="number"
+                    placeholder="30000"
+                    type="input"
                   />
                 </div>
+                <!--v-if-->
                 <!--v-if-->
                 <!--v-if-->
               </div>
@@ -762,7 +803,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input"
+                    class="settings-input settings-input__changed"
                     id="form-checkUpdatesAutomatically"
                   >
                     
@@ -780,6 +821,11 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
               </div>
             </div>
             

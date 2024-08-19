@@ -19,10 +19,10 @@ import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
 import fs from 'fs';
 import { logger } from '@/main/services/logging';
 import { APP_CA_CHAIN_IDP, APP_CONFIG_DATA } from '@/main/preload-api';
-import isFQDN from 'validator/lib/isFQDN';
 import { matches as ipMatches } from 'ip-matching';
 import { minimatch } from 'minimatch';
 import * as dns from 'dns';
+import isValidDomain = require('is-valid-domain');
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
 
@@ -39,9 +39,9 @@ export async function createProxyAgent(url: string): TReturnType {
     proxyUrl = host + ':' + port;
     logger.info('Proxy url picked from config');
   }
-  logger.debug('proxy url is:' + proxyUrl);
+  logger.debug('Proxy url is: ' + proxyUrl);
   const ignoreProxyForUrl = await isUrlInProxyIgnoreList(url);
-  logger.debug('ignore destination url:' + ignoreProxyForUrl);
+  logger.debug('Ignore destination url: ' + ignoreProxyForUrl);
 
   if (proxyUrl && !ignoreProxyForUrl) {
     logger.info('Proxy url exists and is not ignored');
@@ -63,7 +63,7 @@ export async function createProxyAgent(url: string): TReturnType {
 
     const proxyCertificate = getProxyCertificate();
     if (isSecure) {
-      logger.info('Proxy url is an https secure url');
+      logger.info('Proxy url is a https secure url');
       return new HttpsProxyAgent({
         proxy,
         ca: caIdp,
@@ -72,7 +72,7 @@ export async function createProxyAgent(url: string): TReturnType {
       });
     }
 
-    logger.info('Proxy url is an http url or no url');
+    logger.info('Proxy url is a http url or no url');
     return new HttpProxyAgent({
       proxy,
       proxyRequestOptions: {
@@ -98,7 +98,7 @@ const isUrlInProxyIgnoreList = async (proxyUrl: string): Promise<boolean> => {
 
   for (const proxyIgnoreEntry of proxyIgnoreEntries) {
     // if this is a fqdn and it matches the proxy url, return true
-    if (isFQDN(proxyIgnoreEntry, { allow_wildcard: true }) && isFqdnInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
+    if (isValidDomain(proxyIgnoreEntry, { wildcard: true }) && isFqdnInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
       return true;
     }
 

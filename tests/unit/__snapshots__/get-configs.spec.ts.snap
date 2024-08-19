@@ -4,7 +4,7 @@ exports[`configMapperByGroup and error handling response should set auth sign pa
 {
   "base64data": "YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=",
   "signatureCidpSchemes": "RSASSA-PSS",
-  "signatureType": "urn:ietf:rfc:3447",
+  "signatureType": "urn:bsi:tr:03111:ecdsa",
 }
 `;
 

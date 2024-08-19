@@ -30,7 +30,7 @@ export const migrateCredentialsForStandalone = async () => {
       // set migration flag
       localStorage.setItem(STORAGE_CONFIG_KEYS.MIGRATIONS.CREDENTIAL_MANAGER_STANDALONE, 'true');
     } catch (e) {
-      logger.error('Could not migrate properly, because of error:', e.message);
+      logger.error('Could not migrate properly, because of the error:', e.message);
     }
   }
 };

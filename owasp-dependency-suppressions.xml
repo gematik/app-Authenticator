@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <suppress>
+        <notes><![CDATA[
+            We patched the library with a newer version, and created a pull request on Github for an update of the sub dependency.
+   ]]></notes>
+        <packageUrl regex="true">^pkg:npm/undici@.*$</packageUrl>
+        <vulnerabilityName>CVE-2024-38372</vulnerabilityName>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   The vendor does not see this as a problem and there is no exploit known.
+   ]]></notes>
+        <packageUrl regex="true">^pkg:npm/async@.*$</packageUrl>
+        <vulnerabilityName>CVE-2024-39249</vulnerabilityName>
+    </suppress>
+<!--    suppress axios -->
+    <suppress>
+        <notes><![CDATA[
+            The vendor does not see this as a problem and there is no exploit known.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/axios@.*$</packageUrl>
+        <vulnerabilityName>CVE-2024-39338</vulnerabilityName>
+    </suppress>
+</suppressions>

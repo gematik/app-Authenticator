@@ -26,36 +26,52 @@ export async function certsValidityTest(): Promise<TestResult> {
     const certs = [...getCaCertsWithFilenames(true), ...getCaCertsWithFilenames(false)];
 
     let totalCerts = 0;
-    let notValidCerts = 0;
+    const invalidCertNames: string[] = [];
     const cleanCerts = certs.filter(({ name }) => name !== MACOS_DS_STORE_FILE_NAME);
 
     await Promise.all(
       cleanCerts.map(async ({ name, cert }) => {
         if (!(await checkPemFileFormatSilent(cert, PEM_TYPES.CERT))) {
-          logger.info(notValidCerts, name, 'is not valid');
-          notValidCerts++;
+          logger.info(invalidCertNames, name, 'is not valid');
+          invalidCertNames.push(name);
         }
         totalCerts++;
       }),
     );
 
     logger.info('total certs:', totalCerts);
-    logger.info('invalid certs:', notValidCerts);
+    logger.info('invalid certs:', invalidCertNames);
 
-    if (notValidCerts > 0) {
+    if (invalidCertNames.length > 0) {
       return {
         title: translate('function_test_general'),
         name: translate('certs_validity'),
         status: TestStatus.failure,
-        details: translate('certs_validity_failure', { totalCerts: totalCerts, notValidCerts: notValidCerts }),
+        details: translate('certs_validity_failure', {
+          totalCerts: totalCerts,
+          notValidCerts: invalidCertNames.length,
+          // list each cert name one below the other
+          certNames: '- ' + invalidCertNames.join('<br>- '),
+        }),
       };
-    } else
+    }
+    if (totalCerts > 0 && invalidCertNames.length === 0) {
       return {
         title: translate('function_test_general'),
         name: translate('certs_validity'),
         status: TestStatus.success,
-        details: translate('certs_validity_successful', { totalCerts: totalCerts }),
+        details: translate('certs_validity_successful', {
+          totalCerts: totalCerts,
+        }),
       };
+    } else {
+      return {
+        title: translate('function_test_general'),
+        name: translate('certs_validity'),
+        status: TestStatus.warning,
+        details: translate('certs_validity_not_found'),
+      };
+    }
   } catch (err) {
     logger.debug(err);
     return {

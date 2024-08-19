@@ -27,6 +27,7 @@ export const ERROR_CODES = {
   AUTHCL_0012: 'AUTHCL_0012',
 
   // connector errors begin with 1XXX
+  AUTHCL_1000: 'AUTHCL_1000',
   AUTHCL_1001: 'AUTHCL_1001',
   AUTHCL_1003: 'AUTHCL_1003',
   AUTHCL_1004: 'AUTHCL_1004',
@@ -52,6 +53,7 @@ export const ERROR_CODES = {
   AUTHCL_1103: 'AUTHCL_1103',
   AUTHCL_1104: 'AUTHCL_1104',
   AUTHCL_1105: 'AUTHCL_1105',
+  AUTHCL_1106: 'AUTHCL_1106',
   AUTHCL_1107: 'AUTHCL_1107',
   AUTHCL_1108: 'AUTHCL_1108',
   AUTHCL_1110: 'AUTHCL_1110',
@@ -121,12 +123,14 @@ export const MAPPED_CONNECTOR_FATAL_ERRORS = {
  * We have more explanation in translation file about error codes for such kind of errors
  */
 export const USER_FACING_WARNINGS = [
+  ERROR_CODES.AUTHCL_1000,
   ERROR_CODES.AUTHCL_1018,
   ERROR_CODES.AUTHCL_1101,
   ERROR_CODES.AUTHCL_1105,
   ERROR_CODES.AUTHCL_1104,
   ERROR_CODES.AUTHCL_1103,
   ERROR_CODES.AUTHCL_1120,
+  ERROR_CODES.AUTHCL_1106,
 ];
 
 /**
@@ -168,6 +172,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_0011]: 'User declined the consent',
   [ERROR_CODES.AUTHCL_0012]: 'Config.json is not valid!',
 
+  [ERROR_CODES.AUTHCL_1000]: 'Could not connect to connector',
   [ERROR_CODES.AUTHCL_1001]: 'Can not get card handle',
   [ERROR_CODES.AUTHCL_1003]: 'Could not read the terminals',
   [ERROR_CODES.AUTHCL_1004]: 'ConErr: 4004 => Ungültige Mandanten-ID',
@@ -195,6 +200,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_1103]: 'Invalid PIN status: REJECTED or BLOCKED',
   [ERROR_CODES.AUTHCL_1104]: 'ConErr: 4092 or Remote pin verify is not possible',
   [ERROR_CODES.AUTHCL_1105]: 'Several card found for single card type',
+  [ERROR_CODES.AUTHCL_1106]: 'SMC-B Pin verify failed',
   [ERROR_CODES.AUTHCL_1108]: 'Error occurred while signing challenge',
   [ERROR_CODES.AUTHCL_1107]: 'Get card certificate failed',
   [ERROR_CODES.AUTHCL_1110]: "Connector Response couldn't be parsed properly",
@@ -209,5 +215,5 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_1120]: 'You have not unlocked your HBA-Card yet, which means the Transport-Pin is still active',
 
   [ERROR_CODES.AUTHCL_2001]: 'Please place the Cards',
-  [ERROR_CODES.AUTHCL_2002]: 'Please enter the PIN',
+  [ERROR_CODES.AUTHCL_2002]: 'Please enter the HBA PIN',
 };

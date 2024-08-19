@@ -31,7 +31,7 @@ export const launch = async (): Promise<{ [name: string]: any }> => {
     logger.debug(`getCardsTerminal.endpoint: ${endpoint}`);
 
     const xmlSoapResponse = await executeServiceGc(endpoint);
-    logger.debug('xmlSoupResponse: ' + xmlSoapResponse);
+    logger.debug('xmlSoapResponse: ' + xmlSoapResponse);
     return await findAvailableCardTerminals(xmlSoapResponse);
   } catch (err) {
     logger.error('Could not get card terminals: ', err.message);

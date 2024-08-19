@@ -27,6 +27,7 @@ const artifactName = (productName, version, ext) => {
  * Always be sure that the signed exe contains this string as CN.
  */
 const PUBLISHER_NAME = 'gematik GmbH';
+const TEST_CASES_JSON_FILE_NAME = 'test-cases-config.json';
 
 /**
  * @type {import("electron-builder").Configuration}
@@ -66,6 +67,20 @@ module.exports = {
     artifactName: artifactName('${productName}', '${version}', '${ext}'),
     icon: './src/assets/logo.png',
     appId: 'de.gematik.authenticator',
+    extraResources: [
+      {
+        from: './src/assets/certs-idp',
+        to: 'certs-idp',
+      },
+      {
+        from: './src/assets/certs-konnektor/ca/pu/rsa',
+        to: 'certs-konnektor',
+      },
+      {
+        from: './src/assets/' + TEST_CASES_JSON_FILE_NAME,
+        to: './',
+      },
+    ],
   },
   directories: {
     buildResources: 'src/assets',

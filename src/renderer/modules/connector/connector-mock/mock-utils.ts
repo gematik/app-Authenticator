@@ -37,7 +37,7 @@ export const readMockCertificate = (configKey: TMockCertificatesValues, cleanCer
 
     return file?.replace(/[\n\r]|-(.*?)-/g, '');
   } catch (e) {
-    logger.error('Missing Certificate for: ' + configKey);
+    logger.error('Missing certificate for: ' + configKey);
     throw e;
   }
 };

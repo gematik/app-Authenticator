@@ -69,12 +69,13 @@ import {
 } from '@/renderer/utils/utils';
 import { validateDeeplinkProtocol, validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
 import { filterCardTypeFromScope, validateLauncherArguments } from '@/renderer/utils/url-service';
-import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
+import { OAUTH2_ERROR_TYPE, TAccessDataResponse, TCallback, TCard } from '@/renderer/modules/gem-idp/type-definitions';
 import Swal from 'sweetalert2';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
 import { removeLastPartOfChallengePath } from '@/renderer/utils/parse-idp-url';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
+import { CRYPT_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -90,7 +91,6 @@ export default defineComponent({
   },
   data() {
     return {
-      stepCounter: 0,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       rejectPendingCardActionTimeout: (_error: UserfacingError) => {
         /* do nothing here */
@@ -100,6 +100,7 @@ export default defineComponent({
       selectedCardType: ECardTypes.HBA, // this is for multi card select modal
       currentCardType: null as null | ECardTypes, // this is the current flow's card type
       multiCardList: [],
+      attemptId: '',
       showMultiCardSelectModal: false,
       selectCardPromises: {} as {
         resolve: () => void;
@@ -109,6 +110,7 @@ export default defineComponent({
       authQueue: [] as {
         event: Event;
         args: TOidcProtocol2UrlSpec;
+        loginAttemptId: string;
       }[],
     };
   },
@@ -135,8 +137,11 @@ export default defineComponent({
   methods: {
     async createQueue(event: Event, args: TOidcProtocol2UrlSpec) {
       this.logStep('createQueue');
+      const loginAttemptId = this.generateUniqueId();
+      this.attemptId = loginAttemptId;
+
       if (this.isAuthProcessActive) {
-        this.authQueue.push({ event, args });
+        this.authQueue.push({ event, args, loginAttemptId });
         logger.info('Auth process is already active, adding to queue');
         return;
       } else {
@@ -161,10 +166,10 @@ export default defineComponent({
       });
     },
 
-    async finishAndStartNextFlow() {
+    async finishAndStartNextFlow(): Promise<void> {
+      const hasCurrentFlowFailed = this.errorShown;
       this.logStep('finishAndStartNextFlow');
 
-      this.stepCounter = 0;
       this.userSavedConsent = false;
 
       // first clear the stores
@@ -178,10 +183,35 @@ export default defineComponent({
       // clear class state
       this.isAuthProcessActive = false;
 
-      // start next flow if there is one
-      const nextFlow = this.authQueue.shift();
-      if (nextFlow) {
-        await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+      // set the default ECC value for the next flow
+      ConnectorConfig.setCardReaderParameter({
+        crypt: CRYPT_TYPES.ECC,
+      });
+
+      // set the default ECC value for the next flow
+      ConnectorConfig.setAuthSignParameter({
+        signatureType: SIGNATURE_TYPES.ECC,
+      });
+
+      // start next flow if there is one and the current flow was successful
+      if (!hasCurrentFlowFailed) {
+        const nextFlow = this.authQueue.shift();
+        if (nextFlow) {
+          await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+        }
+      } else {
+        // find the current flow with the same ID and remove it from the queue
+        const sameAttemptIdIndex = this.authQueue.findIndex((flow) => flow.loginAttemptId === this.attemptId);
+        if (sameAttemptIdIndex > -1) {
+          this.authQueue.splice(sameAttemptIdIndex, 1);
+          logger.error('Flow with ID ' + this.attemptId + ' encountered an error and is removed from queue!');
+        }
+
+        // check for the next flow in the queue
+        const nextFlow = this.authQueue.shift();
+        if (nextFlow) {
+          await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+        }
       }
     },
     async startAuthenticationFlow(_: Event, args: TOidcProtocol2UrlSpec): Promise<void> {
@@ -439,15 +469,27 @@ export default defineComponent({
     },
     async getCardCertificate(cardType: ECardTypes): Promise<void> {
       this.logStep('getCardCertificate');
-      // get card certificate
       try {
         await this.$store.dispatch('connectorStore/getCardCertificate', cardType);
-        logger.info('getCardCertificate finished');
-      } catch (err) {
-        await this.handleErrors(err);
+      } catch (e) {
+        try {
+          // as ECC throws an error, we try to get the RSA certificate
+          ConnectorConfig.setCardReaderParameter({
+            crypt: CRYPT_TYPES.RSA,
+          });
 
-        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1107));
-        this.setCaughtError(ERROR_CODES.AUTHCL_1107, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
+          ConnectorConfig.setAuthSignParameter({
+            signatureType: SIGNATURE_TYPES.RSA,
+          });
+
+          await this.$store.dispatch('connectorStore/getCardCertificate', cardType);
+          logger.info('getCardCertificate finished');
+        } catch (err) {
+          await this.handleErrors(err);
+
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1107));
+          this.setCaughtError(ERROR_CODES.AUTHCL_1107, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
+        }
       }
     },
     /**
@@ -478,7 +520,7 @@ export default defineComponent({
         // in case of 1105, there are multiple smcbs in the connector, so the user has to choose in a modal dialog which one he want´s to use
         if (err.code === ERROR_CODES.AUTHCL_1105) {
           this.multiCardList = err.data.foundCards;
-          this.selectedCardType = (this.multiCardList[0] as any)?.CardType;
+          this.selectedCardType = (this.multiCardList[0] as TCard)?.CardType;
 
           try {
             const selectedCard: any = await this.showMultiCardSelectDialogModal();
@@ -565,7 +607,16 @@ export default defineComponent({
         if (!isPinStatusVerified) {
           // customer should see the pin warning
           window.api.focusToApp();
-
+          /**
+           * If the card is SMC-B and pinStatus is not verified, we show an alert dialog
+           */
+          if (cardType === ECardTypes.SMCB) {
+            throw new UserfacingError(
+              'Entering the PIN for the SMC-B is not allowed Users can only enter their HBA Pin.',
+              ' To unlock the SMC-B they have to contact with their DVO or Admin.',
+              ERROR_CODES.AUTHCL_1106,
+            );
+          }
           /**
            * If the user clicks cancel the value will be -1
            */
@@ -599,8 +650,14 @@ export default defineComponent({
         }
       } catch (err) {
         await this.handleErrors(err);
-        !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1101));
-        this.setCaughtError(ERROR_CODES.AUTHCL_1101, err.message, OAUTH2_ERROR_TYPE.ACCESS_DENIED);
+        if (cardType === ECardTypes.SMCB) {
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1106));
+          this.setCaughtError(ERROR_CODES.AUTHCL_1106, err.message, OAUTH2_ERROR_TYPE.ACCESS_DENIED);
+          throw new UserfacingError('SMC-B PinStatus is not verified', err.message, ERROR_CODES.AUTHCL_1106);
+        } else {
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_1101));
+          this.setCaughtError(ERROR_CODES.AUTHCL_1101, err.message, OAUTH2_ERROR_TYPE.ACCESS_DENIED);
+        }
       }
     },
 
@@ -611,9 +668,10 @@ export default defineComponent({
     async verifyPin(cardType: string): Promise<void> {
       this.logStep('verifyPin');
       try {
-        // ask user for enter pin
+        // ask user for enter hba pin
         await this.$store.dispatch('connectorStore/verifyPin', cardType);
 
+        // it will be here only for HBA as we don't open modal for the SMC-B
         if (typeof pinVerifyModalClose === 'function') {
           pinVerifyModalClose();
         }
@@ -637,7 +695,6 @@ export default defineComponent({
         // customer should see the idp errors
         window.api.focusToApp();
 
-        // Error AUTHCL_0013 means something went wrong with Auth Response validation
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0005) {
           !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0005));
           this.setCaughtError(ERROR_CODES.AUTHCL_0005, undefined, OAUTH2_ERROR_TYPE.SERVER_ERROR);
@@ -920,14 +977,12 @@ export default defineComponent({
           logger.error('Redirecting automatically request failed! Error message: ', err?.message);
           logger.debug('Own http-client auto redirect failed e.response: ', err?.response);
 
-          await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0009);
+          !this.errorShown && (await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0009));
         }
       }
     },
     logStep(log: string) {
-      logger.info('\n');
-      logger.info('### Step ' + this.stepCounter + ': ' + log + ' ###');
-      this.stepCounter++;
+      logger.info('\n### Step: ' + log + ' ###');
     },
     async showConsentDeclaration(): Promise<boolean> {
       const cardIccsn = this.$store.state.connectorStore.cards[this.currentCardType!]!.iccsn;
@@ -983,6 +1038,9 @@ export default defineComponent({
       }
 
       return true;
+    },
+    generateUniqueId(): string {
+      return Math.random().toString(36).substring(2, 9);
     },
     renderConsentItemList(title: string, list: Record<string, string>) {
       let consentItemList = '<h2 style="text-align: left; margin: 10px 0">' + title + '</h2>';

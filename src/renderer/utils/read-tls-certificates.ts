@@ -25,19 +25,20 @@ export function readCaCerts(isConnector: boolean): string[] {
   const caCertificatePath = PathProvider.caCertificatePath(isConnector);
   const certs = window.api.readdirSync(caCertificatePath);
 
-  logger.debug('certificates found in ProgramFolder: ' + caCertificatePath, { certsCount: certs?.length });
+  logger.debug('Certificates found in ProgramFolder: ' + caCertificatePath, { certsCount: certs?.length });
   return certs
     .filter((fileName) => window.api.isFile(window.api.pathJoin(caCertificatePath, fileName)))
     .map((fileName) => window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf8'));
 }
 
-export function getCaCertsWithFilenames(isConnector: boolean): { name: string; cert: string }[] {
+export function getCaCertsWithFilenames(isConnector: boolean): { name: string; cert: string; path: string }[] {
   const caCertificatePath = PathProvider.caCertificatePath(isConnector);
   return window.api
     .readdirSync(caCertificatePath)
     .filter((fileName) => window.api.isFile(window.api.pathJoin(caCertificatePath, fileName)))
     .map((fileName) => ({
       name: fileName,
+      path: window.api.pathJoin(caCertificatePath, fileName),
       cert: window.api.readFileSync(window.api.pathJoin(caCertificatePath, fileName), 'utf8'),
     }));
 }
@@ -54,13 +55,17 @@ export function getUploadedFilePath(filename: string): string {
   return window.api.pathJoin(PathProvider.configPath, filename);
 }
 
+type AllowedFieldName =
+  | (typeof ENTRY_OPTIONS_CONFIG_GROUP)[keyof typeof ENTRY_OPTIONS_CONFIG_GROUP]
+  | typeof PROXY_SETTINGS_CONFIG.PROXY_CERTIFICATE_PATH;
 export const copyUploadedFileToTargetDir = async (
   filePath: string,
-  fieldName: string,
+  fieldName: AllowedFieldName,
   filename: string,
 ): Promise<string> => {
   // todo this if statement is probably not necessary. Remove later!
-  const allowedFiles = [
+
+  const allowedFiles: AllowedFieldName[] = [
     ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY,
     ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE,
     ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD,

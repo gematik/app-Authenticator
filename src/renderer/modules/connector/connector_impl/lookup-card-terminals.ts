@@ -21,7 +21,7 @@ import { ERROR_CODES } from '@/error-codes';
 export async function findAvailableCardTerminals(xmlSoapResponse: string): Promise<{ [name: string]: any }> {
   const cardTerminals = await findSpecificElementInResponseProperties(xmlSoapResponse, XML_TAG_NAMES.TAG_CARD_TERMINAL);
   if (cardTerminals == null) {
-    logger.error('No Card terminals found, response from connector', xmlSoapResponse);
+    logger.error('The connector responded with: No card terminals found', xmlSoapResponse);
     throw new UserfacingError('Technical error', 'No Card-Terminals found', ERROR_CODES.AUTHCL_1113);
   }
   return cardTerminals;

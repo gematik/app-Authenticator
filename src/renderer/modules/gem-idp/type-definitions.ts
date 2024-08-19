@@ -12,6 +12,8 @@
  * permissions and limitations under the Licence.
  */
 
+import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
+
 export enum OAUTH2_ERROR_TYPE {
   INVALID_REQUEST = 'invalid_request',
   ACCESS_DENIED = 'access_denied',
@@ -43,3 +45,11 @@ export enum TCallback {
   DIRECT = 'DIRECT',
   DEEPLINK = 'DEEPLINK',
 }
+
+export type TCard = {
+  CardHandle: string;
+  Iccsn: string;
+  CardType: ECardTypes;
+  SlotId: number;
+  CtId: string;
+};
