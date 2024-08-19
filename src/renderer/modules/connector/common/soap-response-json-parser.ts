@@ -23,42 +23,53 @@ const parser = new Parser({
   tagNameProcessors: [processors.stripPrefix],
 });
 
-export async function findSpecificElementInResponseProperties(
-  xml: string,
-  tagName: string,
-): Promise<{ [name: string]: any } | null> {
+interface SoapEnvelope {
+  Envelope: {
+    Header?: any;
+    Body: SoapBody;
+  };
+}
+
+interface SoapBody {
+  [key: string]: any;
+}
+
+type SoapResponse = SoapEnvelope;
+
+export async function findSpecificElementInResponseProperties<T>(xml: string, tagName: string): Promise<T | null> {
   return new Promise((resolve, reject) => {
-    let result;
-    parser.parseString(xml, (err: Error, res: Array<unknown>) => {
+    parser.parseString(xml, (err: Error, res: SoapResponse) => {
       if (err) {
         const error = new UserfacingError('XML Response parsing error', err.message, ERROR_CODES.AUTHCL_1110);
         reject(error);
+        return;
       }
-      result = getTagNameValue(res, tagName);
+      let result: unknown = getTagNameValue(res.Envelope.Body, tagName);
+
       if (Array.isArray(result) && result.length > 1) {
         result = result[1];
       } else {
         logger.warn(`Cannot find ${tagName} in SOAP response.`);
       }
-      resolve(result);
+      resolve(result as T | null);
     });
   });
 }
 
-const getTagNameValue = (soapJsonResponse: Array<any>, prop: string): Array<any> | null => {
+const getTagNameValue = (soapJsonResponse: SoapBody, prop: string): [string, unknown] | null => {
   for (const key in soapJsonResponse) {
     const value = soapJsonResponse[key];
-    if (prop == key) {
+    if (prop === key) {
       return [prop, value];
     }
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; ++i) {
         const x = getTagNameValue(value[i], prop);
-        if (x && x[0] == prop) return x;
+        if (x && x[0] === prop) return x;
       }
-    } else if (typeof value === 'object') {
+    } else if (typeof value === 'object' && value !== null) {
       const y = getTagNameValue(value, prop);
-      if (y && y[0] == prop) return y;
+      if (y && y[0] === prop) return y;
     }
   }
   return null;

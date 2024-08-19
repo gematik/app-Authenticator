@@ -65,8 +65,7 @@ Github-Release.Jenkinsfile
 
 
 # we don't want to release the credential scripts now
-/credential-distribution/README.md
-/credential-distribution/store-credential.ps1
+/credential-distribution/facade-poc
 
 # we don't want to release the certificates
 /src/assets/certs-idp/RCA2_KOMPCA24.pem

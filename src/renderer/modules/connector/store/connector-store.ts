@@ -11,7 +11,16 @@
  * language governing permissions and limitations under the License.ee the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
+// #!if MOCK_MODE === 'ENABLED'
+import {
+  MOCK_CONNECTOR_CERTS_CONFIG,
+  MOCK_CONNECTOR_CONFIG,
+} from '@/renderer/modules/connector/connector-mock/mock-config';
+import { MOCK_CARD_PIN_STATUS, MOCK_CARD_TERMINALS } from '@/renderer/modules/connector/connector-mock/mock-constants';
+import { MockCIdpJWSOptions } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/jws-tool-helper';
+import { MockJwsSignature } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/mock-jws-signature';
+import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
+// #!endif
 import { ActionContext, Module } from 'vuex';
 import { TRootStore } from '@/renderer/store';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
@@ -27,21 +36,11 @@ import { ConnectorError, UserfacingError } from '@/renderer/errors/errors';
 
 import * as pinVerifier from '@/renderer/modules/connector/connector_impl/verify-pin-launcher';
 import * as pinChecker from '@/renderer/modules/connector/connector_impl/check-pin-status';
-import { TCardData, TConnectorStore } from '@/renderer/modules/connector/type-definitions';
+import { TCardData, TCardTerminal, TConnectorStore } from '@/renderer/modules/connector/type-definitions';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { ERROR_CODES } from '@/error-codes';
-import { GemIdpJwsOptions } from '@/renderer/modules/gem-idp/sign-feature/cidp-sign-options';
-
-// #!if MOCK_MODE === 'ENABLED'
-import {
-  MOCK_CONNECTOR_CERTS_CONFIG,
-  MOCK_CONNECTOR_CONFIG,
-} from '@/renderer/modules/connector/connector-mock/mock-config';
-import { MOCK_CARD_PIN_STATUS, MOCK_CARD_TERMINALS } from '@/renderer/modules/connector/connector-mock/mock-constants';
-import { MockCIdpJWSOptions } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/jws-tool-helper';
-import { MockJwsSignature } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/mock-jws-signature';
-import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
-// #!endif
+import { convertDerToConcatenated, createUnsignedJws } from '@/renderer/modules/gem-idp/services/signing-service';
+import { SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
 
 const base64url = require('base64url');
 const PIN_STATUS_VERIFIED = 'VERIFIED';
@@ -51,30 +50,6 @@ const INITIAL_CARDS_STATE = {
   [ECardTypes.HBA]: undefined,
   [ECardTypes.SMCB]: undefined,
 };
-
-async function paramsToSignChallenge(
-  cardType: ECardTypes,
-  isDefaultFlow: boolean,
-  context: ActionContext<TConnectorStore, TRootStore>,
-  challenge: string,
-) {
-  const certificate = <string>context.state.cards[cardType]?.certificate;
-
-  const jwsUtil = new GemIdpJwsOptions(challenge, certificate, cardType).initializeJwsOptions();
-
-  let hashedToSignInputString;
-  try {
-    hashedToSignInputString = await jwsUtil.hashedChallenge;
-    ConnectorConfig.setAuthSignParameter({
-      ...ConnectorConfig.authSignParameter,
-      base64data: <string>hashedToSignInputString,
-    });
-  } catch (err) {
-    logger.error(`Could not create signed input. Error: ${err.message}`);
-    throw new UserfacingError('JWS hashing failed', err.message, ERROR_CODES.AUTHCL_0003);
-  }
-  return { jwsUtil };
-}
 
 export const connectorStore: Module<TConnectorStore, TRootStore> = {
   namespaced: true,
@@ -90,7 +65,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       const smcbCardData = { ...state.cards[ECardTypes.SMCB], ...cardData };
       state.cards = { ...state.cards, [ECardTypes.SMCB]: smcbCardData };
     },
-    setTerminals(state: TConnectorStore, terminals: any): void {
+    setTerminals(state: TConnectorStore, terminals: TCardTerminal): void {
       state.terminals = terminals;
     },
 
@@ -107,29 +82,46 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
       };
 
       const challenge = this.state.gemIdpServiceStore.challenge;
+      const cardCertificate = <string>context?.state?.cards[cardType]?.certificate;
 
-      const { jwsUtil } = await paramsToSignChallenge(cardType, false, context, challenge);
+      const jwsParts = await createUnsignedJws(cardCertificate, challenge);
+
+      ConnectorConfig.setAuthSignParameter({
+        ...ConnectorConfig.authSignParameter,
+        base64data: <string>jwsParts.hashedChallenge,
+      });
+
       let jwsSignature;
       // #!if MOCK_MODE === 'ENABLED'
       if (getConfig(MOCK_CONNECTOR_CONFIG).value) {
         const jwsHelper = new MockCIdpJWSOptions(cardType, challenge);
         try {
-          jwsSignature = await new MockJwsSignature(cardType).createJws(
+          const mockJwsSignature = new MockJwsSignature(cardType);
+          const isEccCert = mockJwsSignature.isEccCert(mockJwsSignature.getPrivateKey());
+          jwsSignature = await mockJwsSignature.createJws(
+            isEccCert,
             jwsHelper.getPayload(),
-            jwsHelper.getProtectedHeader(),
+            jwsHelper.getProtectedHeader(isEccCert),
           );
           logger.debug('jwsSignature: ', jwsSignature);
         } catch (err) {
-          logger.error('jwsSignature not created: ', err.message);
+          logger.error('jwsSignature was not created: ', err.message);
         }
       } else {
         // #!endif
         try {
           const cardData = <TCardData>context.state.cards[cardType];
           logger.debug('cardData', JSON.stringify(cardData));
+
           const signedChallengeFromConnector = await authSignLauncher(cardData.cardHandle);
-          const signature = base64url.fromBase64(signedChallengeFromConnector);
-          jwsSignature = `${jwsUtil.header}.${jwsUtil.payload}.${signature}`;
+          let signature = base64url.fromBase64(signedChallengeFromConnector);
+
+          // For the ECC we need to convert the signature from DER to concatenated
+          if (ConnectorConfig.authSignParameter.signatureType === SIGNATURE_TYPES.ECC) {
+            signature = convertDerToConcatenated(signature, 64);
+          }
+
+          jwsSignature = `${jwsParts.header}.${jwsParts.payload}.${signature}`;
           logger.debug('JWS signature created: ', jwsSignature);
         } catch (err) {
           logger.error(`Could not get signed challenge for authentication: ${err.message}`);
@@ -292,7 +284,7 @@ export const connectorStore: Module<TConnectorStore, TRootStore> = {
         // #!endif
         const cardData = context.state.cards[cardType];
         try {
-          if (cardData?.pinStatus === PIN_STATUS_VERIFIABLE) {
+          if (cardData?.pinStatus === PIN_STATUS_VERIFIABLE && context.state.terminals) {
             await pinVerifier.launch(context.state.terminals, cardData);
           }
           const pinStatusResult = await pinChecker.getPinStatus(cardType, <string>cardData?.cardHandle);

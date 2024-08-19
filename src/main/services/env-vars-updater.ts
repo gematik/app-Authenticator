@@ -13,18 +13,21 @@
  */
 import { logger } from '@/main/services/logging';
 import { BrowserWindow } from 'electron';
-import { IPC_UPDATE_ENV } from '@/constants';
+import { EXPOSED_ENV_VARIABLES, IPC_UPDATE_ENV } from '@/constants';
 import fs from 'fs';
 import path from 'path';
 import * as process from 'process';
 
 require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
-//as compatibility reason initialize UP_TO_DATE_PROCESS_ENVS 'computername' from process env and not from registry!
-export const UP_TO_DATE_PROCESS_ENVS: Record<string, string> = {
-  ...process.env,
-  COMPUTERNAME: process.env.COMPUTERNAME ?? '',
-};
+export const UP_TO_DATE_PROCESS_ENVS: Record<string, string> = {};
+
+// initialize UP_TO_DATE_PROCESS_ENVS with process env variables
+EXPOSED_ENV_VARIABLES.forEach((envVar) => {
+  if (process.env[envVar]) {
+    UP_TO_DATE_PROCESS_ENVS[envVar] = process.env[envVar] ?? '';
+  }
+});
 
 let FOUND_ENV_VARS: Record<string, string> = {};
 
@@ -47,9 +50,9 @@ export const setupEnvReadInterval = async (mainWindow: BrowserWindow | null) => 
     // On startup, we wait for the ENVS to load; this may take a while because of the event.
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    logger.debug('env loaded');
+    logger.debug('Environment variables loaded');
   } catch (e) {
-    logger.error('env not loaded', e);
+    logger.error('Environment variables not loaded', e);
   }
 };
 
@@ -119,7 +122,7 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
     }
     if (FOUND_ENV_VARS[envVar] !== previousVal?.toUpperCase()) {
       const newValue = FOUND_ENV_VARS[envVar];
-      logger.info(`Env variable change detected: ${envVar} changed from ${previousVal} to ${newValue}`);
+      logger.info(`Environment variable change detected: ${envVar} changed from ${previousVal} to ${newValue}`);
       UP_TO_DATE_PROCESS_ENVS[envVar] = newValue;
       hasVarsChanged = true;
     }
@@ -149,12 +152,12 @@ export const readRegistryForKey = (regKey: string): Promise<string> => {
     let stdout = '';
     let stderr = '';
 
-    bat.stdout.on('data', (data: any) => {
-      stdout += data;
+    bat.stdout.on('data', (data: Buffer) => {
+      stdout += data.toString();
     });
 
-    bat.stderr.on('data', (err: any) => {
-      stderr += err;
+    bat.stderr.on('data', (err: Buffer) => {
+      stderr += err.toString();
     });
 
     bat.on('close', () => {
@@ -196,18 +199,18 @@ export const querySessionID = (): Promise<string> => {
     let stdout = '';
     let stderr = '';
 
-    bat.stdout.on('data', (data: any) => {
-      stdout += data;
+    bat.stdout.on('data', (data: Buffer) => {
+      stdout += data.toString();
     });
 
-    bat.stderr.on('data', (err: any) => {
-      stderr += err;
+    bat.stderr.on('data', (err: Buffer) => {
+      stderr += err.toString();
     });
 
     bat.on('close', () => {
       // log and return on error case
       if (stderr) {
-        logger.error('## querySessionID: query not found:' + stderr.toString());
+        logger.error('The querySessionID was not found:' + stderr.toString());
         reject(stderr.toString());
         return;
       }

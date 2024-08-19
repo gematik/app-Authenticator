@@ -14,9 +14,12 @@
 
 // #!if MOCK_MODE === 'ENABLED'
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
-import { FinalConstants } from '@/renderer/service/jws-sign-options';
 import { MOCK_CONNECTOR_CERTS_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { readMockCertificate } from '@/renderer/modules/connector/connector-mock/mock-utils';
+
+import { ENCRYPTION_TYPES } from '@/renderer/modules/connector/constants';
+
+type TCardParams = (string | number | boolean)[];
 
 /**
  * JwsOptionsMocked for creating JWS Signature
@@ -24,9 +27,9 @@ import { readMockCertificate } from '@/renderer/modules/connector/connector-mock
 abstract class MockJWSOptions {
   protected _cardType: ECardTypes;
   protected readonly _challenge: string | undefined;
-  protected readonly _params: any;
+  protected readonly _params: TCardParams;
 
-  protected constructor(cardType: ECardTypes, challenge: string | undefined, ...args: any) {
+  protected constructor(cardType: ECardTypes, challenge: string | undefined, ...args: TCardParams) {
     this._cardType = cardType;
     this._challenge = challenge;
     this._params = args;
@@ -48,7 +51,7 @@ abstract class MockJWSOptions {
 
   abstract getPayload(): string;
 
-  abstract getProtectedHeader(): object | string;
+  abstract getProtectedHeader(isEccCert: boolean): object | string;
 }
 
 export { MockJWSOptions };
@@ -58,15 +61,12 @@ export class MockCIdpJWSOptions extends MockJWSOptions {
     super(cardType, challenge);
   }
 
-  getProtectedHeader(): object {
+  getProtectedHeader(isEccCert: boolean): object {
     return {
-      format: 'compact',
-      fields: {
-        x5c: [this.getCert()],
-        typ: 'JWT',
-        cty: 'NJWT',
-        alg: FinalConstants.RSASSA_PSS_USING_SHA256,
-      },
+      x5c: [this.getCert()],
+      typ: 'JWT',
+      cty: 'NJWT',
+      alg: isEccCert ? ENCRYPTION_TYPES.ECC_ALG_SHA256 : ENCRYPTION_TYPES.RSASSA_PSS_USING_SHA256,
     };
   }
 

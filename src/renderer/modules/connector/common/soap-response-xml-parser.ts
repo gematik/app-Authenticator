@@ -24,14 +24,15 @@ export default function parse(xmlStr: string, tagSoapResp: string): string {
   const parser = sax.parser(true);
   let textFound = '';
   let entry: TTag | null = null;
-  let currentTag: any = null;
-  let result;
+  let currentTag: TTag | null = null;
+  let result: string | undefined;
 
   parser.onclosetag = function (tagName: string) {
     if (tagName.indexOf(tagSoapResp) > -1) {
       currentTag = entry = null;
       return;
     }
+    currentTag = currentTag?.parent?.children.find((child) => child.name === tagName) || null;
   };
 
   parser.onopentag = function (tag: TTag) {
@@ -43,7 +44,9 @@ export default function parse(xmlStr: string, tagSoapResp: string): string {
     }
     tag.parent = currentTag;
     tag.children = [];
-    tag.parent && tag.parent.children.push(tag);
+    if (currentTag) {
+      currentTag.children.push(tag);
+    }
     currentTag = tag;
   };
 

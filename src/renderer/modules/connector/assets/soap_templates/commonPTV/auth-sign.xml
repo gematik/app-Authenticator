@@ -20,7 +20,7 @@
                 <!--Optional:-->
                 <urn:SignatureType>{SIGNATURETYPE}</urn:SignatureType>
                 <!--Optional:-->
-                <v7:SignatureSchemes>{SIGNATURESCHEME}</v7:SignatureSchemes>
+                <!-- <v7:SignatureSchemes>{SIGNATURESCHEME}</v7:SignatureSchemes>-->
             </v7:OptionalInputs>
             <v7:BinaryString>
                 <urn:Base64Data MimeType="application/octet-stream">{BASE64DATA}</urn:Base64Data>

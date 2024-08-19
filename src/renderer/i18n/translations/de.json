@@ -21,12 +21,13 @@
   "text_github": "Unsere veröffentlichten Versionen sowie Code finden Sie auf unserer {url}",
   "text_privacy_notice": "Weitere Informationen zum Datenschutz finden Sie in unserem {url}",
   "save": "Speichern",
+  "reset_changes": "Verwerfen",
   "save_changes": "Änderung speichern",
   "file_selected": "Datei Ausgewählt",
   "welcome_to_our_authenticator_app": "Sichere Anmeldung in der Telematikinfrastruktur",
   "cancel": "Abbrechen",
-  "login_via_smart_card_successful": "Anmeldung mittels Smart Card erfolgreich!",
-  "login_not_successful": "Anmeldung mittels Smart Card nicht erfolgreich!",
+  "login_via_smart_card_successful": "Smartcard konnte erfolgreich geprüft werden",
+  "login_not_successful": "Smartcard konnte nicht erfolgreich geprüft werden",
   "login_cancelled_by_user": "Sie haben den Vorgang abgebrochen",
   "no_settings_found": "Es wurden noch keine Einstellungen vorgenommen.",
   "open_settings": "Einstellungen öffnen",
@@ -64,7 +65,7 @@
   "multi_card_select_header": "Bitte wählen Sie eine {cardType} aus:",
   "multi_card_select": "( Es befinden sich mehrere {cardType}s in den verbundenen Kartenterminals )",
   "info_text_check_updates_automatically": "Ist diese Option \"Aktiviert\", dann prüft der Authenticator regelmäßig , ob es Updates gibt und führt diese eigenständig durch",
-  "info_text_timeout_for_developers": "Hier kann die Dauer des Timeouts zum Verbindungsaufbau in Millisekunden eingetragen werden (Default 10000ms).",
+  "info_text_timeout_for_developers": "Hier kann die Dauer des Timeouts zum Verbindungsaufbau in Millisekunden eingetragen werden (Default 30000ms).",
   "work_space_id": "Arbeitsplatz-ID",
   "tls_authentication": "Client Authentisierung",
   "username_password": "Benutzername/Passwort",
@@ -109,14 +110,16 @@
   "hba_availability": "HBA Verfügbarkeit",
   "smcb_found_in_card_terminal": "SMC-B in Slot {slotNr} vom Kartenterminal {ctId} gefunden",
   "hba_found_in_card_terminal": "HBA in Slot {slotNr} vom Kartenterminal {ctId} gefunden",
-  "readability_test_hba_transport_pin": "Ihre HBA in Slot {slotNr} vom Kartenterminal {ctId} ist noch mit einer Transport Pin belegt. Wandeln Sie diesen in einen eigenen PIN um",
-  "readability_test_hba_blocked": "Ihre HBA in Slot {slotNr} vom Kartenterminal {ctId} ist blockiert oder gesperrt",
-  "readability_test_hba_empty_pin": "Ihre HBA in Slot {slotNr} vom Kartenterminal {ctId} hat keinen PIN",
-  "readability_test_hba_disabled": "Ihre HBA in Slot {slotNr} vom Kartenterminal {ctId} hat keinen PIN-Schutz. Bitte vergeben Sie für eine sichere Nutzung Ihrer Karte einen PIN",
-  "readability_test_hba_unknown_pin_status": "Unbekannter PIN Status: ${status}",
+  "readability_test_transport_pin": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} ist noch mit einer Transport-PIN belegt. Wandeln Sie diesen in einen eigenen PIN um",
+  "readability_test_blocked": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} ist blockiert oder durch mehrfache Eingabe einer falschen PIN gesperrt",
+  "readability_test_empty_pin": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} hat keinen vergebenen PIN",
+  "readability_test_disabled": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} hat keinen PIN-Schutz. Bitte vergeben Sie für eine sichere Nutzung Ihrer Karte einen PIN",
+  "readability_test_smcb_verifiable": "Ihre SMC-B Karte in Slot {slotNr} vom Kartenterminal {ctId} ist nicht freigeschaltet. Bitte schalten Sie diese in Ihrem Kartenverwaltungssystem frei und starten Sie die Funktionstest erneut",
+  "readability_test_unknown_pin_status": "Unbekannter PIN Status: ${status}",
   "certs_validity": "Validität der Zertifikate",
-  "certs_validity_successful": "Es wurden insgesamt {totalCerts} valide Zertifikate gefunden",
-  "certs_validity_failure": "Es wurden insgesamt {totalCerts} Zertifikate gefunden, davon {notValidCerts} fehlerhaft",
+  "certs_validity_successful": "Es wurden insgesamt {totalCerts} valide Zertifikate gefunden.",
+  "certs_validity_not_found": "Es wurden keine Zertifikate gefunden.",
+  "certs_validity_failure": "Es wurden insgesamt {totalCerts} Zertifikate gefunden, davon {notValidCerts} fehlerhaft. Bitte überprüfen Sie die folgenden Zertifikate: <br>{certNames}",
   "accessibility_of_the_idp": "Erreichbarkeit des {name}",
   "accessibility_of_the_idp_result": "Der IDP mit der URL {url} liefert den Statuscode {statusCode}",
   "accessibility_of_the_idp_error": "Fehler: {message} mit der URL {url}",
@@ -126,8 +129,11 @@
   "vat_number": "Umsatzsteuer-Identifikationsnummer (USt-ID)",
   "warning": "Achtung",
   "selected_file_is_not_compatible_with": "Ausgewählte Datei {filePath} ist nicht richtig für {fieldName}",
+  "settings_unsaved": "Einstellungen wurden noch nicht gespeichert!",
+  "setting_is_unsaved": "Diese Änderung wurde noch nicht gespeichert",
   "settings_will_be_saved": "Einstellungen werden gespeichert!",
   "are_you_sure": "Sind Sie sicher?",
+  "do_you_want_to_save_changes": "Möchten Sie die Änderungen speichern?",
   "automatic_updates": "Automatische Updates",
   "check_updates_automatically": "Updates automatisch durchführen",
   "timout_settings": "Timeout Einstellungen",
@@ -168,7 +174,7 @@
   "see_link_to_understand_how_to_configure_config_properly": "Hier finden Sie eine Anleitung, wie Sie die Einstellungen korrekt konfigurieren",
   "default_config_is_in_use": "Standard(Default)-konfiguration wird verwendet",
   "you_are_using_default_config": "Sie verwenden die Standard(Default)-konfiguration: {path}",
-  "you_are_using_default_config_if_you_save_changes_will_be_saved_to_specific_path" : "Sie verwenden die Standard(Default)-konfiguration. Wenn Sie Änderungen speichern, werden diese in der spezifischen Konfigurationsdatei gespeichert!",
+  "you_are_using_default_config_if_you_save_changes_will_be_saved_to_specific_path": "Sie verwenden die Standard(Default)-konfiguration. Wenn Sie Änderungen speichern, werden diese in der spezifischen Konfigurationsdatei gespeichert!",
   "errors": {
     "technical_error": "Technischer Fehler",
     "technical_error_code": "Bitte kontaktieren Sie Ihren Support. Fehlercode ({code})",
@@ -206,6 +212,10 @@
       "title": "Fehler beim Lesen der Konfigurationsdatei",
       "text": "Es gibt einen Fehler in der Konfigurationsdatei, bitte überprüfen Sie die Datei {path}."
     },
+    "AUTHCL_1000": {
+      "title": "Verbindung zum Konnektor fehlgeschlagen",
+      "text": "Bitte überprüfen Sie Ihre Konnektor-Einstellungen in den Authenticator-Einstellungen. Stellen Sie sicher, dass der Konnektor läuft und verbunden ist und dass keine Netzwerkprobleme vorliegen. Fehlercode (AUTHCL_1000)"
+    },
     "AUTHCL_1001": {
       "title": "Karte konnte nicht abgerufen werden",
       "text": "Bitte überprüfen Sie die Netzwerkverbindung Ihres Kartenterminals sowie dass mindestens eine SmartCard im Kartenterminal steckt. Fehlercode (AUTHCL_1001)"
@@ -233,6 +243,10 @@
     "AUTHCL_1104": {
       "title": "Remote PIN-Eingabe für {cardType}-Karte nicht möglich.",
       "text": "Die remote PIN-Eingabe für Ihre SmartCard ist nicht möglich. Kontaktieren Sie bitte Ihren DVO oder Administrator und lassen Sie die in Ihrem Kartenterminal vorgenommenen Konfigurationen überprüfen. Fehlercode (AUTHCL_1104)"
+    },
+    "AUTHCL_1106": {
+      "title": "Überprüfung SMC-B Pin-Status fehlgeschlagen",
+      "text": "Die SMC-B konnte nicht ausgelesen werden. Vergewissern Sie sich, dass der PIN für Ihre SMC-B Karte, die Sie für die Authentifizierung nutzen möchten, bereits in Ihrem Kartenverwaltungssystem oder Ihrem Konnektor eingegeben wurde. Sollte dies nicht der Fall sein, lassen Sie dies durch Ihren für die SMC-B Karte Verantwortlichen durchführen. Fehlercode (AUTHCL_1106)"
     },
     "AUTHCL_1107": {
       "title": "Abrufen des Kartenzertifikats ist fehlgeschlagen",

@@ -70,3 +70,21 @@ export const SOAP_ACTION = {
   GetCards: 'http://ws.gematik.de/conn/EventService/v7.2#GetCards',
   GetCardTerminals: 'http://ws.gematik.de/conn/EventService/v7.2#GetCardTerminals',
 };
+
+export enum SIGNATURE_TYPES {
+  ECC = 'urn:bsi:tr:03111:ecdsa',
+  RSA = 'urn:ietf:rfc:3447',
+}
+
+export enum CRYPT_TYPES {
+  ECC = 'ECC',
+  RSA = 'RSA',
+}
+
+export const ENCRYPTION_TYPES = {
+  RSASSA_PSS_USING_SHA256: 'PS256',
+  RSASSA_PKCS1_USING_SHA256: 'RS256',
+  ENCRYPT_ALG_SHA256: 'SHA-256',
+
+  ECC_ALG_SHA256: 'BP256R1',
+};

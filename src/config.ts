@@ -18,7 +18,7 @@ export const CONTEXT_PARAMETERS_CONFIG_GROUP = {
   MANDANT_ID: 'connector.contextParameter.mandantId',
   CLIENT_ID: 'connector.contextParameter.clientId',
   WORKPLACE_ID: 'connector.contextParameter.workplaceId',
-};
+} as const;
 
 export const ENTRY_OPTIONS_CONFIG_GROUP = {
   HOSTNAME: 'connector.entryOption.hostname',
@@ -30,7 +30,7 @@ export const ENTRY_OPTIONS_CONFIG_GROUP = {
   TLS_PFX_PASSWORD: 'connector.entryOption.pfxPassword',
   USERNAME_BASIC_AUTH: 'connector.entryOption.username',
   PASSWORD_BASIC_AUTH: 'connector.entryOption.password',
-};
+} as const;
 
 /**
  * @deprecated
@@ -56,7 +56,7 @@ export const PROXY_SETTINGS_CONFIG = {
   PROXY_IGNORE_LIST: 'proxy.proxyIgnoreList',
   PROXY_ADDRESS: 'proxy.proxySettingsAddress',
   PROXY_PORT: 'proxy.proxySettingsPort',
-};
+} as const;
 
 export const TIMEOUT_PARAMETER_CONFIG = 'timeoutValue';
 

@@ -83,7 +83,7 @@ export class PathProvider {
 
     const userData = <string>window.api.sendSync(IPC_GET_PATH, 'userData');
 
-    // change path from .../Application Support/authenticator to .../Application Support/gematik Authenticator
+    // change the path from .../Application Support/authenticator to .../Application Support/gematik Authenticator
     return userData.replace(window.api.pathSep() + APP_NAME, window.api.pathSep() + PRODUCT_NAME);
   }
 

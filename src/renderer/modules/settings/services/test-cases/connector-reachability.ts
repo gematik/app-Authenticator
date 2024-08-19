@@ -22,7 +22,7 @@ const translate = i18n.global.t;
 export async function connectorReachabilityTest(): Promise<TestResult> {
   try {
     const cardTerminals = await getCardTerminals();
-    logger.debug(`Cardterminal Informationen - ${JSON.stringify(cardTerminals)}`);
+    logger.debug(`Card terminal informationen: ${JSON.stringify(cardTerminals)}`);
     return {
       title: translate('function_test_general'),
       name: translate('accessibility_of_the_connector'),

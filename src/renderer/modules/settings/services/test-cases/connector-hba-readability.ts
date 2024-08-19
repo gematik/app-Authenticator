@@ -22,6 +22,7 @@ import i18n from '@/renderer/i18n';
 import { getPinStatus } from '@/renderer/modules/connector/connector_impl/check-pin-status';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
+import { getErrorMessage } from '@/renderer/modules/settings/services/utils/get-smartcard-pinstatus-errormessages';
 
 const translate = i18n.global.t;
 
@@ -79,32 +80,4 @@ export async function connectorHbaReadabilityTest(): Promise<TestResult> {
       details: details,
     };
   }
-}
-
-function getErrorMessage(status: string, slotNr: string, cardTerminalId: string) {
-  let errorMessage: string;
-  if (status === 'TRANSPORT_PIN') {
-    errorMessage = translate('readability_test_hba_transport_pin', {
-      slotNr: slotNr,
-      ctId: cardTerminalId,
-    });
-  } else if (status === 'BLOCKED') {
-    errorMessage = translate('readability_test_hba_blocked', {
-      slotNr: slotNr,
-      ctId: cardTerminalId,
-    });
-  } else if (status === 'EMPTY_PIN') {
-    errorMessage = translate('readability_test_hba_empty_pin', {
-      slotNr: slotNr,
-      ctId: cardTerminalId,
-    });
-  } else if (status === 'DISABLED') {
-    errorMessage = translate('readability_test_hba_disabled', {
-      slotNr: slotNr,
-      ctId: cardTerminalId,
-    });
-  } else {
-    errorMessage = translate('readability_test_hba_unknown_pin_status', { status: status });
-  }
-  return errorMessage;
 }

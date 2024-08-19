@@ -21,6 +21,7 @@ import {
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 import dotObject from 'dot-object';
+import { TLS_AUTH_TYPE } from '@/@types/common-types';
 
 export const SAMPLE_CONFIG_DATA = {
   [CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]: 'Mandant-y',
@@ -33,7 +34,7 @@ export const SAMPLE_CONFIG_DATA = {
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY]: 'c:/xxx.pem',
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE]: 'c:/yyy.pem',
 
-  [TLS_AUTH_TYPE_CONFIG]: 'ServerCertAuth',
+  [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE.ServerCertAuth,
 
   [MOCK_CONNECTOR_CONFIG]: false,
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
@@ -42,7 +43,7 @@ export const SAMPLE_CONFIG_DATA = {
 export const SAMPLE_CONFIG_DATA_STRUCTURED = dotObject.object(SAMPLE_CONFIG_DATA);
 
 /**
- * Be aware, test file path is not same with production config file!
+ * Be aware, the test file path is different from production config file!
  */
 export const setSampleData = (customData: TRepositoryData = {}) => {
   const fileStorageRepositoryInstance = new FileStorageRepository();

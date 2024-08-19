@@ -11,9 +11,10 @@
  * language governing permissions and limitations under the License.ee the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
+const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const { resolve } = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -46,7 +47,14 @@ module.exports = {
   externals: {
     keytar: 'commonjs keytar',
   },
-
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        exclude: /preload\.js/,
+      }),
+    ],
+  },
   module: {
     rules: [
       {
@@ -58,12 +66,15 @@ module.exports = {
         },
       },
       {
+        test: /\.node$/,
+        use: 'node-loader',
+      },
+      {
         test: /\.[ts|vue]/,
         loader: 'webpack-preprocessor-loader',
         options: {
           debug: process.env.MOCK_MODE === 'ENABLED',
           directives: {
-            // if you add "// #!no_prod" to the above of the line, it will be removed in the production build
             no_prod: false,
           },
           params: {
@@ -77,6 +88,14 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       window: false,
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: resolve(__dirname, 'node_modules/win-ca/lib/roots.exe'),
+          to: resolve(__dirname, 'dist_electron'),
+        },
+      ],
     }),
   ],
 };

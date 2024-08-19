@@ -149,8 +149,8 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
 
         context.commit('setOpenIdConfiguration', jsonwebtoken.decode(res.data));
       } catch (err) {
-        logger.error('Can not get Discovery Document', err);
-        throw new CentralIdpError('Could not get Discovery Document');
+        logger.error('Can not get discovery document', err);
+        throw new CentralIdpError('Could not get discovery document');
       }
     },
     async getIdpEncJwk(context: ActionContext<TGemIdpServiceStore, TRootStore>): Promise<void> {
@@ -168,7 +168,7 @@ export const gemIdpServiceStore: Module<TGemIdpServiceStore, TRootStore> = {
         });
         context.commit('setIdpEncJwk', res.data);
       } catch (err) {
-        logger.error('Can not get puk idp enc', err);
+        logger.error('Cannot get puk idp enc', err);
         throw new CentralIdpError('could not get IdpEncJwk');
       }
     },

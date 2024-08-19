@@ -15,7 +15,7 @@
 import { IPC_ERROR_LOG_EVENT_TYPES } from '@/constants';
 
 //TODO: @Rene: bitte im Rahmen von authcl-448 diese Function loeschen
-export function getCallerInfo(err: any): string {
+export function getCallerInfo(err: Error): string {
   const caller_line = err?.stack?.split('\n')[4];
 
   if (!caller_line) {

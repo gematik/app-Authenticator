@@ -22,7 +22,7 @@ let CA_CHAINS_IDP: undefined | string[];
  */
 const getIdpTlsCertificates = (): undefined | string[] => {
   if (CA_CHAINS_IDP) {
-    logger.debug('reuse CA_CHAINS_IDP');
+    logger.debug('Reuse CA_CHAINS_IDP');
     return CA_CHAINS_IDP;
   }
   CA_CHAINS_IDP = readCaCerts(false);

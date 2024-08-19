@@ -29,7 +29,7 @@ let logLevel = 'info';
 logLevel = 'debug';
 // #!endif
 
-// get directory path and create it if missing
+// get the directory path and create it if missing
 const genLogDirPath = isMacOS
   ? path.join(os.homedir(), MACOS_PATHS.LOGGING_DIR, LOG_DIRECTORY_NAME)
   : path.join(os.tmpdir(), LOG_DIRECTORY_NAME);

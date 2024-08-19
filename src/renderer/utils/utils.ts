@@ -19,6 +19,8 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 import i18n from '@/renderer/i18n';
 import { IdpError, OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 import packageJson from '../../../package.json';
+import { TRepositoryData } from '@/renderer/modules/settings/repository';
+import { IConfig } from '@/@types/common-types';
 
 const translate = i18n.global.t;
 
@@ -27,12 +29,12 @@ function openUrlOnclick() {
   window.api.openExternal(WIKI_ERRORCODES_URL);
 }
 
-function determineUserAgentVersion() {
-  if (packageJson) {
+function determineUserAgentVersion(): string {
+  if (packageJson?.version && typeof packageJson.version === 'string') {
     return packageJson.version;
   }
-  if (PROCESS_ENVS.version) return PROCESS_ENVS.version;
-  logger.warn("Info on VERSION not available for user-agent. set '1.0.0' as default");
+  if (PROCESS_ENVS.version && typeof PROCESS_ENVS.version === 'string') return PROCESS_ENVS.version;
+  logger.warn("Info on VERSION is not available for user-agent. Set '1.0.0' as default");
   return '1.0.0';
 }
 
@@ -174,17 +176,53 @@ export function createRedirectDeeplink(protocol: string, redirectIdp: string): s
 /**
  * Escape HTML special characters
  * @param str
+ * @param exceptions
  */
-export function escapeHTML(str: string) {
-  return str.replace(/[&<>"']/g, (match: string) => {
-    return (
-      {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-      }[match] || match
-    );
-  });
+export function escapeHTML(str: string, exceptions: string[] = []) {
+  const escapeMap: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+
+  if (exceptions.length > 0) {
+    const exceptionRegex = new RegExp(`</?(${exceptions.join('|')})>`, 'gi');
+    let lastIndex = 0;
+    let escapedStr = '';
+
+    str.replace(exceptionRegex, (match, p1, offset) => {
+      // Escape the portion before the match
+      escapedStr += str.substring(lastIndex, offset).replace(/[&<>"']/g, (char) => escapeMap[char] ?? char);
+      // Add the exception tag as is
+      escapedStr += match;
+      lastIndex = offset + match.length;
+      return match;
+    });
+
+    // Escape the remaining portion after the last match
+    escapedStr += str.substring(lastIndex).replace(/[&<>"']/g, (char) => escapeMap[char] ?? char);
+
+    return escapedStr;
+  } else {
+    return str.replace(/[&<>"']/g, (char) => escapeMap[char] ?? char);
+  }
+}
+
+/**
+ * Validates the data user try to save.
+ */
+export function validateData(configValues: TRepositoryData, formColumnsFlat: Record<string, IConfig>): boolean {
+  let isFormValid = true;
+  for (const key in configValues) {
+    const val = key in configValues ? configValues[key as keyof TRepositoryData] : undefined;
+    const regex = formColumnsFlat[key]?.validationRegex;
+    if (typeof val === 'boolean') continue;
+    if (val && regex && !regex.test(String(val))) {
+      isFormValid = false;
+      break;
+    }
+  }
+  return isFormValid;
 }

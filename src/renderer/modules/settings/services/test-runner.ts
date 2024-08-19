@@ -48,12 +48,17 @@ export async function runTestsCases(
 ): Promise<TestResult[]> {
   const results: TestResult[] = [];
   const translate = i18n.global.t;
-  logger.info('start test cases');
+  logger.info('Start test cases');
 
   for (const testCase of testCases) {
     // #!if MOCK_MODE === 'ENABLED'
     const isMockModeActive = getConfig(MOCK_CONNECTOR_CONFIG).value;
-    if (isMockModeActive && (testCase === connectorReachabilityTest || testCase === connectorSmcbReadabilityTest)) {
+    if (
+      isMockModeActive &&
+      (testCase === connectorReachabilityTest ||
+        testCase === connectorSmcbReadabilityTest ||
+        testCase === connectorHbaReadabilityTest)
+    ) {
       continue;
     }
     // #!endif
@@ -91,6 +96,6 @@ export async function runTestsCases(
       break;
     }
   }
-  logger.info('finished test cases');
+  logger.info('Finished test cases');
   return results;
 }

@@ -15,7 +15,6 @@
 import store from '@/renderer/store';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { TPinStatusResponse } from '@/renderer/modules/connector/type-definitions';
-import { GemIdpJwsOptions } from '@/renderer/modules/gem-idp/sign-feature/cidp-sign-options';
 
 const CERT_MOCKS = {
   HbaCardHandle:
@@ -81,44 +80,6 @@ jest.mock('@/renderer/modules/connector/connector_impl/auth-sign-launcher', () =
 
 jest.mock('base64url', () => ({
   fromBase64: (_input: string) => Promise.resolve(''),
-}));
-jest.mock('@/renderer/service/jws-sign-options', () => ({
-  JwsSignOptions: jest.fn().mockImplementation(() => {
-    return {
-      base2urlEncode: (_input: string) => Promise.resolve(''),
-    };
-  }),
-}));
-
-const testCIdpSpyClass = new GemIdpJwsOptions('challengeTest', 'certTest', ECardTypes.SMCB);
-jest.mock('@/renderer/service/jws-sign-options', () => ({
-  OgrJwsSignOptions: jest.fn().mockImplementation(() => {
-    return {
-      getComposeSigningInput: (_input: string, _value: string) => {
-        return '';
-      },
-    };
-  }),
-}));
-
-jest.mock('@/renderer/service/jws-sign-options', () => ({
-  CIdpJwsSignOptions: jest.fn().mockImplementation(() => {
-    return {
-      getComposeSigningInput: (_input: string, _value: string) => {
-        return '';
-      },
-    };
-  }),
-}));
-
-jest.mock('@/renderer/service/jws-sign-options', () => ({
-  JwsSignOptions: jest.fn().mockReturnValue(() => {
-    return {
-      sha256Encode: (_input: string) => {
-        return '';
-      },
-    };
-  }),
 }));
 
 describe('connector module actions', () => {
@@ -196,21 +157,22 @@ describe('connector module actions', () => {
     expect(store.state.connectorStore.cards['SMC-B']?.certificate).toBe(CERT_MOCKS['SmcbCardHandle']);
   });
 
-  xit('Cidp SignedAuthChallenge for SMC-B', async () => {
-    const cIdpSpyFirstMethod = jest.spyOn(testCIdpSpyClass, 'createJwsOptions').mockReturnValue({
-      protectedHeader: 'test1',
-      payload: 'test2',
-    });
-    // set anc check smcbCardCertificate
-    const cIdpSpySecMethod = jest
-      .spyOn(testCIdpSpyClass, 'createSigningInputString')
-      .mockImplementation(() => Promise.resolve('test'));
-    expect(cIdpSpyFirstMethod).toBeCalledTimes(1);
-    expect(cIdpSpySecMethod).toBeCalledTimes(1);
-    const expectedJWS = await store.dispatch('connectorStore/getSignedAuthChallenge', ECardTypes.SMCB);
-    expect(async () => {
-      await store.dispatch('connectorStore/getSignedAuthChallenge', ECardTypes.SMCB);
-    }).not.toThrow();
-    expect(expectedJWS).toBe(JWS_SIGNATUR_MOCKED);
-  });
+  // xit('Cidp SignedAuthChallenge for SMC-B', async () => {
+  //   const testCIdpSpyClass = new GemIdpJwsOptions('challengeTest', 'certTest', ECardTypes.SMCB);
+  //   const cIdpSpyFirstMethod = jest.spyOn(testCIdpSpyClass, 'createJwsOptions').mockReturnValue({
+  //     protectedHeader: 'test1',
+  //     payload: 'test2',
+  //   });
+  //   // set anc check smcbCardCertificate
+  //   const cIdpSpySecMethod = jest
+  //     .spyOn(testCIdpSpyClass, 'createSigningInputString')
+  //     .mockImplementation(() => Promise.resolve('test'));
+  //   expect(cIdpSpyFirstMethod).toBeCalledTimes(1);
+  //   expect(cIdpSpySecMethod).toBeCalledTimes(1);
+  //   const expectedJWS = await store.dispatch('connectorStore/getSignedAuthChallenge', ECardTypes.SMCB);
+  //   expect(async () => {
+  //     await store.dispatch('connectorStore/getSignedAuthChallenge', ECardTypes.SMCB);
+  //   }).not.toThrow();
+  //   expect(expectedJWS).toBe(JWS_SIGNATUR_MOCKED);
+  // });
 });

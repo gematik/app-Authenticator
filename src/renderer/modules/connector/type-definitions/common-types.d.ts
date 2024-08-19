@@ -16,6 +16,7 @@ import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 export type TAuthSignParameter = {
   signatureType: string;
+  // @deprecated
   signatureCidpSchemes: string;
   base64data: string;
 };
@@ -34,7 +35,7 @@ export type TGetCardsParameter = {
 
 export type TTag = {
   name: string;
-  parent: { children: TTag[] };
+  parent?: { children: TTag[] } | null;
   children: TTag[];
   attributes: { Location: string; Name: string; Version: string };
 };
@@ -62,9 +63,7 @@ export type TCertReaderParameter = {
   crypt: string;
 };
 
-export type TConfigObject = {
-  [key: string]: string | number | boolean;
-};
+export type TConfigObject = Record<string, string>;
 
 export type TCardData = {
   cardType: ECardTypes;
@@ -74,6 +73,24 @@ export type TCardData = {
   pinStatus: string;
   certificate: string;
   iccsn: string;
+};
+
+export type TCardTerminal = {
+  Connected: string;
+  CtId: string;
+  IPAddress: { IPV4Address: string };
+  IS_PHYSICAL: string;
+  MacAddress: string;
+  Name: string;
+  ProductInformation: {
+    InformationDate: string;
+    ProductTypeInformation: Record<string, any>;
+    ProductIdentification: Record<string, any>;
+    ProductMiscellaneous: Record<string, any>;
+  };
+  Slots: string;
+  WorkplaceIds: { WorkplaceId: string };
+  [key: string]: any;
 };
 
 export type TPinStatusTypes = 'VERIFIED' | 'VERIFIABLE' | 'BLOCKED' | 'REJECTED' | 'TRANSPORT_PIN';
@@ -88,5 +105,5 @@ export type TConnectorStore = {
     HBA?: TCardData;
     'SMC-B'?: TCardData;
   };
-  terminals?: any;
+  terminals?: TCardTerminal;
 };

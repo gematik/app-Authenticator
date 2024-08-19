@@ -64,7 +64,7 @@ ipcMain.on(IPC_GET_PROXY, async (event, url) => {
     logger.info('Session found for resolving proxy');
     const res = await session.resolveProxy(url);
 
-    logger.debug('Proxy resolved:' + res);
+    logger.debug('Proxy resolved: ' + res);
     if (res !== 'DIRECT') {
       const parts = res.trim().split(/\s+/);
       const type = parts[0];

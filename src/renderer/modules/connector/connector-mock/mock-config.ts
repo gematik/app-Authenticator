@@ -23,5 +23,5 @@ export const MOCK_CONNECTOR_CERTS_CONFIG = {
 
 export const DEVELOPER_OPTIONS = {
   IDP_CERTIFICATE_CHECK: 'developer.disableCertificateCheck',
-};
+} as const;
 // #!endif

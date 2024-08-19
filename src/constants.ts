@@ -165,6 +165,10 @@ export const CA_CONNECTOR_DIR_PATH = 'certs-konnektor';
  */
 export const CA_IDP_DIR_PATH = 'certs-idp';
 
+/**
+ * On the renderer side, we have only the allowed environment variables,
+ * to use more environment variables; you need to add them to the EXPOSED_ENV_VARIABLES list
+ */
 export let PROCESS_ENVS: Record<string, unknown> = window?.api?.sendSync
   ? JSON.parse(window.api.sendSync(IPC_READ_MAIN_PROCESS_ENVS) as string)
   : (process.env as Record<string, unknown>);
@@ -230,8 +234,8 @@ export const STORAGE_CONFIG_KEYS = {
 };
 
 export const MACOS_PATHS = {
-  LOGGING_DIR: '/Library/Logs/', // we add user's home path to end of this path e.x. /Users/x/Library...
-  CERTS_DIR: '/Library/Application Support/' + PRODUCT_NAME,
+  LOGGING_DIR: '/Library/Logs/', // we add the user's home path at the beginning of this path e.x. /Users/x/Library...
+  CERTS_DIR: window?.api?.homedir() + '/Library/Application Support/' + PRODUCT_NAME,
 };
 
 export const MACOS_DS_STORE_FILE_NAME = '.DS_Store';
@@ -245,4 +249,19 @@ export const START_ARGUMENTS_TO_PREVENT = [
   '--inspect-brk',
   '--inspect-port',
   '--remote-allow-origins',
+];
+
+export const TEST_CASES_JSON_FILE_NAME = 'test-cases-config.json';
+
+// These are the environment variables that are exposed to the renderer process
+export const EXPOSED_ENV_VARIABLES = [
+  'VERSION',
+  'BRANCH_NAME',
+  'TAG_NAME',
+  'BUILD_NUMBER',
+  'CONNECTOR_PATH',
+  'COMPUTERNAME',
+  'AUTHCONFIGPATH',
+  'NODE_ENV',
+  'MOCK_MODE',
 ];

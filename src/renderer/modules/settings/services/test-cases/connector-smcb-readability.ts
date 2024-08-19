@@ -19,11 +19,25 @@ import { logger } from '@/renderer/service/logger';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { ERROR_CODES } from '@/error-codes';
 import i18n from '@/renderer/i18n';
+import { getPinStatus } from '@/renderer/modules/connector/connector_impl/check-pin-status';
+import { getErrorMessage } from '@/renderer/modules/settings/services/utils/get-smartcard-pinstatus-errormessages';
 
 export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
   const translate = i18n.global.t;
   try {
     const cardSmcbInfo = await getCards(ECardTypes.SMCB);
+    const pinStatus = await getPinStatus(ECardTypes.SMCB, cardSmcbInfo.cardHandle!, true);
+    logger.info('SMC-B PinStatus: ' + pinStatus.pinStatus);
+
+    const errorMessage = getErrorMessage(pinStatus.pinStatus, cardSmcbInfo.slotNr!, cardSmcbInfo.ctId!);
+    if (pinStatus.pinStatus !== 'VERIFIED') {
+      return {
+        title: translate('function_test_general'),
+        name: translate('smcb_availability'),
+        status: TestStatus.failure,
+        details: errorMessage,
+      };
+    }
     return {
       title: translate('function_test_general'),
       name: translate('smcb_availability'),

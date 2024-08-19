@@ -1,0 +1,3 @@
+{
+  "reject": ["got","sweetalert2", "query-string", "eslint", "axios","@typescript-eslint/eslint-plugin", "@typescript-eslint/parser"]
+}

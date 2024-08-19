@@ -35,6 +35,8 @@ import { checkPemFileFormat, checkPemFileFormatSilent, PEM_TYPES } from '@/rende
 import { certsValidityTest } from '@/renderer/modules/settings/services/test-cases/certs-validity-test';
 import { TestStatus } from '@/renderer/modules/settings/services/test-runner';
 import { preloadApi } from '@/main/preload-api';
+import { isMacOS } from '@tests/utils';
+import os from 'os';
 
 jest.mock('sweetalert2', () => ({
   fire: jest.fn().mockReturnValue({ isConfirmed: true }),
@@ -56,6 +58,10 @@ const contentKey = fs.readFileSync(TEST_FILE_PATH_TO_KEY);
 const contentCert = fs.readFileSync(TEST_FILE_PATH);
 
 jest.spyOn(FileStorageRepository as any, 'saveToCm').mockReturnValue(true);
+
+if (isMacOS()) {
+  jest.spyOn(window.api, 'sendSync').mockReturnValue(os.homedir());
+}
 
 const fileStorageRepository = new FileStorageRepository();
 jest.mock('@/renderer/modules/settings/useSettings.ts', () => ({
@@ -82,6 +88,7 @@ describe('settings page validation', () => {
   });
 
   it('validation error appears ', async function () {
+    // @ts-ignore
     setSampleData({ [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 'wrong-port-data' });
     const wrapper = await mount(SettingsScreen, {
       global: {
@@ -97,6 +104,7 @@ describe('settings page validation', () => {
       .spyOn(Swal, 'fire')
       .mockResolvedValue({ isConfirmed: true, value: '123456', isDenied: false, isDismissed: false });
 
+    // @ts-ignore
     setSampleData({ [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 'wrong-port-data' });
     const wrapper = await mount(SettingsScreen, {
       global: {
@@ -125,6 +133,7 @@ describe('settings page validation', () => {
   });
 
   it('validation that invalid uploading key and cert files throws an error', async function () {
+    /* @ts-ignore this is a negative test*/
     await expect(copyUploadedFileToTargetDir(TEST_FILE_PATH, 'wrong entry option', 'example-cer.cer')).rejects.toThrow(
       `Error: selected file ${TEST_FILE_PATH} is not in PEM-Format`,
     );
@@ -164,6 +173,26 @@ describe('settings page validation', () => {
     const resp = await certsValidityTest();
     expect(resp.status).toBe(TestStatus.success);
   });
+  it('Negative - Certs Validity Function Test', async function () {
+    // create one invalid cert in the PathProvider.caCertificatePath(isConnector) folder
+    const caCertificatePath = PathProvider.caCertificatePath(false);
+    const invalidCertPath = caCertificatePath + '/invalid_cert.pem';
+    fs.writeFileSync(invalidCertPath, 'invalid cert content');
+
+    try {
+      const resp = await certsValidityTest();
+      console.log('custom resp', resp);
+      expect(resp.details).toBe(
+        'Es wurden insgesamt 29 Zertifikate gefunden, davon 1 fehlerhaft. Bitte überprüfen Sie die folgenden Zertifikate: <br>- invalid_cert.pem',
+      );
+    } catch (e) {
+      console.log('custom error', e);
+      expect(e).toBe('Test failed');
+    } finally {
+      // remove the invalid cert
+      fs.unlinkSync(invalidCertPath);
+    }
+  });
   it('validation that uploading pfx-file keep their name', async function () {
     fs.mkdirSync(PathProvider.configPath, { recursive: true });
     expect(
@@ -175,7 +204,7 @@ describe('settings page validation', () => {
     ).toBe(getUploadedFilePath('cs0001.p12'));
   });
   it('validation that valid uploading pfx-file is successful', async function () {
-    await expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, '123456')).toBe(P12_VALIDITY_TYPE.VALID);
+    expect(preloadApi.isP12Valid(TEST_FILE_PATH_PFX, '123456')).toBe(P12_VALIDITY_TYPE.VALID);
   });
   it('validation that outdated uploading pfx-file throws an error', async function () {
     await expect(preloadApi.isP12Valid(TEST_FILE_PATH_OUTDATED_PFX, '00')).toBe(P12_VALIDITY_TYPE.INVALID_CERTIFICATE);

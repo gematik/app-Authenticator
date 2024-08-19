@@ -43,6 +43,7 @@ exports[`form element renders drop-down for custom options 1`] = `
       </select>
     </div>
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -95,6 +96,7 @@ exports[`form element renders drop-down for standard options 1`] = `
       </select>
     </div>
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -134,6 +136,7 @@ exports[`form element renders email field 1`] = `
         type="email"
       />
     </div>
+    <!--v-if-->
     <!--v-if-->
     <!--v-if-->
   </div>
@@ -194,6 +197,7 @@ exports[`form element renders file field 1`] = `
       </label>
     </div>
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -249,6 +253,7 @@ exports[`form element renders file-path field 1`] = `
       </label>
     </div>
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -288,6 +293,7 @@ exports[`form element renders file-path field 2`] = `
         type="password"
       />
     </div>
+    <!--v-if-->
     <!--v-if-->
     <!--v-if-->
   </div>
@@ -331,6 +337,7 @@ exports[`form element renders input field 1`] = `
     </div>
     <!--v-if-->
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -372,6 +379,7 @@ exports[`form element renders number field 1`] = `
     </div>
     <!--v-if-->
     <!--v-if-->
+    <!--v-if-->
   </div>
 </div>
 `;
@@ -411,6 +419,7 @@ exports[`form element renders text field 1`] = `
         required=""
       />
     </div>
+    <!--v-if-->
     <!--v-if-->
   </div>
 </div>

@@ -29,7 +29,10 @@
           :disabled="disabled"
           :type="type"
           :required="required"
-          class="settings-input"
+          :class="{
+            'settings-input': true,
+            'settings-input__changed': isChanged,
+          }"
           @change="onLocalChange"
           @blur="onLocalChange"
         />
@@ -41,7 +44,10 @@
           :placeholder="placeholder"
           :disabled="disabled"
           :required="required"
-          class="settings-input"
+          :class="{
+            'settings-input': true,
+            'settings-input__changed': isChanged,
+          }"
           @change="onLocalChange"
           @blur="onLocalChange"
         />
@@ -52,7 +58,10 @@
           v-model="model[name]"
           :disabled="disabled"
           :required="required"
-          class="settings-input"
+          :class="{
+            'settings-input': true,
+            'settings-input__changed': isChanged,
+          }"
           @change="onLocalChange"
           @blur="onLocalChange"
         >
@@ -102,6 +111,9 @@
         </label>
       </div>
       <div v-if="!isValid" class="text-error text-[12px] px-[15px] pt-[5px]">{{ $t('value_is_not_valid') }}</div>
+      <div v-if="isChanged" class="text-orange-500 text-[12px] px-[15px] pt-[5px]">
+        {{ $t('setting_is_unsaved') }}
+      </div>
     </div>
   </div>
 </template>
@@ -200,11 +212,36 @@ export default defineComponent({
       required: false,
       default: '.pem',
     },
+    /**
+     * Event trigger for updating the internal init value
+     * e.g. a save got performed successfully
+     */
+    updateInitValue: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
       isValid: true,
+      initValue: undefined as string | undefined,
     };
+  },
+  computed: {
+    isChanged(): boolean {
+      return this.initValue !== this.model[this.name];
+    },
+  },
+  watch: {
+    /* Update init value when this prop gets altered */
+    updateInitValue() {
+      this.initValue = this.model[this.name];
+    },
+  },
+  mounted() {
+    this.initValue = this.model[this.name];
+    // We use this to check if the value is changed and notify the user
   },
   created() {
     this.validate();
@@ -218,7 +255,6 @@ export default defineComponent({
      */
     onLocalChange(): void {
       this.validate();
-
       this.onFormChange();
     },
     async onFileChange(e: Event): Promise<void> {
@@ -303,6 +339,10 @@ export default defineComponent({
   @apply h-[36px] rounded-[8px] px-[12px] py-[8px] bg-neutral border-inputBorder border;
   @apply w-[333px] leading-[100%];
   /* focus: focus: */
+}
+
+.settings-input__changed {
+  @apply border-orange-500;
 }
 
 .settings-input:focus {

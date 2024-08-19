@@ -1,0 +1,35 @@
+/*
+ * Copyright 2024 gematik GmbH
+ *
+ * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
+ * Sourcecode must be in compliance with the EUPL.
+ *
+ * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
+ * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
+ * language governing permissions and limitations under the License.ee the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
+
+import { logger } from '@/main/services/logging';
+
+const winCaApi = require('win-ca/api');
+const macCa = require('mac-ca');
+
+export function getCasFromTruststore(format: string = 'pem'): string[] {
+  const casFromTrustStore: string[] = [];
+  try {
+    winCaApi({
+      store: ['root', 'ca'],
+      ondata: (cert: string) => casFromTrustStore.push(cert),
+      unique: true,
+      format: winCaApi.der2[format],
+    });
+
+    casFromTrustStore.push(...macCa.get({ format: format }));
+  } catch (e) {
+    logger.error('Error while reading CAs from trust store', e);
+  }
+  return casFromTrustStore;
+}

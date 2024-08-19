@@ -18,6 +18,7 @@ import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
 import i18n from '@/renderer/i18n';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
+import { IS_DEV, TEST_CASES_JSON_FILE_NAME } from '@/constants';
 
 export async function idpReachabilityTest(): Promise<TestResult[]> {
   const translate = i18n.global.t;
@@ -84,28 +85,29 @@ async function callIdp(url: string): Promise<number> {
 
 function loadAndParseConnectionTestConfig(): any {
   let filePath = '';
-  const jsonFileName = 'test-cases-config.json';
 
   if (window.api.isMacOS()) {
-    filePath = window.api.pathJoin(PathProvider.getMacOsUserAppPath(), jsonFileName);
+    filePath = window.api.pathJoin(PathProvider.getMacOsUserAppPath(), TEST_CASES_JSON_FILE_NAME);
 
     // #!if MOCK_MODE === 'ENABLED'
-    filePath = window.api.pathJoin(PathProvider.getAppPath(), 'src/assets/', jsonFileName);
+    if (IS_DEV) {
+      filePath = window.api.pathJoin(PathProvider.getAppPath(), 'src/assets/', TEST_CASES_JSON_FILE_NAME);
+    }
     // #!endif
   } else {
     // TODO: This config file must be stored on a proper location and not in the dist folder
     // C:\Program Files\gematik Authenticator\resources
-    filePath = window.api.pathJoin(PathProvider.getAppPath().replace(/app.asar/i, ''), jsonFileName);
+    filePath = window.api.pathJoin(PathProvider.getAppPath().replace(/app.asar/i, ''), TEST_CASES_JSON_FILE_NAME);
   }
 
   if (!window.api.existsSync(filePath)) {
-    logger.error('Conf file not found: ' + filePath + '-App-path: ' + PathProvider.getAppPath());
+    logger.error('Config file not found: ' + filePath + '-App-path: ' + PathProvider.getAppPath());
     throw new UserfacingError('Read Config File', 'file ' + filePath + ' not found', undefined, {
       filePath,
     });
   }
 
-  logger.info('Conf file found, filepath:' + filePath);
+  logger.info('Config file found, filepath:' + filePath);
   const buffer = window.api.readFileSync(filePath);
   const decoder = new TextDecoder('utf-8');
   return JSON.parse(decoder.decode(buffer));

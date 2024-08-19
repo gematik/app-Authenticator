@@ -20,9 +20,7 @@ import {
 } from '@/renderer/modules/connector/connector-mock/mock-config';
 // #!endif
 import { getMatch } from 'ip-matching';
-import isFQDN from 'validator/lib/isFQDN';
-
-import { IConfig, IConfigSection, TlsAuthType } from '@/@types/common-types';
+import { IConfig, IConfigSection, TLS_AUTH_TYPE } from '@/@types/common-types';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
@@ -42,6 +40,7 @@ import Swal from 'sweetalert2';
 import i18n from '@/renderer/i18n';
 import ConnectorIcon from '@/assets/icon-connector.svg';
 import { logger } from '@/renderer/service/logger';
+import isValidDomain = require('is-valid-domain');
 
 const translate = i18n.global.t;
 
@@ -230,7 +229,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           options: [
             {
               text: translate('username_password'),
-              value: TlsAuthType.BasicAuth,
+              value: TLS_AUTH_TYPE.BasicAuth,
             },
             { text: translate('certificate'), value: 'ServerClientCertAuth' },
             { text: translate('certificate_pfx'), value: 'ServerClientCertAuth_Pfx' },
@@ -245,23 +244,23 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('username_from_connector'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.USERNAME_BASIC_AUTH,
           type: 'input',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.BasicAuth,
           infoText: translate('info_text_username_con'),
-          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.BasicAuth,
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TLS_AUTH_TYPE.BasicAuth,
         },
         {
           label: translate('password_from_connector'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.PASSWORD_BASIC_AUTH,
           type: 'password',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.BasicAuth,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.BasicAuth,
           infoText: translate('info_text_password_con'),
-          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.BasicAuth,
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TLS_AUTH_TYPE.BasicAuth,
         },
         {
           label: translate('private_key'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY,
           type: 'file-path',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.ServerClientCertAuth,
           infoText: translate('info_text_private_key'),
           /**
            * Moves file to right position and renames it
@@ -292,7 +291,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('client_certificate'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE,
           type: 'file-path',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.ServerClientCertAuth,
           infoText: translate('info_text_client_certificate'),
           /**
            * Moves file to right position and renames it
@@ -326,9 +325,9 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('pfx_file'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE,
           type: 'file-path',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.ServerClientCertAuth_Pfx,
           infoText: translate('info_text_pfx_file'),
-          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TlsAuthType.ServerClientCertAuth_Pfx,
+          required: repositoryData[TLS_AUTH_TYPE_CONFIG] === TLS_AUTH_TYPE.ServerClientCertAuth_Pfx,
           /**
            * Moves file to right position and renames it
            * @param e
@@ -341,7 +340,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           label: translate('pfx_file_password'),
           key: ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD,
           type: 'password',
-          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TlsAuthType.ServerClientCertAuth_Pfx,
+          hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.ServerClientCertAuth_Pfx,
           infoText: translate('info_text_pfx_file_password'),
         },
         {
@@ -442,7 +441,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
               return true;
             }
 
-            if (isFQDN(value)) {
+            if (isValidDomain(value)) {
               return true;
             }
 
@@ -485,8 +484,8 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
                   }
                   return isIPValid;
                 } catch (error) {
-                  const isFQDNValid = isFQDN(entry, {
-                    allow_wildcard: true,
+                  const isFQDNValid = isValidDomain(entry, {
+                    wildcard: true,
                   });
 
                   if (!isFQDNValid) {
@@ -523,9 +522,10 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         {
           label: translate('time_out_value'),
           key: TIMEOUT_PARAMETER_CONFIG,
-          type: 'number',
-          placeholder: '10000',
+          type: 'input',
+          placeholder: '30000',
           infoText: translate('info_text_timeout_for_developers'),
+          validationRegex: COMMON_USED_REGEXES.NUMBER,
         },
       ],
     },
