@@ -56,6 +56,7 @@ export declare global {
       extractValidCertificate: (p12Path: string, password: string) => string;
       isMacOS: () => boolean;
       homedir: () => string;
+      readLicenceFile: () => string;
     };
   }
 }

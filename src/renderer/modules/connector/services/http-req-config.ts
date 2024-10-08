@@ -35,9 +35,12 @@ export const getConnectorEndpoint = (endpoint?: string) => {
   if (endpoint) {
     const parsedEndpoint = new URL(endpoint);
     path = parsedEndpoint.pathname;
-  } else {
+  }
+  // #!if MOCK_MODE === 'ENABLED'
+  else {
     path = mappingPath(path);
   }
+  // #!endif
 
   return `https://${tlsEntryOptions.hostname}:${tlsEntryOptions.port}${path}`;
 };
@@ -80,9 +83,9 @@ export const httpReqConfig = (headers?: Headers): Options => {
   };
 };
 
+// #!if MOCK_MODE === 'ENABLED'
 function mappingPath(path: string): string {
   const konnFarmHost = 'ksp.ltuzd.telematik-test';
-  const keyKonnektorKonnFarm = 'konnektor_konnFarm';
 
   let conFarmPath = '/kon23';
 
@@ -94,7 +97,8 @@ function mappingPath(path: string): string {
   logger.debug('conFarmPath:' + conFarmPath);
 
   if (ConnectorConfig.tlsEntryOptions.hostname.includes(konnFarmHost)) {
-    return getConfig(keyKonnektorKonnFarm, conFarmPath).value + path;
+    return conFarmPath + path;
   }
   return path;
 }
+// #!endif

@@ -79,6 +79,19 @@ export async function createProxyAgent(url: string): TReturnType {
         ca: caIdp,
       },
     });
+  } else {
+    // #!if MOCK_MODE === 'ENABLED'
+    // This is only for the macOS Pipeline
+    const pCert = getProxyCertificate();
+    if (process.env.BUILD_ID && process.env.http_proxy) {
+      return new HttpsProxyAgent({
+        proxy: process.env.http_proxy,
+        ca: APP_CA_CHAIN_IDP,
+        cert: pCert,
+        requestCert: !!pCert,
+      });
+    }
+    // #!endif
   }
 }
 

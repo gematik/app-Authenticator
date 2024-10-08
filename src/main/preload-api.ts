@@ -130,4 +130,13 @@ export const preloadApi = {
   isMacOS: (): boolean => {
     return os.platform() === 'darwin';
   },
+  readLicenceFile: (): string => {
+    // #!if MOCK_MODE === 'ENABLED'
+    if (process.env.NODE_ENV === 'development') {
+      return fs.readFileSync('License.txt', 'latin1');
+    }
+    // #!endif
+
+    return fs.readFileSync(path.join(__dirname, '..', '..', 'License.txt'), 'latin1');
+  },
 };

@@ -78,3 +78,8 @@ Github-Release.Jenkinsfile
 /src/assets/certs-idp/R3.cer
 /src/assets/certs-idp/gematik idp test server.cer
 
+# Fastlane
+./fastlane
+/fastlane
+/fastlane/
+

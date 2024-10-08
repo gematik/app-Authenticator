@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -108,6 +108,7 @@ module.exports = {
       http: false,
       buffer: require.resolve('buffer/'),
       crypto: require.resolve('crypto-browserify'),
+      vm: require.resolve('vm-browserify'),
     },
   },
   module: {

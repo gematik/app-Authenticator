@@ -14,12 +14,4 @@
         <packageUrl regex="true">^pkg:npm/async@.*$</packageUrl>
         <vulnerabilityName>CVE-2024-39249</vulnerabilityName>
     </suppress>
-<!--    suppress axios -->
-    <suppress>
-        <notes><![CDATA[
-            The vendor does not see this as a problem and there is no exploit known.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:npm/axios@.*$</packageUrl>
-        <vulnerabilityName>CVE-2024-39338</vulnerabilityName>
-    </suppress>
 </suppressions>

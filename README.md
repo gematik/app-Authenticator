@@ -93,11 +93,13 @@ This stack based on those technologies:
 * Formatter: Prettier
 
 ## Storing Credentials Securely
-For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator, see [here](credential-distribution/README.md)
+
+For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator,
+see [here](credential-distribution/README.md)
 
 ## License EUPL
 
-Copyright 2023 gematik GmbH
+Copyright 2024 gematik GmbH
 
 The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
 Sourcecode must be in compliance with the EUPL.
@@ -108,3 +110,4 @@ Unless required by applicable law or agreed to in writing, software distributed 
 IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
 language governing permissions and limitations under the License.ee the Licence for the specific language governing
 permissions and limitations under the Licence.
+

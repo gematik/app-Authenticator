@@ -103,6 +103,9 @@
   CreateDirectory "$PROFILE\AppData\Local\${PRODUCT_NAME}"
   ; Delete the created Temp Backup Folder
   RMDir /r "$TEMP\${PRODUCT_NAME}"
+
+  ; Delete not needed Direct3D-API / DirectX DLL
+  Delete "$INSTDIR\d3dcompiler_47.dll"
 !macroend
 
 

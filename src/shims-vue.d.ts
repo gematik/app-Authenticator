@@ -12,7 +12,6 @@
  * permissions and limitations under the Licence.
  */
 
-/* eslint-disable */
 declare module '*.vue' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<{}, {}, any>;

@@ -2,6 +2,19 @@
 
 # Release Authenticator
 
+## Version 4.13.0
+
+### Fixed
+
+- Added CLIENTNAME to the exposed environment variables
+- Change certificate retrieval logic
+- Remove Konnektorfarm-Code from the production version
+- Pending card insert dialog is now closed when more than one smartcard is found
+
+### Security
+
+- Add patch file in dot-object because of security vulnerability
+
 ## Version 4.12.0
 
 ### Added
@@ -30,7 +43,6 @@
 - Limited exposure of environment variables to only the necessary ones
 - Updated dependencies for enhanced security
 
-
 ## Version 4.11.0
 
 ### Added
@@ -38,7 +50,6 @@
 - Action-Buttons on the Settings-Screen now stay in the view while scrolling in order to enhance our UX
 - Set default connector port to 443
 - Default-configuration feature
-
 
 ### Fixed
 

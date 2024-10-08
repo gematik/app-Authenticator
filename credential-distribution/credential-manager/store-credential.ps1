@@ -1,5 +1,5 @@
 #
-# Copyright 2023 gematik GmbH
+# Copyright 2024 gematik GmbH
 #
 # The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
 # Sourcecode must be in compliance with the EUPL.
@@ -72,5 +72,5 @@ if ([string]::IsNullOrEmpty($password)) {
 }
 
 # This is the relevant command which is invoked.
-$cmdkeyCommand = "cmdkey /generic:$targetName /user:$userName /pass:$password"
+$cmdkeyCommand = "cmdkey /generic:$targetName /user:$userName /pass:'$password'"
 Invoke-Expression -Command $cmdkeyCommand;

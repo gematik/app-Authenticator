@@ -31,7 +31,7 @@
     </p>
     <p class="mt-[15px]">
       Amtsgericht Charlottenburg HRB 96351 B<br />
-      {{ $t('managing_director') }}: Dr. Florian Hartge<br />
+      {{ $t('managing_director') }}: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge<br />
       {{ $t('vat_number') }}: DE241843684
     </p>
 
@@ -48,13 +48,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import License from '@/../LICENSE.txt';
 
 export default defineComponent({
   name: 'ImprintScreen',
   data() {
     return {
-      license: License,
+      license: window.api.readLicenceFile(),
     };
   },
 });

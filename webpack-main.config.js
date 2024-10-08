@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -11,10 +11,10 @@
  * language governing permissions and limitations under the License.ee the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-const TerserPlugin = require('terser-webpack-plugin');
+
 const webpack = require('webpack');
 const { resolve } = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -28,7 +28,11 @@ module.exports = {
   watchOptions: {
     ignored: '**/node_modules',
   },
-  node: { global: true },
+  node: {
+    global: true,
+    __dirname: false,
+    __filename: false,
+  },
   output: {
     path: resolve(__dirname, 'dist_electron'),
     filename: '[name].js',
@@ -46,14 +50,7 @@ module.exports = {
   },
   externals: {
     keytar: 'commonjs keytar',
-  },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        exclude: /preload\.js/,
-      }),
-    ],
+    'electron-edge-js': 'commonjs2 electron-edge-js',
   },
   module: {
     rules: [
@@ -75,6 +72,7 @@ module.exports = {
         options: {
           debug: process.env.MOCK_MODE === 'ENABLED',
           directives: {
+            // if you add "// #!no_prod" to the above of the line, it will be removed in the production build
             no_prod: false,
           },
           params: {
@@ -89,13 +87,8 @@ module.exports = {
     new webpack.DefinePlugin({
       window: false,
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: resolve(__dirname, 'node_modules/win-ca/lib/roots.exe'),
-          to: resolve(__dirname, 'dist_electron'),
-        },
-      ],
+    new CopyPlugin({
+      patterns: [{ from: 'winCertStoreLib/WinCertStoreLib.dll', to: '' }],
     }),
   ],
 };

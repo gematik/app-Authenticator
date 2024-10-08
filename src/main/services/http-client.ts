@@ -18,18 +18,28 @@ import { IncomingHttpHeaders } from 'http';
 import { stringify } from 'flatted';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 
-import { IS_TEST, PROCESS_ENVS } from '@/constants';
+import { IPC_READ_CERTIFICATES, IS_TEST, PROCESS_ENVS } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { APP_CONFIG_DATA } from '@/main/preload-api';
-import { getCasFromTruststore } from '@/main/services/ca-trust-store-service';
+import { ipcRenderer } from 'electron';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
 
-const truststoreCAs = getCasFromTruststore() || [];
+let trustStoreCertificates: string[] = [];
+
+ipcRenderer
+  .invoke(IPC_READ_CERTIFICATES)
+  .then((certificates) => {
+    trustStoreCertificates = certificates;
+    logger.info('Retrieved trust store certificates: ' + trustStoreCertificates.length);
+  })
+  .catch((error) => {
+    logger.error('Error retrieving trust store certificates:', error);
+  });
 
 let gotAdvanced = got;
 // #!if MOCK_MODE === 'ENABLED'
@@ -95,7 +105,7 @@ export const httpClient = async (
       },
       https: {
         ...config.https,
-        certificateAuthority: [...truststoreCAs, ...(config?.https?.certificateAuthority || [])],
+        certificateAuthority: [...trustStoreCertificates, ...(config?.https?.certificateAuthority || [])],
         ...putP12Config(url),
       },
     };
