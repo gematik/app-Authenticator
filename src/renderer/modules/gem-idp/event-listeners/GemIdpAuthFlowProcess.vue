@@ -24,10 +24,9 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { defineComponent } from 'vue';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
-import queryString from 'query-string';
+import queryString from 'qs';
 import isEqual from 'lodash/isEqual';
 
 import MultiCardSelectModal from '@/renderer/modules/home/components/SelectMultiCardModal.vue';
@@ -76,6 +75,7 @@ import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
 import { removeLastPartOfChallengePath } from '@/renderer/utils/parse-idp-url';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
 import { CRYPT_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
+import { sendAutoRedirectRequest } from '@/renderer/modules/gem-idp/utils';
 
 /**
  * We store the sweetalert's close function in this variable.
@@ -91,7 +91,6 @@ export default defineComponent({
   },
   data() {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       rejectPendingCardActionTimeout: (_error: UserfacingError) => {
         /* do nothing here */
       },
@@ -515,12 +514,13 @@ export default defineComponent({
           pendingCardActionModalClose();
         }
       } catch (err) {
-        // 4047 is not handled in the handleErrors function!
-
-        // in case of 1105, there are multiple smcbs in the connector, so the user has to choose in a modal dialog which one he want´s to use
+        // in case of 1105, there are multiple SMC-Bs or HBAs in the connector, so the user has to choose in a modal dialog which one he want´s to use
         if (err.code === ERROR_CODES.AUTHCL_1105) {
           this.multiCardList = err.data.foundCards;
           this.selectedCardType = (this.multiCardList[0] as TCard)?.CardType;
+          if (typeof pendingCardActionModalClose === 'function') {
+            pendingCardActionModalClose();
+          }
 
           try {
             const selectedCard: any = await this.showMultiCardSelectDialogModal();
@@ -556,10 +556,16 @@ export default defineComponent({
         /**
          * Connector Error code 4047 means card is not placed!
          * We give a second chance to place the card here
+         * 4047 won't be handled in the handleErrors function
          */
         if (err instanceof ConnectorError && err.code === CONNECTOR_ERROR_CODES.E4047) {
           alertWithCancelButton(ERROR_CODES.AUTHCL_2001, 0, cardType)
-            .then(this.onUserCancelledCardInsert)
+            .then(() => {
+              // to be sure that this throws only for 4047
+              if (!this.multiCardList.length) {
+                this.onUserCancelledCardInsert();
+              }
+            })
             .catch(() => {
               // do nothing here
             });
@@ -949,7 +955,7 @@ export default defineComponent({
         const customUserAgent = userAgent + this.$store.state.gemIdpServiceStore.clientId;
         window.api.sendSync(IPC_SET_USER_AGENT, customUserAgent);
 
-        await axios.get(url);
+        await sendAutoRedirectRequest(url);
 
         logger.info(successMessage + ' from browser context');
       } catch (e) {

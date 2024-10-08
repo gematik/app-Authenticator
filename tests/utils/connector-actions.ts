@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -12,9 +12,9 @@
  * permissions and limitations under the Licence.
  */
 
-import { HTTP_METHODS, httpClient } from '@/main/services/http-client';
-import { httpReqConfig } from '@/renderer/modules/connector/services';
-import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from '@tests/TestInfo';
+import { HTTP_METHODS, httpClient } from "@/main/services/http-client";
+import { httpReqConfig } from "@/renderer/modules/connector/services";
+import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from "@tests/TestInfo";
 
 interface ConnectorActionConfig {
   terminal: ETerminalTypes;
@@ -104,6 +104,14 @@ const execute = async () => {
       };
 
       await httpClient(HTTP_METHODS.POST, CONNECTOR_URLS[terminal], httpReqConfig(), data);
+      if (actionType === ESlotActions.INSERT) {
+        // sleep 100ms
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(true);
+          }, 100);
+        });
+      }
     }
   } catch (e) {
     throw new Error(

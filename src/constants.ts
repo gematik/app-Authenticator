@@ -50,11 +50,12 @@ export const IPC_GET_PATH = 'IPC_GET_PATH';
 
 export const IPC_READ_CREDENTIALS = 'IPC_READ_CREDENTIALS';
 export const IPC_SAVE_CREDENTIALS = 'IPC_SAVE_CREDENTIALS';
-
 /**
  * This sets the user agent in the main process
  */
 export const IPC_SET_USER_AGENT = 'IPC_SET_USER_AGENT';
+
+export const IPC_READ_CERTIFICATES = 'IPC_READ_CERTIFICATES';
 
 /**
  * @deprecated remove this logic completely and use cardType parameter instead
@@ -261,6 +262,7 @@ export const EXPOSED_ENV_VARIABLES = [
   'BUILD_NUMBER',
   'CONNECTOR_PATH',
   'COMPUTERNAME',
+  'CLIENTNAME',
   'AUTHCONFIGPATH',
   'NODE_ENV',
   'MOCK_MODE',

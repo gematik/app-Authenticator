@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -36,9 +36,21 @@ module.exports = {
   appId: appConfig.appId,
   productName: appConfig.title,
   copyright: 'Copyright © ' + year + ' ${author}',
+  extraResources: [
+    {
+      from: './LICENSE.txt',
+      to: 'LICENSE.txt',
+    },
+  ],
   win: {
     target: ['nsis'],
     publisherName: PUBLISHER_NAME,
+    extraResources: [
+      {
+        from: 'dist_electron/WinCertStoreLib.dll',
+        to: 'WinCertStoreLib.dll',
+      },
+    ],
   },
   files: ['!*', 'dist_electron/*'],
   forceCodeSigning: FORCE_SIGNING,
@@ -62,7 +74,17 @@ module.exports = {
     },
   },
   mac: {
-    target: ['dmg', 'zip'], // zip will be used for auto-update
+    target: [
+      {
+        target: 'dmg',
+        arch: 'x64',
+      },
+      {
+        target: 'zip',
+        arch: 'x64',
+      },
+    ],
+    forceCodeSigning: true,
     category: 'public.app-category.utilities',
     artifactName: artifactName('${productName}', '${version}', '${ext}'),
     icon: './src/assets/logo.png',

@@ -12,8 +12,6 @@
  * permissions and limitations under the Licence.
  */
 
-/* eslint-disable */
-
 const saxParser = require('sax');
 import { TTag } from '../type-definitions';
 
@@ -31,7 +29,8 @@ export default function parse(xmlStr: string) {
 
   parser.onclosetag = function (tagName: string) {
     if (tagName.indexOf('EndpointTLS') > -1 && entry) {
-      if (versionMap.size === 0 || serviceVersion > versionMap.keys().next().value) {
+      const currentVersion = versionMap.keys().next().value;
+      if (versionMap.size === 0 || (currentVersion && serviceVersion > currentVersion)) {
         versionMap.clear();
         versionMap.set(serviceVersion, entry.attributes.Location);
         serviceMap.set(serviceName, entry.attributes.Location);

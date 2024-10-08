@@ -1,0 +1,280 @@
+@Library('gematik-jenkins-shared-library') _
+def BRANCH = 'master'
+def JIRA_PROJECT_ID = 'AUTHCL'
+def REPORT_DIR = 'reports'
+def CREDENTIAL_ID_GEMATIK_GIT = 'svc_gitlab_prod_credentials'
+def TEAMS_URL = 'https://gematikde.webhook.office.com/webhookb2/afecc7e7-e6cb-478d-8d49-c7d8416e014a@30092c62-4dbf-43bf-a33f-10d21b5b660a/IncomingWebhook/42afb4739668419398c0ced1e0c74246/da0c216c-86a9-4a36-9cc8-7565928bc892'
+
+pipeline {
+    options {
+        disableConcurrentBuilds()
+    }
+
+    agent { label 'IOSDEV2' }
+
+    triggers {
+        cron(env.BRANCH_NAME == 'master' ? '00 05 * * *' : '')
+    }
+
+    environment {
+        GH_TOKEN = credentials('GITHUB.API.Token')
+        IDP_DEV_API_KEY = credentials('IDP_DEV_GEMATIK_SOLUTIONS_API_KEY')
+        CONNECTOR_CREDS = credentials('CONNECTOR_23')
+        SNYK_TOKEN = credentials('snyk_authenticator_account')
+        SNYK_API ='https://app.eu.snyk.io/'
+        APP_STORE_CONNECT = credentials('APPSTORE-CONNECT_NOTARIZATION_KEY')
+        APP_STORE_CONNECT_API_KEY_KEY_ID = "${APP_STORE_CONNECT_USR}"
+        APP_STORE_CONNECT_API_KEY_KEY = "${APP_STORE_CONNECT_PSW}"
+        KEYCHAIN_PASSWORD = credentials('KEYCHAIN_PASSWORD')
+        MATCH_PASSWORD = credentials('MATCH_PASSWORD')
+    }
+
+    parameters {
+        booleanParam(name: 'MOCK_BUILD', defaultValue: false, description: 'Build the Mock-Version from the Authenticator but do not archive it')
+        booleanParam(name: 'ARCHIVE_ARTIFACTS', defaultValue: false, description: 'Should the artifacts be archived? releases/*, release & master will be archived in anyway')
+        booleanParam(name: 'SIGN_ARTIFACTS', defaultValue: false, description: 'Should the artifacts be signed? Only Tags can be signed')
+        booleanParam(name: 'E2E', defaultValue: false, description: 'E2E Testsuite')
+    }
+
+    stages {
+        stage('Install Brewfile') {
+            steps {
+                sh 'brew bundle install --file=Brewfile'
+            }
+        }
+        stage('Build Node.js WebApp') {
+            steps {
+                gitSetIdentity()
+                sh 'node --version'
+                sh 'npm -version'
+                sh 'cat ~/.npmrc || true'
+
+                  // Actual CI Build, Tests, Demo App
+                sh label: 'starting ios test run', script: '''#!/bin/bash -l
+                    set -ev
+
+                    ELECTRON_GET_USE_PROXY=true GLOBAL_AGENT_HTTPS_PROXY=$https_proxy npm ci
+                '''
+          }
+        }
+        stage ('Set BUILD_VERSION') {
+            steps {
+                script {
+                    def packageJson = readFile(file: 'package.json')
+
+                    def parsedJson = new groovy.json.JsonSlurper().parseText(packageJson)
+
+                    env.BUILD_VERSION = parsedJson.version
+
+                    echo "Build version: ${env.BUILD_VERSION}"
+                }
+            }
+        }
+        stage('All Tests & Coverage') {
+            steps {
+                script {
+                    sh "echo HOST_NAME='ksp.ltuzd.telematik-test' >> .env"
+                    sh "echo PORT_NUMBER=443 >> .env"
+                    sh "echo USER_NAME=CONNECTOR_CREDS_USR >> .env"
+                    sh "echo PASSWORD_CONNECTOR_ENTRY=CONNECTOR_CREDS_PSW >> .env"
+                    sh "echo MANDANT_ID='mandant0001' >> .env"
+                    sh "echo CLIENT_ID='cs0001' >> .env"
+                    sh "echo WORKPLACE_ID='wp0001' >> .env"
+                    sh "echo USER_ID='user1' >> .env"
+                    sh "echo PROTOCOL='https' >> .env"
+                    sh "echo LOCAL_KT='kon23/cats' >> .env"
+                    sh "echo REMOTE_KT='kon23/cats2' >> .env"
+                    sh "echo CONNECTOR_PATH='/kon23' >> .env"
+                    try {
+                        sh 'npm run test -- --silent'
+                    } catch (Exception e) {
+                        echo 'Running additional tests for failures...'
+                        sh 'npm run test:fail -- --silent'
+                    } finally {
+                        junit checksName: 'Jest Tests', testResults: 'jenkins-jest-test-report.xml'
+                    }
+                }
+            }
+        }
+        stage('Mock Mode: Build Electron Desktop App') {
+            when {
+                expression { params.MOCK_BUILD }
+            }
+            steps {
+                script {
+                    // set the environment variable NPM_SCRIPT to electron:build, this will be used in the Fastfile
+                    env.NPM_SCRIPT = 'mock:build'
+                }
+
+                sh label: 'Build and Notarize Authenticator for macos', script: '''#!/bin/bash -l
+                    if [ -f $HOME/.bash_profile ]; then source $HOME/.bash_profile; fi
+
+                    set -ev
+
+                    security -v unlock-keychain -p "${KEYCHAIN_PASSWORD}" ~/Library/Keychains/login.keychain
+                    bundle install
+                    bundle exec fastlane build_authenticator
+                '''
+
+                // move the artifacts to the releaseCI folder
+                sh 'mkdir -p releaseCI'
+                sh "mv 'release/gematik Authenticator ${env.BUILD_VERSION}.dmg' 'releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg'"
+            }
+        }
+        stage('Remove unnecessary certificates') {
+            when {
+                anyOf {
+                    expression { params.SIGN_ARTIFACTS }
+                }
+            }
+            steps {
+                script {
+                    sh 'rm src/assets/certs-idp/RCA2_KOMPCA24.pem'
+                    sh 'rm src/assets/certs-idp/web.gematik.solutions.cer'
+                    sh 'rm src/assets/certs-idp/web.gematik.solutions.intermediate.cer'
+                    sh 'rm src/assets/certs-idp/web.gematik.solutions.root.cer'
+                    sh 'rm src/assets/certs-idp/R3.cer'
+                    sh 'rm src/assets/certs-idp/gematik-idp-test-server.cer'
+
+                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/fullchain.pem'
+                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/konnektor.pem'
+                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/secunet-fullchain.pem'
+                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/TRUSTED-ZD-ROOT-CA.cer'
+                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/ksp-ltuzd-telematik-test-intern.pem'
+                }
+            }
+        }
+        stage('Build Electron Desktop App') {
+            steps {
+                script {
+                    // set the environment variable NPM_SCRIPT to electron:build, this will be used in the Fastfile
+                    env.NPM_SCRIPT = 'electron:build'
+                }
+
+                sh label: 'Build and Notarize Authenticator for macos', script: '''#!/bin/bash -l
+                    if [ -f $HOME/.bash_profile ]; then source $HOME/.bash_profile; fi
+
+                    set -ev
+
+                    security -v unlock-keychain -p "${KEYCHAIN_PASSWORD}" ~/Library/Keychains/login.keychain
+                    bundle install
+                    bundle exec fastlane build_authenticator
+                '''
+
+                // move the artifacts to the releaseCI folder
+                sh 'mkdir -p releaseCI'
+                sh "mv 'release/gematik Authenticator ${env.BUILD_VERSION}.dmg' 'releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg'"
+                sh "mv 'release/gematik Authenticator ${env.BUILD_VERSION}.dmg.blockmap' 'releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap'"
+                sh "mv 'release/gematik Authenticator ${env.BUILD_VERSION}.zip' 'releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip'"
+                sh "mv 'release/latest-mac.yml' 'releaseCI/latest-mac.yml'"
+            }
+        }
+        stage('Compute SHA256 Hash') {
+            steps {
+                script {
+                    def filePath = "releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg"
+
+                    // Compute SHA256 hash with a given Jenkins function
+                    def sha256Hash = sha256 file: filePath
+
+                    writeFile file: "sha256Hash.txt", text: "" + sha256Hash
+                    echo "SHA256 Hash for Prod-Version: " + sha256Hash
+
+                    sh 'cp sha256Hash.txt releaseCI/'
+
+                    if ( params.MOCK_BUILD == true ) {
+                        def filePathMock = "releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg"
+                        def sha256HashMock = sha256 file: filePathMock
+
+                        writeFile file: "sha256HashMock.txt", text: "" + sha256HashMock
+                        echo "SHA256 Hash for Mock-Version: " + sha256HashMock
+
+                        sh 'cp sha256HashMock.txt releaseCI/'
+                    }
+                }
+            }
+        }
+        stage('Nexus Upload: Snapshot') {
+            when {
+                anyOf {
+                    branch 'release'
+                    branch 'master'
+                    expression { params.ARCHIVE_ARTIFACTS == true }
+                    buildingTag()
+                }
+
+            }
+            steps {
+                script {
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "gematik_snapshots_raw")
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "gematik_snapshots_raw")
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.zip", "gematik_snapshots_raw")
+                    nexusFileUpload("./releaseCI/latest-mac.yml", "de/gematik/authenticator/snapshot/macOS/latest-mac.yml", "gematik_snapshots_raw")
+                    nexusFileUpload("releaseCI/sha256Hash.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256Hash.txt", "gematik_releases_raw")
+
+                    if ( params.MOCK_BUILD == true ) {
+                        nexusFileUpload("./releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "gematik_snapshots_raw")
+                        nexusFileUpload("releaseCI/sha256HashMock.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256HashMock.txt", "gematik_releases_raw")
+                    }
+                }
+            }
+        }
+        stage('Nexus Upload: Releases') {
+            when {
+              allOf {
+                expression { params.SIGN_ARTIFACTS }
+                branch 'release'
+              }
+            }
+            steps {
+                script {
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "gematik_releases_raw")
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "gematik_releases_raw")
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.zip", "gematik_releases_raw")
+                    nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.zip", "gematik_releases_raw")
+                    nexusFileUpload("./releaseCI/latest-mac.yml", "de/gematik/authenticator/snapshot/macOS/latest-mac.yml", "gematik_releases_raw")
+                    nexusFileUpload("releaseCI/sha256Hash.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256Hash.txt", "gematik_releases_raw")
+
+                    if ( params.MOCK_BUILD == true ) {
+                        nexusFileUpload("./releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "gematik_releases_raw")
+                        nexusFileUpload("releaseCI/sha256HashMock.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256HashMock.txt", "gematik_releases_raw")
+                    }
+                }
+            }
+        }
+        stage('Archive Artifacts') {
+            when {
+                anyOf {
+                    expression { BRANCH_NAME ==~ /releases\/(.*)+/ }
+                    branch 'release'
+                    branch 'master'
+                    expression { params.ARCHIVE_ARTIFACTS == true }
+                    buildingTag()
+                }
+            }
+            steps {
+                archiveArtifacts artifacts: "releaseCI/*.dmg,releaseCI/*.dmg.blockmap,releaseCI/*.zip,releaseCI/latest-mac.yml,releaseCI/sha256Hash.txt,releaseCI/sha256HashMock.txt,${REPORT_DIR}/*.*", onlyIfSuccessful: 'true'
+            }
+        }
+        stage('Archive Build Log') {
+            when {
+                allOf {
+                     branch 'release'
+                     expression { params.SIGN_ARTIFACTS }
+                }
+            }
+            steps {
+                 build job: 'Authenticator-Authenticator_Archive_Buildlog-Release',
+                     parameters: [
+                          string(name: 'BUILDNUMBER', value: "${BUILD_NUMBER}"),
+                          string(name: 'COMMIT_MESSAGE', value: "Save Log for Build  ${BUILD_NUMBER}")
+                     ]
+            }
+        }
+    }
+    post {
+        always {
+            sendTeamsNotification(TEAMS_URL)
+        }
+    }
+}

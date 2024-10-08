@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 gematik GmbH
+ * Copyright 2024 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.
@@ -20,13 +20,6 @@ import { PRODUCT_NAME } from '@/constants';
 import fs from 'fs';
 import { clearSampleData } from '@tests/utils/config-sample-data';
 
-/**
- * TODO: This solves TextEncoder problem for macOs, but it should be fixed in the future
- */
-jest.mock('mac-ca', () => ({
-  get: jest.fn(() => ['mocked-mac-ca-cert']),
-}));
-
 // as the connector works slowly, we need at least 10 seconds to be sure
 jest.setTimeout(10000);
 
@@ -45,19 +38,17 @@ if (typeof global.TextEncoder === 'undefined') {
   global.TextEncoder = TextEncoder;
 }
 
-/**
- * Add missing TextDecoder functionality
- */
-if (typeof global.TextDecoder === 'undefined') {
-  const { TextDecoder } = require('util');
-  global.TextDecoder = TextDecoder;
-}
-
 jest.mock('electron', () => ({
   ipcRenderer: {
     send: () => {},
     sendSync: () => {},
     on: () => {},
+    invoke: jest.fn((channel) => {
+      if (channel === 'IPC_READ_CERTIFICATES') {
+        return Promise.resolve(['mocked certificate']);
+      }
+      return Promise.resolve(null); // Default mock response
+    }),
   },
 }));
 

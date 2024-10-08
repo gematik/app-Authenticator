@@ -1,281 +1,281 @@
-Lizenzbedingungen fÃ¼r die Software "gematik Authenticator" der gematik
+Lizenzbedingungen für die Software "gematik Authenticator" der gematik
 
-FÃ¼r die Software (Quellcode und Installer/Binary) des "gematik Authenticators" gelten die
+Für die Software (Quellcode und Installer/Binary) des "gematik Authenticators" gelten die
 nachfolgenden Lizenzbedingungen des Rechteinhabers gematik GmbH:
 
-I. OPEN-SOURCE-LIZENZ FÃœR DIE EUROPÃ„ISCHE UNION v. 1.2
+I. OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
 
-EUPL Â© EuropÃ¤ische Union 2007, 2016
+EUPL © Europäische Union 2007, 2016
 
-Diese Open-Source-Lizenz fÃ¼r die EuropÃ¤ische Union ("EUPL") gilt fÃ¼r Werke (im Sinne
-der nachfolgenden Begriffsbestimmung), die unter EUPL-Bedingungen zur VerfÃ¼gung
+Diese Open-Source-Lizenz für die Europäische Union ("EUPL") gilt für Werke (im Sinne
+der nachfolgenden Begriffsbestimmung), die unter EUPL-Bedingungen zur Verfügung
 gestellt werden. Das Werk darf nur in der durch diese Lizenz gestatteten Form genutzt
 werden (insoweit eine solche Nutzung dem Urheber vorbehalten ist).
 
-Das Werk wird unter den Bedingungen dieser Lizenz zur VerfÃ¼gung gestellt, wenn der
+Das Werk wird unter den Bedingungen dieser Lizenz zur Verfügung gestellt, wenn der
 Lizenzgeber (im Sinne der nachfolgenden Begriffsbestimmung) den folgenden Hinweis
 unmittelbar hinter dem Urheberrechtshinweis dieses Werks anbringt:
 
 Lizenziert unter der EUPL
 
 oder in einer anderen Form zum Ausdruck bringt, dass er es unter der EUPL lizenzieren
-mÃ¶chte.
+möchte.
 
 1. Begriffsbestimmungen
 
-FÃ¼r diese Lizenz gelten folgende Begriffsbestimmungen:
+Für diese Lizenz gelten folgende Begriffsbestimmungen:
 
 - "Lizenz": diese Lizenz.
 
 - "Originalwerk": das Werk oder die Software, die vom Lizenzgeber unter dieser Lizenz
-verbreitet oder zugÃ¤nglich gemacht wird, und zwar als Quellcode und gegebenenfalls
-auch als ausfÃ¼hrbarer Code.
+verbreitet oder zugänglich gemacht wird, und zwar als Quellcode und gegebenenfalls
+auch als ausführbarer Code.
 
 - "Bearbeitungen": die Werke oder Software, die der Lizenznehmer auf der Grundlage
 des Originalwerks oder seiner Bearbeitungen schaffen kann. In dieser Lizenz wird nicht
-festgelegt, wie umfangreich die Ã„nderung oder wie stark die AbhÃ¤ngigkeit vom
-Originalwerk fÃ¼r eine Einstufung als Bearbeitung sein muss; dies bestimmt sich nach
-dem Urheberrecht, das in dem unter Artikel 15 aufgefÃ¼hrten Land anwendbar ist.
+festgelegt, wie umfangreich die Änderung oder wie stark die Abhängigkeit vom
+Originalwerk für eine Einstufung als Bearbeitung sein muss; dies bestimmt sich nach
+dem Urheberrecht, das in dem unter Artikel 15 aufgeführten Land anwendbar ist.
 
 - "Werk": das Originalwerk oder seine Bearbeitungen.
 
 - "Quellcode": diejenige Form des Werkes, die zur Auffassung durch den Menschen
 bestimmt ist und die am besten geeignet ist, um vom Menschen verstanden und
-verÃ¤ndert zu werden.
+verändert zu werden.
 
-- "AusfÃ¼hrbarer Code": die - Ã¼blicherweise - kompilierte Form des Werks, die von
-einem Computer als Programm ausgefÃ¼hrt werden soll.
+- "Ausführbarer Code": die - üblicherweise - kompilierte Form des Werks, die von
+einem Computer als Programm ausgeführt werden soll.
 
-- "Lizenzgeber": die natÃ¼rliche oder juristische Person, die das Werk unter der Lizenz
-verbreitet oder zugÃ¤nglich macht.
+- "Lizenzgeber": die natürliche oder juristische Person, die das Werk unter der Lizenz
+verbreitet oder zugänglich macht.
 
-- "Bearbeiter": jede natÃ¼rliche oder juristische Person, die das Werk unter der Lizenz
-verÃ¤ndert oder auf andere Weise zur Schaffung einer Bearbeitung beitrÃ¤gt.
-- "Lizenznehmer" ("Sie"): jede natÃ¼rliche oder juristische Person, die das Werk unter
+- "Bearbeiter": jede natürliche oder juristische Person, die das Werk unter der Lizenz
+verändert oder auf andere Weise zur Schaffung einer Bearbeitung beiträgt.
+- "Lizenznehmer" ("Sie"): jede natürliche oder juristische Person, die das Werk unter
 den Lizenzbedingungen nutzt.
 
-- "Verbreitung" oder "ZugÃ¤nglichmachung": alle Formen von Verkauf, Ãœberlassung,
-Verleih, Vermietung, Verbreitung, Weitergabe, Ãœbermittlung oder anderweitiger
-Online- oder Offline-Bereitstellung von VervielfÃ¤ltigungen des Werks oder
-ZugÃ¤nglichmachung seiner wesentlichen Funktionen fÃ¼r dritte natÃ¼rliche oder
+- "Verbreitung" oder "Zugänglichmachung": alle Formen von Verkauf, Überlassung,
+Verleih, Vermietung, Verbreitung, Weitergabe, Übermittlung oder anderweitiger
+Online- oder Offline-Bereitstellung von Vervielfältigungen des Werks oder
+Zugänglichmachung seiner wesentlichen Funktionen für dritte natürliche oder
 juristische Personen.
 
 2. Umfang der Lizenzrechte
 
-Der Lizenzgeber erteilt Ihnen hiermit fÃ¼r die GÃ¼ltigkeitsdauer der am Originalwerk
-bestehenden Urheberrechte eine weltweite, unentgeltliche, nicht ausschlieÃŸliche,
+Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk
+bestehenden Urheberrechte eine weltweite, unentgeltliche, nicht ausschließliche,
 unterlizenzierbare Lizenz, die Sie berechtigt:
 
-- das Werk uneingeschrÃ¤nkt zu nutzen,
+- das Werk uneingeschränkt zu nutzen,
 
-- das Werk zu vervielfÃ¤ltigen,
+- das Werk zu vervielfältigen,
 
-- das Werk zu verÃ¤ndern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
+- das Werk zu verändern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
 
-- das Werk Ã¶ffentlich zugÃ¤nglich zu machen, was das Recht einschlieÃŸt, das Werk oder
-VervielfÃ¤ltigungsstÃ¼cke davon Ã¶ffentlich bereitzustellen oder wahrnehmbar zu machen
-oder das Werk, soweit mÃ¶glich, Ã¶ffentlich aufzufÃ¼hren,
+- das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder
+Vervielfältigungsstücke davon öffentlich bereitzustellen oder wahrnehmbar zu machen
+oder das Werk, soweit möglich, öffentlich aufzuführen,
 
-- das Werk oder VervielfÃ¤ltigungen davon zu verbreiten,
+- das Werk oder Vervielfältigungen davon zu verbreiten,
 
-- das Werk oder VervielfÃ¤ltigungen davon zu vermieten oder zu verleihen,
+- das Werk oder Vervielfältigungen davon zu vermieten oder zu verleihen,
 
-- das Werk oder VervielfÃ¤ltigungen davon weiter zu lizenzieren.
+- das Werk oder Vervielfältigungen davon weiter zu lizenzieren.
 
-FÃ¼r die Wahrnehmung dieser Rechte kÃ¶nnen beliebige, derzeit bekannte oder kÃ¼nftige
-Medien, TrÃ¤ger und Formate verwendet werden, soweit das geltende Recht dem nicht
+Für die Wahrnehmung dieser Rechte können beliebige, derzeit bekannte oder künftige
+Medien, Träger und Formate verwendet werden, soweit das geltende Recht dem nicht
 entgegensteht.
 
-FÃ¼r die LÃ¤nder, in denen UrheberpersÃ¶nlichkeitsrechte an dem Werk bestehen, verzichtet
-der Lizenzgeber im gesetzlich zulÃ¤ssigen Umfang auf seine UrheberpersÃ¶nlichkeitsrechte,
-um die Lizenzierung der oben aufgefÃ¼hrten Verwertungsrechte wirksam durchfÃ¼hren zu
-kÃ¶nnen.
+Für die Länder, in denen Urheberpersönlichkeitsrechte an dem Werk bestehen, verzichtet
+der Lizenzgeber im gesetzlich zulässigen Umfang auf seine Urheberpersönlichkeitsrechte,
+um die Lizenzierung der oben aufgeführten Verwertungsrechte wirksam durchführen zu
+können.
 
-Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschlieÃŸliches, unentgeltliches
-Nutzungsrecht an seinen Patenten, sofern dies zur AusÃ¼bung der durch die Lizenz
+Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschließliches, unentgeltliches
+Nutzungsrecht an seinen Patenten, sofern dies zur Ausübung der durch die Lizenz
 erteilten Nutzungsrechte am Werk notwendig ist.
 
-3. ZugÃ¤nglichmachung des Quellcodes
+3. Zugänglichmachung des Quellcodes
 
-Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausfÃ¼hrbaren Code zur
-VerfÃ¼gung stellen. Stellt er es als ausfÃ¼hrbaren Code zur VerfÃ¼gung, so stellt er darÃ¼ber
-hinaus eine maschinenlesbare Kopie des Quellcodes fÃ¼r jedes von ihm verbreitete
-VervielfÃ¤ltigungsstÃ¼ck des Werks zur VerfÃ¼gung, oder er verweist in einem Vermerk im
-Anschluss an den dem Werk beigefÃ¼gten Urheberrechtshinweis auf einen Speicherort, an
+Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausführbaren Code zur
+Verfügung stellen. Stellt er es als ausführbaren Code zur Verfügung, so stellt er darüber
+hinaus eine maschinenlesbare Kopie des Quellcodes für jedes von ihm verbreitete
+Vervielfältigungsstück des Werks zur Verfügung, oder er verweist in einem Vermerk im
+Anschluss an den dem Werk beigefügten Urheberrechtshinweis auf einen Speicherort, an
 dem problemlos und unentgeltlich auf den Quellcode zugegriffen werden kann, solange
-der Lizenzgeber das Werk verbreitet oder zugÃ¤nglich macht.
+der Lizenzgeber das Werk verbreitet oder zugänglich macht.
 
-4. EinschrÃ¤nkungen des Urheberrechts
+4. Einschränkungen des Urheberrechts
 
-Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschlieÃŸlichen Rechte
-des Urhebers am Werk, die dem Lizenznehmer zugutekommen, einzuschrÃ¤nken. Auch die
-ErschÃ¶pfung dieser Rechte bleibt von dieser Lizenz unberÃ¼hrt.
+Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschließlichen Rechte
+des Urhebers am Werk, die dem Lizenznehmer zugutekommen, einzuschränken. Auch die
+Erschöpfung dieser Rechte bleibt von dieser Lizenz unberührt.
 
 5. Pflichten des Lizenznehmers
 
-Die EinrÃ¤umung der oben genannten Rechte ist an mehrere BeschrÃ¤nkungen und
-Pflichten fÃ¼r den Lizenznehmer gebunden:
+Die Einräumung der oben genannten Rechte ist an mehrere Beschränkungen und
+Pflichten für den Lizenznehmer gebunden:
 
 Urheberrechtshinweis, Lizenztext, Nennung des Bearbeiters: Der Lizenznehmer
 muss alle Urheberrechts-, Patent- oder Markenrechtshinweise und alle Hinweise auf die
-Lizenz und den Haftungsausschluss unverÃ¤ndert lassen. Jedem von ihm verbreiteten oder
-zugÃ¤nglich gemachten VervielfÃ¤ltigungsstÃ¼ck des Werks muss der Lizenznehmer diese
-Hinweise sowie diese Lizenz beifÃ¼gen. Der Lizenznehmer muss auf jedem abgeleiteten
-Werk deutlich darauf hinweisen, dass das Werk geÃ¤ndert wurde, und das Datum der
+Lizenz und den Haftungsausschluss unverändert lassen. Jedem von ihm verbreiteten oder
+zugänglich gemachten Vervielfältigungsstück des Werks muss der Lizenznehmer diese
+Hinweise sowie diese Lizenz beifügen. Der Lizenznehmer muss auf jedem abgeleiteten
+Werk deutlich darauf hinweisen, dass das Werk geändert wurde, und das Datum der
 Bearbeitung angeben.
 
-"Copyleft"-Klausel: Der Lizenznehmer darf VervielfÃ¤ltigungen des Originalwerks oder
+"Copyleft"-Klausel: Der Lizenznehmer darf Vervielfältigungen des Originalwerks oder
 Bearbeitungen nur unter den Bedingungen dieser EUPL oder einer neueren Version dieser
-Lizenz verbreiten oder zugÃ¤nglich machen, auÃŸer wenn das Originalwerk ausdrÃ¼cklich nur
+Lizenz verbreiten oder zugänglich machen, außer wenn das Originalwerk ausdrücklich nur
 unter dieser Lizenzversion - z. B. mit der Angabe "Nur EUPL V. 1.2" - verbreitet werden
-darf. Der Lizenznehmer (der zum Lizenzgeber wird) darf fÃ¼r das Werk oder die
-Bearbeitung keine zusÃ¤tzlichen Bedingungen anbieten oder vorschreiben, die die
-Bedingungen dieser Lizenz verÃ¤ndern oder einschrÃ¤nken.
+darf. Der Lizenznehmer (der zum Lizenzgeber wird) darf für das Werk oder die
+Bearbeitung keine zusätzlichen Bedingungen anbieten oder vorschreiben, die die
+Bedingungen dieser Lizenz verändern oder einschränken.
 
-KompatibilitÃ¤ts-Klausel: Wenn der Lizenznehmer Bearbeitungen, die auf dem Werk
+Kompatibilitäts-Klausel: Wenn der Lizenznehmer Bearbeitungen, die auf dem Werk
 und einem anderen Werk, das unter einer kompatiblen Lizenz lizenziert wurde, basieren,
-oder die Kopien dieser Bearbeitungen verbreitet oder zugÃ¤nglich macht, kann dies unter
+oder die Kopien dieser Bearbeitungen verbreitet oder zugänglich macht, kann dies unter
 den Bedingungen dieser kompatiblen Lizenz erfolgen. Unter "kompatibler Lizenz" ist eine
-im Anhang dieser Lizenz angefÃ¼hrte Lizenz zu verstehen. Sollten die Verpflichtungen des
+im Anhang dieser Lizenz angeführte Lizenz zu verstehen. Sollten die Verpflichtungen des
 Lizenznehmers aus der kompatiblen Lizenz mit denjenigen aus der vorliegenden Lizenz
 (EUPL) in Konflikt stehen, werden die Verpflichtungen aus der kompatiblen Lizenz
 Vorrang haben.
 
-Bereitstellung des Quellcodes: Wenn der Lizenznehmer VervielfÃ¤ltigungsstÃ¼cke des
-Werks verbreitet oder zugÃ¤nglich macht, muss er eine maschinenlesbare Fassung des
-Quellcodes mitliefern oder einen Speicherort angeben, Ã¼ber den problemlos und
+Bereitstellung des Quellcodes: Wenn der Lizenznehmer Vervielfältigungsstücke des
+Werks verbreitet oder zugänglich macht, muss er eine maschinenlesbare Fassung des
+Quellcodes mitliefern oder einen Speicherort angeben, über den problemlos und
 unentgeltlich so lange auf diesen Quellcode zugegriffen werden kann, wie der
-Lizenznehmer das Werk verbreitet oder zugÃ¤nglich macht.
+Lizenznehmer das Werk verbreitet oder zugänglich macht.
 
 Rechtsschutz: Diese Lizenz erlaubt nicht die Benutzung von Kennzeichen, Marken oder
-geschÃ¼tzten Namensrechten des Lizenzgebers, soweit dies nicht fÃ¼r die angemessene
-und Ã¼bliche Beschreibung der Herkunft des Werks und der inhaltlichen Wiedergabe des
+geschützten Namensrechten des Lizenzgebers, soweit dies nicht für die angemessene
+und übliche Beschreibung der Herkunft des Werks und der inhaltlichen Wiedergabe des
 Urheberrechtshinweises erforderlich ist.
 
 6. Urheber und Bearbeiter
 
-Der ursprÃ¼ngliche Lizenzgeber gewÃ¤hrleistet, dass er das Urheberrecht am Originalwerk
+Der ursprüngliche Lizenzgeber gewährleistet, dass er das Urheberrecht am Originalwerk
 innehat oder dieses an ihn lizenziert wurde und dass er befugt ist, diese Lizenz zu
 erteilen.
 
-Jeder Bearbeiter gewÃ¤hrleistet, dass er das Urheberrecht an den von ihm
-vorgenommenen Ã„nderungen des Werks besitzt und befugt ist, diese Lizenz zu erteilen.
+Jeder Bearbeiter gewährleistet, dass er das Urheberrecht an den von ihm
+vorgenommenen Änderungen des Werks besitzt und befugt ist, diese Lizenz zu erteilen.
 
-Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprÃ¼ngliche Lizenzgeber
-und alle folgenden Bearbeiter eine Befugnis zur Nutzung ihrer BeitrÃ¤ge zum Werk unter
+Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprüngliche Lizenzgeber
+und alle folgenden Bearbeiter eine Befugnis zur Nutzung ihrer Beiträge zum Werk unter
 den Bedingungen dieser Lizenz.
 
-7. GewÃ¤hrleistungsausschluss
+7. Gewährleistungsausschluss
 
-Die Arbeit an diesem Werk wird laufend fortgefÃ¼hrt; es wird durch unzÃ¤hlige Bearbeiter
-stÃ¤ndig verbessert. Das Werk ist nicht vollendet und kann daher Fehler ("bugs")
-enthalten, die dieser Art der Entwicklung inhÃ¤rent sind.
+Die Arbeit an diesem Werk wird laufend fortgeführt; es wird durch unzählige Bearbeiter
+ständig verbessert. Das Werk ist nicht vollendet und kann daher Fehler ("bugs")
+enthalten, die dieser Art der Entwicklung inhärent sind.
 
-Aus den genannten GrÃ¼nden wird das Werk unter dieser Lizenz "so, wie es ist" ohne
-jegliche GewÃ¤hrleistung zur VerfÃ¼gung gestellt. Dies gilt unter anderem - aber nicht
-ausschlieÃŸlich - fÃ¼r Marktreife, Verwendbarkeit fÃ¼r einen bestimmten Zweck,
-MÃ¤ngelfreiheit, Richtigkeit sowie Nichtverletzung von anderen ImmaterialgÃ¼terrechten als
+Aus den genannten Gründen wird das Werk unter dieser Lizenz "so, wie es ist" ohne
+jegliche Gewährleistung zur Verfügung gestellt. Dies gilt unter anderem - aber nicht
+ausschließlich - für Marktreife, Verwendbarkeit für einen bestimmten Zweck,
+Mängelfreiheit, Richtigkeit sowie Nichtverletzung von anderen Immaterialgüterrechten als
 dem Urheberrecht (vgl. dazu Artikel 6 dieser Lizenz).
 
-Dieser GewÃ¤hrleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Bedingung
-fÃ¼r die EinrÃ¤umung von Rechten an dem Werk.
+Dieser Gewährleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Bedingung
+für die Einräumung von Rechten an dem Werk.
 
-8. Haftungsausschluss/HaftungsbeschrÃ¤nkung
+8. Haftungsausschluss/Haftungsbeschränkung
 
-AuÃŸer in FÃ¤llen von Vorsatz oder der Verursachung von PersonenschÃ¤den haftet der
-Lizenzgeber nicht fÃ¼r direkte oder indirekte, materielle oder immaterielle SchÃ¤den
+Außer in Fällen von Vorsatz oder der Verursachung von Personenschäden haftet der
+Lizenzgeber nicht für direkte oder indirekte, materielle oder immaterielle Schäden
 irgendwelcher Art, die aus der Lizenz oder der Benutzung des Werks folgen; dies gilt
-unter anderem, aber nicht ausschlieÃŸlich, fÃ¼r Firmenwertverluste, Produktionsausfall,
-Computerausfall oder Computerfehler, Datenverlust oder wirtschaftliche SchÃ¤den, und
-zwar auch dann, wenn der Lizenzgeber auf die MÃ¶glichkeit solcher SchÃ¤den hingewiesen
-wurde. UnabhÃ¤ngig davon haftet der Lizenzgeber im Rahmen der gesetzlichen
+unter anderem, aber nicht ausschließlich, für Firmenwertverluste, Produktionsausfall,
+Computerausfall oder Computerfehler, Datenverlust oder wirtschaftliche Schäden, und
+zwar auch dann, wenn der Lizenzgeber auf die Möglichkeit solcher Schäden hingewiesen
+wurde. Unabhängig davon haftet der Lizenzgeber im Rahmen der gesetzlichen
 Produkthaftung, soweit die entsprechenden Regelungen auf das Werk anwendbar sind.
 
 9. Zusatzvereinbarungen
 
-Wenn Sie das Werk verbreiten, kÃ¶nnen Sie Zusatzvereinbarungen schlieÃŸen, in denen
+Wenn Sie das Werk verbreiten, können Sie Zusatzvereinbarungen schließen, in denen
 Verpflichtungen oder Dienstleistungen festgelegt werden, die mit dieser Lizenz vereinbar
-sind. Sie dÃ¼rfen Verpflichtungen indessen nur in Ihrem eigenen Namen und auf Ihre
-eigene Verantwortung eingehen, nicht jedoch im Namen des ursprÃ¼nglichen Lizenzgebers
-oder eines anderen Bearbeiters, und nur, wenn Sie sich gegenÃ¼ber allen Bearbeitern
-verpflichten, sie zu entschÃ¤digen, zu verteidigen und von der Haftung freizustellen, falls
-aufgrund der von Ihnen eingegangenen GewÃ¤hrleistungsverpflichtung oder
-HaftungsÃ¼bernahme Forderungen gegen sie geltend gemacht werden oder eine
+sind. Sie dürfen Verpflichtungen indessen nur in Ihrem eigenen Namen und auf Ihre
+eigene Verantwortung eingehen, nicht jedoch im Namen des ursprünglichen Lizenzgebers
+oder eines anderen Bearbeiters, und nur, wenn Sie sich gegenüber allen Bearbeitern
+verpflichten, sie zu entschädigen, zu verteidigen und von der Haftung freizustellen, falls
+aufgrund der von Ihnen eingegangenen Gewährleistungsverpflichtung oder
+Haftungsübernahme Forderungen gegen sie geltend gemacht werden oder eine
 Haftungsverpflichtung entsteht.
 
 10. Annahme der Lizenz
 
-Sie kÃ¶nnen den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol "Lizenz
+Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol "Lizenz
 annehmen" unter dem Fenster mit dem Lizenztext anklicken oder indem Sie Ihre
-Zustimmung auf vergleichbare Weise in einer nach anwendbarem Recht zulÃ¤ssigen Form
+Zustimmung auf vergleichbare Weise in einer nach anwendbarem Recht zulässigen Form
 geben. Das Anklicken des Symbols gilt als Anzeichen Ihrer eindeutigen und
 unwiderruflichen Annahme der Lizenz und der darin enthaltenen Klauseln und
 Bedingungen.
 
 In gleicher Weise gilt als Zeichen der eindeutigen und unwiderruflichen Zustimmung die
-AusÃ¼bung eines Rechtes, das in Artikel 2 dieser Lizenz angefÃ¼hrt ist, wie das Erstellen
-einer Bearbeitung oder die Verbreitung oder ZugÃ¤nglichmachung des Werks oder dessen
-VervielfÃ¤ltigungen.
+Ausübung eines Rechtes, das in Artikel 2 dieser Lizenz angeführt ist, wie das Erstellen
+einer Bearbeitung oder die Verbreitung oder Zugänglichmachung des Werks oder dessen
+Vervielfältigungen.
 
 11. Informationspflichten
 
-Wenn Sie das Werk verbreiten oder zugÃ¤nglich machen (beispielsweise, indem Sie es
-zum Herunterladen von einer Website anbieten), mÃ¼ssen Sie Ã¼ber den Vertriebskanal
-oder das benutzte Verbreitungsmedium der Ã–ffentlichkeit zumindest jene Informationen
-bereitstellen, die nach dem anwendbaren Recht bezÃ¼glich der Lizenzgeber, der Lizenz
-und ihrer ZugÃ¤nglichkeit, des Abschlusses des Lizenzvertrags sowie darÃ¼ber, wie die
-Lizenz durch den Lizenznehmer gespeichert und vervielfÃ¤ltigt werden kann, erforderlich
+Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es
+zum Herunterladen von einer Website anbieten), müssen Sie über den Vertriebskanal
+oder das benutzte Verbreitungsmedium der Öffentlichkeit zumindest jene Informationen
+bereitstellen, die nach dem anwendbaren Recht bezüglich der Lizenzgeber, der Lizenz
+und ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wie die
+Lizenz durch den Lizenznehmer gespeichert und vervielfältigt werden kann, erforderlich
 sind.#
 
 12. Beendigung der Lizenz
 
-Die Lizenz und die damit eingerÃ¤umten Rechte erlÃ¶schen automatisch, wenn der
-Lizenznehmer gegen die Lizenzbedingungen verstÃ¶ÃŸt.
+Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der
+Lizenznehmer gegen die Lizenzbedingungen verstößt.
 
-Ein solches ErlÃ¶schen der Lizenz fÃ¼hrt nicht zum ErlÃ¶schen der Lizenzen von Personen,
-denen das Werk vom Lizenznehmer unter dieser Lizenz zur VerfÃ¼gung gestellt worden ist,
-solange diese Personen die Lizenzbedingungen erfÃ¼llen.
+Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von Personen,
+denen das Werk vom Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist,
+solange diese Personen die Lizenzbedingungen erfüllen.
 
 13.   Sonstiges
 
-Unbeschadet des Artikels 9 stellt die Lizenz die vollstÃ¤ndige Vereinbarung der Parteien
-Ã¼ber das Werk dar.
+Unbeschadet des Artikels 9 stellt die Lizenz die vollständige Vereinbarung der Parteien
+über das Werk dar.
 
 Sind einzelne Bestimmungen der Lizenz nach geltendem Recht nichtig oder unwirksam,
-so berÃ¼hrt dies nicht die Wirksamkeit oder Durchsetzbarkeit der Lizenz an sich. Solche
+so berührt dies nicht die Wirksamkeit oder Durchsetzbarkeit der Lizenz an sich. Solche
 Bestimmungen werden vielmehr so ausgelegt oder modifiziert, dass sie wirksam und
 durchsetzbar sind.
 
-Die EuropÃ¤ische Kommission kann weitere Sprachfassungen oder neue Versionen dieser
-Lizenz oder aktualisierte Fassungen des Anhangs verÃ¶ffentlichen, soweit dies notwendig
+Die Europäische Kommission kann weitere Sprachfassungen oder neue Versionen dieser
+Lizenz oder aktualisierte Fassungen des Anhangs veröffentlichen, soweit dies notwendig
 und angemessen ist, ohne den Umfang der Lizenzrechte zu verringern. Neue Versionen
-werden mit einer eindeutigen Versionsnummer verÃ¶ffentlicht.
+werden mit einer eindeutigen Versionsnummer veröffentlicht.
 
-Alle von der EuropÃ¤ischen Kommission anerkannten Sprachfassungen dieser Lizenz sind
-gleichwertig. Die Parteien kÃ¶nnen sich auf die Sprachfassung ihrer Wahl berufen.
+Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz sind
+gleichwertig. Die Parteien können sich auf die Sprachfassung ihrer Wahl berufen.
 
 14. Gerichtsstand
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
-- FÃ¼r alle Streitigkeiten Ã¼ber die Auslegung dieser Lizenz zwischen den Organen,
-Einrichtungen und sonstigen Stellen der EuropÃ¤ischen Union als Lizenzgeber und
-einem Lizenznehmer ist der Gerichtshof der EuropÃ¤ischen Union gemÃ¤ÃŸ Artikel 272
-des Vertrags Ã¼ber die Arbeitsweise der EuropÃ¤ischen Union zustÃ¤ndig;
+- Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen,
+Einrichtungen und sonstigen Stellen der Europäischen Union als Lizenzgeber und
+einem Lizenznehmer ist der Gerichtshof der Europäischen Union gemäß Artikel 272
+des Vertrags über die Arbeitsweise der Europäischen Union zuständig;
 
-- Gerichtsstand fÃ¼r Streitigkeiten zwischen anderen Parteien Ã¼ber die Auslegung dieser
+- Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser
 Lizenz ist allein der Ort, an dem der Lizenzgeber seinen Wohnsitz oder den
-wirtschaftlichen Mittelpunkt seiner TÃ¤tigkeit hat.
+wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
 
 15. Anwendbares Recht
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
-- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der EuropÃ¤ischen Union, in dem
+- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem
 der Lizenzgeber seinen Sitz, Wohnsitz oder eingetragenen Sitz hat;
 
 - diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz,
-Wohnsitz oder eingetragenen Sitz in einem Mitgliedstaat der EuropÃ¤ischen Union hat.
+Wohnsitz oder eingetragenen Sitz in einem Mitgliedstaat der Europäischen Union hat.
 
 
 ***
@@ -293,25 +293,25 @@ Anlage
 - CeCILL v. 2.0, v. 2.1
 - Mozilla Public Licence (MPL) v. 2
 - GNU Lesser General Public Licence (LGPL) v. 2.1, v. 3
-- Creative Commons Attribution-ShareAlike v. 3.0 Unported (CC BY-SA 3.0) fÃ¼r andere
+- Creative Commons Attribution-ShareAlike v. 3.0 Unported (CC BY-SA 3.0) für andere
 Werke als Software
 - European Union Public Licence (EUPL) v. 1.1, v. 1.2
-- QuÃ©bec Free and Open-Source Licence - Reciprocity (LiLiQ-R) oder Strong
+- Québec Free and Open-Source Licence - Reciprocity (LiLiQ-R) oder Strong
 Reciprocity (LiLiQ-R+)
 
-Die EuropÃ¤ische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen
-der obigen Lizenzen aufzunehmen, ohne hierfÃ¼r eine neue Fassung der EUPL
-auszuarbeiten, solange diese Lizenzen die in Artikel 2 gewÃ¤hrten Rechte gewÃ¤hrleisten
-und den erfassten Quellcode vor ausschlieÃŸlicher Aneignung schÃ¼tzen.
+Die Europäische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen
+der obigen Lizenzen aufzunehmen, ohne hierfür eine neue Fassung der EUPL
+auszuarbeiten, solange diese Lizenzen die in Artikel 2 gewährten Rechte gewährleisten
+und den erfassten Quellcode vor ausschließlicher Aneignung schützen.
 
-Alle sonstigen Ã„nderungen oder ErgÃ¤nzungen dieses Anhangs bedÃ¼rfen der Ausarbeitung
+Alle sonstigen Änderungen oder Ergänzungen dieses Anhangs bedürfen der Ausarbeitung
 einer neuen Version der EUPL.
 
-II. Bestehende AbhÃ¤ngigkeiten zu Open Source Bibliotheken
+II. Bestehende Abhängigkeiten zu Open Source Bibliotheken
 
 Es bestehen bei der Nutzung der vorbezeichneten Software bzw. des Quellcodes folgende
-AbhÃ¤ngigkeiten zu Open Source Bibliotheken, deren jeweilige Lizenzbedingungen
-inkompatibel mit der unter I. wiedergegebenen EUPL sind oder sein kÃ¶nnen. Es gelten
+Abhängigkeiten zu Open Source Bibliotheken, deren jeweilige Lizenzbedingungen
+inkompatibel mit der unter I. wiedergegebenen EUPL sind oder sein können. Es gelten
 insofern die entsprechenden Lizenzbedingungen der herangezogenen Bibliotheken bzw.
 Drittsoftwareanteile:
 
@@ -343,8 +343,8 @@ Drittsoftwareanteile:
     Komponente: node-jose
     Lizenz: Apache-2.0
 
-    Komponente: query-string
-    Lizenz: MIT
+    Komponente: qs
+    Lizenz: BSD-3-Clause
 
     Komponente: sax
     Lizenz: ISC
@@ -394,9 +394,6 @@ Drittsoftwareanteile:
     Komponente: keytar
     Lizenz: MIT
 
-    Komponente: axios
-    Lizenz: MIT
-
     Komponente: lodash
     Lizenz: MIT
 
@@ -409,8 +406,5 @@ Drittsoftwareanteile:
     Komponente: is-valid-domain
     Lizenz: MIT
 
-    Komponente: mac-ca
-    Lizenz: BSD-3-Clause
-
-    Komponente: win-ca
+    Komponente: electron-edge-js
     Lizenz: MIT
