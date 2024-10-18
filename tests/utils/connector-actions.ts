@@ -12,9 +12,9 @@
  * permissions and limitations under the Licence.
  */
 
-import { HTTP_METHODS, httpClient } from "@/main/services/http-client";
-import { httpReqConfig } from "@/renderer/modules/connector/services";
-import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from "@tests/TestInfo";
+import { HTTP_METHODS, httpClient } from '@/main/services/http-client';
+import { httpReqConfig } from '@/renderer/modules/connector/services';
+import { CONNECTOR_URLS, ESlotActions, ETerminalTypes } from '@tests/TestInfo';
 
 interface ConnectorActionConfig {
   terminal: ETerminalTypes;
@@ -109,7 +109,7 @@ const execute = async () => {
         await new Promise((resolve) => {
           setTimeout(() => {
             resolve(true);
-          }, 100);
+          }, 2000);
         });
       }
     }

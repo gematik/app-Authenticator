@@ -24,6 +24,8 @@ import { createLogZip, logger } from '@/main/services/logging';
 import { findValidCertificate, getP12ValidityType } from '@/main/services/p12-certificate-service';
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
+const { webUtils } = require('electron');
+
 const forge = require('node-forge');
 
 type IpcRendererCallback = (event: IpcRendererEvent, ...args: any[]) => void;
@@ -138,5 +140,8 @@ export const preloadApi = {
     // #!endif
 
     return fs.readFileSync(path.join(__dirname, '..', '..', 'License.txt'), 'latin1');
+  },
+  showFilePath(file: File): string {
+    return webUtils.getPathForFile(file);
   },
 };

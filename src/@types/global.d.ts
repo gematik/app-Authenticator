@@ -57,6 +57,7 @@ export declare global {
       isMacOS: () => boolean;
       homedir: () => string;
       readLicenceFile: () => string;
+      showFilePath(file: File): string;
     };
   }
 }

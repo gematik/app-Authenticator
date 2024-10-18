@@ -264,7 +264,7 @@ export default defineComponent({
       // for file-path type we only need absolute path of the file, not the content
       if (this.type === 'file-path' && file) {
         if (!this.iterable) {
-          this.model[this.name] = file?.path;
+          this.model[this.name] = window.api.showFilePath(file) || '';
 
           this.onElementChange(e);
           this.onFormChange();
@@ -274,7 +274,7 @@ export default defineComponent({
         if (!this.model[this.name].length) {
           this.model[this.name] = [];
         }
-        this.model[this.name].push(file?.path);
+        this.model[this.name].push(window.api.showFilePath(file) || '');
 
         this.onElementChange(e);
         this.onFormChange();

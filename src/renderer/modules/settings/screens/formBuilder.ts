@@ -280,7 +280,11 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.KEY);
 
-              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, keyFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(
+                window.api.showFilePath(file),
+                fieldKey,
+                keyFilename,
+              );
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
@@ -314,7 +318,11 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
 
-              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, certFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(
+                window.api.showFilePath(file),
+                fieldKey,
+                certFilename,
+              );
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
@@ -414,7 +422,11 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
             try {
               await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
 
-              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, certFilename);
+              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(
+                window.api.showFilePath(file),
+                fieldKey,
+                certFilename,
+              );
             } catch (err) {
               input.value = '';
               repositoryData[fieldKey] = '';
@@ -583,7 +595,7 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
     if (!newPassword.isConfirmed) {
       return false;
     }
-    let sourcePath = file.path;
+    let sourcePath = window.api.showFilePath(file);
     let errorText = '';
     const isP12Valid = window.api.isP12Valid(sourcePath, <string>newPassword.value);
     switch (isP12Valid) {
@@ -622,7 +634,7 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
         break;
       case P12_VALIDITY_TYPE.VALID:
         repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
-        repositoryData[fieldKey] = await copyUploadedFileToTargetDir(file.path, fieldKey, pfxFilename);
+        repositoryData[fieldKey] = await copyUploadedFileToTargetDir(sourcePath, fieldKey, pfxFilename);
         return;
     }
     input.value = '';
