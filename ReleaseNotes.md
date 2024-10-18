@@ -2,6 +2,12 @@
 
 # Release Authenticator
 
+## Version 4.13.1
+
+### Fixed
+
+- Read and copy certificates correctly in the UI
+
 ## Version 4.13.0
 
 ### Fixed
