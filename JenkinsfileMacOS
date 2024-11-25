@@ -49,23 +49,23 @@ pipeline {
                 sh 'npm -version'
                 sh 'cat ~/.npmrc || true'
 
-                  // Actual CI Build, Tests, Demo App
+                // Actual CI Build, Tests, Demo App
                 sh label: 'starting ios test run', script: '''#!/bin/bash -l
                     set -ev
 
                     ELECTRON_GET_USE_PROXY=true GLOBAL_AGENT_HTTPS_PROXY=$https_proxy npm ci
                 '''
-          }
+
+                // copy LICENSE.txt into ./src/assets/license_de.txt to add it to the DMG file
+                sh 'iconv -f windows-1250 -t utf-8 LICENSE.txt > ./src/assets/license_de.txt'
+            }
         }
-        stage ('Set BUILD_VERSION') {
+        stage('Set BUILD_VERSION') {
             steps {
                 script {
                     def packageJson = readFile(file: 'package.json')
-
                     def parsedJson = new groovy.json.JsonSlurper().parseText(packageJson)
-
                     env.BUILD_VERSION = parsedJson.version
-
                     echo "Build version: ${env.BUILD_VERSION}"
                 }
             }
@@ -85,13 +85,10 @@ pipeline {
                     sh "echo LOCAL_KT='kon23/cats' >> .env"
                     sh "echo REMOTE_KT='kon23/cats2' >> .env"
                     sh "echo CONNECTOR_PATH='/kon23' >> .env"
-                    try {
+                    lock(resource: 'authenticator-k23') {
                         sh 'npm run test -- --silent'
-                    } catch (Exception e) {
-                        echo 'Running additional tests for failures...'
-                        sh 'npm run test:fail -- --silent'
-                    } finally {
                         junit checksName: 'Jest Tests', testResults: 'jenkins-jest-test-report.xml'
+                        stash name: 'test-reports', includes: '*.xml,coverage/lcov.info'
                     }
                 }
             }
@@ -182,7 +179,7 @@ pipeline {
 
                     sh 'cp sha256Hash.txt releaseCI/'
 
-                    if ( params.MOCK_BUILD == true ) {
+                    if (params.MOCK_BUILD == true) {
                         def filePathMock = "releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg"
                         def sha256HashMock = sha256 file: filePathMock
 
@@ -202,7 +199,6 @@ pipeline {
                     expression { params.ARCHIVE_ARTIFACTS == true }
                     buildingTag()
                 }
-
             }
             steps {
                 script {
@@ -212,7 +208,7 @@ pipeline {
                     nexusFileUpload("./releaseCI/latest-mac.yml", "de/gematik/authenticator/snapshot/macOS/latest-mac.yml", "gematik_snapshots_raw")
                     nexusFileUpload("releaseCI/sha256Hash.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256Hash.txt", "gematik_releases_raw")
 
-                    if ( params.MOCK_BUILD == true ) {
+                    if (params.MOCK_BUILD == true) {
                         nexusFileUpload("./releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "gematik_snapshots_raw")
                         nexusFileUpload("releaseCI/sha256HashMock.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256HashMock.txt", "gematik_releases_raw")
                     }
@@ -221,10 +217,10 @@ pipeline {
         }
         stage('Nexus Upload: Releases') {
             when {
-              allOf {
-                expression { params.SIGN_ARTIFACTS }
-                branch 'release'
-              }
+                allOf {
+                    expression { params.SIGN_ARTIFACTS }
+                    branch 'release'
+                }
             }
             steps {
                 script {
@@ -235,7 +231,7 @@ pipeline {
                     nexusFileUpload("./releaseCI/latest-mac.yml", "de/gematik/authenticator/snapshot/macOS/latest-mac.yml", "gematik_releases_raw")
                     nexusFileUpload("releaseCI/sha256Hash.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256Hash.txt", "gematik_releases_raw")
 
-                    if ( params.MOCK_BUILD == true ) {
+                    if (params.MOCK_BUILD == true) {
                         nexusFileUpload("./releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg", "gematik_releases_raw")
                         nexusFileUpload("releaseCI/sha256HashMock.txt", "de/gematik/authenticator/${BUILD_VERSION}/windows/sha256HashMock.txt", "gematik_releases_raw")
                     }
@@ -259,16 +255,16 @@ pipeline {
         stage('Archive Build Log') {
             when {
                 allOf {
-                     branch 'release'
-                     expression { params.SIGN_ARTIFACTS }
+                    branch 'release'
+                    expression { params.SIGN_ARTIFACTS }
                 }
             }
             steps {
-                 build job: 'Authenticator-Authenticator_Archive_Buildlog-Release',
-                     parameters: [
-                          string(name: 'BUILDNUMBER', value: "${BUILD_NUMBER}"),
-                          string(name: 'COMMIT_MESSAGE', value: "Save Log for Build  ${BUILD_NUMBER}")
-                     ]
+                build job: 'Authenticator-Authenticator_Archive_Buildlog-Release',
+                    parameters: [
+                        string(name: 'BUILDNUMBER', value: "${BUILD_NUMBER}"),
+                        string(name: 'COMMIT_MESSAGE', value: "Save Log for Build  ${BUILD_NUMBER}")
+                    ]
             }
         }
     }

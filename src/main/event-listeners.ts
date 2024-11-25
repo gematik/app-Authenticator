@@ -18,7 +18,7 @@ import {
   IPC_GET_APP_PATH,
   IPC_GET_PATH,
   IPC_GET_PROXY,
-  IPC_READ_CERTIFICATES,
+  // IPC_READ_CERTIFICATES,
   IPC_READ_CREDENTIALS,
   IPC_READ_MAIN_PROCESS_ENVS,
   IPC_SAVE_CREDENTIALS,
@@ -27,7 +27,7 @@ import {
 import { logger } from '@/main/services/logging';
 import { UP_TO_DATE_PROCESS_ENVS } from '@/main/services/env-vars-updater';
 import { getSensitiveConfigValues, saveSensitiveConfigValues } from '@/main/services/credentials-manager';
-import { getCertificates } from '@/main/services/read-root-certs';
+// import { getCertificates } from '@/main/services/read-root-certs';
 
 ipcMain.on(IPC_GET_PATH, (event, name) => {
   event.returnValue = app.getPath(name);
@@ -91,11 +91,11 @@ ipcMain.on(IPC_SAVE_CREDENTIALS, async (event, data) => {
   event.returnValue = await saveSensitiveConfigValues(data);
 });
 
-ipcMain.handle(IPC_READ_CERTIFICATES, async () => {
-  try {
-    return getCertificates();
-  } catch (error) {
-    logger.error('Error retrieving certificates from trust store:', error);
-    return [];
-  }
-});
+// ipcMain.handle(IPC_READ_CERTIFICATES, async () => {
+//   try {
+//     return getCertificates();
+//   } catch (error) {
+//     logger.error('Error retrieving certificates from trust store:', error);
+//     return [];
+//   }
+// });

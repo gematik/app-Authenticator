@@ -2,6 +2,13 @@
 
 # Release Authenticator
 
+## Version 4.13.2
+
+### Fixed
+
+- Certificate repair functionality
+- Using own trust store
+
 ## Version 4.13.1
 
 ### Fixed

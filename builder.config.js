@@ -45,12 +45,12 @@ module.exports = {
   win: {
     target: ['nsis'],
     publisherName: PUBLISHER_NAME,
-    extraResources: [
-      {
-        from: 'dist_electron/WinCertStoreLib.dll',
-        to: 'WinCertStoreLib.dll',
-      },
-    ],
+    // extraResources: [
+    //   {
+    //     from: 'dist_electron/WinCertStoreLib.dll',
+    //     to: 'WinCertStoreLib.dll',
+    //   },
+    // ],
   },
   files: ['!*', 'dist_electron/*'],
   forceCodeSigning: FORCE_SIGNING,
