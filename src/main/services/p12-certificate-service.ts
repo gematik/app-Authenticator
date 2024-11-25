@@ -117,7 +117,7 @@ function getCertsAndKeys(p12: any): CertsAndKeys {
 }
 
 function privateKeyToCert(keys: KeyBag[], cert: P12Certificate): KeyBag | undefined {
-  return keys.find((keyBag) => keyBag.attributes.localKeyId[0] === cert.attributes.localKeyId[0]);
+  return keys.find((keyBag) => keyBag?.attributes?.localKeyId?.[0] === cert?.attributes?.localKeyId?.[0]);
 }
 
 function getValidCertsWithKey(certs: P12Certificate[], keys: KeyBag[]): ValidCertsWithKey {

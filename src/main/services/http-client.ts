@@ -29,17 +29,17 @@ import { ipcRenderer } from 'electron';
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
 
-let trustStoreCertificates: string[] = [];
+// let trustStoreCertificates: string[] = [];
 
-ipcRenderer
-  .invoke(IPC_READ_CERTIFICATES)
-  .then((certificates) => {
-    trustStoreCertificates = certificates;
-    logger.info('Retrieved trust store certificates: ' + trustStoreCertificates.length);
-  })
-  .catch((error) => {
-    logger.error('Error retrieving trust store certificates:', error);
-  });
+// ipcRenderer
+//   .invoke(IPC_READ_CERTIFICATES)
+//   .then((certificates) => {
+//     trustStoreCertificates = certificates;
+//     logger.info('Retrieved trust store certificates: ' + trustStoreCertificates.length);
+//   })
+//   .catch((error) => {
+//     logger.error('Error retrieving trust store certificates:', error);
+//   });
 
 let gotAdvanced = got;
 // #!if MOCK_MODE === 'ENABLED'
@@ -105,7 +105,7 @@ export const httpClient = async (
       },
       https: {
         ...config.https,
-        certificateAuthority: [...trustStoreCertificates, ...(config?.https?.certificateAuthority || [])],
+        // certificateAuthority: [...(config?.https?.certificateAuthority || [])],
         ...putP12Config(url),
       },
     };
