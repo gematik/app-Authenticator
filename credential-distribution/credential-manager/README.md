@@ -20,7 +20,7 @@ Please make sure, that the client's machine is able to run the script or compile
 
 Test this on a real client machine.
 
-A proposal for a script can be found here [Example Script](./store-credentials.ps1)
+A proposal for a script can be found here [Example Script](./store-credential.ps1)
 
 ## Recommendations for Configurations
 * We recommend to configure exclusive credentials for the authenticator in the Konnektor to mitigate the impact on other systems in case of credential exposure.
