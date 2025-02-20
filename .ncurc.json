@@ -3,6 +3,7 @@
     "got",
     "sweetalert2",
     "@types/node",
-    "electron-builder"
+    "electron-builder",
+    "vue-i18n"
   ]
 }

@@ -1,26 +1,28 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-import os from 'os';
 import fs from 'fs';
-import path from 'path';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
-import { IS_DEV, LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
+import { IS_DEV } from '@/constants';
 import { zip } from 'zip-a-folder';
 import { TransformableInfo } from 'logform';
-import { isMacOS } from '@/main/services/utils';
+import { MainPathProvider } from '@/main/services/main-path-provider';
 
 const { combine, printf, simple } = winston.format;
 
@@ -29,19 +31,12 @@ let logLevel = 'info';
 logLevel = 'debug';
 // #!endif
 
-// get the directory path and create it if missing
-const genLogDirPath = isMacOS
-  ? path.join(os.homedir(), MACOS_PATHS.LOGGING_DIR, LOG_DIRECTORY_NAME)
-  : path.join(os.tmpdir(), LOG_DIRECTORY_NAME);
-
-export const logDirectoryPath = genLogDirPath;
-
-if (!fs.existsSync(logDirectoryPath)) {
-  fs.mkdirSync(logDirectoryPath, { recursive: true });
+if (!fs.existsSync(MainPathProvider.logDirectoryPath)) {
+  fs.mkdirSync(MainPathProvider.logDirectoryPath, { recursive: true });
 }
 
 const transport = new winston.transports.DailyRotateFile({
-  dirname: logDirectoryPath,
+  dirname: MainPathProvider.logDirectoryPath,
   filename: 'authenticator-%DATE%.log',
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
@@ -127,8 +122,9 @@ const renderExtraData = (info: TransformableInfo, restMessages: any[] = []) => {
  * and allows a user selected path
  */
 export async function createLogZip(dirPath: string) {
-  const zipLogDirectoryPath = path.join(dirPath, 'authenticator-logData_' + getUniqueDateString() + '.zip');
-  await zip(logDirectoryPath, zipLogDirectoryPath);
+  const zipLogDirectoryPath = MainPathProvider.genZipLogDirectoryPath(dirPath);
+  fs.mkdirSync(dirPath, { recursive: true });
+  await zip(MainPathProvider.logDirectoryPath, zipLogDirectoryPath);
   logger.info('Your Log-Zip-File is here: ' + zipLogDirectoryPath);
 }
 

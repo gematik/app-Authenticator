@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import got from 'got';
@@ -18,13 +22,13 @@ import { IncomingHttpHeaders } from 'http';
 import { stringify } from 'flatted';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 
-import { IPC_READ_CERTIFICATES, IS_TEST, PROCESS_ENVS } from '@/constants';
+import { IS_TEST, PROCESS_ENVS } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { APP_CONFIG_DATA } from '@/main/preload-api';
-import { ipcRenderer } from 'electron';
+import * as process from 'node:process';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
@@ -101,7 +105,9 @@ export const httpClient = async (
       ...config,
       timeout: {
         ...config.timeout,
-        request: <number>APP_CONFIG_DATA[TIMEOUT_PARAMETER_CONFIG] || 30000,
+        // it the variable specifically defined, use it, this is required for verifyPIN requests
+        // if it is not defined, use the value from the config file, otherwise use 30 seconds
+        request: config.timeout?.request || <number>APP_CONFIG_DATA[TIMEOUT_PARAMETER_CONFIG] || 30000,
       },
       https: {
         ...config.https,
@@ -118,9 +124,27 @@ export const httpClient = async (
     };
     // #!endif
 
-    const proxy = await createProxyAgent(url);
-    //we don't get debug messages from the ipcRenderer in createProxyAgent, so we log it here
-    logger.debug('Proxy for Url: ' + url + ' is:', proxy);
+    let proxy;
+
+    // We create a proxy agent if 'useProxyForConnector' is undefined or set to true,
+    // which happens in the communication between authenticator and ipd.
+    if (typeof config.useProxyForConnector === 'undefined' || config.useProxyForConnector) {
+      proxy = await createProxyAgent(url);
+    }
+    delete config?.useProxyForConnector;
+
+    // In the macOS Pipeline, we need the proxy always
+    // #!if MOCK_MODE === 'ENABLED'
+    if (process.platform === 'darwin' && process.env.NODE_ENV?.includes('test')) {
+      proxy = await createProxyAgent(url);
+    }
+    // #!endif
+
+    if (proxy) {
+      // @ts-ignore we don't get debug messages from the ipcRenderer in createProxyAgent, so we log it here
+      logger.debug('Proxy for: ' + url + ' is:' + proxy?.proxy);
+    }
+
     const client = method === HTTP_METHODS.POST ? gotAdvanced.post : gotAdvanced.get;
     const res = client(url, {
       followRedirect: false, // default false, can be superseded by config.followRedirect
@@ -149,6 +173,13 @@ export const httpClient = async (
   } catch (err) {
     logger.error('http error for url: ' + url, err);
 
+    if (
+      err.code === 'ERR_TLS_CERT_ALTNAME_INVALID' ||
+      err.message.includes('Hostname/IP does not match certificate´s altnames')
+    ) {
+      err.message =
+        err.message + ' Please see No. 15 in https://wiki.gematik.de/pages/viewpage.action?pageId=474101686';
+    }
     /**
      * Electron doesn't allow us to carry information in an Error instance to renderer process.
      * That's why we throw an object instead of new Error()

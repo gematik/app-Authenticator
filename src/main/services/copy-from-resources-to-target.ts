@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 import fs from 'fs';
 import path from 'path';
@@ -42,20 +46,52 @@ const copyFromResourcesToTarget = () => {
 };
 
 function copyFolderSync(src: string, dest: string) {
-  logger.info(`Copying files from ${src} to ${dest}`);
+  logger.info(`Copying folder: ${src} -> ${dest}`);
+
+  // If destination folder does not exist, create it.
   if (!fs.existsSync(dest)) {
-    logger.info(`Creating directory: ${dest}`);
-    fs.mkdirSync(dest);
+    logger.info(`Creating destination folder: ${dest}`);
+    fs.mkdirSync(dest, { recursive: true });
   }
-  const files: string[] = fs.readdirSync(src);
-  logger.info(`Copying files from ${src} to ${dest}`, files);
 
-  files.forEach((file) => {
-    const curSrc: string = path.join(src, file);
-    const curDest: string = path.join(dest, file);
-    logger.info(`Copying file: ${curSrc}`);
-    fs.copyFileSync(curSrc, curDest);
-  });
+  // If source folder does not exist, skip.
+  if (!fs.existsSync(src)) {
+    logger.warn(`Source folder does not exist, skipping: ${src}`);
+    return;
+  }
+
+  let files: string[] = [];
+  try {
+    // Read the content of the source folder
+    files = fs.readdirSync(src);
+  } catch (err) {
+    logger.error(`Unable to read folder: ${src}. Error: ${(err as Error).message}`);
+    return;
+  }
+
+  // If source folder is empty, log it and skip copying
+  if (files.length === 0) {
+    logger.info(`Source folder is empty: ${src}. Skipping copy operation.`);
+    return;
+  }
+
+  // Copy files one by one
+  for (const file of files) {
+    const currentSource = path.join(src, file);
+    const currentDest = path.join(dest, file);
+
+    // Optional: Recursively copy if it's a directory. Remove if not needed.
+    if (fs.lstatSync(currentSource).isDirectory()) {
+      copyFolderSync(currentSource, currentDest);
+    } else {
+      try {
+        logger.info(`Copying file: ${currentSource} -> ${currentDest}`);
+        fs.copyFileSync(currentSource, currentDest);
+      } catch (err) {
+        // Even if there’s an error copying one file, continue with the next.
+        logger.error(`Error copying file: ${currentSource} -> ${currentDest}. Error: ${(err as Error).message}`);
+      }
+    }
+  }
 }
-
 export default copyFromResourcesToTarget;

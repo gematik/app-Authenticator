@@ -1,15 +1,19 @@
 <!--
-  - Copyright 2024 gematik GmbH
+  - Copyright 2025, gematik GmbH
   -
-  - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
-  - Sourcecode must be in compliance with the EUPL.
+  - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+  - European Commission – subsequent versions of the EUPL (the "Licence").
+  - You may not use this work except in compliance with the Licence.
   -
-  - You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+  - You find a copy of the Licence in the "Licence" file or at
+  - https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
   -
-  - Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
-  - IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
-  - language governing permissions and limitations under the License.ee the Licence for the specific language governing
-  - permissions and limitations under the Licence.
+  - Unless required by applicable law or agreed to in writing,
+  - software distributed under the Licence is distributed on an "AS IS" basis,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+  - In case of changes by gematik find details in the "Readme" file.
+  -
+  - See the Licence for the specific language governing permissions and limitations under the Licence.
   -->
 
 <template>
@@ -38,8 +42,22 @@
         role="alert"
       >
         <h2 class="font-bold text-gray-600">{{ $t(`default_config_is_in_use`) }}</h2>
+      </div>
+      <div
+        v-if="centralConfigWarning"
+        class="w-full bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-5"
+        role="alert"
+      >
+        <h2 class="font-bold text-gray-600">{{ $t(`central_configuration_title`) }}</h2>
         <p>
-          {{ $t(`you_are_using_default_config`, { path: configFilePath }) }}
+          {{ $t(`central_configuration_warning`) }}
+          <a
+            href="javascript:void(0)"
+            class="underline text-blue-500"
+            @click="openExternal(WIKI_INSTALLATION_SCENARIOS)"
+          >
+            {{ $t('help') }}
+          </a>
         </p>
       </div>
       <form class="w-full" @submit.prevent="saveConfigValues(true)">
@@ -78,6 +96,7 @@
               :info-text="config.infoText"
               :placeholder="config.placeholder"
               :update-init-value="updateInitValuesFlag"
+              :sanitize-input="config.sanitizeInput"
             />
           </div>
         </div>
@@ -102,6 +121,14 @@
               <br />
             </div>
           </div>
+          <div class="w-3/3">
+            <div>
+              <button id="btnConfAssist" class="bt ml-[15px]" type="button" @click="startConfigAssistant()">
+                {{ $t('open_assistant') }}
+              </button>
+              <br />
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -121,8 +148,9 @@ import { onBeforeRouteLeave } from 'vue-router';
 
 import Swal from 'sweetalert2';
 import {
-  confirmSaveSettingsPrompt,
+  confirmSaveOnStandardDefaultConfig,
   confirmSaveUnsavedSettingsPrompt,
+  confirmSaveWithInvalidCentralConfig,
   invalidDataAlert,
   settingsSavedSuccessfullyAlert,
 } from '@/renderer/modules/settings/screens/modalDialogs';
@@ -137,11 +165,12 @@ import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
 import { cancelActiveUpdateProcess, checkNewUpdate } from '@/renderer/service/auto-updater-service';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
-import { IPC_UPDATE_ENV, WIKI_CONFIGURATION_LINK } from '@/constants';
+import { IPC_UPDATE_ENV, WIKI_CONFIGURATION_LINK, WIKI_INSTALLATION_SCENARIOS } from '@/constants';
 import { IConfigSection } from '@/@types/common-types';
 import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings/screens/formBuilder';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { alertDefinedErrorWithDataOptional, validateData } from '@/renderer/utils/utils';
+import router from '@/renderer/router';
 
 export default defineComponent({
   name: 'SettingsScreen',
@@ -162,11 +191,42 @@ export default defineComponent({
     const formColumnsFlat = getFormColumnsFlat(configValues.value);
     const updateInitValuesFlag = ref(false);
 
+    const isCentralConfigurationInvalid = ref<boolean>(false);
+
+    isCentralConfigurationInvalid.value =
+      FileStorageRepository.isCentralConfigurationInvalid && FileStorageRepository.isNewInstallation;
+
     window?.api?.on(IPC_UPDATE_ENV, () => {
       setTimeout(() => {
         configValues.value = load();
       }, 500);
     });
+
+    /**
+     * Watch if there are unsaved user made settings
+     */
+    const hasUnsavedChanges = (): boolean => {
+      return JSON.stringify(configValues.value) !== initialConfigValues;
+    };
+
+    async function saveConfigValues(needsUserApproval: boolean = true) {
+      if (!(await validateConfig())) return false;
+      if (needsUserApproval) {
+        let saveConfirm;
+        if (isDefaultConfigFile.value) {
+          saveConfirm = await confirmSaveOnStandardDefaultConfig();
+        } else if (isCentralConfigurationInvalid.value) {
+          saveConfirm = await confirmSaveWithInvalidCentralConfig();
+        } else {
+          saveConfirm = await confirmSaveUnsavedSettingsPrompt();
+        }
+        if (!saveConfirm.isConfirmed) {
+          return false;
+        }
+      }
+      handleUpdateProcess();
+      return await performSaveOperation();
+    }
 
     onMounted(() => {
       // Prevent data loss of unsaved settings
@@ -183,40 +243,62 @@ export default defineComponent({
     });
 
     const handleAppClose = async (): Promise<void> => {
-      // Handle case when there are no unsaved changes immediately
+      // Prompt the user to save unsaved settings
       const userWantsToSaveSettings = await confirmSaveUnsavedSettingsPrompt();
+
       if (!userWantsToSaveSettings.isConfirmed) {
+        // User chose not to save; discard changes
         logger.info('User discarded changes to settings.');
         configValues.value = JSON.parse(initialConfigValues);
         updateInitValuesFlag.value = !updateInitValuesFlag.value;
-      } else {
+        return;
+      }
+
+      // User wants to save settings
+      if (isCentralConfigurationInvalid.value) {
+        const centralConfigConfirm = await confirmSaveWithInvalidCentralConfig();
+        if (!centralConfigConfirm.isConfirmed) {
+          // User declined to save with wrong central configuration; discard changes
+          logger.info('User discarded changes to settings.');
+          configValues.value = JSON.parse(initialConfigValues);
+          updateInitValuesFlag.value = !updateInitValuesFlag.value;
+          return;
+        }
+
+        // User confirmed to save even with possible wrong central config; attempt to save
         const savedSuccessful = await saveConfigValues(false);
         if (!savedSuccessful) {
           logger.error('Error while saving settings. Closing app aborted!');
           return;
         }
+        return; // Save successful; proceed to close the app
       }
+      // Not a default config file; attempt to save settings
+      const savedSuccessful = await saveConfigValues(false);
+      if (!savedSuccessful) {
+        logger.error('Error while saving settings. Closing app aborted!');
+      }
+      // Save successful; proceed to close the app
     };
 
     const beforeRouteLeaveGuard = async (to: any, from: any, next: any): Promise<void> => {
-      let proceed: boolean = true; // default case: proceed with navigation
-      if (hasUnsavedChanges()) {
-        const saveConfirm = await confirmSaveUnsavedSettingsPrompt();
-        if (saveConfirm.isConfirmed) {
-          // User wants to save the settings before navigating away
-          proceed = await saveConfigValues(false);
+      if (!hasUnsavedChanges()) {
+        return next(); // No unsaved changes, proceed with navigation
+      }
+      const saveConfirm = await confirmSaveUnsavedSettingsPrompt();
+      if (!saveConfirm.isConfirmed) {
+        return next(); // User chose not to save, proceed with navigation
+      }
+      if (isCentralConfigurationInvalid.value) {
+        const centralConfigConfirm = await confirmSaveWithInvalidCentralConfig();
+        if (!centralConfigConfirm.isConfirmed) {
+          return next(); // User declined to save with possible faulty central config, proceed with navigation
         }
       }
-      proceed ? next() : next(false);
+      const saved = await saveConfigValues(false);
+      return saved ? next() : next(false); // Proceed or cancel based on save success
     };
     onBeforeRouteLeave(beforeRouteLeaveGuard);
-
-    /**
-     * Watch if there are unsaved user made settings
-     */
-    const hasUnsavedChanges = (): boolean => {
-      return JSON.stringify(configValues.value) !== initialConfigValues;
-    };
 
     async function validateConfig() {
       if (!Object.keys(configValues).length) return false;
@@ -227,9 +309,8 @@ export default defineComponent({
       return true;
     }
 
-    async function showSaveSettingsConfirmationDialog() {
-      const saveConfirm = await confirmSaveSettingsPrompt();
-      return saveConfirm.isConfirmed;
+    async function startConfigAssistant() {
+      await router.push('/config-assistant');
     }
 
     function handleUpdateProcess() {
@@ -263,16 +344,8 @@ export default defineComponent({
       await settingsSavedSuccessfullyAlert();
       initialConfigValues = JSON.stringify(configValues.value);
       updateInitValuesFlag.value = !updateInitValuesFlag.value;
+      isCentralConfigurationInvalid.value = false; // user saved so we don't show the warning anymore to the user
       return true;
-    }
-
-    async function saveConfigValues(needsUserApproval: boolean = true) {
-      if (!(await validateConfig())) return false;
-      if (needsUserApproval) {
-        if (!(await showSaveSettingsConfirmationDialog())) return false;
-      }
-      handleUpdateProcess();
-      return await performSaveOperation();
     }
 
     /**
@@ -352,6 +425,7 @@ export default defineComponent({
       createZipWithLogData,
       closeModal,
       beforeRouteLeaveGuard,
+      startConfigAssistant,
       functionTestResults,
       showModal,
       configValues,
@@ -363,8 +437,10 @@ export default defineComponent({
       configFilePath: FileStorageRepository.getPath(),
       reloadConfig,
       WIKI_CONFIGURATION_LINK,
+      WIKI_INSTALLATION_SCENARIOS,
       openExternal: window.api.openExternal,
       isDefaultConfigFile,
+      centralConfigWarning: isCentralConfigurationInvalid,
     };
   },
 });

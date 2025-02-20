@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`config assistant landing screen renders correctly 1`] = `
+<div
+  class="home flex flex-col mt-[128px] ml-2 mr-2 justify-items-center gap-2 text-center"
+>
+  <img
+    alt="logo icon"
+    class="object-contain pr-1 h-[156px]"
+  />
+  <h2
+    class="ml-20 mr-20"
+    id="lblMainCenter"
+  >
+    Um Ihnen bei der Konfiguration zu helfen, stellen wir Ihnen Assistenten mit einer Schritt-für-Schritt-Anleitung zur Verfügung.
+  </h2>
+  <div
+    class="mt-8"
+  >
+    <button
+      class="bt rounded-[4px] ml-[15px] w-60"
+      type="button"
+    >
+      Start der Rise-Anleitung
+    </button>
+    <button
+      class="bt rounded-[4px] ml-[15px] w-60"
+      type="button"
+    >
+      Start der KoCo-Anleitung
+    </button>
+    <button
+      class="bt ml-[15px] w-60"
+      type="button"
+    >
+      Start der Secunet-Anleitung
+    </button>
+  </div>
+</div>
+`;

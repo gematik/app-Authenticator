@@ -408,3 +408,9 @@ Drittsoftwareanteile:
 
     Komponente: electron-edge-js
     Lizenz: MIT
+
+    Komponente: @peculiar/x509
+    Lizenz: MIT
+
+    Komponente: dmg-license
+    Lizenz: MIT

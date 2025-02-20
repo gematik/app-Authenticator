@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 // #!if MOCK_MODE === 'ENABLED'
@@ -23,6 +27,8 @@ import { getMatch } from 'ip-matching';
 import { IConfig, IConfigSection, TLS_AUTH_TYPE } from '@/@types/common-types';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
+  CONNECTOR_GATEWAY_NAME,
+  CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_AUTH_TYPES,
@@ -30,7 +36,7 @@ import {
   TIMEOUT_PARAMETER_CONFIG,
   TLS_AUTH_TYPE_CONFIG,
 } from '@/config';
-import { COMMON_USED_REGEXES, P12_VALIDITY_TYPE } from '@/constants';
+import { COMMON_USED_REGEXES, P12_VALIDITY_TYPE, PROCESS_ENVS } from '@/constants';
 import { TRepositoryData } from '@/renderer/modules/settings/repository';
 import { AuthenticatorError, UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
@@ -192,6 +198,9 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           key: ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME,
           type: 'input',
           infoText: translate('info_text_host'),
+          sanitizeInput(value) {
+            repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME] = value.trim();
+          },
         },
         {
           label: translate('port'),
@@ -207,6 +216,9 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_mandant_id'),
+          sanitizeInput(value) {
+            repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID] = value.trim();
+          },
         },
         {
           label: translate('client_id'),
@@ -214,6 +226,9 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_client_id'),
+          sanitizeInput(value) {
+            repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID] = value.trim();
+          },
         },
         {
           label: translate('work_space_id'),
@@ -221,6 +236,9 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           validationRegex: COMMON_USED_REGEXES.CONNECTOR_ALLOWED,
           infoText: translate('info_text_work_space_id'),
+          sanitizeInput(value) {
+            repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID] = value.trim();
+          },
         },
         {
           label: translate('tls_authentication'),
@@ -262,33 +280,8 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'file-path',
           hide: repositoryData[TLS_AUTH_TYPE_CONFIG] !== TLS_AUTH_TYPE.ServerClientCertAuth,
           infoText: translate('info_text_private_key'),
-          /**
-           * Moves file to right position and renames it
-           * @param e
-           */
           onChange: async (e: Event) => {
-            const input = e.target as HTMLInputElement;
-            const file = input.files && input.files[0];
-            if (file === null) {
-              throw new UserfacingError('Invalid Keyfile', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1114);
-            }
-
-            const keyFilename = file?.name.toString();
-            const fileAsString = await file?.text();
-
-            const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY;
-            try {
-              await checkPemFileFormat(fileAsString, PEM_TYPES.KEY);
-
-              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(
-                window.api.showFilePath(file),
-                fieldKey,
-                keyFilename,
-              );
-            } catch (err) {
-              input.value = '';
-              repositoryData[fieldKey] = '';
-            }
+            await movePrivateKey(e, repositoryData);
           },
         },
         {
@@ -302,31 +295,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
            * @param e
            */
           onChange: async (e: Event) => {
-            const input = e.target as HTMLInputElement;
-            const file = input.files && input.files[0];
-            if (file === null) {
-              throw new UserfacingError(
-                'Invalid Cert-file',
-                'Input File darf nicht NULL sein.',
-                ERROR_CODES.AUTHCL_1115,
-              );
-            }
-            const certFilename = file?.name.toString();
-            const fileAsString = await file?.text();
-
-            const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE;
-            try {
-              await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
-
-              repositoryData[fieldKey] = await copyUploadedFileToTargetDir(
-                window.api.showFilePath(file),
-                fieldKey,
-                certFilename,
-              );
-            } catch (err) {
-              input.value = '';
-              repositoryData[fieldKey] = '';
-            }
+            await moveCertFile(e, repositoryData);
           },
         },
         {
@@ -357,6 +326,13 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'drop-down',
           optionsType: 'standardBool',
           infoText: translate('info_text_reject_unauthorized'),
+        },
+        {
+          label: translate('smcb_pin_option'),
+          key: ENTRY_OPTIONS_CONFIG_GROUP.SMCB_PIN_OPTION,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('smcb_pin_option_info'),
         },
       ],
     },
@@ -407,7 +383,7 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           hide: repositoryData[PROXY_SETTINGS_CONFIG.AUTH_TYPE] !== PROXY_AUTH_TYPES.PROXY_CLIENT_CERT,
           infoText: translate('info_text_proxy_client_certificate'),
           /**
-           * Moves file to right position and renames it
+           * Moves cert file to right position and renames it
            * @param e
            */
           onChange: async (e: Event) => {
@@ -525,6 +501,35 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           },
           infoText: translate('info_text_proxy_ignore_list'),
         },
+        {
+          label: translate('proxy_for_connector'),
+          key: PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('info_text_proxy_for_connector'),
+        },
+      ],
+    },
+    {
+      title: 'Konnektor Gateway',
+      icon: ConnectorIcon,
+      hide: !PROCESS_ENVS.AUTHCONFIGPATH,
+      columns: [
+        {
+          label: translate('connector_gateway'),
+          key: CONNECTOR_GATEWAY_NAME_STATUS,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('connector_gateway_status_info_text'),
+        },
+
+        {
+          hide: repositoryData[CONNECTOR_GATEWAY_NAME_STATUS] === false,
+          label: translate('connector_gateway_name'),
+          key: CONNECTOR_GATEWAY_NAME,
+          type: 'input',
+          infoText: translate('connector_gateway_name_info_text'),
+        },
       ],
     },
     {
@@ -570,14 +575,76 @@ export function getFormColumnsFlat(repositoryData: TRepositoryData): Record<stri
   return formSectionsFlat;
 }
 
-export async function validateP12AndMove(e: Event, repositoryData: TRepositoryData) {
+/**
+ * Moves certificate file to right position and renames it
+ * @param {Event} e - The file input change event.
+ * @param repositoryData
+ */
+export async function moveCertFile(e: Event, repositoryData: TRepositoryData) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files && input.files[0];
+  if (file === null) {
+    throw new UserfacingError('Invalid Cert-file', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1115);
+  }
+  const certFilename = file?.name.toString();
+  const fileAsString = await file?.text();
+
+  const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE;
+  try {
+    await checkPemFileFormat(fileAsString, PEM_TYPES.CERT);
+
+    repositoryData[fieldKey] = await copyUploadedFileToTargetDir(window.api.showFilePath(file), fieldKey, certFilename);
+  } catch (err) {
+    input.value = '';
+    repositoryData[fieldKey] = '';
+  }
+}
+
+/**
+ * Moves private key file to right position and renames it
+ * @param {Event} e - The file input change event.
+ * @param repositoryData
+ */
+export async function movePrivateKey(e: Event, repositoryData: TRepositoryData) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files && input.files[0];
+  if (file === null) {
+    throw new UserfacingError('Invalid Keyfile', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1114);
+  }
+  const keyFilename = file?.name.toString();
+  const fileAsString = await file?.text();
+  const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY;
+  try {
+    await checkPemFileFormat(fileAsString, PEM_TYPES.KEY);
+
+    repositoryData[fieldKey] = await copyUploadedFileToTargetDir(window.api.showFilePath(file), fieldKey, keyFilename);
+  } catch (err) {
+    input.value = '';
+    repositoryData[fieldKey] = '';
+  }
+}
+
+/**
+ * Validates a P12 file and moves it to the target directory if valid.
+ *
+ * This function handles a file input event, checks the validity of the selected P12 file
+ * (also known as PKCS#12 or PFX file), retrieves a password from the user, and processes the file accordingly.
+ *
+ * It provides feedback to the user and updates `repositoryData` with the result.
+ *
+ * @param {Event} e - The file input change event.
+ * @param {TRepositoryData} repositoryData - An object containing repository data where the TLS certificate information is stored.
+ *
+ * @throws {UserfacingError} If the selected file is null.
+ * @returns {Promise<boolean | void>} Returns false if the user cancels the password input, otherwise void.
+ */
+export async function validateP12AndMove(e: Event, repositoryData: TRepositoryData): Promise<false | undefined> {
   const input = e.target as HTMLInputElement;
   const file = input.files && input.files[0];
   if (file === null) {
     throw new UserfacingError('Invalid File', 'Input File darf nicht NULL sein.', ERROR_CODES.AUTHCL_1114);
   }
   const pfxFilename = file?.name.toString();
-
   const fieldKey = ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE;
   try {
     const newPassword = await Swal.fire({
@@ -639,7 +706,7 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
     }
     input.value = '';
     repositoryData[fieldKey] = '';
-    Swal.fire({
+    await Swal.fire({
       title: translate('error_info'),
       text: translate(errorText),
       icon: 'error',

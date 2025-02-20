@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import dot from 'dot-object';
@@ -34,6 +38,8 @@ import {
 import { logger } from '@/renderer/service/logger';
 import {
   CHECK_UPDATES_AUTOMATICALLY_CONFIG,
+  CONNECTOR_GATEWAY_NAME,
+  CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_AUTH_TYPES,
@@ -49,6 +55,7 @@ import i18n from '@/renderer/i18n';
 
 export type TRepositoryDataValues = {
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: boolean;
+  [PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR]: boolean;
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: PROXY_AUTH_TYPES | boolean;
   [PROXY_SETTINGS_CONFIG.PROXY_USERNAME]: string;
   [PROXY_SETTINGS_CONFIG.PROXY_PASSWORD]: string;
@@ -60,13 +67,13 @@ export type TRepositoryDataValues = {
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: boolean;
   [ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME]: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: number;
-  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: boolean;
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PRIVATE_KEY]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_CERTIFICATE]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_CERTIFICATE]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.USERNAME_BASIC_AUTH]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.PASSWORD_BASIC_AUTH]?: string;
+  [ENTRY_OPTIONS_CONFIG_GROUP.SMCB_PIN_OPTION]: boolean;
 
   [CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID]: string;
   [CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]: string;
@@ -77,6 +84,9 @@ export type TRepositoryDataValues = {
   [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: boolean;
 
   [TIMEOUT_PARAMETER_CONFIG]: number;
+
+  [CONNECTOR_GATEWAY_NAME_STATUS]: boolean;
+  [CONNECTOR_GATEWAY_NAME]: string;
 
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]?: boolean;
@@ -117,7 +127,9 @@ export const INITIAL_STATE = {
   [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: true,
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
-  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: false,
+  [PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR]: false,
+  [ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED]: true,
+  [ENTRY_OPTIONS_CONFIG_GROUP.SMCB_PIN_OPTION]: false,
   [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE.ServerCertAuth,
   [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 443,
 
@@ -125,6 +137,9 @@ export const INITIAL_STATE = {
   [MOCK_CONNECTOR_CONFIG]: false,
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]: true,
   // #!endif
+
+  [CONNECTOR_GATEWAY_NAME_STATUS]: false,
+  [CONNECTOR_GATEWAY_NAME]: '',
 };
 
 export class FileStorageRepository implements ISettingsRepository {
@@ -160,12 +175,17 @@ export class FileStorageRepository implements ISettingsRepository {
     this._isDefaultConfigFile = value;
   }
 
+  static get isCentralConfigurationInvalid(): boolean {
+    return this._isCentralConfigurationInvalid;
+  }
+
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
   private static _usesCredentialManager = false;
   private static _isNewInstallation = false;
   private static _isJsonFileInvalid = false;
   private static _isDefaultConfigFile = false;
+  private static _isCentralConfigurationInvalid = false;
 
   public static getConfigDir(): { path: string; localEnv: boolean } {
     const clientName = PROCESS_ENVS.CLIENTNAME;
@@ -178,6 +198,11 @@ export class FileStorageRepository implements ISettingsRepository {
     logger.info('  -  CLIENTNAME:' + clientName);
     logger.info('  -  COMPUTERNAME:' + computerName);
     logger.info('  -  VIEWCLIENT_MACHINE_NAME:' + viewClientMachineName);
+
+    // This implies a maybe faulty central configuration:
+    if ((clientName || viewClientMachineName) && !authConfigPath) {
+      this._isCentralConfigurationInvalid = true;
+    }
 
     // Abhängig von folgenden Umgebungsvariablen wird die Lokalität der zu verwendenden config.json in folgender Reihenfolge bestimmt:
     // 1. Wenn die Umgebungsvariable AUTHCONFIGPATH gesetzt ist und die Umgebungsvariable ViewClient_Machine_Name (VMWARE)
@@ -286,7 +311,7 @@ export class FileStorageRepository implements ISettingsRepository {
     window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted, null, 2));
 
     logger.info('Saved config changes under: ', FileStorageRepository.getPath());
-
+    FileStorageRepository._isNewInstallation = false;
     // #!if MOCK_MODE === 'ENABLED'
     FileStorageRepository.printConfig();
     // #!endif

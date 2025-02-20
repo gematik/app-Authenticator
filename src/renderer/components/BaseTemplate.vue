@@ -1,23 +1,32 @@
 <!--
-  - Copyright 2024 gematik GmbH
+  - Copyright 2025, gematik GmbH
   -
-  - The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
-  - Sourcecode must be in compliance with the EUPL.
+  - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+  - European Commission – subsequent versions of the EUPL (the "Licence").
+  - You may not use this work except in compliance with the Licence.
   -
-  - You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+  - You find a copy of the Licence in the "Licence" file or at
+  - https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
   -
-  - Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
-  - IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
-  - language governing permissions and limitations under the License.ee the Licence for the specific language governing
-  - permissions and limitations under the Licence.
+  - Unless required by applicable law or agreed to in writing,
+  - software distributed under the Licence is distributed on an "AS IS" basis,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+  - In case of changes by gematik find details in the "Readme" file.
+  -
+  - See the Licence for the specific language governing permissions and limitations under the Licence.
   -->
 
 <script lang="ts" setup>
-import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/GemIdpAuthFlowProcess.vue';
+import AuthFlow from '@/renderer/modules/gem-idp/event-listeners/AuthFlow.vue';
 import { computed } from 'vue';
 import { IS_DEV, PROCESS_ENVS } from '@/constants';
+import { useRoute } from 'vue-router';
+import { useSettings } from '@/renderer/modules/settings/useSettings';
+import packageJson from '../../../package.json';
 
-let version = PROCESS_ENVS.VERSION ?? 'Unbekannt';
+let version = packageJson.version;
+
+const route = useRoute();
 
 // #!if MOCK_MODE === 'ENABLED'
 if (IS_DEV) {
@@ -25,10 +34,13 @@ if (IS_DEV) {
 }
 // #!endif
 
+const isActiveAssistant = computed(() => {
+  return route.path.startsWith('/config-assistant');
+});
+
 const buildVersion = computed(() => {
   // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
-    const packageJson = require('../../../package.json');
     return packageJson.version;
   }
   // #!endif
@@ -38,6 +50,10 @@ const buildVersion = computed(() => {
   }
   return PROCESS_ENVS.BUILD_NUMBER === true ? ` ${PROCESS_ENVS.BUILD_NUMBER}` : ' snapshot';
 });
+
+const { exist } = useSettings();
+
+const settingsSet = computed(() => exist());
 </script>
 
 <template>
@@ -50,8 +66,23 @@ const buildVersion = computed(() => {
         <router-link id="navSettings" to="/settings" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
           {{ $t('settings') }}
         </router-link>
-        <router-link id="navHelp" to="/help" class="p-1.5 rounded-sm operator:hover bg-primary">
+        <router-link id="navHelp" to="/help" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
           {{ $t('help') }}
+        </router-link>
+        <router-link
+          v-if="!settingsSet"
+          id="navConfigAssistant"
+          to="/config-assistant"
+          :class="[
+            'p-1.5',
+            'mr-[16px]',
+            'rounded-sm',
+            'operator:hover',
+            'bg-primary',
+            { 'router-link-active': isActiveAssistant },
+          ]"
+        >
+          {{ $t('config_assistant.menu-title') }}
         </router-link>
       </div>
       <img src="@/assets/logo_gematik.svg" class="object-contain" alt="logo" />
@@ -69,22 +100,15 @@ const buildVersion = computed(() => {
       <div id="lblVersion" class="text-sm cursor-default" :title="buildVersion">{{ $t('version', { version }) }}</div>
     </div>
 
-    <GemIdpAuthFlowProcess />
+    <AuthFlow />
   </div>
 </template>
 
 <style lang="scss" scoped>
-#navLogin:hover {
-  background-color: rgb(240, 240, 240);
-  border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
-}
-
-#navSettings:hover {
-  background-color: rgb(240, 240, 240);
-  border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
-}
-
-#navHelp:hover {
+#navLogin:hover,
+#navSettings:hover,
+#navHelp:hover,
+#navConfigAssistant:hover {
   background-color: rgb(240, 240, 240);
   border-bottom: rgba(78, 91, 166, 0.5) 2px solid;
 }

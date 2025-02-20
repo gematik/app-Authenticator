@@ -1,24 +1,34 @@
-import { shallowMount } from '@vue/test-utils';
-import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/GemIdpAuthFlowProcess.vue';
-import i18n from '@/renderer/i18n';
+/*
+ * Copyright 2025, gematik GmbH
+ *
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
+ *
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
 import store from '@/renderer/store';
 import { TCallback } from '@/renderer/modules/gem-idp/type-definitions';
+import { getParamFromChallengePath } from '@/renderer/modules/gem-idp/services/arguments-parser';
 
 const TEST_CHALLENGE_PATH =
   'https://xx.de/auth?client_id=GEMAmediTISHJL7rK0tR&response_type=code&nonce=UE54P39wyUKggjPsvItc&callback=DIRECT';
 
-describe('GemIdpAuthFlowProcess.vue', () => {
+describe('AuthFlow.vue', () => {
   beforeEach(() => {
-    store.commit('gemIdpServiceStore/resetStore');
+    store.commit('idpServiceStore/resetStore');
   });
 
-  const wrapper = shallowMount(GemIdpAuthFlowProcess, {
-    global: {
-      plugins: [store, i18n],
-    },
-  });
-
-  it('should correctly set challenge path from challenge path and return correct value', async () => {
+  it('should correctly return the clean challenge path and return correct value', async () => {
     // Set up test data
 
     const expectedChallengePath =
@@ -27,21 +37,23 @@ describe('GemIdpAuthFlowProcess.vue', () => {
     const param = 'callback';
 
     // Call the function
-    const returnValue = wrapper.vm.popParamFromChallengePath(param, TEST_CHALLENGE_PATH);
+    const returnValue = getParamFromChallengePath(param, TEST_CHALLENGE_PATH);
 
     // Verify results
-    expect(store.state.gemIdpServiceStore.challengePath).toBe(expectedChallengePath);
-    expect(returnValue).toBe(TCallback.DIRECT);
+    expect(returnValue.cleanChallengePath).toBe(expectedChallengePath);
+    expect(returnValue.value).toBe(TCallback.DIRECT);
   });
 
-  it('negative: should return empty string and should not change the challenge path in store', async () => {
+  it('negative: should return null  and return the same challenge path', async () => {
     const param = 'non-existing-param';
 
     // Call the function
-    const returnValue = wrapper.vm.popParamFromChallengePath(param, TEST_CHALLENGE_PATH);
+    const returnValue = getParamFromChallengePath(param, TEST_CHALLENGE_PATH);
 
     // Verify results
-    expect(store.state.gemIdpServiceStore.challengePath).toBe('');
-    expect(returnValue).toBe('');
+    expect(returnValue.cleanChallengePath).toBe(
+      'https://xx.de/auth?client_id=GEMAmediTISHJL7rK0tR&response_type=code&nonce=UE54P39wyUKggjPsvItc&callback=DIRECT',
+    );
+    expect(returnValue.value).toBe(null);
   });
 });

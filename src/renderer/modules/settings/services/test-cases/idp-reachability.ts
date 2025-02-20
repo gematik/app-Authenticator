@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import { TestResult, TestStatus } from '@/renderer/modules/settings/services/test-runner';
@@ -18,7 +22,6 @@ import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
 import i18n from '@/renderer/i18n';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
-import { IS_DEV, TEST_CASES_JSON_FILE_NAME } from '@/constants';
 
 export async function idpReachabilityTest(): Promise<TestResult[]> {
   const translate = i18n.global.t;
@@ -84,29 +87,7 @@ async function callIdp(url: string): Promise<number> {
 }
 
 function loadAndParseConnectionTestConfig(): any {
-  let filePath = '';
-
-  if (window.api.isMacOS()) {
-    filePath = window.api.pathJoin(PathProvider.getMacOsUserAppPath(), TEST_CASES_JSON_FILE_NAME);
-
-    // #!if MOCK_MODE === 'ENABLED'
-    if (IS_DEV) {
-      filePath = window.api.pathJoin(PathProvider.getAppPath(), 'src/assets/', TEST_CASES_JSON_FILE_NAME);
-    }
-    // #!endif
-  } else {
-    // TODO: This config file must be stored on a proper location and not in the dist folder
-    // C:\Program Files\gematik Authenticator\resources
-    filePath = window.api.pathJoin(PathProvider.getAppPath().replace(/app.asar/i, ''), TEST_CASES_JSON_FILE_NAME);
-  }
-
-  if (!window.api.existsSync(filePath)) {
-    logger.error('Config file not found: ' + filePath + '-App-path: ' + PathProvider.getAppPath());
-    throw new UserfacingError('Read Config File', 'file ' + filePath + ' not found', undefined, {
-      filePath,
-    });
-  }
-
+  const filePath = PathProvider.getTestCasesPath();
   logger.info('Config file found, filepath:' + filePath);
   const buffer = window.api.readFileSync(filePath);
   const decoder = new TextDecoder('utf-8');

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`base template screen render with settings button 1`] = `
+exports[`base template screen renders with settings button 1`] = `
 <div
   class="h-full flex flex-col bg-primary text-defaultext"
 >
@@ -8,27 +8,30 @@ exports[`base template screen render with settings button 1`] = `
     class="flex flex-row justify-between px-[32px] py-[32px]"
   >
     <div>
-      <router-link
+      <a
         class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
         id="navLogin"
-        to="/"
       >
         Home
-      </router-link>
-      <router-link
+      </a>
+      <a
         class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
         id="navSettings"
-        to="/settings"
       >
         Einstellungen
-      </router-link>
-      <router-link
-        class="p-1.5 rounded-sm operator:hover bg-primary"
+      </a>
+      <a
+        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
         id="navHelp"
-        to="/help"
       >
         Hilfe
-      </router-link>
+      </a>
+      <a
+        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
+        id="navConfigAssistant"
+      >
+        Konfigurationsassistent
+      </a>
     </div>
     <img
       alt="logo"
@@ -45,9 +48,8 @@ exports[`base template screen render with settings button 1`] = `
   <div
     class="flex flex-row justify-between relative px-[32px] py-[32px]"
   >
-    <router-link
+    <a
       class="inline-flex"
-      to="/imprint"
     >
       <img
         alt="info icon"
@@ -59,18 +61,20 @@ exports[`base template screen render with settings button 1`] = `
       >
         Impressum
       </span>
-    </router-link>
+    </a>
     <div
       class="text-sm cursor-default"
       id="lblVersion"
-      title="4.13.2"
+      title="4.14.0"
     >
       Version dev 
     </div>
   </div>
   
-  <div />
   <!--v-if-->
+  <div />
+  <div />
+  <div />
   
 </div>
 `;

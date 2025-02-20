@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 /**
@@ -110,7 +114,7 @@ describe('proxyResolver', () => {
 
     const proxyAgent = (await createProxyAgent('https://Server.com')) as HttpsProxyAgent;
 
-    expect(proxyAgent.options.ca).toBe(ca);
+    expect(proxyAgent.options.ca).toEqual(ca);
     // @ts-ignore
     expect(proxyAgent.proxy.username).toBe('');
     // @ts-ignore
@@ -166,14 +170,8 @@ describe('proxyResolver', () => {
       'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
     )) as HttpsProxyAgent;
 
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent).toBeDefined();
-    }
+    // @ts-ignore
+    expect(proxyAgent).toBeUndefined();
   });
 
   it('performs proxy creation with a unmatching proxyIgnoreList entry for the destination address', async function () {
@@ -203,14 +201,7 @@ describe('proxyResolver', () => {
       'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
     )) as HttpsProxyAgent;
 
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent).toBeDefined();
-    }
+    expect(proxyAgent).toBeUndefined();
   });
 
   it('performs proxy creation with a matching CIDR entry in the proxyIgnoreList for the destination address', async function () {
@@ -225,14 +216,7 @@ describe('proxyResolver', () => {
       'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
     )) as HttpsProxyAgent;
 
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent).toBeDefined();
-    }
+    expect(proxyAgent).toBeUndefined();
   });
   it('performs proxy creation with a matching IP-List entry in the proxyIgnoreList for the destination address', async function () {
     preloadApi.setAppConfigInPreload({
@@ -245,14 +229,7 @@ describe('proxyResolver', () => {
       'https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration',
     )) as HttpsProxyAgent;
 
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent).toBeDefined();
-    }
+    expect(proxyAgent).toBeUndefined();
   });
   it('useManualProxySetting', async function () {
     preloadApi.setAppConfigInPreload({
@@ -278,15 +255,8 @@ describe('proxyResolver', () => {
     });
 
     const proxyAgent = await createProxyAgent('https://gematik.de');
-
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent?.proxy?.href).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent?.proxy?.href).toBeDefined();
-    }
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBeUndefined();
   });
 
   it('should ignore fqdn with asterix', async function () {
@@ -299,14 +269,7 @@ describe('proxyResolver', () => {
     });
 
     const proxyAgent = await createProxyAgent('https://proxy.gematik.de');
-
-    // on windows expect the proxy to be undefined
-    if (process.platform !== 'darwin') {
-      // @ts-ignore
-      expect(proxyAgent?.proxy?.href).toBeUndefined();
-    } else {
-      // @ts-ignore
-      expect(proxyAgent?.proxy?.href).toBeDefined();
-    }
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBeUndefined();
   });
 });

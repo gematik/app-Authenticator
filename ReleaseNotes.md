@@ -2,6 +2,33 @@
 
 # Release Authenticator
 
+## 4.14.0
+
+### Added
+
+- Open export directory after log zip-export
+- Configuration assistant that helps users find the required inputs
+- TLS validation is now enabled by default in settings
+- Added recommended cipher-suites for IdP connections
+- Universal Arc for the macOS version
+- Add shortcuts to logs, certs, config folders via windows task bar and macOS dock
+- Optional proxy bypass for Konnektor communications
+- Add more information for HBA PIN in dialog
+- Add option for SMC-B PIN request
+- Add example of API Gateway for Konnektor abstraction
+- Add Konnektor Selection for API Gateway
+
+### Fixed
+
+- Remove redundant root certificates
+- Version Number is now shown correctly in the UI of the Auth-Window
+- Increased the timeout for the verifyPIN call to 60 seconds
+
+### Security
+
+- Hide filepath to the global config file (if in use) in Settings tab
+  Updated dependencies for enhanced security
+
 ## Version 4.13.2
 
 ### Fixed

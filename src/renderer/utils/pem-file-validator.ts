@@ -1,21 +1,31 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-import i18n from '@/renderer/i18n';
 import Swal from 'sweetalert2';
+import forge from 'node-forge';
+import * as x509 from '@peculiar/x509';
+
+import i18n from '@/renderer/i18n';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
+import { CERTIFICATE_VALIDATION_STATUS } from '@/constants';
+import { logger } from '@/renderer/service/logger';
+import { readECPrivateKey } from '@/renderer/modules/connector/connector-mock/jws-jose-tools/sign-bp-256';
 
 const translate = i18n.global.t;
 
@@ -24,19 +34,13 @@ export enum PEM_TYPES {
   CERT = 'cert',
 }
 
-const CERT_HEAD_AND_FOOTER_REGEX = {
-  [PEM_TYPES.KEY]: {
-    FILEFORMAT:
-      /(-----BEGIN(.*?)KEY-----(\n|\r|\r\n)([0-9a-zA-Z\+\/=]{64}(\n|\r|\r\n))*([0-9a-zA-Z\+\/=]{1,63}(\n|\r|\r\n))?-----END(.*?)KEY-----)/, //eslint-disable-line
-  },
-  [PEM_TYPES.CERT]: {
-    FILEFORMAT:
-      /(-----BEGIN CERTIFICATE-----(\n|\r|\r\n)([0-9a-zA-Z\+\/=]{64}(\n|\r|\r\n))*([0-9a-zA-Z\+\/=]{1,63}(\n|\r|\r\n))?-----END CERTIFICATE-----)/, //eslint-disable-line
-  },
-};
-
 export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
-  const isFormatLineValid = CERT_HEAD_AND_FOOTER_REGEX[type].FILEFORMAT.test(fileContent);
+  let isFormatLineValid: boolean;
+  if (type === PEM_TYPES.CERT) {
+    isFormatLineValid = checkCertificates(fileContent) === CERTIFICATE_VALIDATION_STATUS.VALID;
+  } else {
+    isFormatLineValid = checkPrivateKey(fileContent);
+  }
 
   if (!isFormatLineValid) {
     await Swal.fire({
@@ -57,6 +61,47 @@ export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
   }
 }
 
-export async function checkPemFileFormatSilent(fileContent: string, type: PEM_TYPES) {
-  return CERT_HEAD_AND_FOOTER_REGEX[type].FILEFORMAT.test(fileContent);
+// Function to parse certificates
+export function checkCertificates(pem: string): CERTIFICATE_VALIDATION_STATUS {
+  try {
+    const normalizedPem = pem.replace(/\r\n/g, '\n');
+    const cert = new x509.X509Certificate(normalizedPem);
+
+    const notBefore = cert.notBefore;
+    const notAfter = cert.notAfter;
+
+    const now = new Date();
+
+    if (now < notBefore) {
+      return CERTIFICATE_VALIDATION_STATUS.NOT_VALID_YET;
+    } else if (now > notAfter) {
+      return CERTIFICATE_VALIDATION_STATUS.EXPIRED;
+    } else {
+      return CERTIFICATE_VALIDATION_STATUS.VALID;
+    }
+  } catch (error) {
+    logger.error('Error parsing certificate: ', error);
+    return CERTIFICATE_VALIDATION_STATUS.INVALID;
+  }
+}
+
+export function checkPrivateKey(pem: string): boolean {
+  try {
+    forge.pki.privateKeyFromPem(pem);
+
+    return true;
+  } catch (error) {
+    logger.warn('Error parsing private key. Try parsing as EC key:', error);
+
+    try {
+      readECPrivateKey(pem);
+
+      logger.info('EC private key parsed successfully');
+
+      return true;
+    } catch (error) {
+      logger.error('Error parsing EC private key:', error);
+      return false;
+    }
+  }
 }
