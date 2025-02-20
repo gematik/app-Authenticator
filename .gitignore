@@ -31,12 +31,6 @@ coverage
 *.pfx
 /src/index.ts
 
-
-/src/assets/certs-idp/tu-ca.crt
-/src/assets/certs-idp/dev-idp-ca.crt
-/src/assets/certs-idp/org_ru_chain.pem
-
-
 # ignore jest report files
 /reports/
 /jenkins-jest-test-report.xml
@@ -45,11 +39,21 @@ coverage
 /test-cases-config.json
 /.env
 
+# python stuff
+/venv/
+
+# DMG Licence
+/src/assets/license_de.txt
+
+
 Archive.Jenkinsfile
 Jenkinsfile
 Release.Jenkinsfile
 Github-Release.Jenkinsfile
 /tests/Integration/
+Koco.env
+Secunet.env
+Rise.env
 
 # echte p12 Dateien von unserem Kon23 - derzeit wird geklärt, ob die ins gitHub dürften, deshalb erst einmal hier
 /tests/resources/certs/example/cs0001.p12
@@ -63,23 +67,18 @@ Github-Release.Jenkinsfile
 /tests/resources/certs/example/example-key.cer
 /tests/resources/certs/kops
 
-
-# we don't want to release the credential scripts now
-/credential-distribution/facade-poc
-
-# we don't want to release the certificates
-/src/assets/certs-idp/RCA2_KOMPCA24.pem
-/src/assets/certs-idp/web.gematik.solutions.cer
-/src/assets/certs-idp/web.gematik.solutions.intermediate.cer
-/src/assets/certs-idp/web.gematik.solutions.intermediate copy.cer
-/src/assets/certs-idp/web.gematik.solutions.root.cer
-/src/assets/certs-idp/web.gematik.solutions.root copy.cer
-/src/assets/certs-idp/web.gematik.solutions copy.cer
-/src/assets/certs-idp/R3.cer
-/src/assets/certs-idp/gematik idp test server.cer
+/src/assets/certs-konnektor/ca/ru
 
 # Fastlane
 ./fastlane
 /fastlane
 /fastlane/
+
+# Internal Configurations
+# TODO we should write this down in our guide lines
+**/internal-files
+
+# MSIX Configurations
+/msix
+/msix/
 

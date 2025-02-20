@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 // read envs from .env file for production
@@ -31,6 +35,7 @@ import { setupEnvReadInterval } from '@/main/services/env-vars-updater';
 import '@/main/services/electron-updater';
 import { hasAppRemoteDebuggingFlags } from '@/main/services/utils';
 import copyFromResourcesToTarget from '@/main/services/copy-from-resources-to-target';
+import { setMacOSDockShortcuts, setWindowsTaskbarShortcuts } from '@/renderer/utils/os-menu-shortcuts';
 
 require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
@@ -46,6 +51,10 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 
 const PLATFORM_WIN32 = 'win32';
 const PLATFORM_DARWIN = 'darwin';
+
+if (process.platform === PLATFORM_WIN32) {
+  setWindowsTaskbarShortcuts();
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -269,6 +278,12 @@ if (!gotTheLock) {
     if (deepLink) {
       handleDeepLink([deepLink], mainWindow);
       deepLink = '';
+    }
+
+    if (process.platform === PLATFORM_DARWIN) {
+      setMacOSDockShortcuts()
+        .then(() => logger.debug('Mac Dock shortcuts set'))
+        .catch((error: unknown) => logger.error('Error setting Mac Dock shortcuts', error));
     }
   });
 

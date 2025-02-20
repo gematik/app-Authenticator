@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 export const CONFIG_FILE_NAME = 'config.json';
@@ -135,6 +139,8 @@ export const WIKI_CONSENT_DECLARATION_URL = 'https://wiki.gematik.de/x/GijaI';
 export const WIKI_CONFIGURATION_LINK =
   'https://wiki.gematik.de/display/GAKB/Installationshandbuch+Authenticator#InstallationshandbuchAuthenticator-Konfiguration:~:text=komplett%20zu%20beenden.-,Konfiguration,-Es%20gibt%20mehrere';
 
+export const WIKI_INSTALLATION_SCENARIOS = 'https://wiki.gematik.de/pages/viewpage.action?pageId=492836624';
+
 /**
  * URL zum Authenticator-Sharepoint
  */
@@ -213,7 +219,7 @@ export const LOGIN_NOT_SUCCESSFUL = 'login_not_successful';
 
 export const LOGIN_CANCELLED_BY_USER = 'login_cancelled_by_user';
 
-export const DEV_CON_CA_CERT_PATH = '/src/assets/certs-konnektor/ca/pu/rsa';
+export const DEV_CON_CA_CERT_PATH = '/src/assets/certs-konnektor/ru';
 export const DEV_IDP_CA_CERT_PATH = '/src/assets/certs-idp';
 
 export enum P12_VALIDITY_TYPE {
@@ -239,8 +245,6 @@ export const MACOS_PATHS = {
   CERTS_DIR: window?.api?.homedir() + '/Library/Application Support/' + PRODUCT_NAME,
 };
 
-export const MACOS_DS_STORE_FILE_NAME = '.DS_Store';
-
 /**
  * We close the app if any debugging flags are found in the main process
  */
@@ -263,7 +267,32 @@ export const EXPOSED_ENV_VARIABLES = [
   'CONNECTOR_PATH',
   'COMPUTERNAME',
   'CLIENTNAME',
+  'VIEWCLIENT_MACHINE_NAME',
+  'ViewClient_Machine_Name',
   'AUTHCONFIGPATH',
   'NODE_ENV',
   'MOCK_MODE',
 ];
+
+/**
+ * Allowed ciphers for the IDP
+ */
+export const IDP_CIPHERS = [
+  'ECDHE-RSA-AES128-SHA256',
+  'ECDHE-RSA-AES256-SHA384',
+  'ECDHE-RSA-AES128-GCM-SHA256',
+  'ECDHE-RSA-AES256-GCM-SHA384',
+  'ECDHE-ECDSA-AES128-SHA256',
+  'ECDHE-ECDSA-AES256-SHA384',
+  'ECDHE-ECDSA-AES128-GCM-SHA256',
+  'ECDHE-ECDSA-AES256-GCM-SHA384',
+  'ECDHE-ECDSA-AES128-CCM',
+  'ECDHE-ECDSA-AES256-CCM',
+];
+
+export enum CERTIFICATE_VALIDATION_STATUS {
+  VALID = 'valid',
+  INVALID = 'invalid',
+  NOT_VALID_YET = 'not-valid-yet',
+  EXPIRED = 'expired',
+}

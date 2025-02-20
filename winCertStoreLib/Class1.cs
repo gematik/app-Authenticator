@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
  * Sourcecode must be in compliance with the EUPL.

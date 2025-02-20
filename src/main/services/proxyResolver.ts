@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import { ipcRenderer } from 'electron';
@@ -26,199 +30,200 @@ import isValidDomain = require('is-valid-domain');
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
 
-export async function createProxyAgent(url: string): TReturnType {
-  let proxyUrl;
-  //default behavior is always the os setting, also when nothing is set
+export async function createProxyAgent(url: string, trustStoreCertificates: string[] = []): TReturnType {
+  const proxyUrl = await getProxyUrl(url);
+
+  logger.info('custom proxyUrl', proxyUrl);
+  // #!if MOCK_MODE === 'ENABLED'
+  // This is only for the macOS Pipeline
+  const pCert = getProxyCertificate();
+  if (!proxyUrl && process.env.BUILD_ID && process.env.http_proxy) {
+    return new HttpsProxyAgent({
+      proxy: process.env.http_proxy,
+      ca: fs.readFileSync('src/assets/certs-konnektor/ru/Gematik-Intern-ZD-Root-CA.crt'),
+      cert: pCert,
+      requestCert: !!pCert,
+    });
+  }
+  // #!endif
+
+  if (!proxyUrl) {
+    return undefined;
+  }
+  const shouldBypass = await shouldBypassProxy(url);
+  if (shouldBypass) {
+    logger.info(`Bypassing proxy for URL: ${url}`);
+    return undefined;
+  }
+  const proxyAuthSettings = getProxyAuthSettings();
+  return createAgent(url, proxyUrl, proxyAuthSettings, trustStoreCertificates);
+}
+
+/** Helper Functions */
+// determination of proxy URL based on OS settings or application configuration.
+async function getProxyUrl(url: string): Promise<string | undefined> {
   const useOsSetting = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS];
+  let proxyUrl: string | undefined;
+
   if (useOsSetting || useOsSetting === undefined) {
     proxyUrl = (await ipcRenderer.sendSync(IPC_GET_PROXY, url)) as string;
-    logger.info('Proxy url picked from os settings');
+    logger.info('Proxy URL obtained from OS settings');
   } else {
     const host = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_ADDRESS] as string;
     const port = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PORT];
-    proxyUrl = host + ':' + port;
-    logger.info('Proxy url picked from config');
+    proxyUrl = `${host}:${port}`;
+    logger.info('Proxy URL obtained from app configuration');
   }
-  logger.debug('Proxy url is: ' + proxyUrl);
-  const ignoreProxyForUrl = await isUrlInProxyIgnoreList(url);
-  logger.debug('Ignore destination url: ' + ignoreProxyForUrl);
 
-  if (proxyUrl && !ignoreProxyForUrl) {
-    logger.info('Proxy url exists and is not ignored');
-
-    const proxy = new URL(proxyUrl);
-    const destinationUrl = new URL(url);
-    const isSecure = destinationUrl.protocol === 'https:';
-    const proxyBasicAuthSettings = getProxyBasicAuthSettings();
-
-    // set username and password for basic auth
-    if (proxyBasicAuthSettings?.username && proxyBasicAuthSettings?.password) {
-      logger.info('App uses basic auth for proxy');
-
-      proxy.username = proxyBasicAuthSettings.username;
-      proxy.password = proxyBasicAuthSettings.password;
-    }
-
-    const caIdp = APP_CA_CHAIN_IDP.length === 0 ? undefined : APP_CA_CHAIN_IDP;
-
-    const proxyCertificate = getProxyCertificate();
-    if (isSecure) {
-      logger.info('Proxy url is a https secure url');
-      return new HttpsProxyAgent({
-        proxy,
-        ca: caIdp,
-        cert: proxyCertificate,
-        requestCert: !!proxyCertificate,
-      });
-    }
-
-    logger.info('Proxy url is a http url or no url');
-    return new HttpProxyAgent({
-      proxy,
-      proxyRequestOptions: {
-        ca: caIdp,
-      },
-    });
+  if (proxyUrl) {
+    return proxyUrl;
   } else {
-    // #!if MOCK_MODE === 'ENABLED'
-    // This is only for the macOS Pipeline
-    const pCert = getProxyCertificate();
-    if (process.env.BUILD_ID && process.env.http_proxy) {
-      return new HttpsProxyAgent({
-        proxy: process.env.http_proxy,
-        ca: APP_CA_CHAIN_IDP,
-        cert: pCert,
-        requestCert: !!pCert,
-      });
-    }
-    // #!endif
+    logger.info('No proxy URL found');
+    return undefined;
   }
 }
 
-const isUrlInProxyIgnoreList = async (proxyUrl: string): Promise<boolean> => {
+// bypass based on proxy ignore list
+async function shouldBypassProxy(url: string): Promise<boolean> {
   const proxyIgnoreList = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_IGNORE_LIST] as string;
-
   if (!proxyIgnoreList?.trim()) {
-    return false;
-  }
-
-  if (!proxyUrl) {
-    logger.info('Could not resolve ip address for the proxy ignore list');
     return false;
   }
 
   const proxyIgnoreEntries = proxyIgnoreList.split(';');
 
-  for (const proxyIgnoreEntry of proxyIgnoreEntries) {
-    // if this is a fqdn and it matches the proxy url, return true
-    if (isValidDomain(proxyIgnoreEntry, { wildcard: true }) && isFqdnInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
+  for (const entry of proxyIgnoreEntries) {
+    const isDomainEntry = isValidDomain(entry, { wildcard: true });
+
+    if (isDomainEntry && isDomainIgnored(url, entry)) {
       return true;
     }
 
-    try {
-      // if this is an ip address, and it matches the proxy url, return true
-      if (await isIpInProxyIgnoreList(proxyUrl, proxyIgnoreEntry)) {
-        return true;
-      }
-    } catch (e) {
-      // if the ip address is not valid, continue with the next entry
+    if (!isDomainEntry && (await isIpIgnored(url, entry))) {
+      return true;
     }
   }
+
   return false;
-};
+}
 
-const isFqdnInProxyIgnoreList = (proxyUrl: string, proxyIgnoreEntry: string): boolean => {
-  const parsedProxyUrl = new URL(proxyUrl);
-  const host = parsedProxyUrl.host;
+function isDomainIgnored(url: string, entry: string): boolean {
+  const host = new URL(url).host;
 
-  const isUrlInProxyIgnoreListResult = minimatch(host, proxyIgnoreEntry);
-
-  logger.info('isUrlInProxyIgnoreListResult' + isUrlInProxyIgnoreListResult);
-  if (isUrlInProxyIgnoreListResult) {
-    logger.info('URL is in proxy ignore list');
-    logger.debug(
-      'ProxyIgnoreEntry:' +
-        proxyIgnoreEntry +
-        ', Address for URL:' +
-        host +
-        ', is proxyURL in proxy ignore range:' +
-        isUrlInProxyIgnoreListResult,
-    );
+  if (minimatch(host, entry)) {
+    logger.info(`URL ${url} is ignored based on domain entry ${entry}`);
+    logger.debug(`ProxyIgnoreEntry: ${entry}, Host: ${host}`);
     return true;
   }
 
   return false;
-};
+}
 
-const isIpInProxyIgnoreList = async (proxyUrl: string, proxyIgnoreEntry: string): Promise<boolean> => {
-  const ipAddress = await getIpAddress(proxyUrl);
-
-  if (!ipAddress) {
-    logger.info('Could not resolve ip address for the proxy ignore list');
-    return false;
-  }
-
+async function isIpIgnored(url: string, entry: string): Promise<boolean> {
   try {
-    const isUrlInIpRange = ipMatches(ipAddress, proxyIgnoreEntry);
-    if (isUrlInIpRange) {
-      logger.info('IP-address is in proxy ignore list');
-      logger.debug(
-        'ProxyIgnoreEntry:' +
-          proxyIgnoreEntry +
-          ', IP-Address for URL:' +
-          ipAddress +
-          ', is proxyURL in proxy ignore range:' +
-          isUrlInIpRange,
-      );
-      return isUrlInIpRange;
+    const ipAddress = await getIpAddress(url);
+    if (!ipAddress) {
+      return false;
     }
 
-    return false;
-  } catch (e) {
-    return false;
+    if (ipMatches(ipAddress, entry)) {
+      logger.info(`IP address ${ipAddress} of URL ${url} is ignored based on IP entry ${entry}`);
+      logger.debug(`ProxyIgnoreEntry: ${entry}, IP Address: ${ipAddress}`);
+      return true;
+    }
+  } catch (error) {
+    logger.error(`Error checking IP ignore list: ${error}`);
   }
-};
 
-async function getIpAddress(href: string): Promise<string | false> {
-  return new Promise((resolve, reject) => {
-    // timeout for dns lookup, if it takes longer than 200ms, reject with false
+  return false;
+}
+
+// resolves the IP address for a given URL
+async function getIpAddress(url: string): Promise<string | false> {
+  return new Promise((resolve) => {
+    const hostname = new URL(url).hostname;
+
+    // DNS lookup with a timeout
     const timer = setTimeout(() => {
+      logger.debug(`DNS lookup timed out for hostname: ${hostname}`);
       resolve(false);
     }, 200);
 
-    dns.lookup(new URL(href).host, (err, address) => {
-      clearTimeout(timer); // Clear the timer if DNS lookup completes
+    dns.lookup(hostname, (err: NodeJS.ErrnoException | null, address: string) => {
+      clearTimeout(timer);
       if (err) {
-        reject(false); // Reject with false on error
-        logger.debug('Error while resolving ip address for url:' + href + ', error:' + err);
+        logger.debug(`Error resolving IP address for ${hostname}: ${err ? err.message : 'Unknown error'}`);
+        resolve(false);
       } else {
-        resolve(address); // Resolve with the address on success
+        resolve(address);
       }
     });
   });
 }
 
-const getProxyBasicAuthSettings = (): void | { password: string; username: string } => {
+function getProxyAuthSettings(): { username: string; password: string } | undefined {
   if (APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.AUTH_TYPE] === PROXY_AUTH_TYPES.BASIC_AUTH) {
-    return {
-      username: APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_USERNAME] as string,
-      password: APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PASSWORD] as string,
-    };
+    const username = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_USERNAME] as string;
+    const password = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PASSWORD] as string;
+    logger.info('Using basic authentication for proxy');
+    return { username, password };
   }
-};
+  return undefined;
+}
 
-const getProxyCertificate = (): undefined | string => {
+function getProxyCertificate(): string | undefined {
   const proxyCertificatePath = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_CERTIFICATE_PATH];
   const isClientCertAuth = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.AUTH_TYPE] === PROXY_AUTH_TYPES.PROXY_CLIENT_CERT;
   const clientCertPathExists = typeof proxyCertificatePath === 'string';
 
   if (isClientCertAuth && clientCertPathExists) {
     try {
-      return fs.readFileSync(proxyCertificatePath, 'utf8');
-    } catch (e) {
+      const certificate = fs.readFileSync(proxyCertificatePath, 'utf8');
+      logger.info('Proxy client certificate loaded');
+      return certificate;
+    } catch (error) {
+      logger.error(`Error reading proxy certificate from ${proxyCertificatePath}: ${error}`);
       return undefined;
     }
   }
-
   return undefined;
-};
+}
+
+function createAgent(
+  url: string,
+  proxyUrl: string,
+  authSettings: { username: string; password: string } | undefined,
+  trustStoreCertificates: string[],
+): HttpsProxyAgent | HttpProxyAgent {
+  const destinationUrl = new URL(url);
+  const isSecure = destinationUrl.protocol === 'https:';
+  const proxy = new URL(proxyUrl);
+
+  if (authSettings) {
+    proxy.username = authSettings.username;
+    proxy.password = authSettings.password;
+    logger.info('Proxy authentication credentials set');
+  }
+
+  const caCertificates = APP_CA_CHAIN_IDP.length === 0 ? undefined : [...trustStoreCertificates, ...APP_CA_CHAIN_IDP];
+
+  const proxyCertificate = getProxyCertificate();
+
+  if (isSecure) {
+    logger.info('Creating HttpsProxyAgent for secure connection');
+    return new HttpsProxyAgent({
+      proxy,
+      ca: caCertificates,
+      cert: proxyCertificate,
+      requestCert: !!proxyCertificate,
+    });
+  } else {
+    logger.info('Creating HttpProxyAgent for non-secure connection');
+    return new HttpProxyAgent({
+      proxy,
+      proxyRequestOptions: {
+        ca: caCertificates,
+      },
+    });
+  }
+}

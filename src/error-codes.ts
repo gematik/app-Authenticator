@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 export const ERROR_CODES = {
@@ -25,6 +29,7 @@ export const ERROR_CODES = {
   AUTHCL_0010: 'AUTHCL_0010',
   AUTHCL_0011: 'AUTHCL_0011',
   AUTHCL_0012: 'AUTHCL_0012',
+  AUTHCL_0013: 'AUTHCL_0013',
 
   // connector errors begin with 1XXX
   AUTHCL_1000: 'AUTHCL_1000',
@@ -73,6 +78,7 @@ export const ERROR_CODES = {
   // prompts start with 2XXX
   AUTHCL_2001: 'AUTHCL_2001',
   AUTHCL_2002: 'AUTHCL_2002',
+  AUTHCL_2003: 'AUTHCL_2003',
 };
 
 /**
@@ -171,6 +177,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_0010]: 'Failed to save to credentials manager',
   [ERROR_CODES.AUTHCL_0011]: 'User declined the consent',
   [ERROR_CODES.AUTHCL_0012]: 'Config.json is not valid!',
+  [ERROR_CODES.AUTHCL_0013]: 'Creating JWE Signature failed',
 
   [ERROR_CODES.AUTHCL_1000]: 'Could not connect to connector',
   [ERROR_CODES.AUTHCL_1001]: 'Can not get card handle',
@@ -216,4 +223,5 @@ export const ERROR_CODE_EXPLANATIONS = {
 
   [ERROR_CODES.AUTHCL_2001]: 'Please place the Cards',
   [ERROR_CODES.AUTHCL_2002]: 'Please enter the HBA PIN',
+  [ERROR_CODES.AUTHCL_2003]: 'Please enter the SMC-B PIN',
 };

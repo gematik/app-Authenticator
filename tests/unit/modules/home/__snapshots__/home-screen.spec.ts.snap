@@ -34,15 +34,14 @@ exports[`home screen render with loading spinner 1`] = `
       Es wurden noch keine Einstellungen vorgenommen.
     </p>
     <button
-      class="bt"
+      class="bt flex items-center"
       type="submit"
     >
       <img
         alt="settings icon"
-        class="inline pr-[8px]"
-        src="[object Object]"
+        class="inline-block pr-[8px]"
       />
-      Einstellungen öffnen
+      Konfigurationsassistent starten
     </button>
   </div>
   <!-- #!if MOCK_MODE === 'ENABLED' -->
@@ -115,15 +114,14 @@ exports[`home screen render with settings button 1`] = `
       Es wurden noch keine Einstellungen vorgenommen.
     </p>
     <button
-      class="bt"
+      class="bt flex items-center"
       type="submit"
     >
       <img
         alt="settings icon"
-        class="inline pr-[8px]"
-        src="[object Object]"
+        class="inline-block pr-[8px]"
       />
-      Einstellungen öffnen
+      Konfigurationsassistent starten
     </button>
   </div>
   <!-- #!if MOCK_MODE === 'ENABLED' -->

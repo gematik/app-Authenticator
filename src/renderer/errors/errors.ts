@@ -1,19 +1,23 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import { logger } from '@/renderer/service/logger';
-import { IdpError } from '@/renderer/modules/gem-idp/type-definitions';
+import { IdpError, OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 
 export class AuthenticatorError extends Error {
   constructor(error: string) {
@@ -86,5 +90,32 @@ export class CentralIdpError extends AuthenticatorError {
   constructor(error: string, data?: IdpError) {
     super(error);
     this.data = data;
+  }
+}
+
+/**
+ * Generates a new Error class only for the AuthFlow.
+ * Right before this error is thrown, we should show an alert to the user
+ */
+export class AuthFlowError extends Error {
+  name = 'AuthFlowError';
+  errorDetails?: string;
+  errorUrl?: string;
+  errorShown?: boolean;
+  errorType?: OAUTH2_ERROR_TYPE;
+
+  constructor(
+    error: string,
+    errorDetails: string,
+    errorUrl?: string,
+    errorShown?: boolean,
+    errorType?: OAUTH2_ERROR_TYPE,
+  ) {
+    super(error);
+    logger.error('AuthFlowError: ' + error, errorDetails);
+    this.errorDetails = errorDetails;
+    this.errorUrl = errorUrl;
+    this.errorShown = errorShown;
+    this.errorType = errorType;
   }
 }

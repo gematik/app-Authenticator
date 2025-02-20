@@ -1,8 +1,27 @@
-import { shallowMount } from '@vue/test-utils';
-import GemIdpAuthFlowProcess from '@/renderer/modules/gem-idp/event-listeners/GemIdpAuthFlowProcess.vue';
+/*
+ * Copyright 2025, gematik GmbH
+ *
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
+ *
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
+import { mount } from '@vue/test-utils';
+import AuthFlow from '@/renderer/modules/gem-idp/event-listeners/AuthFlow.vue';
 import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
 import store from '@/renderer/store';
+import IdpActions from '@/renderer/modules/gem-idp/components/IdpActions.vue';
 
 // Mocking logger functions
 jest.mock('@/renderer/service/logger', () => {
@@ -34,9 +53,9 @@ window.api.openExternal = jest.fn();
 
 const PORT = '3000';
 
-describe('GemIdpAuthFlowProcess.vue', () => {
+describe('AuthFlow.vue', () => {
   beforeEach(() => {
-    store.commit('gemIdpServiceStore/resetStore');
+    store.commit('idpServiceStore/resetStore');
   });
 
   afterEach(() => {
@@ -44,7 +63,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
   });
 
   it('should send a request to the provided URL', async () => {
-    const wrapper = shallowMount(GemIdpAuthFlowProcess, {
+    const wrapper = mount(AuthFlow, {
       global: {
         plugins: [store, i18n],
       },
@@ -52,14 +71,14 @@ describe('GemIdpAuthFlowProcess.vue', () => {
 
     const url = 'http://localhost:' + PORT;
 
-    await wrapper.vm.sendAutomaticRedirectRequest(url);
+    await (wrapper.vm.$refs.idpActionsComponent as InstanceType<typeof IdpActions>).sendAutomaticRedirectRequest(url);
 
     expect(fetch).toHaveBeenCalledWith(url);
     expect(logger.info).toHaveBeenNthCalledWith(2, 'Redirecting automatically flow completed from preload context');
   });
 
   it('should retry the request with window.api.httpGet if fetch fails', async () => {
-    const wrapper = shallowMount(GemIdpAuthFlowProcess, { global: { plugins: [store] } });
+    const wrapper = mount(AuthFlow, { global: { plugins: [store] } });
     const url = 'http://localhost:' + PORT;
 
     // @ts-ignore
@@ -69,7 +88,7 @@ describe('GemIdpAuthFlowProcess.vue', () => {
       statusText: 'Not Found',
     });
 
-    await wrapper.vm.sendAutomaticRedirectRequest(url);
+    await (wrapper.vm.$refs.idpActionsComponent as InstanceType<typeof IdpActions>).sendAutomaticRedirectRequest(url);
 
     expect(fetch).toHaveBeenCalledWith(url);
     expect(logger.warn).toHaveBeenCalledWith(
@@ -80,8 +99,8 @@ describe('GemIdpAuthFlowProcess.vue', () => {
     expect(logger.info).toHaveBeenCalledWith('Redirecting automatically flow completed from preload context');
   });
 
-  fit('should handle errors in the second request', async () => {
-    const wrapper = shallowMount(GemIdpAuthFlowProcess, { global: { plugins: [store] } });
+  it('should handle errors in the second request', async () => {
+    const wrapper = mount(AuthFlow, { global: { plugins: [store] } });
     const url = 'http://localhost:' + PORT;
 
     // @ts-ignore
@@ -96,7 +115,9 @@ describe('GemIdpAuthFlowProcess.vue', () => {
       throw new Error('httpGet Error');
     });
 
-    await wrapper.vm.sendAutomaticRedirectRequest(url);
+    await expect(async () => {
+      await (wrapper.vm.$refs.idpActionsComponent as InstanceType<typeof IdpActions>).sendAutomaticRedirectRequest(url);
+    }).rejects.toThrow();
 
     expect(fetch).toHaveBeenCalledWith(url);
     expect(logger.warn).toHaveBeenCalledWith(

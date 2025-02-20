@@ -3,7 +3,11 @@ def BRANCH = 'master'
 def JIRA_PROJECT_ID = 'AUTHCL'
 def REPORT_DIR = 'reports'
 def CREDENTIAL_ID_GEMATIK_GIT = 'svc_gitlab_prod_credentials'
-def TEAMS_URL = 'https://gematikde.webhook.office.com/webhookb2/afecc7e7-e6cb-478d-8d49-c7d8416e014a@30092c62-4dbf-43bf-a33f-10d21b5b660a/IncomingWebhook/42afb4739668419398c0ced1e0c74246/da0c216c-86a9-4a36-9cc8-7565928bc892'
+def TARGET = 'macOS'
+def currentStage = ''
+def KONNEKTOR_LOCKS = [ 'Koco': 'authenticator-k10',
+                        'Rise': 'authenticator-k12',
+                        'Secunet': 'authenticator-k23' ]
 
 pipeline {
     options {
@@ -34,16 +38,24 @@ pipeline {
         booleanParam(name: 'ARCHIVE_ARTIFACTS', defaultValue: false, description: 'Should the artifacts be archived? releases/*, release & master will be archived in anyway')
         booleanParam(name: 'SIGN_ARTIFACTS', defaultValue: false, description: 'Should the artifacts be signed? Only Tags can be signed')
         booleanParam(name: 'E2E', defaultValue: false, description: 'E2E Testsuite')
+        booleanParam(name: 'TEAMS_NOTIFICATION', defaultValue: false, description: 'Send Teams Notification about this build. Always true for Master and Release Branches.')
+        choice(name: 'CONNECTOR_CHOICE', choices: ['Rise', 'Secunet', 'Koco' ], description: 'Pick the connector for the "Integration Tests"-step.')
     }
 
     stages {
         stage('Install Brewfile') {
             steps {
+                script {
+                    currentStage = env.STAGE_NAME
+                }
                 sh 'brew bundle install --file=Brewfile'
             }
         }
         stage('Build Node.js WebApp') {
             steps {
+                script {
+                    currentStage = env.STAGE_NAME
+                }
                 gitSetIdentity()
                 sh 'node --version'
                 sh 'npm -version'
@@ -55,7 +67,6 @@ pipeline {
 
                     ELECTRON_GET_USE_PROXY=true GLOBAL_AGENT_HTTPS_PROXY=$https_proxy npm ci
                 '''
-
                 // copy LICENSE.txt into ./src/assets/license_de.txt to add it to the DMG file
                 sh 'iconv -f windows-1250 -t utf-8 LICENSE.txt > ./src/assets/license_de.txt'
             }
@@ -63,6 +74,7 @@ pipeline {
         stage('Set BUILD_VERSION') {
             steps {
                 script {
+                    currentStage = env.STAGE_NAME
                     def packageJson = readFile(file: 'package.json')
                     def parsedJson = new groovy.json.JsonSlurper().parseText(packageJson)
                     env.BUILD_VERSION = parsedJson.version
@@ -70,25 +82,62 @@ pipeline {
                 }
             }
         }
-        stage('All Tests & Coverage') {
-            steps {
-                script {
-                    sh "echo HOST_NAME='ksp.ltuzd.telematik-test' >> .env"
-                    sh "echo PORT_NUMBER=443 >> .env"
-                    sh "echo USER_NAME=CONNECTOR_CREDS_USR >> .env"
-                    sh "echo PASSWORD_CONNECTOR_ENTRY=CONNECTOR_CREDS_PSW >> .env"
-                    sh "echo MANDANT_ID='mandant0001' >> .env"
-                    sh "echo CLIENT_ID='cs0001' >> .env"
-                    sh "echo WORKPLACE_ID='wp0001' >> .env"
-                    sh "echo USER_ID='user1' >> .env"
-                    sh "echo PROTOCOL='https' >> .env"
-                    sh "echo LOCAL_KT='kon23/cats' >> .env"
-                    sh "echo REMOTE_KT='kon23/cats2' >> .env"
-                    sh "echo CONNECTOR_PATH='/kon23' >> .env"
-                    lock(resource: 'authenticator-k23') {
-                        sh 'npm run test -- --silent'
-                        junit checksName: 'Jest Tests', testResults: 'jenkins-jest-test-report.xml'
-                        stash name: 'test-reports', includes: '*.xml,coverage/lcov.info'
+        stage('Tests & Linting') {
+            parallel {
+                stage('Linting Node.js WebApp') {
+                    steps {
+                        script {
+                            currentStage = env.STAGE_NAME
+                        }
+                        sh 'echo Start Linting'
+                        sh "npm run lint:ci"
+                        //stash name: 'linting-report', includes: 'reports/eslint-report.xml'
+                    }
+                }
+                stage('Unit Tests') {
+                    steps {
+                        script {
+                            currentStage = env.STAGE_NAME
+                            try {
+                                sh 'npm run test:unit -- --silent'
+                            } catch (Exception e) {
+                                echo 'Running additional unit tests for failures...'
+                                sh 'npm run jest:base -- --onlyFailures tests/unit -- --silent'
+                            } finally {
+                                sh """
+                                    if [ ! -d "./${REPORT_DIR}" ]; then
+                                        mkdir "./${REPORT_DIR}"
+                                    fi
+
+                                    # Move the test report to the reports directory
+                                    mv jenkins-jest-test-report.xml ./${REPORT_DIR}/jenkins-jest-unit-test-report.xml
+
+                                    # Move the coverage report to the reports directory
+                                    mv ./coverage/lcov.info ./${REPORT_DIR}/unit-lcov.info
+                                """
+                                //  stash name: 'unit-test-reports', includes: 'reports/jenkins-jest-unit-test-report.xml,reports/unit-lcov.info'
+                            }
+                        }
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        script {
+                            currentStage = env.STAGE_NAME
+                            def connectorEnvFile = "${params.CONNECTOR_CHOICE}.env"
+                            sh "cp ${connectorEnvFile} .env"
+                            lock(resource: KONNEKTOR_LOCKS[params.CONNECTOR_CHOICE]) { // get lockable resources for every Konnektor (For now only Secunet is available) [SWF-542]
+                                sh 'npm run test:integration -- --silent'
+                                sh """
+                                    if [ ! -d "./${REPORT_DIR}" ]; then
+                                        mkdir "./${REPORT_DIR}"
+                                    fi
+                                    mv jenkins-jest-test-report.xml ./${REPORT_DIR}/jenkins-jest-integration-test-report.xml
+                                    mv ./coverage/lcov.info ./${REPORT_DIR}/integration-lcov.info
+                                """
+                                //  stash name: 'integration-test-reports', includes: 'reports/jenkins-jest-integration-test-report.xml,reports/integration-lcov.info'
+                            }
+                        }
                     }
                 }
             }
@@ -101,6 +150,7 @@ pipeline {
                 script {
                     // set the environment variable NPM_SCRIPT to electron:build, this will be used in the Fastfile
                     env.NPM_SCRIPT = 'mock:build'
+                    currentStage = env.STAGE_NAME
                 }
 
                 sh label: 'Build and Notarize Authenticator for macos', script: '''#!/bin/bash -l
@@ -115,7 +165,7 @@ pipeline {
 
                 // move the artifacts to the releaseCI folder
                 sh 'mkdir -p releaseCI'
-                sh "mv 'release/gematik Authenticator ${env.BUILD_VERSION}.dmg' 'releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg'"
+                sh "mv 'release/gematik Authenticator - Mock Version ${env.BUILD_VERSION}.dmg' 'releaseCI/gematik-Authenticator-Mock-Version-${env.BUILD_VERSION}.dmg'"
             }
         }
         stage('Remove unnecessary certificates') {
@@ -126,18 +176,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'rm src/assets/certs-idp/RCA2_KOMPCA24.pem'
-                    sh 'rm src/assets/certs-idp/web.gematik.solutions.cer'
-                    sh 'rm src/assets/certs-idp/web.gematik.solutions.intermediate.cer'
-                    sh 'rm src/assets/certs-idp/web.gematik.solutions.root.cer'
-                    sh 'rm src/assets/certs-idp/R3.cer'
-                    sh 'rm src/assets/certs-idp/gematik-idp-test-server.cer'
-
-                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/fullchain.pem'
-                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/konnektor.pem'
-                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/secunet-fullchain.pem'
-                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/TRUSTED-ZD-ROOT-CA.cer'
-                    sh 'rm src/assets/certs-konnektor/ca/pu/rsa/ksp-ltuzd-telematik-test-intern.pem'
+                    currentStage = env.STAGE_NAME
+                    sh 'rm -rf src/assets/certs-konnektor/ru'
                 }
             }
         }
@@ -146,6 +186,7 @@ pipeline {
                 script {
                     // set the environment variable NPM_SCRIPT to electron:build, this will be used in the Fastfile
                     env.NPM_SCRIPT = 'electron:build'
+                    currentStage = env.STAGE_NAME
                 }
 
                 sh label: 'Build and Notarize Authenticator for macos', script: '''#!/bin/bash -l
@@ -169,6 +210,7 @@ pipeline {
         stage('Compute SHA256 Hash') {
             steps {
                 script {
+                    currentStage = env.STAGE_NAME
                     def filePath = "releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg"
 
                     // Compute SHA256 hash with a given Jenkins function
@@ -202,6 +244,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentStage = env.STAGE_NAME
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "gematik_snapshots_raw")
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "gematik_snapshots_raw")
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.zip", "gematik_snapshots_raw")
@@ -224,6 +267,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentStage = env.STAGE_NAME
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg", "gematik_releases_raw")
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.dmg.blockmap", "gematik_releases_raw")
                     nexusFileUpload("./releaseCI/gematik-Authenticator-${env.BUILD_VERSION}.zip", "de/gematik/authenticator/snapshot/macOS/gematik-Authenticator-${env.BUILD_VERSION}.zip", "gematik_releases_raw")
@@ -249,6 +293,9 @@ pipeline {
                 }
             }
             steps {
+                script {
+                    currentStage = env.STAGE_NAME
+                }
                 archiveArtifacts artifacts: "releaseCI/*.dmg,releaseCI/*.dmg.blockmap,releaseCI/*.zip,releaseCI/latest-mac.yml,releaseCI/sha256Hash.txt,releaseCI/sha256HashMock.txt,${REPORT_DIR}/*.*", onlyIfSuccessful: 'true'
             }
         }
@@ -260,6 +307,9 @@ pipeline {
                 }
             }
             steps {
+                script {
+                    currentStage = env.STAGE_NAME
+                }
                 build job: 'Authenticator-Authenticator_Archive_Buildlog-Release',
                     parameters: [
                         string(name: 'BUILDNUMBER', value: "${BUILD_NUMBER}"),
@@ -270,7 +320,24 @@ pipeline {
     }
     post {
         always {
-            sendTeamsNotification(TEAMS_URL)
+            script {
+                node('k8-backend-small') {
+                    def facts = [
+                        'Version': "${env.BUILD_VERSION}",
+                        'Branch': "${env.BRANCH_NAME}",
+                        'Integration Tests': "${params.CONNECTOR_CHOICE}",
+                        'Target': "${TARGET}",
+                    ]
+                    if (currentBuild.result != 'SUCCESS') {
+                        facts['Error in stage'] = "${currentStage}"
+                        echo "Pipeline failed in stage: ${currentStage}"
+                    }
+                    if(params.TEAMS_NOTIFICATION || env.BRANCH_NAME == "release" || env.BRANCH_NAME.startsWith("releases/") || env.BRANCH_NAME == 'master' ) {
+                        teamsSendNotificationToGroupChat('19:4d4a3475c91e44ecbed28aa3229c9315@thread.v2', ['facts': facts])
+                    }
+                    echo "Integration Tests via: ${params.CONNECTOR_CHOICE}"
+                }
+            }
         }
     }
 }

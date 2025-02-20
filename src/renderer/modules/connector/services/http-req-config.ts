@@ -1,15 +1,19 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025, gematik GmbH
  *
- * The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
- * Sourcecode must be in compliance with the EUPL.
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+ * European Commission – subsequent versions of the EUPL (the "Licence").
+ * You may not use this work except in compliance with the Licence.
  *
- * You will find more details about the EUPL here: https://joinup.ec.europa.eu/collection/eupl
+ * You find a copy of the Licence in the "Licence" file or at
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the EUPL is distributed on an "AS
- * IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
- * language governing permissions and limitations under the License.ee the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+ * In case of changes by gematik find details in the "Readme" file.
+ *
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
 import { Headers, HTTPSOptions, Options } from 'got';
@@ -20,7 +24,7 @@ import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { logger } from '@/renderer/service/logger';
 import { buildCaChainsConnector } from '@/renderer/modules/connector/common/utils';
 import { getConfig } from '@/renderer/utils/get-configs';
-import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
+import { CONNECTOR_GATEWAY_NAME, ENTRY_OPTIONS_CONFIG_GROUP, PROXY_SETTINGS_CONFIG } from '@/config';
 import { PROCESS_ENVS } from '@/constants';
 
 /**
@@ -38,6 +42,15 @@ export const getConnectorEndpoint = (endpoint?: string) => {
   }
   // #!if MOCK_MODE === 'ENABLED'
   else {
+    /*
+     Note: This will not work with the Konnektor Gateway!
+     The Konnektor Service Platform itself has a mapping of the Konnektors
+     in its route definition, e.g. https://url-of-konnektor-service-platform/kon23
+     The Konnektor Gateway does the mapping with a custom header and has no
+     konnektor name within the url
+
+     However, this is required to be active for automatic integration testing!
+     */
     path = mappingPath(path);
   }
   // #!endif
@@ -45,15 +58,20 @@ export const getConnectorEndpoint = (endpoint?: string) => {
   return `https://${tlsEntryOptions.hostname}:${tlsEntryOptions.port}${path}`;
 };
 
-export const httpReqConfig = (headers?: Headers): Options => {
+export const httpReqConfig = (headers?: Headers, customOptions?: Options): Options => {
   // tlsEntryOptions are always stable
   const tlsEntryOptions: TEntryOptions = ConnectorConfig.tlsEntryOptions;
 
+  // TODO when adjusting authenticator to official konnektor gateway support,
+  // we need to find a better way of parametrize the konnektor instance
   const reqConfig: Options = {
+    // @ts-ignore
+    useProxyForConnector: !!getConfig(PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR).value,
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
       accept: '*/*',
       ...headers,
+      'X-Konnektor-Gateway': String(getConfig(CONNECTOR_GATEWAY_NAME).value) || '',
     },
   };
 
@@ -77,17 +95,28 @@ export const httpReqConfig = (headers?: Headers): Options => {
     agentConfig.certificate = certFile && window.api.readFileSync(certFile);
   }
 
+  // Merge `customOptions` so that any of its properties override the defaults:
   return {
     ...reqConfig,
-    https: agentConfig,
+    // Merge the HTTPS portion if `customOptions.https` exists
+    https: {
+      ...agentConfig,
+      ...(customOptions?.https || {}),
+    },
+    // Merge/override everything else in customOptions
+    ...customOptions,
+    // Finally, merge headers if customOptions has them
+    headers: {
+      ...reqConfig.headers,
+      ...(customOptions?.headers || {}),
+    },
   };
 };
-
 // #!if MOCK_MODE === 'ENABLED'
 function mappingPath(path: string): string {
   const konnFarmHost = 'ksp.ltuzd.telematik-test';
 
-  let conFarmPath = '/kon23';
+  let conFarmPath = '/kon12';
 
   if (PROCESS_ENVS.CONNECTOR_PATH) {
     conFarmPath = '/' + PROCESS_ENVS.CONNECTOR_PATH;
@@ -101,4 +130,5 @@ function mappingPath(path: string): string {
   }
   return path;
 }
+
 // #!endif

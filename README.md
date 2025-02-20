@@ -21,8 +21,7 @@
 3. [Secure Credentials Storage](#storing-credentials-securely)
 4. [Contributing](#contributing)
 5. [License EUPL](#license-eupl)
-6. [FAQ](#faq)
-7. [Support and Feedback](#support-and-feedback)
+
 
 ## About The Project
 
@@ -94,12 +93,15 @@ This stack based on those technologies:
 
 ## Storing Credentials Securely
 
-For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator,
-see [here](credential-distribution/README.md)
+For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator, see [here](credential-management/README.md)
+
+## Contributing
+
+We 💖 contributions. You can find detailed information in [CONTRIBUTING](.github/CONTRIBUTING.md)
 
 ## License EUPL
 
-Copyright 2024 gematik GmbH
+Copyright 2025 gematik GmbH
 
 The Authenticator App is licensed under the European Union Public Licence (EUPL); every use of the Authenticator App
 Sourcecode must be in compliance with the EUPL.
@@ -110,4 +112,3 @@ Unless required by applicable law or agreed to in writing, software distributed 
 IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the EUPL for the specific
 language governing permissions and limitations under the License.ee the Licence for the specific language governing
 permissions and limitations under the Licence.
-

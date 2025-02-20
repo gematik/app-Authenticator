@@ -84,12 +84,18 @@
    RmDir "$INSTDIR"
 !macroend
 
+; Compile-time variable to check if the RU PEM files exist
+!system 'if exist "${PROJECT_DIR}\src\assets\certs-konnektor\ru\*.pem" (echo !define RU_PEM_EXISTS) else (echo ; )'
+
 !macro customInstall
   CreateDirectory "$INSTDIR\resources\certs-konnektor"
   CopyFiles /SILENT "$TEMP\${PRODUCT_NAME}\backup\certs-konnektor\*.*" "$INSTDIR\resources\certs-konnektor"
   SetOutPath "$INSTDIR\resources\certs-konnektor"
   SetOverwrite ifnewer
-  File /r ${PROJECT_DIR}\src\assets\certs-konnektor\ca\pu\rsa\*.pem
+  File /nonfatal /r ${PROJECT_DIR}\src\assets\certs-konnektor\pu\*.pem
+  !ifdef RU_PEM_EXISTS
+    File /nonfatal /r ${PROJECT_DIR}\src\assets\certs-konnektor\ru\*.pem
+  !endif
 
   CreateDirectory "$INSTDIR\resources\certs-idp"
   CopyFiles /SILENT "$TEMP\${PRODUCT_NAME}\backup\certs-idp\*.*" "$INSTDIR\resources\certs-idp"
