@@ -2,6 +2,12 @@
 
 # Release Authenticator
 
+## 4.14.1
+
+### Fixed
+
+- Added root certificates
+
 ## 4.14.0
 
 ### Added

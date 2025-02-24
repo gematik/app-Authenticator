@@ -30,7 +30,7 @@ import isValidDomain = require('is-valid-domain');
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
 
-export async function createProxyAgent(url: string, trustStoreCertificates: string[] = []): TReturnType {
+export async function createProxyAgent(url: string, trustStoreCertificates: readonly string[] = []): TReturnType {
   const proxyUrl = await getProxyUrl(url);
 
   logger.info('custom proxyUrl', proxyUrl);
@@ -193,7 +193,7 @@ function createAgent(
   url: string,
   proxyUrl: string,
   authSettings: { username: string; password: string } | undefined,
-  trustStoreCertificates: string[],
+  trustStoreCertificates: readonly string[],
 ): HttpsProxyAgent | HttpProxyAgent {
   const destinationUrl = new URL(url);
   const isSecure = destinationUrl.protocol === 'https:';
