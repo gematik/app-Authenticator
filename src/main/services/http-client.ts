@@ -29,6 +29,7 @@ import { TLS_AUTH_TYPE } from '@/@types/common-types';
 import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CONFIG } from '@/config';
 import { APP_CONFIG_DATA } from '@/main/preload-api';
 import * as process from 'node:process';
+import { rootCertificates } from 'tls';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
@@ -111,7 +112,7 @@ export const httpClient = async (
       },
       https: {
         ...config.https,
-        // certificateAuthority: [...(config?.https?.certificateAuthority || [])],
+        certificateAuthority: [...(config?.https?.certificateAuthority || []), ...rootCertificates],
         ...putP12Config(url),
       },
     };
@@ -129,7 +130,7 @@ export const httpClient = async (
     // We create a proxy agent if 'useProxyForConnector' is undefined or set to true,
     // which happens in the communication between authenticator and ipd.
     if (typeof config.useProxyForConnector === 'undefined' || config.useProxyForConnector) {
-      proxy = await createProxyAgent(url);
+      proxy = await createProxyAgent(url, rootCertificates);
     }
     delete config?.useProxyForConnector;
 
