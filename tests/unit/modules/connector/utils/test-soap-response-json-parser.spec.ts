@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
@@ -75,7 +79,7 @@ describe('SoapResponse JsonParser', () => {
     const resp = readResourceFile('soap', 'get-card-terminals-response-no-terminals.xml');
 
     await expect(findAvailableCardTerminals(resp)).rejects.toThrow(
-      new UserfacingError('Technical error', 'No Card-Terminals found', ERROR_CODES.AUTHCL_1113),
+      new UserfacingError('Technical error', 'Kein Kartenterminal gefunden', ERROR_CODES.AUTHCL_1113),
     );
   });
 });

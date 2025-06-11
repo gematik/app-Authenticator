@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <script lang="ts" setup>
@@ -60,27 +64,20 @@ const settingsSet = computed(() => exist());
   <div class="h-full flex flex-col bg-primary text-defaultext">
     <div class="flex flex-row justify-between px-[32px] py-[32px]">
       <div>
-        <router-link id="navLogin" to="/" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
+        <router-link id="navLogin" to="/" class="p-1.5 mr-[16px] operator:hover bg-primary">
           {{ $t('registration') }}
         </router-link>
-        <router-link id="navSettings" to="/settings" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
+        <router-link id="navSettings" to="/settings" class="p-1.5 mr-[16px] operator:hover bg-primary">
           {{ $t('settings') }}
         </router-link>
-        <router-link id="navHelp" to="/help" class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary">
+        <router-link id="navHelp" to="/help" class="p-1.5 mr-[16px] operator:hover bg-primary">
           {{ $t('help') }}
         </router-link>
         <router-link
           v-if="!settingsSet"
           id="navConfigAssistant"
           to="/config-assistant"
-          :class="[
-            'p-1.5',
-            'mr-[16px]',
-            'rounded-sm',
-            'operator:hover',
-            'bg-primary',
-            { 'router-link-active': isActiveAssistant },
-          ]"
+          :class="['p-1.5', 'mr-[16px]', 'operator:hover', 'bg-primary', { 'router-link-active': isActiveAssistant }]"
         >
           {{ $t('config_assistant.menu-title') }}
         </router-link>
@@ -104,7 +101,9 @@ const settingsSet = computed(() => exist());
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
+@import '../global.css';
+
 #navLogin:hover,
 #navSettings:hover,
 #navHelp:hover,

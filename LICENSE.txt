@@ -315,14 +315,22 @@ inkompatibel mit der unter I. wiedergegebenen EUPL sind oder sein können. Es gel
 insofern die entsprechenden Lizenzbedingungen der herangezogenen Bibliotheken bzw.
 Drittsoftwareanteile:
 
-
-    Komponente: Electron
-    Lizenz: MIT
-
-    Komponente: got
+    Komponente: @peculiar/x509
     Lizenz: MIT
 
     Komponente: base64url
+    Lizenz: MIT
+
+    Komponente: dot-object
+    Lizenz: MIT
+
+    Komponente: electron-edge-js
+    Lizenz: MIT
+
+    Komponente: flatted
+    Lizenz: ISC
+
+    Komponente: got
     Lizenz: MIT
 
     Komponente: hpagent
@@ -331,14 +339,29 @@ Drittsoftwareanteile:
     Komponente: http-status-codes
     Lizenz: MIT
 
-    Komponente: dot-object
+    Komponente: ip-matching
+    Lizenz: LGPL-3.0-only
+
+    Komponente: is-fqdn
+    Lizenz: MIT
+
+    Komponente: is-valid-domain
     Lizenz: MIT
 
     Komponente: jsonwebtoken
     Lizenz: MIT
 
+    Komponente: keytar
+    Lizenz: MIT
+
+    Komponente: lodash
+    Lizenz: MIT
+
+    Komponente: minimatch
+    Lizenz: ISC
+
     Komponente: node-forge
-    Lizenz: Apache-2.0
+    Lizenz: (BSD-3-Clause OR GPL-2.0)
 
     Komponente: node-jose
     Lizenz: Apache-2.0
@@ -353,6 +376,15 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: sweetalert2
+    Lizenz: MIT
+
+    Komponente: tailwindcss
+    Lizenz: MIT
+
+    Komponente: uuid
+    Lizenz: MIT
+
+    Komponente: validator
     Lizenz: MIT
 
     Komponente: vue
@@ -376,41 +408,5 @@ Drittsoftwareanteile:
     Komponente: xml2js
     Lizenz: MIT
 
-    Komponente: flatted
-    Lizenz: ISC
-
-    Komponente: ip-range-check
-    Lizenz: MIT
-
     Komponente: zip-a-folder
-    Lizenz: MIT
-
-    Komponente: ip-matching
-    Lizenz: MIT
-
-    Komponente: uuid
-    Lizenz: MIT
-
-    Komponente: keytar
-    Lizenz: MIT
-
-    Komponente: lodash
-    Lizenz: MIT
-
-    Komponente: minimatch
-    Lizenz: MIT
-
-    Komponente: validator
-    Lizenz: MIT
-
-    Komponente: is-valid-domain
-    Lizenz: MIT
-
-    Komponente: electron-edge-js
-    Lizenz: MIT
-
-    Komponente: @peculiar/x509
-    Lizenz: MIT
-
-    Komponente: dmg-license
     Lizenz: MIT

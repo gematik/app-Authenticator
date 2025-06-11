@@ -19,11 +19,12 @@ exports[`home screen render with loading spinner 1`] = `
     Sichere Anmeldung in der Telematikinfrastruktur
   </h2>
   <div
-    class="flex justify-center"
+    class="flex justify-center flex-col items-center"
   >
     <div
       class="loader"
     />
+    <!--v-if-->
   </div>
   <div
     class="flex flex-col items-center mt-[64px]"
@@ -41,7 +42,7 @@ exports[`home screen render with loading spinner 1`] = `
         alt="settings icon"
         class="inline-block pr-[8px]"
       />
-      Konfigurationsassistent starten
+      Konfigurationsassistent
     </button>
   </div>
   <!-- #!if MOCK_MODE === 'ENABLED' -->
@@ -121,7 +122,7 @@ exports[`home screen render with settings button 1`] = `
         alt="settings icon"
         class="inline-block pr-[8px]"
       />
-      Konfigurationsassistent starten
+      Konfigurationsassistent
     </button>
   </div>
   <!-- #!if MOCK_MODE === 'ENABLED' -->

@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 <script setup lang="ts">
 import { computed, onUnmounted, ref } from 'vue';
@@ -117,7 +121,7 @@ const stepText = computed(() => {
         class="screenshot-helper__nav_container__left"
         @click="(event) => onLeftArrowClick(event)"
       >
-        &#129032;
+        <span class="custom-arrow">&#129032;</span>
       </div>
 
       <div
@@ -125,13 +129,14 @@ const stepText = computed(() => {
         class="screenshot-helper__nav_container__right"
         @click="(event) => onRightArrowClick(event)"
       >
-        &#129034;
+        <span class="custom-arrow">&#129034;</span>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+@import '../../../global.css';
 .show-screenshot {
   display: flex !important;
 }
@@ -141,7 +146,6 @@ const stepText = computed(() => {
   align-items: center;
   font-family: Arial, sans-serif;
   color: #000e52;
-  margin-top: 10px;
 }
 
 .screenshot-helper__overlay {
@@ -187,41 +191,48 @@ const stepText = computed(() => {
 
 .screenshot-helper__close-button {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 35px;
-  height: 35px;
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  box-shadow: 0 0 1px 0 rgb(0, 0, 0);
+  top: 5px;
+  right: 5px;
+  width: 45px;
+  height: 45px;
+  background-color: rgba(0, 14, 82, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   color: #ffffff;
   font-size: 24px;
-  text-shadow: 0 0 1px rgb(0, 0, 0);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 99;
+  transition: all 0.2s ease;
 }
 
-.screenshot-helper__close-button:hover,
-.screenshot-helper__nav_container__right:hover {
-  color: grey;
-  background-image: linear-gradient(90deg, transparent, rgb(66, 66, 66));
+.screenshot-helper__close-button:hover {
+  background-color: rgba(0, 14, 82, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
 }
 
-.screenshot-helper__nav_container__left:hover {
-  color: grey;
-  background-image: linear-gradient(90deg, rgb(66, 66, 66), transparent);
+.screenshot-helper__nav_container__left:hover .custom-arrow,
+.screenshot-helper__nav_container__right:hover .custom-arrow {
+  background-color: rgba(0, 14, 82, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
 }
 
 .screenshot-helper__nav_container__left,
 .screenshot-helper__nav_container__right {
   height: 100vh;
   width: 50px;
-  text-align: center;
-  padding-top: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
 }
 
 .screenshot-helper__image-description {
@@ -238,12 +249,34 @@ const stepText = computed(() => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  color: rgba(255, 255, 255, 0.64);
-  background-color: transparent;
-  box-shadow: 0 0 1px 0 rgb(0, 0, 0);
-  font-size: 33px;
-  text-shadow: 0 0 1px rgb(0, 0, 0);
-  position: fixed;
-  user-select: none;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.screenshot-helper__nav_container__left {
+  padding-left: 5px;
+}
+
+.screenshot-helper__nav_container__right {
+  padding-right: 5px;
+}
+
+.custom-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  width: 45px;
+  height: 45px;
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 14, 82, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 </style>

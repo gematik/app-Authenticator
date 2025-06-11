@@ -14,13 +14,17 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { SOAP_ACTION, SOAP_ACTION_CONTENT_TYPE } from '@/renderer/modules/connector/constants';
 import { TAuthSignParameter, TContextParameter } from '../type-definitions/common-types';
 
 import template from '@/renderer/modules/connector/assets/soap_templates/commonPTV/auth-sign.xml';
-import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
+import { httpReqConfig } from '@/renderer/modules/connector/services';
 
 export const runSoapRequest = async (
   contextParameter: TContextParameter,
@@ -34,8 +38,7 @@ export const runSoapRequest = async (
     soapAction: SOAP_ACTION.ExternalAuthenticate,
   };
 
-  const url = getConnectorEndpoint(endpoint);
-  const { data } = await window.api.httpPost(url, envelope, httpReqConfig(requestHeaders));
+  const { data } = await window.api.httpPost(endpoint, envelope, httpReqConfig(requestHeaders));
   return data;
 };
 

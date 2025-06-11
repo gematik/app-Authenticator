@@ -20,16 +20,13 @@ exports[`configMapperByGroup and error handling response should set context para
 exports[`configMapperByGroup and error handling response should set setEntryOptions right 1`] = `
 {
   "certFile": "c:/yyy.pem",
-  "hostname": "127.1.1.1",
+  "hostname": "https://127.1.1.1:80",
   "keyFile": "c:/xxx.pem",
   "localKT": "not-defined",
-  "method": "GET",
   "password": "not-defined",
-  "path": "/connector.sds",
   "pfxFile": "not-defined",
   "pfxPassword": "not-defined",
   "port": 80,
-  "protocol": "https",
   "rejectUnauthorized": false,
   "remoteKT": "not-defined",
   "secureProtocol": "TLSv1_2_method",

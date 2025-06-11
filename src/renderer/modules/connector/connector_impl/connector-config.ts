@@ -14,10 +14,13 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { TAuthSignParameter, TContextParameter, TEntryOptions, TGetCardsParameter } from '../type-definitions';
-import { logger } from '@/renderer/service/logger';
 import { getConfig, getConfigGroup } from '@/renderer/utils/get-configs';
 import {
   AUTH_SIGN_PARAMETER_CONFIG_GROUP,
@@ -33,8 +36,6 @@ class ConnectorConfig {
   public tlsEntryOptions: TEntryOptions = {
     hostname: '127.0.0.1',
     port: 443,
-    path: '/connector.sds',
-    method: 'GET',
     secureProtocol: 'TLSv1_2_method',
     keyFile: 'not-defined',
     certFile: 'not-defined',
@@ -43,7 +44,6 @@ class ConnectorConfig {
     username: 'not-defined',
     password: 'not-defined',
     rejectUnauthorized: false,
-    protocol: 'https',
     remoteKT: 'not-defined',
     localKT: 'not-defined',
   };
@@ -107,6 +107,7 @@ class ConnectorConfig {
 
   setTlsEntryOptions(data: TEntryOptions): void {
     this.tlsEntryOptions = data;
+    this.tlsEntryOptions.hostname = this.migrateToNewHostLogic(<TEntryOptions>data);
   }
 
   setContextParameters(data: TContextParameter): void {
@@ -114,21 +115,21 @@ class ConnectorConfig {
   }
 
   /**
-   * This function replaces Connector's endpoints with our host parameter which defined in Settings Page
-   * We need this mapping because, Kops gives us a wrong host name from docker container
-   *
-   * In case of leaving Kops, probably this function will be needless
-   *
-   * @param endpoint
-   * @return string
+   * This function is used to migrate the old port logic to the new one.
    */
-  mapEndpoint = (endpoint: string): string => {
-    const uri = new URL(endpoint);
-    uri.hostname = this.tlsEntryOptions.hostname;
-    const url = new URL(uri.toString()).toString();
-    logger.debug(`URI: ${uri.toString()} ?= ${url}`);
-    return url;
-  };
+  migrateToNewHostLogic(entryOptions: Partial<TEntryOptions>): string {
+    // check if hostname contains http,https or port. If yes it means it is already the new form
+    const { hostname, port } = entryOptions;
+    const isNewForm = hostname?.match(/^(http|https):\/\//) || hostname?.match(/:\d+$/);
+
+    if (isNewForm) {
+      // replace the last slash and return
+      return hostname!.replace(/\/$/, '');
+    }
+
+    // in any other cases, we need to build the whole URL with https, domain and port, default port is 443
+    return `https://${hostname}:${port}`;
+  }
 
   /**
    * Update connector parameters on init and after save setting

@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { logger } from '@/renderer/service/logger';
@@ -26,7 +30,7 @@ export async function findAvailableCardTerminals(xmlSoapResponse: string): Promi
   const cardTerminals = await findSpecificElementInResponseProperties(xmlSoapResponse, XML_TAG_NAMES.TAG_CARD_TERMINAL);
   if (cardTerminals == null) {
     logger.error('The connector responded with: No card terminals found', xmlSoapResponse);
-    throw new UserfacingError('Technical error', 'No Card-Terminals found', ERROR_CODES.AUTHCL_1113);
+    throw new UserfacingError('Technical error', 'Kein Kartenterminal gefunden', ERROR_CODES.AUTHCL_1113);
   }
   return cardTerminals;
 }

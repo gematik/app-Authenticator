@@ -14,10 +14,15 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 import { logger } from '@/main/services/logging';
 import { BrowserWindow } from 'electron';
-import { EXPOSED_ENV_VARIABLES, IPC_UPDATE_ENV } from '@/constants';
+import { EXPOSED_ENV_VARIABLES, IPC_UPDATE_ENV, IS_DEV } from '@/constants';
+import { callEdgeMethod } from '@/main/services/edge-js-dll-service';
 import fs from 'fs';
 import path from 'path';
 import * as process from 'process';
@@ -34,16 +39,41 @@ EXPOSED_ENV_VARIABLES.forEach((envVar) => {
 });
 
 let FOUND_ENV_VARS: Record<string, string> = {};
-
 const WATCHED_ENV_VAR_KEYS = ['CLIENTNAME', 'AUTHCONFIGPATH', 'VIEWCLIENT_MACHINE_NAME'];
 
-const REGISTRY_KEY_SYSTEM_ENV = 'HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment';
-const REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION = 'HKLM\\SOFTWARE\\Citrix\\Ica\\Session';
+const REGISTRY_KEY_SYSTEM_ENV = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment';
+const REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Citrix\\Ica\\Session';
 
-/**
- * interval for checking new env vars
- * @param mainWindow
- */
+let assemblyFile: string = 'resources/WinCertStoreLib.dll';
+// #!if MOCK_MODE === 'ENABLED'
+if (IS_DEV) {
+  assemblyFile = path.join(__dirname, 'WinCertStoreLib.dll');
+}
+
+// #!endif
+
+async function getKeyValueFromWindowsRegistry(key: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (process.platform !== 'win32') {
+      return reject(new Error('Registry access is not supported on non-Windows platforms.'));
+    }
+    try {
+      const getKeyValueFromWindowsReg = callEdgeMethod('GetKeyFromRegistry');
+      getKeyValueFromWindowsReg(key, function (error: Error, result: unknown) {
+        if (error) {
+          return reject(error);
+        }
+        if (!result || result === '') {
+          return reject(new Error('Key not found'));
+        }
+        resolve(result as string);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 export const setupEnvReadInterval = async (mainWindow: BrowserWindow | null) => {
   setInterval(async () => {
     await readLatestEnvs(mainWindow);
@@ -53,7 +83,6 @@ export const setupEnvReadInterval = async (mainWindow: BrowserWindow | null) => 
 
     // On startup, we wait for the ENVS to load; this may take a while because of the event.
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     logger.debug('Environment variables loaded');
   } catch (e) {
     logger.error('Environment variables not loaded', e);
@@ -65,7 +94,7 @@ export const setupEnvReadInterval = async (mainWindow: BrowserWindow | null) => 
  */
 async function getVolatileEnv(): Promise<string> {
   const sessionID = await querySessionID();
-  return 'HKCU\\Volatile Environment' + '\\' + sessionID;
+  return 'HKEY_CURRENT_USER\\Volatile Environment\\' + sessionID;
 }
 
 /**
@@ -89,7 +118,14 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
   }
   try {
     const keyValuePairsFromRegistryAsString = await getVolatileEnv()
-      .then((value) => readRegistryForKey(value))
+      .then((value) => {
+        return getKeyValueFromWindowsRegistry(value).then((result: string) => {
+          if (result) {
+            return result;
+          }
+          throw new Error('Key not found');
+        });
+      })
       .catch(() => {
         logger.debug('Error when reading the registry key for volatile envs');
         return '';
@@ -115,13 +151,11 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
   let hasVarsChanged = false;
   WATCHED_ENV_VAR_KEYS.forEach((envVar) => {
     const previousVal = UP_TO_DATE_PROCESS_ENVS[envVar];
-
     if (!FOUND_ENV_VARS[envVar]) {
       if (!envVarChangedToEmptyLogged[envVar]) {
         logger.debug(`Env variable change ignored for ${envVar} as it is empty`);
         envVarChangedToEmptyLogged[envVar] = true;
       }
-
       return;
     }
     if (FOUND_ENV_VARS[envVar] !== previousVal?.toUpperCase()) {
@@ -131,7 +165,6 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
       hasVarsChanged = true;
     }
   });
-
   if (hasVarsChanged && mainWindow) {
     mainWindow.webContents.send(IPC_UPDATE_ENV);
   }
@@ -144,108 +177,61 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
 let readingErrorIsLogged = false;
 export const readRegistryForKey = (regKey: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const spawn = require('child_process').spawn;
-
-    const bat = spawn('cmd.exe', [
-      '/c', // Argument for cmd.exe to carry out the specified script
-      'reg',
-      'query',
-      regKey,
-    ]);
-
-    let stdout = '';
-    let stderr = '';
-
-    bat.stdout.on('data', (data: Buffer) => {
-      stdout += data.toString();
-    });
-
-    bat.stderr.on('data', (err: Buffer) => {
-      stderr += err.toString();
-    });
-
-    bat.on('close', () => {
-      // log and return on error case
-      if (stderr) {
+    getKeyValueFromWindowsRegistry(regKey)
+      .then((value) => {
+        if (value) {
+          resolve(value);
+        }
+      })
+      .catch((e: Error) => {
         if (!readingErrorIsLogged) {
           logger.warn(
-            '## readRegistryForKey, Registry Entry (' +
-              regKey +
-              ') not found:' +
-              stderr.toString() +
-              '(If you have not configured the AUTHCONFIGPATH you can ignore this message)',
+            `## readRegistryForKey, Registry Entry (${regKey}) not found: ${e.toString()} (If you have not configured the AUTHCONFIGPATH you can ignore this message)`,
           );
-          readingErrorIsLogged = true;
         }
-
-        reject(stderr.toString());
-        return;
-      }
-
-      resolve(stdout.toString());
-    });
+        readingErrorIsLogged = true;
+        reject(e);
+      });
   });
 };
 
-/**
- * find the Windows-Session-ID of the running authenticator-executable
- */
 export const querySessionID = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const spawn = require('child_process').spawn;
-
-    const bat = spawn('cmd.exe', [
-      '/c', // Argument for cmd.exe to carry out the specified script
-      'query',
-      'SESSION',
-    ]);
-
-    let stdout = '';
-    let stderr = '';
-
-    bat.stdout.on('data', (data: Buffer) => {
-      stdout += data.toString();
-    });
-
-    bat.stderr.on('data', (err: Buffer) => {
-      stderr += err.toString();
-    });
-
-    bat.on('close', () => {
-      // log and return on error case
-      if (stderr) {
-        logger.error('The querySessionID was not found:' + stderr.toString());
-        reject(stderr.toString());
-        return;
-      }
-
-      const regexLine = /^>.*$/m;
-      const regexNumber = /\s(\d+)\s+.*$/;
-      const multilineString = stdout.toString();
-      const match = multilineString.match(regexLine);
-      if (match) {
-        const sessionID = match[0].match(regexNumber);
-
-        if (sessionID) {
-          resolve(sessionID[1].toString());
+    if (process.platform !== 'win32') {
+      return reject(new Error('Registry access is not supported on non-Windows platforms.'));
+    }
+    try {
+      const getQuerySessionID = callEdgeMethod('GetCurrentSessionId');
+      getQuerySessionID('no parameter', function (error: Error, result: unknown) {
+        if (error) {
+          reject(error);
         }
-      }
-    });
+        if (!result || result === '') {
+          reject(new Error('Could not get session ID'));
+        } else {
+          resolve(result as string);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
   });
 };
 
 export const checkEnvVarsChange = (variable: string, data: string) => {
-  //Check only the lines where the variable exists, because the regex did not work on the whole text.
+  // Split the input data into lines
   data
     .toUpperCase()
     .split(/\r\n|\r|\n/)
     .forEach((line) => {
-      if (line.includes(variable)) {
-        const regex = new RegExp(`${variable}\\s+\\w+\\s+(\\S+)`);
+      // Check if the line contains the variable
+      if (line.startsWith(`${variable}:`)) {
+        // Extract the value after "VARIABLE:"
+        const regex = new RegExp(`${variable}:\\s*(\\S+)`);
         const match = line.match(regex);
         const newValue = match?.[1] && match[1];
 
-        // when  authconfigpath doesn't exist ignore it
+        // Special case for AUTHCONFIGPATH
         if (variable === 'AUTHCONFIGPATH' && newValue && !fs.existsSync(path.join(newValue))) {
           FOUND_ENV_VARS[variable] = '';
           logger.debug('The AUTHCONFIGPATH is ignored because it does not exist: ', newValue);

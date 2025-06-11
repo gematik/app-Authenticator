@@ -14,33 +14,23 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { execSync } from 'child_process';
 import { platform } from 'os';
 import { logger } from '@/main/services/logging';
-
-import path from 'path';
-import { IS_DEV } from '@/constants';
+import { callEdgeMethod } from '@/main/services/edge-js-dll-service';
 
 // Function to retrieve certificates from specific Windows certificate stores
 export function getWindowsCertificates(): Array<string> {
-  const edge = require('electron-edge-js');
   const allCerts: Array<string> = [];
 
-  let assemblyFile: string = 'resources/WinCertStoreLib.dll';
-  // #!if MOCK_MODE === 'ENABLED'
-  if (IS_DEV) {
-    assemblyFile = path.join(__dirname, 'WinCertStoreLib.dll');
-  }
-  // #!endif
-
-  const getCertsFromWinTrustStore = edge.func({
-    assemblyFile,
-    typeName: 'WinCertStoreLib.Methods',
-    methodName: 'GetCertificates',
-  });
-  getCertsFromWinTrustStore('JavaScript', function (error: Error, result: unknown) {
+  const getCertsFromWinTrustStore = callEdgeMethod('GetCertificates');
+  getCertsFromWinTrustStore('no parameter', function (error: Error, result: unknown) {
     if (error) {
       logger.error('Error retrieving certificates from Windows Trust Store:', error);
       return [];

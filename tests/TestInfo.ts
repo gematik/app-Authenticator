@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
@@ -59,8 +63,8 @@ export enum ESlotActions {
 }
 
 export const CONNECTOR_URLS = {
-  [ETerminalTypes.LOCAL]: `${CONNECTOR_TEST_ENTRY_OPTIONS.protocol}://${CONNECTOR_TEST_ENTRY_OPTIONS.hostname}/${CONNECTOR_TEST_ENTRY_OPTIONS.localKT}/config/card/insert`,
-  [ETerminalTypes.REMOTE]: `${CONNECTOR_TEST_ENTRY_OPTIONS.protocol}://${CONNECTOR_TEST_ENTRY_OPTIONS.hostname}/${CONNECTOR_TEST_ENTRY_OPTIONS.remoteKT}/config/card/insert`,
+  [ETerminalTypes.LOCAL]: `${CONNECTOR_TEST_ENTRY_OPTIONS.hostname}/${CONNECTOR_TEST_ENTRY_OPTIONS.localKT}/config/card/insert`,
+  [ETerminalTypes.REMOTE]: `${CONNECTOR_TEST_ENTRY_OPTIONS.hostname}/${CONNECTOR_TEST_ENTRY_OPTIONS.remoteKT}/config/card/insert`,
 };
 
 export const TIME_OUT_VALUE_JEST = 90000;
@@ -84,18 +88,7 @@ export function printTestInfo(filename: string, cardType: ECardTypes): void {
 
 export function printEntryOptionsTest(filename: string, entryOptions: TEntryOptions): void {
   printTestTitle(filename);
-  logger.info(
-    '--Testsystem: \n' +
-      'Konnektor-Test-Konnektor-Farm' +
-      ', -Host: ' +
-      entryOptions.hostname +
-      ', -Port: ' +
-      entryOptions.port +
-      ', -Path: ' +
-      entryOptions.path +
-      ', -Method: ' +
-      entryOptions.method,
-  );
+  logger.info('--Testsystem: \n' + 'Konnektor-Test-Konnektor-Farm' + ', -Host: ' + entryOptions.hostname);
 }
 
 export function printWarningOnConfiguration(info: Error): void {

@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -22,12 +26,16 @@ import { logStep } from '@/renderer/modules/gem-idp/utils';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { CRYPT_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
 import { logger } from '@/renderer/service/logger';
-import { alertDefinedErrorWithDataOptional } from '@/renderer/utils/utils';
+import { alertDefinedErrorWithDataOptional, escapeHTML } from '@/renderer/utils/utils';
 import { ERROR_CODES } from '@/error-codes';
 import { OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 import { AuthFlowError } from '@/renderer/errors/errors';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import createJwe from '@/renderer/modules/gem-idp/sign-feature/create-jwe';
+import { getConfig } from '@/renderer/utils/get-configs';
+import { ECC_WARNING_OPTIONS } from '@/config';
+import Swal from 'sweetalert2';
+import i18n from '@/renderer/i18n';
 
 export default defineComponent({
   name: 'ConnectorActions',
@@ -44,6 +52,10 @@ export default defineComponent({
         await this.$store.dispatch('connectorStore/getCardCertificate', cardType);
       } catch (e) {
         try {
+          if (cardType === ECardTypes.HBA) {
+            await this.showEccWarning();
+          }
+
           // as ECC throws an error, we try to get the RSA certificate
           ConnectorConfig.setCardReaderParameter({
             crypt: CRYPT_TYPES.RSA,
@@ -155,10 +167,46 @@ export default defineComponent({
         );
       }
     },
+    /**
+     * REMOVE THIS FUNCTION AFTER 2026
+     */
+    async showEccWarning() {
+      try {
+        const translate = i18n.global.t;
+        const eccShowWarningStatus = getConfig(ECC_WARNING_OPTIONS.ECC_WARNING_STATUS).value;
+        const eccWarningStartDate = getConfig(ECC_WARNING_OPTIONS.ECC_WARNING_START_DATE).value;
+
+        if (!eccShowWarningStatus) {
+          return;
+        }
+
+        if (
+          typeof eccWarningStartDate === 'undefined' ||
+          (!!eccWarningStartDate && new Date(String(eccWarningStartDate)) < new Date())
+        ) {
+          await Swal.fire({
+            icon: 'warning',
+            title: translate(`ecc_warning_options.the_selected_card_is_not_ecc_compliant`),
+            text:
+              escapeHTML(<string>getConfig(ECC_WARNING_OPTIONS.CUSTOM_MESSAGE).value) ||
+              translate(`ecc_warning_options.please_contact_your_technician`),
+            allowEscapeKeys: true,
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: translate(`continue`),
+            timer: 10000,
+          });
+        }
+      } catch (e) {
+        // do nothing, not necessary to throw an error
+      }
+    },
   },
 });
 </script>
 
 <template><div></div></template>
 
-<style scoped></style>
+<style scoped>
+@import '../../../global.css';
+</style>

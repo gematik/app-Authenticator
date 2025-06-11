@@ -1,6 +1,37 @@
-<img align="right" width="200" height="37" src="docs/Gematik_Logo_Flag.png"/> <br/>
-
 # Release Authenticator
+
+## 4.15.0
+
+### Added
+
+#### Config Assistant Enhancements:
+
+- Added new pages to guide users through the SMC-B PIN entry process
+- Improved menu structure and wording based on user feedback
+- Updated screenshots in the authentication section for better clarity
+
+#### Configuration Updates:
+
+- Introduced RSA2ECC Warning and Checker options in the settings page
+- Simplified host configuration by removing the Port option
+
+### Fixed
+
+#### Configuration and Setup:
+
+- Removed the migration script for transferring credentials from config.json to Windows Credential Manager
+- Fixed the 'configuration-video' button in the Config Assistant to ensure proper functionality
+
+#### User Experience:
+
+- Enhanced overall user interface and experience in the Config Assistant
+- Improved feedback during function tests when card terminals are unavailable
+
+### Security
+
+- Added operating system trust stores for certificate checks
+- Upgraded Windows registry communication and session ID retrieval to use Microsoft Windows API for increased security
+- Updated Truststore to include ECC-CAs for verifying connector certificates
 
 ## 4.14.1
 

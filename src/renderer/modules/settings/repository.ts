@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import dot from 'dot-object';
@@ -41,6 +45,7 @@ import {
   CONNECTOR_GATEWAY_NAME,
   CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
+  ECC_WARNING_OPTIONS,
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_AUTH_TYPES,
   PROXY_SETTINGS_CONFIG,
@@ -88,6 +93,9 @@ export type TRepositoryDataValues = {
   [CONNECTOR_GATEWAY_NAME_STATUS]: boolean;
   [CONNECTOR_GATEWAY_NAME]: string;
 
+  [ECC_WARNING_OPTIONS.ECC_WARNING_STATUS]: boolean;
+  [ECC_WARNING_OPTIONS.ECC_WARNING_START_DATE]: string;
+
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]?: boolean;
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]?: boolean;
@@ -133,6 +141,8 @@ export const INITIAL_STATE = {
   [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE.ServerCertAuth,
   [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 443,
 
+  [ECC_WARNING_OPTIONS.ECC_WARNING_STATUS]: true,
+
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]: true,
@@ -149,14 +159,6 @@ export class FileStorageRepository implements ISettingsRepository {
 
   static set isNewInstallation(value: boolean) {
     this._isNewInstallation = value;
-  }
-
-  static get usesCredentialManager(): boolean {
-    return this._usesCredentialManager;
-  }
-
-  static set usesCredentialManager(value: boolean) {
-    this._usesCredentialManager = value;
   }
 
   static get isJsonFileInvalid(): boolean {
@@ -181,7 +183,6 @@ export class FileStorageRepository implements ISettingsRepository {
 
   private static encoding: BufferEncoding = 'utf-8';
   private static _path: string | null = null;
-  private static _usesCredentialManager = false;
   private static _isNewInstallation = false;
   private static _isJsonFileInvalid = false;
   private static _isDefaultConfigFile = false;
@@ -277,23 +278,13 @@ export class FileStorageRepository implements ISettingsRepository {
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
 
-    const { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail } = FileStorageRepository.decideToSaveToCM();
-    const nonSensitiveData = FileStorageRepository.filterSensitiveData(data);
-    let dataToSaveConfigFile: TRepositoryData = saveAllToConfigFileOnFail ? data : nonSensitiveData;
+    const nonSensitiveData: TRepositoryData = FileStorageRepository.filterSensitiveData(data);
 
-    // save to credential manager
-    if (shouldSaveToCM) {
-      const savedToCMSuccessfully = FileStorageRepository.saveToCm(data);
+    // save sensitive data to the credential manager
+    const savedToCMSuccessfully = FileStorageRepository.saveToCm(data);
 
-      if (!savedToCMSuccessfully && showWarningOnFail) {
-        throw new UserfacingError('Could not save to credential manager', '', ERROR_CODES.AUTHCL_0010);
-      }
-
-      if (savedToCMSuccessfully) {
-        dataToSaveConfigFile = nonSensitiveData;
-      }
-    } else {
-      dataToSaveConfigFile = data;
+    if (!savedToCMSuccessfully) {
+      throw new UserfacingError('Could not save to credential manager', '', ERROR_CODES.AUTHCL_0010);
     }
 
     // create config dir if it does not exist
@@ -307,7 +298,7 @@ export class FileStorageRepository implements ISettingsRepository {
       }
     }
 
-    const unFlatted = dot.object({ ...dataToSaveConfigFile });
+    const unFlatted = dot.object({ ...nonSensitiveData });
     window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted, null, 2));
 
     logger.info('Saved config changes under: ', FileStorageRepository.getPath());
@@ -325,45 +316,8 @@ export class FileStorageRepository implements ISettingsRepository {
     return (window.api.sendSync(IPC_READ_CREDENTIALS) as Partial<TRepositoryData>) || {};
   }
 
-  static decideToSaveToCM(): {
-    shouldSaveToCM: boolean;
-    showWarningOnFail: boolean;
-    saveAllToConfigFileOnFail: boolean;
-  } {
-    let shouldSaveToCM;
-    let showWarningOnFail;
-    let saveAllToConfigFileOnFail;
-
-    const isCentralConfiguration = PROCESS_ENVS.AUTHCONFIGPATH;
-
-    // If it's a new installation
-    if (FileStorageRepository._isNewInstallation) {
-      shouldSaveToCM = true;
-      showWarningOnFail = true;
-      saveAllToConfigFileOnFail = false;
-    } else {
-      if (isCentralConfiguration) {
-        if (FileStorageRepository._usesCredentialManager) {
-          shouldSaveToCM = true;
-          saveAllToConfigFileOnFail = false;
-          showWarningOnFail = true;
-        } else {
-          shouldSaveToCM = false;
-          saveAllToConfigFileOnFail = true;
-          showWarningOnFail = true;
-        }
-      } else {
-        saveAllToConfigFileOnFail = false;
-        showWarningOnFail = true;
-        shouldSaveToCM = true;
-      }
-    }
-
-    return { shouldSaveToCM, showWarningOnFail, saveAllToConfigFileOnFail };
-  }
-
   /**
-   * This function filters sensitive data from the config data
+   * This function filters sensitive data from the config data and returns the non-sensitive data
    * @param data
    */
   static filterSensitiveData(data: TRepositoryData): TRepositoryData {
@@ -393,9 +347,6 @@ export class FileStorageRepository implements ISettingsRepository {
     }
 
     const sensitiveDataFromCredentialsManager = FileStorageRepository.readFromCm();
-
-    // set usesCredentialManager if sensitiveDataFromCredentialsManager is not empty
-    FileStorageRepository._usesCredentialManager = !!Object.keys(sensitiveDataFromCredentialsManager).length;
 
     if (!window.api.existsSync(FileStorageRepository.getPath())) {
       FileStorageRepository._isNewInstallation = true;

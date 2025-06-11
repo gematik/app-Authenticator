@@ -14,12 +14,16 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { XML_ERROR_TAG_NAMES, XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import ConnectorConfig from './connector-config';
-import * as pinVerifier from './verify-pin';
-import * as connectorSdsRequest from './sds-request';
+import { runSoapRequest } from './verify-pin';
+import { getServiceEndpointTls } from './sds-request';
 import { logger } from '@/renderer/service/logger';
 import cardHandleParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
@@ -34,14 +38,13 @@ import { TCardData, TCardTerminal } from '@/renderer/modules/connector/type-defi
  * @returns {Promise<void>}
  */
 export const verifyPin = async (endpoint: string, cardHandle: string, pinType: string): Promise<string> => {
-  const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
-  return await pinVerifier.runSoapRequest(ConnectorConfig.contextParameters, endpointMapped, cardHandle, pinType);
+  return await runSoapRequest(ConnectorConfig.contextParameters, endpoint, cardHandle, pinType);
 };
 
 export const launch = async (terminals: TCardTerminal, cardData: TCardData): Promise<string> => {
   let cardServiceEndpoint, statusResult;
   try {
-    cardServiceEndpoint = await connectorSdsRequest.getServiceEndpointTls(XML_TAG_NAMES.TAG_CARD_SERVICE);
+    cardServiceEndpoint = await getServiceEndpointTls(XML_TAG_NAMES.TAG_CARD_SERVICE);
     logger.debug(`Using card service endpoint ${cardServiceEndpoint} to send SDS requests to connector.`);
     checkRemotePIN(terminals, cardData);
     const statusVerifyResponse = await verifyPin(

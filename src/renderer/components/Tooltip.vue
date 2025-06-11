@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -36,6 +40,8 @@ export default defineComponent({
 </template>
 
 <style scoped>
+@import '../global.css';
+
 .tooltip {
   position: relative;
   display: inline-block;

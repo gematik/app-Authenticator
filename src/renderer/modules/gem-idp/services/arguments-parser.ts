@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 import { OAUTH2_ERROR_TYPE, TAuthArguments, TCallback } from '@/renderer/modules/gem-idp/type-definitions';
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';

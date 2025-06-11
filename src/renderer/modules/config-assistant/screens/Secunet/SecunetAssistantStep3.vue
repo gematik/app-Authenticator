@@ -14,10 +14,14 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div>
+  <div class="m-4">
     <div class="assistant-heading flex flex-row justify-between">
       {{ $t('config_assistant.secunet.step3.title') }}
       <AssistantButton
@@ -26,69 +30,22 @@
     </div>
     <div>
       <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.secunet.step3.clientId_heading') }}</strong>
-        <ScreenshotHelper
-          image-src="secu_step3_client_id.png"
-          :image-description="$t('config_assistant.secunet.step3.clientId_screenshot_hint')"
-        />
+        <strong>{{ $t('config_assistant.secunet.step3.heading') }}</strong>
       </p>
-      <ol class="list-decimal list-inside mb-4">
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.clientId_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.clientId_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.clientId_step3') }}</li>
-        <li class="list-item">
-          {{ $t('config_assistant.secunet.step3.clientId_step4') }}
-        </li>
-      </ol>
-    </div>
-    <div>
       <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.secunet.step3.assignAuth_heading') }}</strong>
-        <ScreenshotHelper
-          image-src="secu_step3_auth.png"
-          :image-description="$t('config_assistant.secunet.step3.assignAuth_screenshot_hint')"
-        />
+        {{ $t('config_assistant.secunet.step3.description') }}
       </p>
-      <ol class="list-decimal list-inside mb-4">
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.assignAuth_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.assignAuth_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.assignAuth_step3') }}</li>
-      </ol>
-    </div>
-    <div>
-      <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.secunet.step3.callContext_heading') }}</strong>
-        <ScreenshotHelper
-          image-src="secu_step3_kontext.png"
-          :image-description="$t('config_assistant.secunet.step3.callContext_screenshot_hint')"
-        />
-      </p>
-      <ol class="list-decimal list-inside mb-2">
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.callContext_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.callContext_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.secunet.step3.callContext_step3') }}</li>
-      </ol>
-    </div>
-    <div>
-      <AssistantInput
-        v-model="props.repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID]"
-        :label="$t('config_assistant.secunet.step3.title')"
-        type="text"
-        :maxlength="50"
-        @update-validity="updateValidity"
-      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AssistantInput from '@/renderer/modules/config-assistant/components/AssistantInput.vue';
-import ScreenshotHelper from '@/renderer/modules/config-assistant/components/ScreenshotHelper.vue';
 import AssistantButton from '@/renderer/modules/config-assistant/components/AssistantButton.vue';
-
-import { CONTEXT_PARAMETERS_CONFIG_GROUP } from '@/config';
 import { PropType } from 'vue';
 import { TRepositoryData } from '@/renderer/modules/settings/repository';
+import i18n from '@/renderer/i18n';
+
+const translate = i18n.global.t;
 
 const props = defineProps({
   repositoryData: {

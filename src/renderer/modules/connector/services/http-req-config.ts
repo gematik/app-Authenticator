@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { Headers, HTTPSOptions, Options } from 'got';
@@ -25,37 +29,13 @@ import { logger } from '@/renderer/service/logger';
 import { buildCaChainsConnector } from '@/renderer/modules/connector/common/utils';
 import { getConfig } from '@/renderer/utils/get-configs';
 import { CONNECTOR_GATEWAY_NAME, ENTRY_OPTIONS_CONFIG_GROUP, PROXY_SETTINGS_CONFIG } from '@/config';
-import { PROCESS_ENVS } from '@/constants';
 
 /**
+ * @deprecated TODO remove in AUTHCL-2004
  * @param endpoint
  */
 export const getConnectorEndpoint = (endpoint?: string) => {
-  // tlsEntryOptions are always stable
-  const tlsEntryOptions: TEntryOptions = ConnectorConfig.tlsEntryOptions;
-  let path = tlsEntryOptions.path;
-
-  // We change the path if it is provided if not we get the standard one from tlsEntryOptions
-  if (endpoint) {
-    const parsedEndpoint = new URL(endpoint);
-    path = parsedEndpoint.pathname;
-  }
-  // #!if MOCK_MODE === 'ENABLED'
-  else {
-    /*
-     Note: This will not work with the Konnektor Gateway!
-     The Konnektor Service Platform itself has a mapping of the Konnektors
-     in its route definition, e.g. https://url-of-konnektor-service-platform/kon23
-     The Konnektor Gateway does the mapping with a custom header and has no
-     konnektor name within the url
-
-     However, this is required to be active for automatic integration testing!
-     */
-    path = mappingPath(path);
-  }
-  // #!endif
-
-  return `https://${tlsEntryOptions.hostname}:${tlsEntryOptions.port}${path}`;
+  return ConnectorConfig.tlsEntryOptions.hostname + endpoint;
 };
 
 export const httpReqConfig = (headers?: Headers, customOptions?: Options): Options => {
@@ -82,7 +62,6 @@ export const httpReqConfig = (headers?: Headers, customOptions?: Options): Optio
     rejectUnauthorized,
     certificateAuthority: buildCaChainsConnector(),
   };
-
   if (ConnectorConfig.tlsAuthType == TLS_AUTH_TYPE.BasicAuth) {
     if (tlsEntryOptions.username && tlsEntryOptions.password) {
       reqConfig.username = tlsEntryOptions.username;
@@ -112,23 +91,3 @@ export const httpReqConfig = (headers?: Headers, customOptions?: Options): Optio
     },
   };
 };
-// #!if MOCK_MODE === 'ENABLED'
-function mappingPath(path: string): string {
-  const konnFarmHost = 'ksp.ltuzd.telematik-test';
-
-  let conFarmPath = '/kon12';
-
-  if (PROCESS_ENVS.CONNECTOR_PATH) {
-    conFarmPath = '/' + PROCESS_ENVS.CONNECTOR_PATH;
-  }
-
-  logger.debug('PROCESS_ENVS.CONNECTOR_PATH:' + PROCESS_ENVS.CONNECTOR_PATH);
-  logger.debug('conFarmPath:' + conFarmPath);
-
-  if (ConnectorConfig.tlsEntryOptions.hostname.includes(konnFarmHost)) {
-    return conFarmPath + path;
-  }
-  return path;
-}
-
-// #!endif

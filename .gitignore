@@ -48,8 +48,10 @@ coverage
 
 Archive.Jenkinsfile
 Jenkinsfile
+JenkinsfileMacOS
 Release.Jenkinsfile
 Github-Release.Jenkinsfile
+*Jenkinsfile*
 /tests/Integration/
 Koco.env
 Secunet.env

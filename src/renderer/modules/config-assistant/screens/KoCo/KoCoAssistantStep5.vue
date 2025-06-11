@@ -14,37 +14,64 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div>
+  <div class="m-4">
     <div class="assistant-heading flex flex-row justify-between">
       {{ $t('config_assistant.koco.step5.title') }}
       <AssistantButton
         button-link="https://wiki.gematik.de/download/attachments/540043222/Authenticator-Tutorial-KocoBox.mp4"
       />
     </div>
-    <div class="flex flex-row mb-8">
-      <div class="w-2/3">
-        <p>
-          <strong>{{ $t('config_assistant.koco.step5.intro') }}</strong>
-        </p>
-        <ol class="list-decimal list-outside ml-4">
-          <li class="list-item mt-4">{{ $t('config_assistant.koco.step5.workplaceId_step1') }}</li>
-          <li class="list-item mt-4">{{ $t('config_assistant.koco.step5.workplaceId_step2') }}</li>
-          <li class="list-item mt-4">{{ $t('config_assistant.koco.step5.workplaceId_step3') }}</li>
-          <li class="list-item mt-4">{{ $t('config_assistant.koco.step5.workplaceId_step4') }}</li>
-        </ol>
+    <div>
+      <div class="flex flex-row mb-8">
+        <div class="w-2/3">
+          <p>
+            <strong>{{ $t('config_assistant.koco.step5.assignMandant_heading') }}</strong>
+          </p>
+          <ol class="list-decimal list-inside mb-4">
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.assignMandant_step1') }}</li>
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.assignMandant_step2') }}</li>
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.assignMandant_step3') }}</li>
+          </ol>
+        </div>
+        <div class="flex flex-col justify-start items-end gap-4 w-1/3">
+          <ScreenshotHelper
+            image-src="koco_step3_mandant.png"
+            :image-description="$t('config_assistant.koco.step5.assignMandant_screenshot_hint')"
+          />
+        </div>
       </div>
-      <div class="flex flex-col gap-4">
-        <ScreenshotHelper
-          image-src="koco_step5_arbeitsplatz.png"
-          :image-description="$t('config_assistant.koco.step5.screen_hint')"
-        />
+    </div>
+    <div>
+      <div class="flex flex-row mb-8">
+        <div class="w-2/3">
+          <p>
+            <strong>{{ $t('config_assistant.koco.step5.intro') }}</strong>
+          </p>
+          <ol class="list-decimal list-outside ml-4">
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.mandantId_step1') }}</li>
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.mandantId_step2') }}</li>
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.mandantId_step3') }}</li>
+            <li class="list-item mt-2">{{ $t('config_assistant.koco.step5.mandantId_step4') }}</li>
+          </ol>
+        </div>
+        <div class="flex flex-col justify-start items-end gap-4 w-1/3">
+          <ScreenshotHelper
+            image-src="koco_step4_mandant.png"
+            :image-description="$t('config_assistant.koco.step5.screen_hint')"
+          />
+        </div>
       </div>
     </div>
     <AssistantInput
-      v-model="props.repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID]"
+      v-model="props.repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]"
+      placeholder="Ihre Eingabe"
       :label="$t('config_assistant.koco.step5.title')"
       type="text"
       :maxlength="50"

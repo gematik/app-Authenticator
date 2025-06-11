@@ -14,15 +14,20 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import sdsParser from '../common/sds-parser';
 import { logger } from '@/renderer/service/logger';
 import textParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
-import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
-import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
+import { CONNECTOR_SDS_PATH, XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
+import { httpReqConfig } from '@/renderer/modules/connector/services';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
+import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 
 let endpoints = new Map();
 let productTypeVersion = '';
@@ -36,8 +41,10 @@ function extractEndpoints(sds: string) {
  * @deprecated The method is not in use! Remove in next version!
  */
 export const getConnectorSdsTls = async (): Promise<string> => {
-  const url = getConnectorEndpoint();
-  const { data: connectorSdsResponse } = await window.api.httpGet(url, { ...httpReqConfig() });
+  const { data: connectorSdsResponse } = await window.api.httpGet(
+    ConnectorConfig.tlsEntryOptions.hostname + CONNECTOR_SDS_PATH,
+    { ...httpReqConfig() },
+  );
 
   extractEndpoints(connectorSdsResponse);
   return connectorSdsResponse;
@@ -46,8 +53,9 @@ export const getConnectorSdsTls = async (): Promise<string> => {
 export const getServiceEndpointTls = async (serviceName: string): Promise<string> => {
   try {
     if (endpoints.size == 0 || productTypeVersion === '') {
-      const url = getConnectorEndpoint();
-      const { data: sds } = await window.api.httpGet(url, { ...httpReqConfig() });
+      const { data: sds } = await window.api.httpGet(ConnectorConfig.tlsEntryOptions.hostname + CONNECTOR_SDS_PATH, {
+        ...httpReqConfig(),
+      });
       extractEndpoints(sds);
       extractPtv(sds);
     } else {

@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import i18n from '@/renderer/i18n';
@@ -48,7 +52,7 @@ export function getErrorMessage(status: string, slotNr: string, cardTerminalId: 
       ctId: cardTerminalId,
     });
   } else {
-    errorMessage = translate('readability_test_unknown_pin_status', { status: status });
+    errorMessage = translate('readability_test_unknown_pin_status');
   }
   return errorMessage;
 }

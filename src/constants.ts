@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 export const CONFIG_FILE_NAME = 'config.json';
@@ -159,6 +163,12 @@ export const MANUAL_URL = 'https://wiki.gematik.de/x/UTlCH';
  */
 export const FACHPORTAL_URL =
   'https://fachportal.gematik.de/hersteller-anbieter/komponenten-dienste/authenticator#c6684';
+
+/**
+ * URL zum ECC-Migrationsleitfaden
+ */
+export const ECC_MIGRATION_GUIDE = 'https://wiki.gematik.de/display/RUAAS/RSA2ECC-Migration';
+
 /**
  * URL zum Authenticator Voraussetzungs- und Kriterienkatalog
  */
@@ -235,9 +245,6 @@ export enum P12_VALIDITY_TYPE {
 export const STORAGE_CONFIG_KEYS = {
   HBA_CARD_USER_ID: 'userIdForCard-',
   SAVED_USER_CONSENT_PAIRS: 'savedUserConsentPairs',
-  MIGRATIONS: {
-    CREDENTIAL_MANAGER_STANDALONE: 'migrateCredentialManagerForStandalone',
-  },
 };
 
 export const MACOS_PATHS = {
@@ -264,7 +271,6 @@ export const EXPOSED_ENV_VARIABLES = [
   'BRANCH_NAME',
   'TAG_NAME',
   'BUILD_NUMBER',
-  'CONNECTOR_PATH',
   'COMPUTERNAME',
   'CLIENTNAME',
   'VIEWCLIENT_MACHINE_NAME',

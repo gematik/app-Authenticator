@@ -14,44 +14,44 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div class="assistant-content flex flex-col h-full">
+  <div class="assistant-content m-4">
     <div class="assistant-heading flex flex-row justify-between">
       {{ $t('config_assistant.koco.step2.title') }}
       <AssistantButton
         button-link="https://wiki.gematik.de/download/attachments/540043222/Authenticator-Tutorial-KocoBox.mp4"
       />
     </div>
-
-    <div class="assistant-section mb-5">
-      <p class="mb-3"><strong>Host:</strong>&nbsp;{{ $t('config_assistant.koco.step2.intro') }}</p>
-      <p><strong>Beispiel:</strong></p>
-      <p>https://<strong>10.151.81.105</strong>:9443/htm#&nbsp;&rarr;&nbsp;Host:&nbsp;<strong>10.151.81.105</strong></p>
+    <div class="flex flex-row">
+      <div class="assistant-section mb-4 w-2/3">
+        <p class="mb-4"><strong>Host:</strong>&nbsp;{{ $t('config_assistant.koco.step2.intro') }}</p>
+        <p><strong>Beispiel:</strong></p>
+        <p>
+          https://<strong>10.151.81.105</strong>:9443/htm#&nbsp;&rarr;&nbsp;Host:&nbsp;<strong>
+            https://10.151.81.105:443
+          </strong>
+        </p>
+      </div>
+      <div class="flex flex-col justify-start items-end gap-4 w-1/3">
+        <ScreenshotHelper
+          :image-description="$t('config_assistant.koco.step2.screen_hint')"
+          image-src="koco_step2_host_port.png"
+        />
+      </div>
+    </div>
+    <div>
       <AssistantInput
         v-model="props.repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME]"
-        placeholder=""
+        placeholder="Ihre Eingabe"
         label="Host"
         type="text"
         :allow-negative-numbers="false"
-        @update-validity="updateValidity"
-      />
-    </div>
-    <ScreenshotHelper
-      :image-description="$t('config_assistant.koco.step2.screen_hint')"
-      image-src="koco_step2_host_port.png"
-    />
-    <div class="assistant-section flex-grow mt-8">
-      <p class="mb-3"><strong>Port:&nbsp;</strong>{{ $t('config_assistant.koco.step2.port_text') }}</p>
-      <AssistantInput
-        v-model="props.repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.PORT]"
-        label="Port"
-        type="number"
-        :allow-negative-numbers="false"
-        :max="65535"
-        placeholder="443"
-        pre-value="443"
         @update-validity="updateValidity"
       />
     </div>

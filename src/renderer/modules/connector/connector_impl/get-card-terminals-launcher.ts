@@ -14,24 +14,27 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import ConnectorConfig from './connector-config';
-import * as getCardTerminals from './get-card-terminals';
-import * as sdsRequestObj from './sds-request';
+import { runSoapRequest } from './get-card-terminals';
+import { getServiceEndpointTls } from './sds-request';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { logger } from '@/renderer/service/logger';
 import { findAvailableCardTerminals } from '@/renderer/modules/connector/connector_impl/lookup-card-terminals';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 
 const executeServiceGc = async (endpoint: string) => {
-  const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
-  return getCardTerminals.runSoapRequest(ConnectorConfig.contextParameters, endpointMapped);
+  return runSoapRequest(ConnectorConfig.contextParameters, endpoint);
 };
 
 export const launch = async (): Promise<{ [name: string]: any }> => {
   try {
-    const endpoint = await sdsRequestObj.getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
+    const endpoint = await getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
     logger.debug(`getCardsTerminal.endpoint: ${endpoint}`);
 
     const xmlSoapResponse = await executeServiceGc(endpoint);
