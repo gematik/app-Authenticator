@@ -6,7 +6,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -21,20 +21,18 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 6
+        Schritt 1 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 16.666666666666664%;"
+          style="width: 10%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-t-lg"
         >
@@ -70,6 +68,16 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -84,7 +92,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -105,6 +113,16 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -119,7 +137,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -140,6 +158,16 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -154,7 +182,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -175,8 +203,18 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -189,7 +227,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -210,47 +248,20 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -279,7 +290,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -294,20 +305,18 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 6
+        Schritt 2 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 33.33333333333333%;"
+          style="width: 20%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -343,6 +352,16 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -357,7 +376,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -378,6 +397,16 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -392,7 +421,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -413,6 +442,16 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -427,7 +466,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -448,8 +487,18 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -462,7 +511,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -483,47 +532,20 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -552,7 +574,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -567,20 +589,18 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 6
+        Schritt 3 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 30%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -616,6 +636,16 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -630,7 +660,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -651,6 +681,16 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -665,7 +705,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -686,6 +726,16 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -700,7 +750,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -721,8 +771,18 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -735,7 +795,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -756,47 +816,20 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -825,7 +858,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -840,20 +873,18 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 6
+        Schritt 4 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 66.66666666666666%;"
+          style="width: 40%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -889,6 +920,16 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -903,7 +944,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -924,6 +965,16 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -938,7 +989,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -959,11 +1010,21 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             4
           </div>
@@ -973,7 +1034,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -994,8 +1055,18 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -1008,7 +1079,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -1029,47 +1100,20 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -1098,7 +1142,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -1113,20 +1157,18 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 6
+        Schritt 5 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 83.33333333333334%;"
+          style="width: 50%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -1162,6 +1204,16 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1176,7 +1228,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -1197,6 +1249,16 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1211,7 +1273,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -1232,6 +1294,16 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1246,7 +1318,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -1267,11 +1339,21 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             5
           </div>
@@ -1281,7 +1363,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -1302,47 +1384,20 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -1371,7 +1426,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -1386,20 +1441,18 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 6
+        Schritt 6 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 100%;"
+          style="width: 60%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -1435,6 +1488,16 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1449,7 +1512,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -1470,6 +1533,16 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1484,7 +1557,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -1505,6 +1578,16 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1519,7 +1602,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -1540,8 +1623,18 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -1554,7 +1647,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -1575,47 +1668,20 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number step-number-active"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Zertifikat 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -1627,12 +1693,12 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
       >
          ← Zurück
       </button>
-      <!--v-if-->
       <button
         class="bt w-8"
       >
-        Speichern
+        Weiter → 
       </button>
+      <!--v-if-->
     </div>
   </div>
 </div>
@@ -1644,7 +1710,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -1659,20 +1725,18 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 6
+        Schritt 1 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 16.666666666666664%;"
+          style="width: 10%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-t-lg"
         >
@@ -1708,6 +1772,16 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1722,7 +1796,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -1743,6 +1817,16 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1757,7 +1841,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -1778,6 +1862,16 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -1792,7 +1886,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -1813,8 +1907,18 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -1827,7 +1931,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -1848,47 +1952,20 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -1917,7 +1994,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -1932,20 +2009,18 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 6
+        Schritt 2 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 33.33333333333333%;"
+          style="width: 20%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -1981,6 +2056,16 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -1995,7 +2080,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -2016,6 +2101,16 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2030,7 +2125,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -2051,6 +2146,16 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2065,7 +2170,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -2086,8 +2191,18 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -2100,7 +2215,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -2121,47 +2236,20 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -2190,7 +2278,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -2205,20 +2293,18 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 6
+        Schritt 3 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 30%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -2254,6 +2340,16 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2268,7 +2364,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -2289,6 +2385,16 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -2303,7 +2409,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -2324,6 +2430,16 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2338,7 +2454,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -2359,8 +2475,18 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -2373,7 +2499,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -2394,47 +2520,20 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -2463,7 +2562,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -2478,20 +2577,18 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 6
+        Schritt 4 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 66.66666666666666%;"
+          style="width: 40%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -2527,6 +2624,16 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2541,7 +2648,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -2562,6 +2669,16 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2576,7 +2693,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -2597,11 +2714,21 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             4
           </div>
@@ -2611,7 +2738,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -2632,8 +2759,18 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -2646,7 +2783,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -2667,47 +2804,20 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -2736,7 +2846,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -2751,20 +2861,18 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 6
+        Schritt 5 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 83.33333333333334%;"
+          style="width: 50%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -2800,6 +2908,16 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2814,7 +2932,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -2835,6 +2953,16 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2849,7 +2977,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -2870,6 +2998,16 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -2884,7 +3022,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -2905,11 +3043,21 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             5
           </div>
@@ -2919,7 +3067,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -2940,47 +3088,20 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -3009,7 +3130,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -3024,20 +3145,18 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 6
+        Schritt 6 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 100%;"
+          style="width: 60%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -3073,6 +3192,16 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3087,7 +3216,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -3108,6 +3237,16 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3122,7 +3261,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandant und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -3143,6 +3282,16 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3157,7 +3306,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -3178,8 +3327,18 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -3192,7 +3351,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -3213,47 +3372,20 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number step-number-active"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -3265,12 +3397,12 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
       >
          ← Zurück
       </button>
-      <!--v-if-->
       <button
         class="bt w-8"
       >
-        Speichern
+        Weiter → 
       </button>
+      <!--v-if-->
     </div>
   </div>
 </div>
@@ -3282,7 +3414,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -3297,20 +3429,18 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 6
+        Schritt 1 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 16.666666666666664%;"
+          style="width: 10%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-t-lg"
         >
@@ -3346,6 +3476,16 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3360,7 +3500,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -3381,6 +3521,16 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3395,7 +3545,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -3416,6 +3566,16 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3430,7 +3590,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -3451,8 +3611,18 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -3465,7 +3635,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -3486,47 +3656,20 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -3555,7 +3698,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -3570,20 +3713,18 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 6
+        Schritt 2 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 33.33333333333333%;"
+          style="width: 20%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -3619,6 +3760,16 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -3633,7 +3784,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -3654,6 +3805,16 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3668,7 +3829,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -3689,6 +3850,16 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3703,7 +3874,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -3724,8 +3895,18 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -3738,7 +3919,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -3759,47 +3940,20 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -3828,7 +3982,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -3843,20 +3997,18 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 6
+        Schritt 3 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 30%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -3892,6 +4044,16 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3906,7 +4068,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -3927,6 +4089,16 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
         >
@@ -3941,7 +4113,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -3962,6 +4134,16 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -3976,7 +4158,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -3997,8 +4179,18 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -4011,7 +4203,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -4032,47 +4224,20 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -4101,7 +4266,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -4116,20 +4281,18 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 6
+        Schritt 4 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 66.66666666666666%;"
+          style="width: 40%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -4165,6 +4328,16 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4179,7 +4352,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -4200,6 +4373,16 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4214,7 +4397,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -4235,11 +4418,21 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             4
           </div>
@@ -4249,7 +4442,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -4270,8 +4463,18 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -4284,7 +4487,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -4305,47 +4508,20 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -4374,7 +4550,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -4389,20 +4565,18 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 6
+        Schritt 5 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 83.33333333333334%;"
+          style="width: 50%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -4438,6 +4612,16 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4452,7 +4636,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -4473,6 +4657,16 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4487,7 +4681,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -4508,6 +4702,16 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4522,7 +4726,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -4543,11 +4747,21 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
-            class="mr-2 step-number step-number-active"
+            class="mr-2 step-number"
           >
             5
           </div>
@@ -4557,7 +4771,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -4578,47 +4792,20 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -4647,7 +4834,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
 >
   <!-- Linke Spalte (1/3) -->
   <div
-    class="w-1/3 pl-2 pr-2 relative"
+    class="w-1/3 pl-2 pr-2 relative overflow-auto"
   >
     <div
       class="relative z-10"
@@ -4662,20 +4849,18 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 6
+        Schritt 6 von 10
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 100%;"
+          style="width: 60%;"
         />
       </div>
-      <div
-        class="flex-col"
-      >
-        
+      
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-t-lg"
         >
@@ -4711,6 +4896,16 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4725,7 +4920,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Host und Port 
+              Host-Adresse 
             </h2>
           </div>
           <div
@@ -4746,6 +4941,16 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4760,7 +4965,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Client - ID 
+              Clientsystem, Mandanten und Arbeitsplatz 
             </h2>
           </div>
           <div
@@ -4781,6 +4986,16 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
           class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
@@ -4795,7 +5010,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Mandanten - ID 
+              Authentisierungsmethode 
             </h2>
           </div>
           <div
@@ -4816,8 +5031,18 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             />
           </svg>
         </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
         >
           <div
             class="mr-2 step-number"
@@ -4830,7 +5055,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             <h2
               class="text-blue-950 ml-1 text-base"
             >
-              Arbeitsplatz - ID 
+              SMC-B PIN-Abfrage 
             </h2>
           </div>
           <div
@@ -4851,47 +5076,20 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
             />
           </svg>
         </div>
-        <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator bg-blue-100 rounded-b-lg"
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
         >
-          <div
-            class="mr-2 step-number step-number-active"
-          >
-            6
-          </div>
-          <div
-            class="flex flex-row justify-between flex-1"
-          >
-            <h2
-              class="text-blue-950 ml-1 text-base"
-            >
-              Client - Authentisierung 
-            </h2>
-          </div>
-          <div
-            class="text-yellow-400 text-2xl"
-          />
-          <svg
-            class="w-5 h-5 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        
+          <!--v-if-->
+        </transition-stub>
       </div>
+      
     </div>
   </div>
   <div
-    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border"
+    class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
   >
     <!--v-if-->
     <div
@@ -4903,12 +5101,12 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
       >
          ← Zurück
       </button>
-      <!--v-if-->
       <button
         class="bt w-8"
       >
-        Speichern
+        Weiter → 
       </button>
+      <!--v-if-->
     </div>
   </div>
 </div>

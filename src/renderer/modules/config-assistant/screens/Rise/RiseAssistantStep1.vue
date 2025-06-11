@@ -14,10 +14,14 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div class="assistant-content">
+  <div class="assistant-content m-4">
     <div class="assistant-heading flex flex-row justify-between">
       {{ $t('config_assistant.rise.step1.title') }}
       <AssistantButton
@@ -53,6 +57,7 @@
       </p>
       <AssistantInput
         :disabled="true"
+        placeholder="Ihre Eingabe"
         :label="translate('example')"
         type="text"
         :callback="
@@ -71,5 +76,6 @@ import AssistantButton from '@/renderer/modules/config-assistant/components/Assi
 import ScreenshotHelper from '@/renderer/modules/config-assistant/components/ScreenshotHelper.vue';
 import AssistantInput from '@/renderer/modules/config-assistant/components/AssistantInput.vue';
 import i18n from '@/renderer/i18n';
+
 const translate = i18n.global.t;
 </script>

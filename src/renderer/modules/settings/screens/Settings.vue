@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
@@ -100,43 +104,32 @@
             />
           </div>
         </div>
-        <div class="flex items-center pt-[26px] sticky bg-primary bottom-0">
+        <div class="flex items-center pt-[52px] sticky bg-primary bottom-0 justify-start">
           <button id="btnSaveSettings" class="bt" type="submit" :title="$t('settings_saved_info')">
             {{ $t('save') }}
           </button>
 
-          <div class="w-3/3">
-            <div>
-              <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="runAndFormatTestCases">
-                {{ $t('connection_test') }}
-              </button>
-              <br />
-            </div>
-          </div>
-          <div class="w-3/3">
-            <div>
-              <button id="btnLogToZip" class="bt ml-[15px]" type="button" @click="createZipWithLogData">
-                {{ $t('log_to_zip') }}
-              </button>
-              <br />
-            </div>
-          </div>
-          <div class="w-3/3">
-            <div>
-              <button id="btnConfAssist" class="bt ml-[15px]" type="button" @click="startConfigAssistant()">
-                {{ $t('open_assistant') }}
-              </button>
-              <br />
-            </div>
-          </div>
+          <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="runAndFormatTestCases">
+            {{ $t('connection_test') }}
+          </button>
+          <button id="btnFeatureTest" class="bt ml-[15px]" type="button" @click="toggleEccWarningModal(true)">
+            {{ $t('ecc_warning_options.ecc_check') }}
+          </button>
+          <button id="btnLogToZip" class="bt ml-[15px]" type="button" @click="createZipWithLogData">
+            {{ $t('log_to_zip') }}
+          </button>
+          <button id="btnConfAssist" class="bt ml-[15px]" type="button" @click="startConfigAssistant()">
+            {{ $t('open_assistant') }}
+          </button>
         </div>
       </form>
     </div>
   </div>
+  <EccWarningModal :toggle-ecc-warning-modal="toggleEccWarningModal" v-if="showEccWarningModal" />
   <TestResultModal
-    v-if="showModal"
+    v-if="showFunctionTestModal"
     :function-test-results="functionTestResults"
-    :close-modal="closeModal"
+    :close-function-test-modal="closeFunctionTestModal"
     :save-settings="saveConfigValues"
   />
 </template>
@@ -171,14 +164,19 @@ import { getFormColumnsFlat, getFormSections } from '@/renderer/modules/settings
 import { UserfacingError } from '@/renderer/errors/errors';
 import { alertDefinedErrorWithDataOptional, validateData } from '@/renderer/utils/utils';
 import router from '@/renderer/router';
+import EccWarningModal from '@/renderer/modules/settings/components/EccWarningModal.vue';
 
 export default defineComponent({
   name: 'SettingsScreen',
   components: {
+    EccWarningModal,
     FormElement,
     TestResultModal,
   },
   setup() {
+    // Update connector config
+    ConnectorConfig.updateConnectorParameters();
+
     const translate = useI18n().t;
     const { save, load, setWithoutSave } = useSettings();
     const configValues = ref<TRepositoryData>({ ...load() });
@@ -186,7 +184,8 @@ export default defineComponent({
     const isJsonFileInvalid = ref(FileStorageRepository.isJsonFileInvalid);
     const isDefaultConfigFile = ref(FileStorageRepository.isDefaultConfigFile);
     const functionTestResults = ref<TestResult[]>([]);
-    const showModal = ref<boolean>(false);
+    const showFunctionTestModal = ref<boolean>(false);
+    const showEccWarningModal = ref<boolean>(false);
     const formSections = computed<IConfigSection[]>(() => getFormSections(configValues.value));
     const formColumnsFlat = getFormColumnsFlat(configValues.value);
     const updateInitValuesFlag = ref(false);
@@ -325,7 +324,7 @@ export default defineComponent({
       try {
         FileStorageRepository.getPath(true);
         save(toRaw(configValues.value));
-        closeModal();
+        closeFunctionTestModal();
       } catch (err) {
         if (err instanceof UserfacingError && err.code === ERROR_CODES.AUTHCL_0010) {
           logger.error("Couldn't save to credential manager");
@@ -381,7 +380,7 @@ export default defineComponent({
 
       // if user cancels the process results can be empty, and in that case, we won't open the results modal
       if (functionTestResults.value.length) {
-        showModal.value = true;
+        showFunctionTestModal.value = true;
       }
     };
 
@@ -395,8 +394,12 @@ export default defineComponent({
       clearEndpoints();
     }
 
-    const closeModal = () => {
-      showModal.value = false;
+    const closeFunctionTestModal = () => {
+      showFunctionTestModal.value = false;
+    };
+
+    const toggleEccWarningModal = (newState: boolean) => {
+      showEccWarningModal.value = newState ?? !showEccWarningModal.value;
     };
 
     const reloadConfig = () => {
@@ -423,11 +426,13 @@ export default defineComponent({
       saveConfigValues,
       runAndFormatTestCases,
       createZipWithLogData,
-      closeModal,
+      closeFunctionTestModal,
+      toggleEccWarningModal,
+      showEccWarningModal,
       beforeRouteLeaveGuard,
       startConfigAssistant,
       functionTestResults,
-      showModal,
+      showFunctionTestModal,
       configValues,
       initialConfigValues,
       updateInitValuesFlag,

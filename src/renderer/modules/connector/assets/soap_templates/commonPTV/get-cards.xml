@@ -14,7 +14,7 @@
 
             </v2:Context>
             <!--Optional:-->
-            <v21:CardType>{CARDTYPE}</v21:CardType>
+            {CARDTYPE}
         </v7:GetCards>
     </soapenv:Body>
 </soapenv:Envelope>

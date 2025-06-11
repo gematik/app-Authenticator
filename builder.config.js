@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 const appConfigFactory = require('./app-config');
@@ -49,12 +53,12 @@ module.exports = {
   win: {
     target: ['nsis'],
     publisherName: PUBLISHER_NAME,
-    // extraResources: [
-    //   {
-    //     from: 'dist_electron/WinCertStoreLib.dll',
-    //     to: 'WinCertStoreLib.dll',
-    //   },
-    // ],
+    extraResources: [
+      {
+        from: 'dist_electron/WinCertStoreLib.dll',
+        to: 'WinCertStoreLib.dll',
+      },
+    ],
   },
   files: ['!*', 'dist_electron/*'],
   forceCodeSigning: FORCE_SIGNING,

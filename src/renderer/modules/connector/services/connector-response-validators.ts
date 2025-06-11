@@ -14,18 +14,35 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { COMMON_USED_REGEXES } from '@/constants';
 
-export function validateSignedChallenge(signedChallenge: string): boolean {
+/**
+ * @param signedChallenge the signed challenge as string
+ * @param minLength of the challenge string
+ * @param maxLength of the challenge string
+ */
+export function validateSignedChallenge(signedChallenge: string, minLength = 1, maxLength = 4096): boolean {
+  if (signedChallenge.length < minLength || signedChallenge.length > maxLength) {
+    return false; // Length check failed
+  }
   return COMMON_USED_REGEXES.JWT.test(signedChallenge);
 }
 
 /**
  * todo implement a proper validation with peculiar
  * @param cardCertificate
+ * @param minLength of the certificate string
+ * @param maxLength of the certificate string
  */
-export function validateCardCertificate(cardCertificate: string): boolean {
+export function validateCardCertificate(cardCertificate: string, minLength = 100, maxLength = 8000): boolean {
+  if (cardCertificate.length < minLength || cardCertificate.length > maxLength) {
+    return false; // Length check failed
+  }
   return COMMON_USED_REGEXES.BASE64.test(cardCertificate);
 }

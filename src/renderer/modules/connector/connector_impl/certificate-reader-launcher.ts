@@ -14,10 +14,14 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import * as certificateReader from './certificate-reader';
-import * as sdsRequest from './sds-request';
+import { runSoapRequest } from './certificate-reader';
+import { getServiceEndpointTls } from './sds-request';
 import ConnectorConfig from './connector-config';
 
 import { logger } from '@/renderer/service/logger';
@@ -27,11 +31,9 @@ import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 import { CONNECTOR_ERROR_CODES } from '@/error-codes';
 
 const readCertificate = async (endpoint: string, cardHandle: string) => {
-  const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
-
-  const res = await certificateReader.runSoapRequest(
+  const res = await runSoapRequest(
     ConnectorConfig.contextParameters,
-    endpointMapped,
+    endpoint,
     cardHandle,
     ConnectorConfig.certReaderParameter,
   );
@@ -49,7 +51,7 @@ const readCertificate = async (endpoint: string, cardHandle: string) => {
 
 export const launch = async (cardHandle: string): Promise<string> => {
   try {
-    const readCertificateEndpoint = await sdsRequest.getServiceEndpointTls(XML_TAG_NAMES.TAG_CERTIFICATE_SERVICE);
+    const readCertificateEndpoint = await getServiceEndpointTls(XML_TAG_NAMES.TAG_CERTIFICATE_SERVICE);
     logger.debug(`Using certificate service endpoint ${readCertificateEndpoint} to send SDS requests to connector.`);
     return await readCertificate(readCertificateEndpoint, cardHandle);
   } catch (error) {

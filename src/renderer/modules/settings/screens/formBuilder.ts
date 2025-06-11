@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 // #!if MOCK_MODE === 'ENABLED'
@@ -30,6 +34,7 @@ import {
   CONNECTOR_GATEWAY_NAME,
   CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
+  ECC_WARNING_OPTIONS,
   ENTRY_OPTIONS_CONFIG_GROUP,
   PROXY_AUTH_TYPES,
   PROXY_SETTINGS_CONFIG,
@@ -203,14 +208,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           },
         },
         {
-          label: translate('port'),
-          key: ENTRY_OPTIONS_CONFIG_GROUP.PORT,
-          type: 'input',
-          validationRegex: COMMON_USED_REGEXES.NUMBER,
-          placeholder: '443',
-          infoText: translate('info_text_port'),
-        },
-        {
           label: translate('mandant_id'),
           key: CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID,
           type: 'input',
@@ -333,6 +330,34 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'drop-down',
           optionsType: 'standardBool',
           infoText: translate('smcb_pin_option_info'),
+        },
+      ],
+    },
+    {
+      title: translate('ecc_warning_options.title'),
+      hide: false,
+      columns: [
+        {
+          label: translate('ecc_warning_options.show_warnings'),
+          key: ECC_WARNING_OPTIONS.ECC_WARNING_STATUS,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('ecc_warning_options.show_warnings_description'),
+        },
+        {
+          label: translate('ecc_warning_options.start_date'),
+          key: ECC_WARNING_OPTIONS.ECC_WARNING_START_DATE,
+          type: 'date',
+          optionsType: 'standardBool',
+          infoText: translate('ecc_warning_options.start_date_description'),
+          hide: repositoryData[ECC_WARNING_OPTIONS.ECC_WARNING_STATUS] === false,
+        },
+        {
+          label: translate('ecc_warning_options.custom_message'),
+          key: ECC_WARNING_OPTIONS.CUSTOM_MESSAGE,
+          type: 'input',
+          infoText: translate('ecc_warning_options.custom_message_info'),
+          hide: repositoryData[ECC_WARNING_OPTIONS.ECC_WARNING_STATUS] === false,
         },
       ],
     },

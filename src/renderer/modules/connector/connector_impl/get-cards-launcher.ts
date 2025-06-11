@@ -14,11 +14,15 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import ConnectorConfig from './connector-config';
-import * as getCardsObj from './get-cards';
-import * as sdsRequestObj from './sds-request';
+import { runSoapRequest } from './get-cards';
+import { getServiceEndpointTls } from './sds-request';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { logger } from '@/renderer/service/logger';
 import soapRespParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
@@ -28,23 +32,29 @@ import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 import { ConnectorHint } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
+import { findSpecificElementInResponseProperties } from '@/renderer/modules/connector/common/soap-response-json-parser';
 
-const executeService = async (endpoint: string, cardType: ECardTypes) => {
-  const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
-  return getCardsObj.runSoapRequest(
+const executeService = async (endpoint: string, cardType?: ECardTypes) => {
+  return runSoapRequest(
     ConnectorConfig.contextParameters,
-    endpointMapped,
-    ConnectorConfig.cardsParametersByType(cardType),
+    endpoint,
+    cardType ? ConnectorConfig.cardsParametersByType(cardType) : undefined,
   );
 };
 
-export const launch = async (cardType: ECardTypes): Promise<Partial<TCardData>> => {
+export const launch = async (cardType?: ECardTypes): Promise<Partial<TCardData>> => {
   let cardsResponse;
 
   try {
-    const endpoint = await sdsRequestObj.getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
+    const endpoint = await getServiceEndpointTls(XML_TAG_NAMES.TAG_EVENT_SERVICE);
     logger.debug(`Using event service endpoint ${endpoint} to send SDS requests to connector.`);
     cardsResponse = await executeService(endpoint, cardType);
+
+    if (cardType === undefined) {
+      const { Card } = await findSpecificElementInResponseProperties<any>(cardsResponse, 'Cards');
+      return (Array.isArray(Card) ? Card : [Card]) as any;
+    }
+
     logger.debug(`Response to GetCard-request for ${cardType.toUpperCase()}-Card is: ${cardsResponse}`);
     await checkGetCards(cardsResponse, cardType);
     const cardHandle = soapRespParser(cardsResponse, XML_TAG_NAMES.TAG_CARD_HANDLE);

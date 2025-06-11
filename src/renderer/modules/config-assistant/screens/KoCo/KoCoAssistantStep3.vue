@@ -14,10 +14,14 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div>
+  <div class="m-4">
     <div class="assistant-heading flex flex-row justify-between">
       {{ $t('config_assistant.koco.step3.title') }}
       <AssistantButton
@@ -26,61 +30,18 @@
     </div>
     <div>
       <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.koco.step3.clientId_heading') }}</strong>
-        <ScreenshotHelper
-          image-src="koco_step3_clientId.png"
-          :image-description="$t('config_assistant.koco.step3.clientId_screenshot_hint')"
-        />
+        <strong>{{ $t('config_assistant.koco.step3.heading') }}</strong>
       </p>
-      <ol class="list-decimal list-inside mb-4">
-        <li class="list-item">{{ $t('config_assistant.koco.step3.clientId_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.clientId_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.clientId_step3') }}</li>
-      </ol>
-    </div>
-    <div>
       <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.koco.step3.assignMandant_heading') }}</strong>
-        <ScreenshotHelper
-          image-src="koco_step3_mandant.png"
-          :image-description="$t('config_assistant.koco.step3.assignMandant_screenshot_hint')"
-        />
+        {{ $t('config_assistant.koco.step3.description') }}
       </p>
-      <ol class="list-decimal list-inside mb-4">
-        <li class="list-item">{{ $t('config_assistant.koco.step3.assignMandant_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.assignMandant_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.assignMandant_step3') }}</li>
-      </ol>
-    </div>
-    <div>
-      <p class="mb-1 flex flex-row justify-between">
-        <strong>{{ $t('config_assistant.koco.step3.csap_heading') }}</strong>
-        <ScreenshotHelper :image-src="csapScreenshots" :image-description="csapScreenshotsDescs" />
-      </p>
-      <ol class="list-decimal list-inside mb-2">
-        <li class="list-item">{{ $t('config_assistant.koco.step3.csap_step1') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.csap_step2') }}</li>
-        <li class="list-item">{{ $t('config_assistant.koco.step3.csap_step3') }}</li>
-      </ol>
-    </div>
-    <div>
-      <AssistantInput
-        v-model="props.repositoryData[CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID]"
-        :label="$t('config_assistant.koco.step3.title')"
-        type="text"
-        :maxlength="50"
-        @update-validity="updateValidity"
-      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AssistantInput from '@/renderer/modules/config-assistant/components/AssistantInput.vue';
-import ScreenshotHelper from '@/renderer/modules/config-assistant/components/ScreenshotHelper.vue';
 import AssistantButton from '@/renderer/modules/config-assistant/components/AssistantButton.vue';
 
-import { CONTEXT_PARAMETERS_CONFIG_GROUP } from '@/config';
 import { PropType } from 'vue';
 import { TRepositoryData } from '@/renderer/modules/settings/repository';
 import i18n from '@/renderer/i18n';
@@ -99,11 +60,4 @@ const emit = defineEmits(['update-validity']);
 function updateValidity(payload: { label: string; isValid: boolean }) {
   emit('update-validity', payload);
 }
-
-const csapScreenshots = ['koco_step3_csap_1.png', 'koco_step3_csap_2.png', 'koco_step3_csap_3.png'];
-const csapScreenshotsDescs = [
-  translate('config_assistant.koco.step3.csap_screenshot_hint1'),
-  translate('config_assistant.koco.step3.csap_screenshot_hint2'),
-  translate('config_assistant.koco.step3.csap_screenshot_hint3'),
-];
 </script>

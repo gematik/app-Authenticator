@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
@@ -47,8 +51,6 @@ export type TTag = {
 export type TEntryOptions = {
   hostname: string;
   port: number;
-  path: string;
-  method: string;
   rejectUnauthorized?: boolean;
   secureProtocol?: string;
   keyFile?: string;
@@ -57,7 +59,6 @@ export type TEntryOptions = {
   pfxPassword?: string;
   username?: string;
   password?: string;
-  protocol?: string;
   remoteKT?: string;
   localKT?: string;
 };
@@ -68,6 +69,30 @@ export type TCertReaderParameter = {
 };
 
 export type TConfigObject = Record<string, string>;
+
+export type TRealCardData = {
+  CardType: ECardTypes;
+  CtId: string;
+  SlotId: string;
+  CardHandle: string;
+  Certificate: string;
+  Iccsn: string;
+  CardVersion: {
+    COSVersion: {
+      Major: string;
+      Minor: string;
+      Revision: string;
+    };
+    ObjectSystemVersion: {
+      Major: string;
+      Minor: string;
+      Revision: string;
+    };
+  };
+  InsertTime: string;
+  CardHolderName: string;
+  CertificateExpirationDate: string;
+};
 
 export type TCardData = {
   cardType: ECardTypes;

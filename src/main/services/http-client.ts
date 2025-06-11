@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import got from 'got';
@@ -22,7 +26,7 @@ import { IncomingHttpHeaders } from 'http';
 import { stringify } from 'flatted';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 
-import { IS_TEST, PROCESS_ENVS } from '@/constants';
+import { IPC_READ_CERTIFICATES, IS_TEST, PROCESS_ENVS } from '@/constants';
 import { logger } from '@/main/services/logging';
 import { createProxyAgent } from '@/main/services/proxyResolver';
 import { TLS_AUTH_TYPE } from '@/@types/common-types';
@@ -30,21 +34,22 @@ import { ENTRY_OPTIONS_CONFIG_GROUP, TIMEOUT_PARAMETER_CONFIG, TLS_AUTH_TYPE_CON
 import { APP_CONFIG_DATA } from '@/main/preload-api';
 import * as process from 'node:process';
 import { rootCertificates } from 'tls';
+import { ipcRenderer } from 'electron';
 
 const { CookieJar } = require('tough-cookie');
 const cookieJar = new CookieJar();
 
-// let trustStoreCertificates: string[] = [];
+let trustStoreCertificates: string[] = [];
 
-// ipcRenderer
-//   .invoke(IPC_READ_CERTIFICATES)
-//   .then((certificates) => {
-//     trustStoreCertificates = certificates;
-//     logger.info('Retrieved trust store certificates: ' + trustStoreCertificates.length);
-//   })
-//   .catch((error) => {
-//     logger.error('Error retrieving trust store certificates:', error);
-//   });
+ipcRenderer
+  .invoke(IPC_READ_CERTIFICATES)
+  .then((certificates) => {
+    trustStoreCertificates = certificates;
+    logger.info('Retrieved trust store certificates: ' + trustStoreCertificates.length);
+  })
+  .catch((error) => {
+    logger.error('Error retrieving trust store certificates:', error);
+  });
 
 let gotAdvanced = got;
 // #!if MOCK_MODE === 'ENABLED'
@@ -112,7 +117,7 @@ export const httpClient = async (
       },
       https: {
         ...config.https,
-        certificateAuthority: [...(config?.https?.certificateAuthority || []), ...rootCertificates],
+        certificateAuthority: [...(config?.https?.certificateAuthority || []), ...trustStoreCertificates],
         ...putP12Config(url),
       },
     };
@@ -203,7 +208,19 @@ export const httpClient = async (
  */
 const putP12Config = (url: string) => {
   // ignore idp requests
-  const connectorHost = <string>APP_CONFIG_DATA[ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME];
+  let connectorHost = <string>APP_CONFIG_DATA[ENTRY_OPTIONS_CONFIG_GROUP.HOSTNAME];
+
+  // try to cover all cases for the connectorHost
+  try {
+    const urlObj = new URL(url);
+    connectorHost = urlObj.hostname;
+  } catch (e) {
+    if (connectorHost.includes(':')) {
+      // if the connectorHost contains a port, we need to remove it
+      connectorHost = connectorHost.split(':')[0];
+    }
+  }
+
   if (!url?.includes(connectorHost)) {
     return {};
   }

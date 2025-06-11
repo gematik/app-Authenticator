@@ -9,25 +9,25 @@ exports[`base template screen renders with settings button 1`] = `
   >
     <div>
       <a
-        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
+        class="p-1.5 mr-[16px] operator:hover bg-primary"
         id="navLogin"
       >
         Home
       </a>
       <a
-        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
+        class="p-1.5 mr-[16px] operator:hover bg-primary"
         id="navSettings"
       >
         Einstellungen
       </a>
       <a
-        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
+        class="p-1.5 mr-[16px] operator:hover bg-primary"
         id="navHelp"
       >
         Hilfe
       </a>
       <a
-        class="p-1.5 mr-[16px] rounded-sm operator:hover bg-primary"
+        class="p-1.5 mr-[16px] operator:hover bg-primary"
         id="navConfigAssistant"
       >
         Konfigurationsassistent
@@ -65,7 +65,7 @@ exports[`base template screen renders with settings button 1`] = `
     <div
       class="text-sm cursor-default"
       id="lblVersion"
-      title="4.14.1"
+      title="4.15.0"
     >
       Version dev 
     </div>

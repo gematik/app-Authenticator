@@ -209,7 +209,7 @@ exports[`settings screen render  1`] = `
                   <span
                     class="tooltiptext"
                   >
-                    Die IP-Adresse oder der Hostname des Konnektors, zu dem Sie eine Verbindung herstellen möchten. Zu finden im Installationsblatt der Praxis (z.B. 127.0.0.1).
+                    Die IP-Adresse oder der Hostname des Konnektors, zu dem Sie eine Verbindung herstellen möchten. Zu finden im Installationsblatt der Praxis (z.B. https://127.0.0.1 oder https://local-connector.com/con12).
                   </span>
                 </div>
               </div>
@@ -225,50 +225,6 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <!--v-if-->
                 <!--v-if-->
-              </div>
-            </div>
-            <div
-              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
-            >
-              <div
-                class="text-sm"
-                for="input-connector.entryOption.port"
-              >
-                <label
-                  class="text-sm"
-                  id="form-connector.entryOption.port-label"
-                >
-                  Port
-                </label>
-                <div
-                  class="tooltip"
-                >
-                  <img
-                    alt=""
-                  />
-                  <span
-                    class="tooltiptext"
-                  >
-                    Die Portnummer, über die der Konnektor erreichbar ist. Standardmäßig ist dies Port 443 für HTTPS.
-                  </span>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <input
-                    class="settings-input settings-input__changed"
-                    id="form-connector.entryOption.port"
-                    placeholder="443"
-                    type="input"
-                  />
-                </div>
-                <!--v-if-->
-                <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
               </div>
             </div>
             <div
@@ -587,6 +543,160 @@ exports[`settings screen render  1`] = `
                 class=""
                 id="lblTitle-3"
               >
+                Optionen für HBA ECC Prüfung
+              </h3>
+            </div>
+            
+            <div
+              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+            >
+              <div
+                class="text-sm"
+                for="input-eccWarnings.status"
+              >
+                <label
+                  class="text-sm"
+                  id="form-eccWarnings.status-label"
+                >
+                  ECC Warnung anzeigen
+                </label>
+                <div
+                  class="tooltip"
+                >
+                  <img
+                    alt=""
+                  />
+                  <span
+                    class="tooltiptext"
+                  >
+                    Ab 2026 werden RSA-Zertifikate nicht mehr unterstützt. Es wird empfohlen, ECC-Zertifikate zu verwenden. Diese Option zeigt eine Warnung an, wenn RSA-Zertifikate verwendet werden.
+                  </span>
+                </div>
+              </div>
+              <div>
+                <!--v-if-->
+                <div>
+                  <select
+                    class="settings-input settings-input__changed"
+                    id="form-eccWarnings.status"
+                  >
+                    
+                    <option
+                      value="true"
+                    >
+                      Aktiviert
+                    </option>
+                    <option
+                      value="false"
+                    >
+                      Deaktiviert
+                    </option>
+                    
+                  </select>
+                </div>
+                <!--v-if-->
+                <div
+                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                >
+                  Diese Änderung wurde noch nicht gespeichert
+                </div>
+              </div>
+            </div>
+            <div
+              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+            >
+              <div
+                class="text-sm"
+                for="input-eccWarnings.startDate"
+              >
+                <label
+                  class="text-sm"
+                  id="form-eccWarnings.startDate-label"
+                >
+                  Hinweis anzeigen ab
+                </label>
+                <div
+                  class="tooltip"
+                >
+                  <img
+                    alt=""
+                  />
+                  <span
+                    class="tooltiptext"
+                  >
+                    Das Startdatum, ab dem die Warnung angezeigt wird.
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <input
+                    class="settings-input"
+                    id="form-eccWarnings.startDate"
+                    placeholder=""
+                    type="date"
+                  />
+                </div>
+                <!--v-if-->
+                <!--v-if-->
+                <!--v-if-->
+              </div>
+            </div>
+            <div
+              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+            >
+              <div
+                class="text-sm"
+                for="input-eccWarnings.customMessage"
+              >
+                <label
+                  class="text-sm"
+                  id="form-eccWarnings.customMessage-label"
+                >
+                  Benutzerdefinierte Nachricht
+                </label>
+                <div
+                  class="tooltip"
+                >
+                  <img
+                    alt=""
+                  />
+                  <span
+                    class="tooltiptext"
+                  >
+                    Hier können Sie einen eigenen Informationstext hinterlegen der angezeigt wird, wenn die Karte nicht den ECC Sicherheitsstandards entspricht.
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <input
+                    class="settings-input"
+                    id="form-eccWarnings.customMessage"
+                    placeholder=""
+                    type="input"
+                  />
+                </div>
+                <!--v-if-->
+                <!--v-if-->
+                <!--v-if-->
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div
+          class="w-full pt-[32px]"
+        >
+          <div>
+            <div
+              class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
+            >
+              <!--v-if-->
+              <h3
+                class=""
+                id="lblTitle-4"
+              >
                 Proxy Einstellungen
               </h3>
             </div>
@@ -824,7 +934,7 @@ exports[`settings screen render  1`] = `
               <!--v-if-->
               <h3
                 class=""
-                id="lblTitle-5"
+                id="lblTitle-6"
               >
                 Timeout Einstellungen
               </h3>
@@ -883,7 +993,7 @@ exports[`settings screen render  1`] = `
               <!--v-if-->
               <h3
                 class=""
-                id="lblTitle-6"
+                id="lblTitle-7"
               >
                 Automatische Updates
               </h3>
@@ -949,7 +1059,7 @@ exports[`settings screen render  1`] = `
         </div>
         
         <div
-          class="flex items-center pt-[26px] sticky bg-primary bottom-0"
+          class="flex items-center pt-[52px] sticky bg-primary bottom-0 justify-start"
         >
           <button
             class="bt"
@@ -959,52 +1069,39 @@ exports[`settings screen render  1`] = `
           >
             Speichern
           </button>
-          <div
-            class="w-3/3"
+          <button
+            class="bt ml-[15px]"
+            id="btnFeatureTest"
+            type="button"
           >
-            <div>
-              <button
-                class="bt ml-[15px]"
-                id="btnFeatureTest"
-                type="button"
-              >
-                Funktionstest
-              </button>
-              <br />
-            </div>
-          </div>
-          <div
-            class="w-3/3"
+            Funktionstest
+          </button>
+          <button
+            class="bt ml-[15px]"
+            id="btnFeatureTest"
+            type="button"
           >
-            <div>
-              <button
-                class="bt ml-[15px]"
-                id="btnLogToZip"
-                type="button"
-              >
-                Log-Daten als ZIP-Datei exportieren
-              </button>
-              <br />
-            </div>
-          </div>
-          <div
-            class="w-3/3"
+            ECC Prüfung
+          </button>
+          <button
+            class="bt ml-[15px]"
+            id="btnLogToZip"
+            type="button"
           >
-            <div>
-              <button
-                class="bt ml-[15px]"
-                id="btnConfAssist"
-                type="button"
-              >
-                Konfigurationsassistent starten
-              </button>
-              <br />
-            </div>
-          </div>
+            Logs exportieren
+          </button>
+          <button
+            class="bt ml-[15px]"
+            id="btnConfAssist"
+            type="button"
+          >
+            Konfigurationsassistent
+          </button>
         </div>
       </form>
     </div>
   </div>
+  <!--v-if-->
   <!--v-if-->
   
 </div>

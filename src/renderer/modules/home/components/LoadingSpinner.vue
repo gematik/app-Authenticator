@@ -14,11 +14,16 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center flex-col items-center">
     <div class="loader" />
+    <div class="my-5 font-semibold" v-if="showText">Bitte warten...</div>
   </div>
 </template>
 
@@ -27,10 +32,18 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'LoadingSpinner',
+  props: {
+    showText: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+@import '../../../global.css';
+
 .loader {
   border: 5px solid #f3f3f3; /* Light grey */
   border-top: 5px solid #000e52; /* Blue */
@@ -38,7 +51,6 @@ export default defineComponent({
   width: 40px;
   height: 40px;
   animation: spin 2s linear infinite;
-  margin-top: 20px;
 }
 
 @keyframes spin {

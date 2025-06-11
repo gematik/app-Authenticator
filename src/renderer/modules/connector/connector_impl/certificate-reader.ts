@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { TCertReaderParameter, TContextParameter } from '../type-definitions/common-types';
@@ -21,7 +25,7 @@ import { SOAP_ACTION, SOAP_ACTION_CONTENT_TYPE } from '@/renderer/modules/connec
 import templatePTV4 from '@/renderer/modules/connector/assets/soap_templates/PTV4/read-card-certificate.xml';
 import templatePTV3 from '@/renderer/modules/connector/assets/soap_templates/PTV3/read-card-certificate.xml';
 import { getProductTypeVersion } from '@/renderer/modules/connector/connector_impl/sds-request';
-import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
+import { httpReqConfig } from '@/renderer/modules/connector/services';
 
 export const runSoapRequest = async (
   contextParameter: TContextParameter,
@@ -42,8 +46,7 @@ export const runSoapRequest = async (
     soapAction: SOAP_ACTION.ReadCardCertificate,
   };
 
-  const url = getConnectorEndpoint(endpoint);
-  const { data } = await window.api.httpPost(url, envelope, httpReqConfig(requestHeaders));
+  const { data } = await window.api.httpPost(endpoint, envelope, httpReqConfig(requestHeaders));
   return data;
 };
 

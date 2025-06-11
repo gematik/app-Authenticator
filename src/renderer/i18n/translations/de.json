@@ -47,73 +47,121 @@
         "intro": "Der Rise Konfigurations-Assistent hilft Ihnen dabei herauszufinden, welche Daten für die Konfiguration des Authenticators im Verbund mit einem Rise Konnektor benötigt werden und woher Sie diese bekommen."
       },
       "step2": {
-        "step_title": "Host und Port",
-        "title": "Host und Port",
-        "screen_hint": "Sie finden Host und Port in der Adressleiste. Wenn Sie keinen Port sehen, wird höchstwahrscheinlich der Standardport 443 verwendet",
-        "intro": "Tragen Sie die IP-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers).",
-        "port_text": "Standardmäßig ist der Port mit dem Wert 443 vorbelegt.  Nur eingeben/ändern, wenn Sie den Wert in Ihren Konnektoreinstellungen angepasst haben."
+        "step_title": "Host-Adresse",
+        "title": "Host-Adresse",
+        "screen_hint": "Sie finden die Host-Adresse in der Adressleiste.",
+        "intro": "Tragen Sie die Host-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers)."
       },
       "step3": {
-        "step_title": "Client - ID",
-        "title": "Client - ID",
-        "clientId_screenshot_hint": "Folgen Sie dem Dialog um eine Client-ID zu erstellen",
-        "clientId_heading": "Client-ID erstellen",
+        "step_title": "Clientsystem, Mandant und Arbeitsplatz",
+        "title": "Clientsystem, Mandant und Arbeitsplatz",
+        "description": "Um eine Verbindung mit dem Konnektor herzustellen, benötigt der Authenticator ein Clientsystem, einen Mandanten und einen Arbeitsplatz. In der Konnektoroberfläche ist entscheidend, dass der Authenticator ein eindeutiges Clientsystem besitzt, während der Mandant und der Arbeitsplatz nicht spezifisch für ihn sein müssen. Nachdem ein neues Clientsystem erstellt wurde, muss es zusammen mit einem Mandanten und einem Arbeitsplatz in einem Verbund verknüpft werden. In dem Rise-Konnektor bedeutet das, die drei IDs in einer Arbeitsumgebung zu verbinden."
+      },
+      "step4": {
+        "step_title": "Clientsystem",
+        "title": "Clientsystem",
+        "clientId_screenshot_hint": "Folgen Sie dem Dialog um ein Clientsystem zu erstellen",
+        "clientId_heading": "Clientsystem erstellen",
         "clientId_step1": "In der Konnektor-Oberfläche auf \"Arbeitsumgebung\" klicken",
         "clientId_step2": "Zum Reiter \"Konfiguration\" navigieren",
         "clientId_step3": "Clientsysteme \"hinzufügen\" klicken",
         "clientId_step4": "Wählen Sie in einen Namen für das Clientsystem und klicken Sie auf \"Speichern\"",
         "assignAuth_screenshot_hint": "Stellen Sie die Authentifizierung hier ein",
-        "assignAuth_heading": "Mandanten-ID und Arbeitsplatz-ID zuweisen:",
-        "assignAuth_step1": "In \"Welcher Mandant benutzt welchen Arbeitsplatz\"-Liste navigieren",
-        "assignAuth_step2": "Gewünschten Arbeitsplatz finden",
-        "assignAuth_step3": "\"Bearbeiten\" (Stift-Symbol) des Arbeitsplatzes klicken",
-        "assignAuth_step4": "\"Speichern und Weiter\" klicken",
-        "assignAuth_step5": "\"Clientsystem hinzufügen\" für Mandant und Arbeitsplatz",
-        "assignAuth_step6": "\"Speichern\" klicken",
-        "callContext_screenshot_hint": "Legen Sie im folgenden den Aufrufkontext fest"
+        "callContext_screenshot_hint": "Legen Sie im folgenden die Arbeitsumgebung fest"
       },
-      "step4": {
-        "step_title": "Mandanten - ID",
-        "title": "Mandanten - ID",
-        "intro": "Mandaten-ID einsehen",
-        "screen_hint": "Wählen Sie die zugeordnete Mandanten-ID",
+      "step5": {
+        "step_title": "Mandant",
+        "title": "Mandant",
+        "screen_hint": "Wählen Sie den zugeordnete Mandanten",
+        "assignAuth_mand_heading": "Mandanten zuweisen:",
+        "assignAuth_mand_step1": "In \"Welcher Mandant benutzt welchen Arbeitsplatz\"-Liste navigieren",
+        "assignAuth_mand_step2": "Gewünschten Arbeitsplatz finden",
+        "assignAuth_mand_step3": "\"Bearbeiten\" des Arbeitsplatzes klicken",
+        "assignAuth_mand_step4": "\"Speichern und Weiter\" klicken",
+        "assignAuth_mand_step5": "\"Clientsystem hinzufügen\" für Mandant",
+        "assignAuth_mand_step6": "\"Speichern\" klicken"
+      },
+      "step6": {
+        "step_title": "Arbeitsplatz",
+        "title": "Arbeitsplatz",
+        "intro": "Arbeitsplatz einsehen",
+        "screen_hint": "Wählen Sie Mandant und Arbeitsplatz aus",
+        "assignAuth_wp_heading": "Arbeitsplatz zuweisen:",
+        "assignAuth_wp_step1": "In \"Welcher Mandant benutzt welchen Arbeitsplatz\"-Liste navigieren",
+        "assignAuth_wp_step2": "Gewünschten Arbeitsplatz finden",
+        "assignAuth_wp_step3": "\"Bearbeiten\" des Arbeitsplatzes klicken",
+        "assignAuth_wp_step4": "\"Speichern und Weiter\" klicken",
+        "assignAuth_wp_step5": "\"Clientsystem hinzufügen\" für Arbeitsplatz",
+        "assignAuth_wp_step6": "\"Speichern\" klicken"
+      },
+      "step7": {
+        "step_title": "Arbeitsumgebung",
+        "title": "Arbeitsumgebung",
+        "intro": "Arbeitsumgebung anlegen",
         "mandantId_step1": "Öffen Sie die Konnektor-Oberfläche",
         "mandantId_step2": "Navigieren Sie zum Reiter \"Arbeitsumgebung\"",
         "mandantId_step3": "Liste aller Mandanten-IDs",
-        "mandantId_step4": "Suchen Sie in der Ansicht nach der Mandanten-ID, dem Sie Ihr Clientsystem zugeordnet haben."
-      },
-      "step5": {
-        "step_title": "Arbeitsplatz - ID",
-        "title": "Arbeitsplatz - ID",
-        "intro": "Arbeitsplatz-ID einsehen",
-        "screen_hint": "Wählen Sie Mandant und Arbeitsplatz aus",
-        "workplaceId_step1": "Öffen Sie die Konnektor-Oberfläche",
-        "workplaceId_step2": "Navigieren Sie zum Reiter \"Arbeitsumgebung\"",
-        "workplaceId_step3": "Liste aller Mandanten-IDs",
-        "workplaceId_step4": "Suchen Sie in der Ansicht nach der Mandanten-ID, dem Sie Ihr Clientsystem zugeordnet haben.",
+        "mandantId_step4": "Suchen Sie in der Ansicht nach dem Mandanten, dem Sie Ihr Clientsystem zugeordnet haben.",
         "workplaceId_step5": "Mandant anklicken und zugeordnete Arbeitsplatz-IDs einsehen"
       },
-      "step6": {
-        "step_title": "Client - Authentisierung",
-        "title": "Client - Authentisierung",
-        "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator beim Konnektor authentisieren soll.",
-        "screen_hint": "Erstellen Sie in diesem Dialog ein Zertifikat",
-        "server_client_cert_auth": "Zertifikat",
-        "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Dienste > Clientsysteme",
-        "server_client_cert_auth_step2": "Authentisierungsmodus > Zertifikatsbasiert",
-        "server_client_cert_auth_step3": "\"Zertifikate\" klicken > \"Neues Zertifikat generieren\"",
-        "server_client_cert_auth_step4": "Clientsystem zuordnen > \"Weiter\"",
-        "server_client_cert_auth_step5": "Passwort verwahren & Zertifikat per Link herunterladen",
-        "server_client_cert_auth_step6": "\"Fertigstellen\" drücken",
-        "pfx": "Zertifikat-P12",
-        "basic_auth": "Benutzername/Passwort",
-        "no_auth": "Keine Authentisierung",
-        "label_file": "Zertifikat - Upload",
-        "label_password": "Zertifikat - Passwort",
-        "server_client_cert_auth_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat vornimmt.",
-        "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (RSA only) vornimmt.",
-        "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
-        "no_auth_hint": "Wählen Sie diese Option, wenn keine Client-Authentifizierung am Konnektor erforderlich ist."
+      "step8": {
+        "step_title": "Authentisierungsmethode",
+        "title": "Authentisierungsmethoden",
+        "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "basic_auth": "Basic Authentication (Benutzername & Passwort):",
+        "cert_option_p12": "Zertifikat im P12-Format",
+        "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
+        "no_authentication": "Keine Authentisierung (falls im Konnektor keine Authentisierung eingestellt ist)",
+        "authentication_description_title": "So finden Sie die aktuelle Authentifizierungsmethode Ihres Konnektors:",
+        "authentication_description_1": "Klicken Sie in der linken Navigationsleiste auf \"Clientsysteme\"",
+        "authentication_description_2": "Gehen Sie zum Reiter \"Konfiguration\".",
+        "authentication_description_3": "Unter \"Authentifizierung von Clientsystemen\" finden Sie Ihre eingestellte Authentifizierungsmethode.",
+        "authentication_screen_hint": "Unter \"Clientsysteme\" und \"Konfiguration\" können Sie sehen, welchen Authentisierungsmodus ihr Konnektor benutzt. "
+      },
+      "step9": {
+        "step_title": "Methode Konfigurieren",
+        "BasicAuth": {
+          "step_title": "Benutzer/Passwort",
+          "title": "Benutzername/Passwort",
+          "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
+          "basicAuth_screen_hint1": "Unter \"Clientsysteme\" und \"Passwörter\" können Sie einen Username und ein Passwort erstellen, indem Sie den \"Neuen Benutzer hinzufügen...\"-Button klicken",
+          "basicAuth_screen_hint2": "Hier können Sie das Clientsystem auswählen, für das die Zugangsdaten gelten und die auch gleich erstellen.",
+          "basicAuth_screen_hint3": "In der Tabelle sehen Sie, dass das von Ihnen ausgewählte Clientsystem nun einen Eintrag hat."
+        },
+        "ServerClientCertAuth": {
+          "step_title": "Zertifikat",
+          "title": "Zertifikat",
+          "intro": "Zertifikat erstellen",
+          "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Dienste > Clientsysteme",
+          "server_client_cert_auth_step2": "Authentisierungsmodus > Zertifikatsbasiert",
+          "server_client_cert_auth_step3": "\"Zertifikate\" klicken > \"Neues Zertifikat generieren\"",
+          "server_client_cert_auth_step4": "Clientsystem zuordnen > \"Weiter\"",
+          "server_client_cert_auth_step5": "Passwort verwahren & Zertifikat per Link herunterladen",
+          "server_client_cert_auth_step6": "\"Fertigstellen\" drücken",
+          "server_client_cert_auth_screen_hint1": "Unter \"Clientsysteme\" und \"Zertifikate\" können Sie sich mit dem \"Neues zertifikat generieren\"-Button ein Zertifikat erstellen lassen.",
+          "server_client_cert_auth_screen_hint2": "Wählen Sie den Verschlüsselungsalgorithmus aus. Der Authenticator unterstützt RSA und ECC-Nist.",
+          "server_client_cert_auth_screen_hint3": "Speichern Sie sich ihr Passwort sorgfältig ab und laden Sie das Zertifikat mit dem bereitgestellten Link herunter.",
+          "server_client_cert_auth_screen_hint4": "In der Tabelle sehen Sie, dass das von Ihnen ausgewählte Clientsystem nun einen Eintrag hat."
+        },
+        "ServerClientCertAuth_Pfx": {
+          "step_title": "Zertifikat-P12",
+          "title": "Zertifikat-P12",
+          "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (ausschließlich RSA) vornimmt.",
+          "pfx": "Zertifikat-P12"
+        },
+        "ServerCertAuth": {
+          "step_title": "Keine Authentisierung",
+          "title": "Keine Authentisierung",
+          "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
+        }
+      },
+      "step10": {
+        "step_title": "SMC-B PIN-Abfrage",
+        "title": "SMC-B - PIN-Abfrage",
+        "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
       }
     },
     "koco": {
@@ -123,76 +171,121 @@
         "intro": "Der KoCo Konfigurations-Assistent hilft Ihnen dabei herauszufinden, welche Daten für die Konfiguration des Authenticators im Verbund mit einem KoCo Konnektor benötigt werden und woher Sie diese bekommen."
       },
       "step2": {
-        "step_title": "Host und Port",
-        "title": "Host und Port",
-        "screen_hint": "Sie können Host und Port aus der Adressleiste ihres Browsers entnehmen. Wenn Sie keinen Port sehen, wird höchstwahrscheinlich der Standardport 443 verwendet",
-        "intro": "Tragen Sie die IP-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers).",
-        "port_text": "Standardmäßig ist der Port mit dem Wert 443 vorbelegt. Nur eingeben/ändern, wenn Sie den Wert in Ihren Konnektoreinstellungen angepasst haben."
+        "step_title": "Host-Adresse",
+        "title": "Host-Adresse",
+        "screen_hint": "Sie finden die Host-Adresse in der Adressleiste.",
+        "intro": "Tragen Sie die Host-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers)."
       },
       "step3": {
-        "step_title": "Client - ID",
-        "title": "Client - ID",
+        "step_title": "Clientsystem, Mandant und Arbeitsplatz",
+        "title": "Clientsystem, Mandant und Arbeitsplatz",
+        "heading": "Was braucht der Authenticator für die Konfiguration",
+        "description": "Um eine Verbindung mit dem Konnektor herzustellen, benötigt der Authenticator ein Clientsystem, einen Mandanten und einen Arbeitsplatz. In der Konnektoroberfläche ist entscheidend, dass der Authenticator ein eindeutiges Clientsystem besitzt, während der Mandant und der Arbeitsplatz nicht spezifisch für ihn sein müssen. Nachdem ein neues Clientsystem erstellt wurde, muss es zusammen mit einem Mandanten und einem Arbeitsplatz in einem Verbund verknüpft werden. In der Koco-Box bedeutet das, die drei IDs in einem CSAP-Objekt zu verbinden."
+      },
+      "step4": {
+        "step_title": "Clientsystem",
+        "title": "Clientsystem",
         "clientId_screenshot_hint": "Wählen Sie 'Infomodell' und klicken Sie dann auf 'Clientsystem hinzufügen...'",
-        "clientId_heading": "Client-ID erstellen",
+        "clientId_heading": "Clientsystem erstellen",
         "clientId_step1": "In der Konnektor-Oberfläche zum Reiter \"Infomodel\" navigieren",
         "clientId_step2": "\"Clientsysteme hinzufügen\" klicken",
-        "clientId_step3": "Neue Client-ID und Bezeichnung eingeben, anschließend bestätigen (der Name ist frei wählbar)",
-        "assignMandant_screenshot_hint": "Ordnen Sie die Client-ID einem Mandanten zu",
-        "assignMandant_heading": "Mandanten-ID zuweisen",
-        "assignMandant_step1": "Neu erstellte Client-ID auswählen",
+        "clientId_step3": "Neues Clientsystem und Bezeichnung eingeben, anschließend bestätigen (der Name ist frei wählbar)"
+      },
+      "step5": {
+        "step_title": "Mandant",
+        "title": "Mandant",
+        "intro": "Mandanten einsehen",
+        "assignMandant_screenshot_hint": "Ordnen Sie das Clientsystem einem Mandanten zu",
+        "assignMandant_heading": "Mandant zuweisen",
+        "assignMandant_step1": "Neu erstelltes Clientsystem auswählen",
         "assignMandant_step2": "\"Bearbeiten\" (Stift-Symbol) klicken",
-        "assignMandant_step3": "Gewünschte Mandanten-ID auswählen",
+        "assignMandant_step3": "Gewünschten Mandant auswählen",
+        "screen_hint": "Suchen Sie in der Liste der CS-AP Objekte nach dem Mandant, der Ihrem Clientsystem zugeordnet ist",
+        "mandantId_step1": "Öffen Sie die Konnektor-Oberfläche",
+        "mandantId_step2": "Navigieren Sie zum Reiter \"Infomodel\"",
+        "mandantId_step3": "Die zugeordneten Mandanten stehen unter CS-AP Objekte",
+        "mandantId_step4": "Suchen Sie in der Liste der CS-AP Objekte nach dem Mandant, die Ihrem Clientsystem zugeordnet ist"
+      },
+      "step6": {
+        "step_title": "Arbeitsplatz",
+        "title": "Arbeitsplatz",
+        "intro": "Arbeitsplatz einsehen",
+        "screen_hint": "Suchen Sie in der Liste der CS-AP Objekte nach dem Arbeitsplatz, der Ihrem Clientsystem zugeordnet ist",
+        "workplaceId_step1": "Öffen Sie die Konnektor-Oberfläche",
+        "workplaceId_step2": "Navigieren Sie zum Reiter \"Infomodel\"",
+        "workplaceId_step3": "Die zugeordneten Arbeitsplätze stehen unter CS-AP Objekte",
+        "workplaceId_step4": "Suchen Sie in der Liste der CS-AP Objekte nach dem Arbeitsplatz, der Ihrem Clientsystem zugeordnet ist"
+      },
+      "step7": {
+        "step_title": "CSAP-Objekt",
+        "title": "CSAP-Objekt",
         "csap_screenshot_hint1": "Wählen Sie 'Infomodell' und klicken Sie dann auf 'CS-AP Objekt hinzufügen...",
-        "csap_screenshot_hint2": "Machen Sie einen Haken bei den erstellten Client-ID, Mandanten-ID und Arbeitsplatz-ID. Bestätigen Sie anschließend mit 'OK'",
+        "csap_screenshot_hint2": "Machen Sie einen Haken bei dem erstellten Clientsystem, Mandanten und Arbeitsplatz. Bestätigen Sie anschließend mit 'OK'",
         "csap_screenshot_hint3": "Das erstellte CSAP-Objekt erscheint in der Liste. Kontrollieren Sie, ob die Daten korrekt sind. Abschließend auf \"Übernehmen\" klicken",
         "csap_heading": "CSAP-Objekt erstellen",
         "csap_step1": "\"CSAP-Objekt hinzufügen\" klicken",
-        "csap_step2": "Neu erstellte Client-ID, Mandanten-ID und Arbeitsplatz-ID auswählen - anschließend bestätigen",
+        "csap_step2": "Neu erstellte Clientsystem, Mandant und Arbeitsplatz auswählen - anschließend bestätigen",
         "csap_step3": "Einstellungen in der Konnektor-Oberfläche speichern"
       },
-      "step4": {
-        "step_title": "Mandanten - ID",
-        "title": "Mandanten - ID",
-        "intro": "Mandanten - ID einsehen",
-        "screen_hint": "Suchen Sie in der Liste der CS-AP Objekte nach der Mandanten-ID, die Ihrem Clientsystem zugeordnet ist",
-        "mandantId_step1": "Öffen Sie die Konnektor-Oberfläche",
-        "mandantId_step2": "Navigieren Sie zum Reiter \"Infomodel\"",
-        "mandantId_step3": "Die zugeordneten Mandanten-IDs stehen unter CS-AP Objekte",
-        "mandantId_step4": "Suchen Sie in der Liste der CS-AP Objekte nach der Mandanten-ID, die Ihrem Clientsystem zugeordnet ist"
+      "step8": {
+        "step_title": "Authentisierungsmethode",
+        "title": "Authentisierungsmethoden",
+        "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "basic_auth": "Basic Authentication (Benutzername & Passwort):",
+        "cert_option_p12": "Zertifikat im P12-Format",
+        "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
+        "no_authentication": "Keine Authentisierung (falls im Konnektor keine Authentisierung eingestellt ist)",
+        "authentication_description_title": "So finden Sie die aktuelle Authentifizierungsmethode Ihres Konnektors:",
+        "authentication_description_1": "Klicken Sie in der linken Navigationsleiste auf \"Verwaltung\"",
+        "authentication_description_2": "Gehen Sie zum Reiter \"Clientsysteme\".",
+        "authentication_description_3": "Unter \"Authentisierung Clientsystem\" finden Sie Ihre eingestellte Authentifizierungsmethode.",
+        "authentication_screen_hint": "Unter \"Verwaltung\" und \"Clientsysteme\" können Sie sehen, welchen Authentisierungsmodus ihr Konnektor benutzt."
       },
-      "step5": {
-        "step_title": "Arbeitsplatz - ID",
-        "title": "Arbeitsplatz - ID",
-        "intro": "Arbeitsplatz - ID einsehen",
-        "screen_hint": "Suchen Sie in der Liste der CS-AP Objekte nach der Arbeitsplatz-ID, die Ihrem Clientsystem zugeordnet ist",
-        "workplaceId_step1": "Öffen Sie die Konnektor-Oberfläche",
-        "workplaceId_step2": "Navigieren Sie zum Reiter \"Infomodel\"",
-        "workplaceId_step3": "Die zugeordneten Arbeitsplatz-IDs stehen unter CS-AP Objekte",
-        "workplaceId_step4": "Suchen Sie in der Liste der CS-AP Objekte nach der Arbeitsplatz-ID, die Ihrem Clientsystem zugeordnet ist"
+      "step9": {
+        "step_title": "Methode Konfigurieren",
+        "title": "Methode Konfigurieren",
+        "BasicAuth": {
+          "step_title": "Benutzer/Passwort",
+          "title": "Benutzername/Passwort",
+          "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
+          "basicAuth_screen_hint1": "Sie können einen Username und ein Passwort über den \"Zugangsdaten hinzufügen\"-Button erstellen",
+          "basicAuth_screen_hint2": "Hier können Sie das Clientsystem auswählen, für das die Zugangsdaten gelten und die auch gleich erstellen.",
+          "basicAuth_screen_hint3": "In der Tabelle sehen Sie, dass das von Ihnen ausgewählte Clientsystem nun einen Eintrag hat."
+        },
+        "ServerClientCertAuth": {
+          "step_title": "Zertifikat",
+          "title": "Zertifikat",
+          "intro": "Zertifikat erstellen",
+          "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Verwaltung > Clientsysteme",
+          "server_client_cert_auth_step2": "Authentisierungsmodus > Zertifikatbasiert",
+          "server_client_cert_auth_step3": "\"Zertifikat für Authentisierung Clientsystem hinzufügen\"-Button klicken",
+          "server_client_cert_auth_step4": "Clientsystem zuordnen > RSA- oder ECC-Verschlüsselung wählen (bei ECC nur NIST-Standard secp256r1 möglich)",
+          "server_client_cert_auth_step5": "\"OK\" klicken & ZIP-Datei mit Zertifikat & Passwort herunterladen",
+          "server_client_cert_auth_step6": "ZIP-Datei & Passwort sicher aufbewahren",
+          "server_client_cert_auth_screen_hint1": "Vergessen Sie nicht Ihre aktuelle Authentisierungsmethode auf \"Zertifikat\" zu setzen",
+          "server_client_cert_auth_screen_hint2": "Sie können sich ein Zertifikat über den \"Zertifikat für Authentisierung Clientsystem hinzufügen\"-Button erstellen",
+          "server_client_cert_auth_screen_hint3": "Wählen Sie den Verschlüsselungsalgorithmus aus. Der Authenticator unterstützt RSA und ECC-Nist (hier secp genannt).",
+          "server_client_cert_auth_screen_hint4": "Ihr Browser wird eine ZIP-Datei herunterladen, die das Zertifikat und das Passwort enthält"
+        },
+        "ServerClientCertAuth_Pfx": {
+          "step_title": "Zertifikat-P12",
+          "title": "Zertifikat-P12",
+          "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (ausschließlich RSA-Verschlüsselung) durchführt.",
+          "pfx": "Zertifikat-P12"
+        },
+        "ServerCertAuth": {
+          "step_title": "Keine Authentisierung",
+          "title": "Keine Authentisierung",
+          "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
+        }
       },
-      "step6": {
-        "step_title": "Client - Zertifikat",
-        "title": "Client - Zertifikat",
-        "intro": "In diesem Schritt wählen Sie die Methode, wie sich der Client am Konnektor authentisieren soll.",
-        "server_client_cert_auth_screen_hint1": "Folgen Sie den Schritten 1 bis 3",
-        "server_client_cert_auth_screen_hint2": "Lassen Sie das Zertifikat durch den Konnektor erzeugen und wählen Sie RSA als Verschlüsselungsalgorithmus",
-        "server_client_cert_auth_screen_hint3": "Ihr Browser wird eine ZIP-Datei herunterladen, die das Zertifikat und das Passwort enthält",
-        "server_client_cert_auth": "Zertifikat",
-        "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Verwaltung > Clientsysteme",
-        "server_client_cert_auth_step2": "Authentisierungsmodus > Zertifikatbasiert",
-        "server_client_cert_auth_step3": "\"Zertifikat für Authentisierung Clientsystem hinzufügen\"-Button klicken",
-        "server_client_cert_auth_step4": "Clientsystem zuordnen > RSA-Verschlüsselung auswählen",
-        "server_client_cert_auth_step5": "\"OK\" klicken & ZIP-Datei mit Zertifikat & Passwort herunterladen",
-        "server_client_cert_auth_step6": "ZIP-Datei & Passwort sicher aufbewahren",
-        "pfx": "Zertifikat-P12",
-        "basic_auth": "Benutzername/Passwort",
-        "no_auth": "Keine Authentisierung",
-        "label_file": "Zertifikat - Upload",
-        "label_password": "Zertifikat - Passwort",
-        "server_client_cert_auth_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat vornimmt.",
-        "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (RSA only) vornimmt.",
-        "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
-        "no_auth_hint": "Wählen Sie diese Option, wenn keine Client-Authentifizierung am Konnektor erforderlich ist."
+      "step10": {
+        "step_title": "SMC-B PIN-Abfrage",
+        "title": "SMC-B - PIN-Abfrage",
+        "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
       }
     },
     "secunet": {
@@ -202,17 +295,22 @@
         "intro": "Der Secunet Konfigurations-Assistent hilft Ihnen dabei herauszufinden, welche Daten für die Konfiguration des Authenticators im Verbund mit einem Secunet Konnektor benötigt werden und woher Sie diese bekommen."
       },
       "step2": {
-        "step_title": "Host und Port",
-        "title": "Host und Port",
-        "screen_hint": "Sie finden Host und Port in der Adressleiste. Wenn Sie keinen Port sehen, wird höchstwahrscheinlich der Standardport 443 verwendet",
-        "intro": "Tragen Sie die IP-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers).",
-        "port_text": "Standardmäßig ist der Port mit dem Wert 443 vorbelegt. Nur eingeben/ändern, wenn Sie den Wert in Ihren Konnektoreinstellungen angepasst haben."
+        "step_title": "Host-Adresse",
+        "title": "Host-Adresse",
+        "screen_hint": "Sie finden die Host-Adresse in der Adressleiste.",
+        "intro": "Tragen Sie die Host-Adresse der Konnektor-Oberfläche ein (aus der URL-Zeile des Browsers)."
       },
       "step3": {
-        "step_title": "Client - ID",
-        "title": "Client - ID",
-        "clientId_screenshot_hint": "Folgen Sie dem Dialog um eine Client-ID zu erstellen",
-        "clientId_heading": "Client-ID erstellen",
+        "step_title": "Clientsystem, Mandanten und Arbeitsplatz",
+        "title": "Clientsystem, Mandanten und Arbeitsplatz",
+        "heading": "Was braucht der Authenticator für die Konfiguration",
+        "description": "Um eine Verbindung mit dem Konnektor herzustellen, benötigt der Authenticator ein Clientsystem, einen Mandanten und einen Arbeitsplatz. In der Konnektoroberfläche ist entscheidend, dass der Authenticator ein eindeutiges Clientsystem besitzt, während der Mandant und der Arbeitsplatz nicht spezifisch für ihn sein müssen. Nachdem ein neues Clientsystem erstellt wurde, muss es zusammen mit einem Mandanten und einem Arbeitsplatz in einem Verbund verknüpft werden. In dem Secunet-Konnektor bedeutet das, Clientsystem, Mandant und Arbeitsplatz in einem Aufrufkontext zu verbinden."
+      },
+      "step4": {
+        "step_title": "Clientsystem",
+        "title": "Clientsystem",
+        "clientId_screenshot_hint": "Folgen Sie dem Dialog um ein Clientsystem zu erstellen",
+        "clientId_heading": "Clientsystem erstellen",
         "clientId_step1": "In der Konnektor-Oberfläche auf \"Praxis\" klicken",
         "clientId_step2": "Zum Reiter \"Clientsysteme\" navigieren",
         "clientId_step3": "\"Clientsysteme anlegen\" klicken",
@@ -221,56 +319,101 @@
         "assignAuth_heading": "Authentifizierung zuweisen",
         "assignAuth_step1": "Auf \"Clientsysteme-Einstellungen\" klicken",
         "assignAuth_step2": "Authentifizierung einstellen (Zertifikat oder Benutzer/Passwort)",
-        "assignAuth_step3": "Bestätigen",
+        "assignAuth_step3": "Bestätigen"
+      },
+      "step5": {
+        "step_title": "Mandant",
+        "title": "Mandant",
+        "intro": "Mandat einsehen",
+        "screen_hint": "Wählen Sie den zugeordnete Mandanten",
+        "mandantId_step1": "Öffen Sie die Konnektor-Oberfläche",
+        "mandantId_step2": "Navigieren Sie zum Reiter \"Praxis\"",
+        "mandantId_step3": "Alle Mandanten sehen Sie in der Sektion \"Mandanten\"",
+        "mandantId_step4": "Die schon zugeordneten Mandaten stehen unter Aufrufkontexte",
+        "mandantId_step5": "Suchen Sie in der Liste der Aufrufkontexte nach dem Mandaten, der Ihrem Clientsystem zugeordnet ist"
+      },
+      "step6": {
+        "step_title": "Arbeitsplatz",
+        "title": "Arbeitsplatz",
+        "intro": "Arbeitsplatz einsehen",
+        "screen_hint": "Wählen Sie Mandant und Arbeitsplatz aus",
+        "workplaceId_step1": "Öffen Sie die Konnektor-Oberfläche",
+        "workplaceId_step2": "Navigieren Sie zum Reiter \"Praxis\"",
+        "workplaceId_step3": "Alle Arbeitsplätze sehen Sie in der Sektion \"Arbeitsplätze\"",
+        "workplaceId_step4": "Die schon zugeordneten Arbeitsplätze stehen unter Aufrufkontexte",
+        "workplaceId_step5": "Suchen Sie in der Liste der Aufrufkontexte nach dem Arbeitsplatz, der Ihrem Clientsystem zugeordnet ist"
+      },
+      "step7": {
+        "step_title": "Aufrufkontext",
+        "title": "Aufrufkontext",
         "callContext_screenshot_hint": "Legen Sie im folgenden den Aufrufkontext fest",
         "callContext_heading": "Aufrufkontext anlegen",
         "callContext_step1": "In der Konnektor-Oberfläche zum Reiter \"Praxis\" navigieren",
         "callContext_step2": "\"Aufrufkontext\" und dann \"Aufrufkontext anlegen\" klicken",
         "callContext_step3": "Mandat-ID, Arbeitsplatz-ID und Clientsystem auswählen"
       },
-      "step4": {
-        "step_title": "Mandanten - ID",
-        "title": "Mandanten - ID",
-        "intro": "Mandaten - ID einsehen",
-        "screen_hint": "Wählen Sie die zugeordnete Mandanten-ID",
-        "mandantId_step1": "Öffen Sie die Konnektor-Oberfläche",
-        "mandantId_step2": "Navigieren Sie zum Reiter \"Praxis\"",
-        "mandantId_step3": "Die Mandaten-IDs stehen unter Mandanten",
-        "mandantId_step4": "Die zugeordneten Mandaten-IDs stehen unter Aufrufkontexte",
-        "mandantId_step5": "Suchen Sie in der Liste der Aufrufkontexte nach der Mandaten-ID, die Ihrem Clientsystem zugeordnet ist"
+      "step8": {
+        "step_title": "Authentisierungsmethode",
+        "title": "Authentisierungsmethoden",
+        "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "basic_auth": "Basic Authentication (Benutzername & Passwort):",
+        "cert_option_p12": "Zertifikat im P12-Format",
+        "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
+        "no_authentication": "Keine Authentisierung (falls im Konnektor keine Authentisierung eingestellt ist)",
+        "authentication_description_title": "So finden Sie die aktuelle Authentifizierungsmethode Ihres Konnektors:",
+        "authentication_description_1": "Klicken Sie in der linken Navigationsleiste auf \"Netzwerk\"",
+        "authentication_description_2": "Gehen Sie zum Reiter \"Allgemein\".",
+        "authentication_description_3": "Unter \"Clientsystem-Einstellungen\" finden Sie Ihre \"Clientsystem-Einstellungen\".",
+        "authentication_screen_hint1": "Unter \"Netzwerk\" und \"Allgemein\" können Sie sehen, welchen Authentisierungsmodus ihr Konnektor benutzt. ",
+        "authentication_screen_hint2": "Unter den \"Clientsystem-Einstellungen\" können Sie sehen, welchen Authentisierungsmodus ihr Konnektor benutzt."
       },
-      "step5": {
-        "step_title": "Arbeitsplatz - ID",
-        "title": "Arbeitsplatz - ID",
-        "intro": "Arbeitsplatz - ID einsehen",
-        "screen_hint": "Wählen Sie Mandant und Arbeitsplatz aus",
-        "workplaceId_step1": "Öffen Sie die Konnektor-Oberfläche",
-        "workplaceId_step2": "Navigieren Sie zum Reiter \"Praxis\"",
-        "workplaceId_step3": "Die Mandaten-IDs stehen unter Mandanten",
-        "workplaceId_step4": "Die zugeordneten Arbeitsplatz-IDs stehen unter Aufrufkontexte",
-        "workplaceId_step5": "Suchen Sie in der Liste der Aufrufkontexte nach der Arbeitsplatz-ID, die Ihrem Clientsystem zugeordnet ist"
+      "step9": {
+        "title": "Methode Konfigurieren",
+        "step_title": "Methode Konfigurieren",
+        "BasicAuth": {
+          "step_title": "Benutzer/Passwort",
+          "title": "Benutzername/Passwort",
+          "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
+          "basicAuth_screen_hint1": "Unter \"Praxis\" und \"Clientsysteme\" können Sie ein Clientsystem auswählen, für das Sie einen Username und ein Passwort erstellen möchten.",
+          "basicAuth_screen_hint2": "Klicken Sie auf Clientsystem und dann auf den \"Benutzerkennung hinzufügen\"-Button",
+          "basicAuth_screen_hint3": "Hier können Sie den Benutzernamen und ein Passwort eintragen.",
+          "basicAuth_screen_hint4": "In der Tabelle sehen Sie, dass das von Ihnen ausgewählte Clientsystem nun einen Eintrag hat (im Secunet wird das erkenntlich durch das Erscheinen eines \"Löschen\"-Buttons für den von Ihnen erstellten Usernamen)."
+        },
+        "ServerClientCertAuth": {
+          "step_title": "Zertifikat",
+          "title": "Zertifikat",
+          "intro": "Zertifikat erstellen",
+          "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Praxis > Clientsysteme",
+          "server_client_cert_auth_step2": "Gewünschtes Clientsystem > Zertifikat erstellen",
+          "server_client_cert_auth_step3": "Eigenes Passwort erstellen und sicher verwahren",
+          "server_client_cert_auth_step4": "Public-Key-Algorithmus > RSA-Verschlüsselung auswählen",
+          "server_client_cert_auth_step5": "Bestätigen und das erstellte Zertifikat (unten in der Zertifikat - Liste) anklicken.",
+          "server_client_cert_auth_step6": "Zertifikat herunterladen",
+          "server_client_cert_auth_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat vornimmt.",
+          "server_client_cert_auth_screen_hint1": "Unter \"Praxis\" und \"Clientsysteme\" können Sie sich mit dem \"Zertifikat erstellen\"-Button ein Zertifikat erstellen lassen.",
+          "server_client_cert_auth_screen_hint2": "Wählen Sie ein Passwort und den Verschlüsselungsalgorithmus aus. Der Authenticator unterstützt RSA und ECC-Nist.",
+          "server_client_cert_auth_screen_hint3": "Speichern Sie sich ihr Passwort sorgfältig ab. Sie finden das neu erstellte Zertifikat ganz unten in der Liste der Zertifikate Ihres Clientsystems.",
+          "server_client_cert_auth_screen_hint4": "Klicken Sie auf das Zertifikat und laden Sie es sich über den \"Zertifikat herunterladen\"-Button herunter."
+        },
+        "ServerClientCertAuth_Pfx": {
+          "step_title": "Zertifikat-P12",
+          "title": "Zertifikat-P12",
+          "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (ausschließlich RSA-Verschlüsselung) durchführt.",
+          "pfx": "Zertifikat-P12"
+        },
+        "ServerCertAuth": {
+          "step_title": "Keine Authentisierung",
+          "title": "Keine Authentisierung",
+          "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
+        }
       },
-      "step6": {
-        "step_title": "Client - Authentisierung",
-        "title": "Client - Authentisierung",
-        "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator beim Konnektor authentisieren soll.",
-        "screen_hint": "Erstellen Sie in diesem Dialog ein Zertifikat",
-        "server_client_cert_auth": "Zertifikat",
-        "server_client_cert_auth_step1": "Konnektor-Oberfläche öffnen > Praxis > Clientsysteme",
-        "server_client_cert_auth_step2": "Gewünschtes Clientsystem > Zertifikat erstellen",
-        "server_client_cert_auth_step3": "Eigenes Passwort erstellen und sicher verwahren",
-        "server_client_cert_auth_step4": "Public-Key-Algorithmus > RSA-Verschlüsselung auswählen",
-        "server_client_cert_auth_step5": "Bestätigen und das erstellte Zertifikat (unten in der Zertifikat - Liste) anklicken.",
-        "server_client_cert_auth_step6": "Zertifikat herunterladen",
-        "pfx": "Zertifikat-P12",
-        "basic_auth": "Benutzername/Passwort",
-        "no_auth": "Keine Authentisierung",
-        "label_file": "Zertifikat - Upload",
-        "label_password": "Zertifikat - Passwort",
-        "server_client_cert_auth_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat vornimmt.",
-        "pfx_hint": "Wählen Sie diese Option, wenn der Client eine Authentisierung mittels Zertifikat im P12-Format (RSA only) vornimmt.",
-        "basic_auth_hint": "Wählen Sie diese Option, wenn der Client eine HTTP-basierte Authentifizierung (Basic Auth) nutzt. ",
-        "no_auth_hint": "Wählen Sie diese Option, wenn keine Client-Authentifizierung am Konnektor erforderlich ist."
+      "step10": {
+        "step_title": "SMC-B PIN-Abfrage",
+        "title": "SMC-B - PIN-Abfrage",
+        "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
       }
     }
   },
@@ -300,11 +443,11 @@
   "login_not_successful": "Smartcard konnte nicht erfolgreich geprüft werden",
   "login_cancelled_by_user": "Sie haben den Vorgang abgebrochen",
   "no_settings_found": "Es wurden noch keine Einstellungen vorgenommen.",
-  "open_assistant": "Konfigurationsassistent starten",
+  "open_assistant": "Konfigurationsassistent",
   "open_settings": "Einstellungen öffnen",
   "remove_settings": "Einstellungen entfernen",
   "connection_test": "Funktionstest",
-  "log_to_zip": "Log-Daten als ZIP-Datei exportieren",
+  "log_to_zip": "Logs exportieren",
   "create_zip_file_successful": "Log-Daten wurden erfolgreich als ZIP-Datei exportiert",
   "connector_settings": "Konnektor-Einstellungen",
   "host": "Host",
@@ -318,8 +461,7 @@
   "info_text_smcb_private_key": "Der private Schlüssel, der zum SMC-B Client-Zertifikat passt und zur Authentisierung bei der Verbindung zum Fachdienst, mittels IDP-Dienst verwendet wird. (Pem-Format)",
   "info_text_hba_certificate": "Das Zertifikat, welches für die HBA Authentisierung bei der Verbindung zum Fachdienst, mittels IDP-Dienst verwendet wird. (Pem-Format)",
   "info_text_hba_private_key": "Der private Schlüssel, der zum HBA Client-Zertifikat passt und zur Authentisierung bei der Verbindung zum Fachdienst, mittels IDP-Dienst verwendet wird. (Pem-Format)",
-  "info_text_host": "Die IP-Adresse oder der Hostname des Konnektors, zu dem Sie eine Verbindung herstellen möchten. Zu finden im Installationsblatt der Praxis (z.B. 127.0.0.1).",
-  "info_text_port": "Die Portnummer, über die der Konnektor erreichbar ist. Standardmäßig ist dies Port 443 für HTTPS.",
+  "info_text_host": "Die IP-Adresse oder der Hostname des Konnektors, zu dem Sie eine Verbindung herstellen möchten. Zu finden im Installationsblatt der Praxis (z.B. https://127.0.0.1 oder https://local-connector.com/con12).",
   "info_text_mandant_id": "Die ID des Infomodels, dass der Konnektor für den Mandanten verwendet. Zu finden in der administrativen Oberfläche des Konnektors oder im Installationsblatt der Praxis.",
   "info_text_client_id": "Die ID des Infomodels, dass der Konnektor für die Client-ID verwendet.  Zu finden in der administrativen Oberfläche des Konnektors oder im Installationsblatt der Praxis.",
   "info_text_work_space_id": "Die ID des Infomodels, dass der Konnektor für den Arbeitsplatz verwendet.  Zu finden in der administrativen Oberfläche des Konnektors oder im Installationsblatt der Praxis.",
@@ -352,7 +494,7 @@
   "private_key": "Privater Schlüssel im PEM-Format",
   "client_certificate": "Client-Zertifikat im PEM-Format",
   "certificate_pfx": "Zertifikat P12-Datei (RSA oder ECC (NIST only))",
-  "pfx_file": "Zertifikat im P12-Format (RSA oder ECC (NIST only))",
+  "pfx_file": "P12-Zertifikat (RSA oder ECC (NIST only))",
   "info_text_pfx_file": "Das Zertifikat, welches für die Authentifizierung bei der Verbindung zum Konnektor verwendet wird. (P12-Format)",
   "pfx_file_password": "Passwort des P12-Zertifikats",
   "pfx_file_password_swal": "Geben Sie das Passwort der ausgewählten P12-Datei ein",
@@ -390,7 +532,7 @@
   "readability_test_empty_pin": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} hat keinen vergebenen PIN",
   "readability_test_disabled": "Ihre Karte in Slot {slotNr} vom Kartenterminal {ctId} hat keinen PIN-Schutz. Bitte vergeben Sie für eine sichere Nutzung Ihrer Karte einen PIN",
   "readability_test_smcb_verifiable": "Ihre SMC-B Karte in Slot {slotNr} vom Kartenterminal {ctId} ist nicht freigeschaltet. Bitte schalten Sie diese in Ihrem Kartenverwaltungssystem frei und starten Sie die Funktionstest erneut",
-  "readability_test_unknown_pin_status": "Unbekannter PIN Status: ${status}",
+  "readability_test_unknown_pin_status": "Die Karte konnte nicht gelesen werden.",
   "certs_validity": "Validität der Zertifikate",
   "certs_validity_successful": "Es wurden insgesamt {totalCerts} valide Zertifikate gefunden.",
   "certs_validity_not_found": "Es wurden keine Zertifikate gefunden.",
@@ -460,6 +602,26 @@
   "connector_gateway_name": "Konnektor-Auswahl",
   "connector_gateway_status_info_text": "Konnektor API-Gateway mit mehreren Konnektoren im Betrieb. Aktivieren Sie diesen Schalter, können Sie den zu verwendenden Konnektor eintragen.",
   "connector_gateway_name_info_text": "Tragen Sie hier den Konnektornamen ein, den der Authenticator bei der Kommunikation über das Konnektor Gateway verwenden soll.",
+  "continue": "Fortfahren",
+  "ecc_warning_options": {
+    "ecc_check": "ECC Prüfung",
+    "title": "Optionen für HBA ECC Prüfung",
+    "show_warnings": "ECC Warnung anzeigen",
+    "show_warnings_description": "Ab 2026 werden RSA-Zertifikate nicht mehr unterstützt. Es wird empfohlen, ECC-Zertifikate zu verwenden. Diese Option zeigt eine Warnung an, wenn RSA-Zertifikate verwendet werden.",
+    "start_date": "Hinweis anzeigen ab",
+    "start_date_description": "Das Startdatum, ab dem die Warnung angezeigt wird.",
+    "ecc_migration_documentation_url": "ECC-Migrationsdokumentation",
+    "modal_title": "ECC Prüfungsergebnisse",
+    "valid_to": "Gültig bis",
+    "ecc_validity": "ECC Validität",
+    "your_card_is_ready_for_ecc_migration": "Die Karte entspricht den ECC Sicherheitsstandards",
+    "your_card_is_not_ready_for_ecc_migration": "Die Karte entspricht nicht den ECC Sicherheitsstandards",
+    "the_selected_card_is_not_ecc_compliant": "Die ausgewählte Karte entspricht nicht den ECC Sicherheitsstandards",
+    "please_contact_your_technician": "Bitte kontaktieren Sie Ihren Techniker (DVO oder Administrator), da RSA-Karten ab 2026 nicht mehr unterstützt werden.",
+    "custom_message": "Benutzerdefinierte Nachricht",
+    "custom_message_info": "Hier können Sie einen eigenen Informationstext hinterlegen der angezeigt wird, wenn die Karte nicht den ECC Sicherheitsstandards entspricht.",
+    "no_cards_found": "Es wurden keine Karten gefunden. Bitte überprüfen Sie die Verbindung zu Ihrem Kartenterminal und stellen Sie sicher, dass mindestens eine Karte eingelegt ist. Es könnte auch ein Konfigurations- oder Verbindungsproblem mit dem Konnektor vorliegen."
+  },
   "errors": {
     "technical_error": "Technischer Fehler",
     "technical_error_code": "Bitte kontaktieren Sie Ihren Support. Fehlercode ({code})",

@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
@@ -32,7 +36,6 @@ import { IPC_UPDATE_ENV, updateProcessEnvs } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
-import { migrateCredentialsForStandalone } from '@/renderer/service/migrations/migrate-credentials-for-standalone';
 
 const configFileStoreRepo = new FileStorageRepository();
 
@@ -54,12 +57,11 @@ window.api.on(IPC_UPDATE_ENV, () => {
   ConnectorConfig.updateConnectorParameters();
   clearEndpoints();
 });
-
-// migrate credentials for standalone, central config will be ignored
-migrateCredentialsForStandalone();
 </script>
 
 <style>
+@import './global.css';
+
 .version span {
   display: none;
 }

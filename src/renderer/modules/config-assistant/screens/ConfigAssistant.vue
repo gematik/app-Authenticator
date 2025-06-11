@@ -14,35 +14,65 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
   <div class="flex config-assistant-container gap-2 overflow-hidden">
     <!-- Linke Spalte (1/3) -->
-    <div class="w-1/3 pl-2 pr-2 relative">
+    <div class="w-1/3 pl-2 pr-2 relative overflow-auto">
       <div class="relative z-10">
-        <div class="assistant-heading">{{ $t('config_assistant.corner-title') }}<br />{{ props.konnektor }}</div>
+        <div class="assistant-heading">{{ $t('config_assistant.corner-title' as any) }}<br />{{ props.konnektor }}</div>
         <div class="mb-1 pr-5 text-blue-900 text-right font-medium">
           {{ $t('config_assistant.step') }} {{ currentStep }} {{ $t('config_assistant.of') }} {{ totalSteps }}
         </div>
         <div class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200">
           <div class="bg-blue-600 h-1 dark:bg-gray-400" :style="progressBarWidth"></div>
         </div>
-        <div class="flex-col">
+        <div v-for="header in groupedSteps.headers" :key="header.stepNumber">
           <step-indicator
-            v-for="step in konnektorAssistantSteps[props.konnektor]"
-            :key="step.stepNumber"
-            :step="step.stepNumber"
-            :title="step.description"
-            :active="step.stepNumber == props.currentStep"
-            :last-step="step.stepNumber == totalSteps"
-            :is-valid="formValidity.get(step.stepNumber)?.isValid ?? true"
-            @click="goToStep(step.stepNumber)"
+            :step="header.navigationStepNumber"
+            :title="header.description"
+            :active="header.stepNumber == props.currentStep"
+            :last-step="header.stepNumber == totalSteps"
+            :is-valid="formValidity.get(header.stepNumber)?.isValid ?? true"
+            @click="
+              () => {
+                toggleDropdown(header.stepNumber);
+                goToStep(header.stepNumber);
+              }
+            "
           />
+          <transition name="dropdown" appear>
+            <div v-if="dropdownVisibility.get(header.stepNumber)">
+              <div
+                v-for="item in groupedSteps.dropdownItems.filter(
+                  (filterItem: any) =>
+                    Math.floor(filterItem.navigationStepNumber) === Math.floor(header.navigationStepNumber),
+                )"
+                :key="item.stepNumber"
+                class="dropdown-item"
+              >
+                <step-indicator
+                  :step="item.navigationStepNumber"
+                  :title="item.description"
+                  :active="item.stepNumber == props.currentStep"
+                  :last-step="item.stepNumber == totalSteps"
+                  :is-valid="formValidity.get(item.stepNumber)?.isValid ?? true"
+                  @click="goToStep(item.stepNumber)"
+                />
+              </div>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
-    <div class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border">
+    <div
+      class="w-2/3 pl-2 pr-2 pb-2 flex flex-col justify-between content-between bg-white left-light-border overflow-auto"
+    >
       <component
         :is="currentStepScreen"
         v-if="currentStepScreen"
@@ -55,7 +85,41 @@
         <button v-if="props.currentStep > 1" class="bt w-8" @click="goToStep(props.currentStep - 1)">
           &larr; {{ $t('config_assistant.back') }}
         </button>
-        <button v-if="props.currentStep < totalSteps" class="bt w-8" @click="goToStep(props.currentStep + 1)">
+        <button
+          v-if="props.currentStep < totalSteps"
+          class="bt w-8"
+          @click="
+            () => {
+              const currentStepInfo = konnektorAssistantSteps[props.konnektor].find(
+                (s) => s.stepNumber === props.currentStep,
+              );
+              const nextStepInfo = konnektorAssistantSteps[props.konnektor].find(
+                (s) => s.stepNumber === props.currentStep + 1,
+              );
+
+              // Determine which dropdown to open based on current step
+              let targetNavigationNumber = null;
+
+              if (currentStepInfo?.navigationStepNumber === 2) {
+                targetNavigationNumber = 3;
+              } else if (currentStepInfo?.navigationStepNumber === 3.3) {
+                targetNavigationNumber = 4;
+              }
+
+              // Find and toggle the appropriate header's dropdown
+              if (targetNavigationNumber) {
+                // Find header with navigation number 3 to toggle its dropdown
+                const targetHeader = groupedSteps.headers.find(
+                  (h: any) => h.navigationStepNumber === targetNavigationNumber,
+                );
+                if (targetHeader) {
+                  toggleDropdown(targetHeader.stepNumber);
+                }
+              }
+              goToStep(props.currentStep + 1);
+            }
+          "
+        >
           {{ $t('config_assistant.next') }} &rarr;
         </button>
         <button v-if="props.currentStep == totalSteps" class="bt w-8" @click="end()">
@@ -79,6 +143,7 @@ import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
 import { alertDefinedErrorWithDataOptional } from '@/renderer/utils/utils';
+import { TLS_AUTH_TYPE_CONFIG } from '@/config';
 
 const { save, load } = useSettings();
 const configValues = ref<TRepositoryData>({ ...load() });
@@ -95,10 +160,27 @@ const props = defineProps<{
 
 function createSteps(vendor: KONNEKTOR_VENDORS, steps: number[]) {
   return steps.map((step, index) => {
-    const stepNumber = index + 1;
+    const stepNumber: number = index + 1;
+    let navigationStepNumber: number = stepNumber;
+    if (stepNumber == 4) navigationStepNumber = 3.1;
+    if (stepNumber == 5) navigationStepNumber = 3.2;
+    if (stepNumber == 6) navigationStepNumber = 3.3;
+    if (stepNumber == 7) navigationStepNumber = 3.4;
+    if (stepNumber == 8) navigationStepNumber = 4;
+    if (stepNumber == 9) navigationStepNumber = 4.1;
+    if (stepNumber == 10) navigationStepNumber = 5;
     return {
       stepNumber,
-      description: translate(`config_assistant.${vendor.toLowerCase()}.step${stepNumber}.step_title`),
+      navigationStepNumber,
+      get description() {
+        if (stepNumber == 9) {
+          return translate(
+            `config_assistant.${vendor.toLowerCase()}.step9.${configValues.value[TLS_AUTH_TYPE_CONFIG]}.step_title`,
+          );
+        } else {
+          return translate(`config_assistant.${vendor.toLowerCase()}.step${stepNumber}.step_title`);
+        }
+      },
       content: import(
         '@/renderer/modules/config-assistant/screens/' + vendor + '/' + vendor + 'AssistantStep' + stepNumber + '.vue'
       ),
@@ -106,10 +188,34 @@ function createSteps(vendor: KONNEKTOR_VENDORS, steps: number[]) {
   });
 }
 
+const groupedSteps = computed(() => {
+  const headers: any = [];
+  const dropdownItems: any = [];
+
+  konnektorAssistantSteps[props.konnektor].forEach((step) => {
+    if (isDecimal(step.navigationStepNumber)) {
+      dropdownItems.push(step);
+    } else {
+      headers.push(step);
+    }
+  });
+
+  return { headers, dropdownItems };
+});
+
+const dropdownVisibility = ref(new Map<number, boolean>());
+
+const toggleDropdown = (headerStepNumber: number) => {
+  const isVisible = dropdownVisibility.value.get(headerStepNumber) || false;
+  dropdownVisibility.value.set(headerStepNumber, !isVisible);
+};
+
+const isDecimal = (number: number) => number % 1 !== 0;
+
 const konnektorAssistantSteps = {
-  [KONNEKTOR_VENDORS.Rise]: createSteps(KONNEKTOR_VENDORS.Rise, new Array(6).fill(null)),
-  [KONNEKTOR_VENDORS.Koco]: createSteps(KONNEKTOR_VENDORS.Koco, new Array(6).fill(null)),
-  [KONNEKTOR_VENDORS.Secunet]: createSteps(KONNEKTOR_VENDORS.Secunet, new Array(6).fill(null)),
+  [KONNEKTOR_VENDORS.Rise]: createSteps(KONNEKTOR_VENDORS.Rise, new Array(10).fill(null)),
+  [KONNEKTOR_VENDORS.Koco]: createSteps(KONNEKTOR_VENDORS.Koco, new Array(10).fill(null)),
+  [KONNEKTOR_VENDORS.Secunet]: createSteps(KONNEKTOR_VENDORS.Secunet, new Array(10).fill(null)),
 };
 
 const totalSteps = computed(() => konnektorAssistantSteps[props.konnektor].length);
@@ -259,6 +365,8 @@ watch(
 );
 </script>
 <style>
+@import '../../../global.css';
+
 .assistant-heading {
   font-size: 1.3rem;
   color: #000e52;
@@ -271,5 +379,9 @@ watch(
 
 .left-light-border {
   border-left: 1px solid #f2f3f6;
+}
+
+.dropdown-item {
+  margin-left: 30px;
 }
 </style>

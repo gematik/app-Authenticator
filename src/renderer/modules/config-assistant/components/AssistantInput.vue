@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <script setup lang="ts">
@@ -222,6 +226,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+@import '../../../global.css';
 .warn {
   position: absolute;
   right: -75px;
@@ -233,24 +238,32 @@ onUnmounted(() => {
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #3e4784;
+  border-radius: 8px;
   max-height: 50px;
   height: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.input-container:hover {
+  border-color: #3e4784;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 label {
   padding-left: 10px;
   padding-right: 5px;
-  color: #636363;
+  color: #313436;
   width: 50%;
+  font-weight: 500;
 }
 
 .input-field {
   width: 50%;
   padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #313436;
+  border-radius: 6px;
   flex: 1;
   margin: 5px;
   transition: border-color 0.3s;
@@ -258,16 +271,17 @@ label {
 
 .input-field-file {
   padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #313436;
+  border-radius: 6px;
   margin: 5px;
   flex: 1;
   align-self: flex-start;
   transition: border-color 0.3s;
+  background-color: #f9fafb;
 }
 
 .input-field:focus {
-  border-color: #007bff;
+  border-color: #3e4784;
   outline: none;
 }
 

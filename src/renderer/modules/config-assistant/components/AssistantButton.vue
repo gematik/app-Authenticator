@@ -14,9 +14,14 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 <script setup lang="ts">
 import i18n from '@/renderer/i18n';
+import { logger } from '@/renderer/service/logger';
 
 enum Positioning {
   left = 'start',
@@ -35,15 +40,24 @@ const props = withDefaults(
     buttonText: i18n.global.t('config_assistant.help_video_button'),
   },
 );
+
+const openExternalLink = (url: string) => {
+  if (window && window.api && typeof window.api.openExternal === 'function') {
+    window.api.openExternal(url);
+  } else {
+    logger.error('window.api.openExternal is not available');
+  }
+};
 </script>
 
 <template>
   <div :style="`text-align: ${positioning};`">
-    <a @click="window.api.openExternal(props.buttonLink)">{{ buttonText }}</a>
+    <a @click="openExternalLink(props.buttonLink)">{{ buttonText }}</a>
   </div>
 </template>
 
 <style scoped>
+@import '../../../global.css';
 div {
   margin-top: 10px;
 }

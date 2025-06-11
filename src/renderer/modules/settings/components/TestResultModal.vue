@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 
 <template>
@@ -88,7 +92,7 @@
             <button
               class="bg-blue-500 text-white active:bg-blue-600 font-bold text-xs px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
               type="button"
-              @click="closeModal"
+              @click="closeFunctionTestModal"
             >
               {{ $t('close_dlg') }}
             </button>
@@ -112,7 +116,7 @@ export default defineComponent({
       type: Object as PropType<TestResult[]>,
       required: true,
     },
-    closeModal: {
+    closeFunctionTestModal: {
       type: Function,
       required: true,
     },
@@ -139,7 +143,7 @@ export default defineComponent({
     },
     onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        this.closeModal();
+        this.closeFunctionTestModal();
       }
     },
     uniqueTitles() {
@@ -152,7 +156,9 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+@import '../../../global.css';
+
 #test-results-container {
   background: rgba(0, 0, 0, 0.4);
 }

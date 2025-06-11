@@ -14,6 +14,10 @@
   - In case of changes by gematik find details in the "Readme" file.
   -
   - See the Licence for the specific language governing permissions and limitations under the Licence.
+  -
+  - *******
+  -
+  - For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
   -->
 <template>
   <div
@@ -25,7 +29,7 @@
       <Tooltip :tooltip-content="infoText"></Tooltip>
     </div>
     <div>
-      <div v-if="type === 'input' || type === 'password' || type === 'email' || type === 'number'">
+      <div v-if="type === 'input' || type === 'password' || type === 'email' || type === 'number' || type === 'date'">
         <input
           :id="`form-${name}`"
           v-model="model[name]"
@@ -339,7 +343,9 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+@import '../global.css';
+
 .form-element-container:last-of-type {
   @apply rounded-bl-[8px];
   @apply rounded-br-[8px];

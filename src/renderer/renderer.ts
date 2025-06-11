@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 import { createApp } from 'vue';
 
@@ -21,7 +25,7 @@ import App from './App.vue';
 import router from './router';
 import i18n from '@/renderer/i18n';
 import store from './store';
-import './index.scss';
+import './global.css';
 import '@/renderer/event-listeners';
 
 const app = createApp(App);

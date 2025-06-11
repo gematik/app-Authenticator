@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { getErrorMessage } from '@/renderer/modules/settings/services/utils/get-smartcard-pinstatus-errormessages';
@@ -67,6 +71,6 @@ describe('getErrorMessage', () => {
   it('should return the correct message for unknown status', () => {
     const result = getErrorMessage('UNKNOWN_STATUS', slotNr, cardTerminalId);
 
-    expect(result).toBe('Unbekannter PIN Status: $UNKNOWN_STATUS');
+    expect(result).toBe('Die Karte konnte nicht gelesen werden.');
   });
 });

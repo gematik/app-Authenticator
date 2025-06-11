@@ -14,21 +14,24 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import ConnectorConfig from './connector-config';
-import * as authSigner from './auth-signer';
-import * as connectorSdsRequest from './sds-request';
+import { runSoapRequest } from './auth-signer';
+import { getServiceEndpointTls } from './sds-request';
 import cardHandleParser from '../common/soap-response-xml-parser';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { logger } from '@/renderer/service/logger';
 import { checkSoapError } from '@/renderer/modules/connector/common/utils';
 
 const getAuthSignature = async (endpoint: string, cardHandle: string) => {
-  const endpointMapped = ConnectorConfig.mapEndpoint(endpoint);
-  const response = await authSigner.runSoapRequest(
+  const response = await runSoapRequest(
     ConnectorConfig.contextParameters,
-    endpointMapped,
+    endpoint,
     cardHandle,
     ConnectorConfig.authSignParameter,
   );
@@ -37,9 +40,7 @@ const getAuthSignature = async (endpoint: string, cardHandle: string) => {
 
 export const launch = async (cardHandle: string): Promise<string> => {
   try {
-    const authSignatureEndpoint = await connectorSdsRequest.getServiceEndpointTls(
-      XML_TAG_NAMES.TAG_AUTH_SIGNATURE_SERVICE,
-    );
+    const authSignatureEndpoint = await getServiceEndpointTls(XML_TAG_NAMES.TAG_AUTH_SIGNATURE_SERVICE);
     logger.debug(`Using signature service endpoint ${authSignatureEndpoint} to send SDS requests to connector.`);
 
     return await getAuthSignature(authSignatureEndpoint, cardHandle);

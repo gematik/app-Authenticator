@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { ipcRenderer, shell } from 'electron';
@@ -21,7 +25,13 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import util from 'util';
-import { IPC_FOCUS_TO_AUTHENTICATOR, IPC_SELECT_FOLDER, P12_VALIDITY_TYPE } from '@/constants';
+import {
+  IPC_FOCUS_TO_AUTHENTICATOR,
+  IPC_GET_APP_PATH,
+  IPC_SELECT_FOLDER,
+  P12_VALIDITY_TYPE,
+  IS_DEV,
+} from '@/constants';
 import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
 import { Options } from 'got';
 import { createLogZip, logger } from '@/main/services/logging';
@@ -58,7 +68,15 @@ export const preloadApi = {
     return { ...process.env };
   },
   getProcessCwd: () => {
-    return process.cwd();
+    // #!if MOCK_MODE === 'ENABLED'
+    if (IS_DEV) {
+      return process.cwd();
+    }
+    // #!endif
+    const appPath = ipcRenderer.sendSync(IPC_GET_APP_PATH);
+
+    const pattern = /app.asar/i;
+    return appPath?.replace(pattern, '') || '';
   },
   isFile: (filePath: string): boolean => {
     return fs.statSync(filePath).isFile();

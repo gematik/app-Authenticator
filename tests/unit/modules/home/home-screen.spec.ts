@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { mount } from '@vue/test-utils';
@@ -45,7 +49,7 @@ describe('home screen', () => {
   });
 
   it('render with loading spinner', async function () {
-    await store.commit('setShowLoadingSpinner', true);
+    store.commit('setShowLoadingSpinner', true);
 
     const wrapper = mount(HomeScreen, {
       global: {

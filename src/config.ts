@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { CREDENTIALS_MANAGER_SERVICE_NAME } from '@/constants';
@@ -26,6 +30,10 @@ export const CONTEXT_PARAMETERS_CONFIG_GROUP = {
 
 export const ENTRY_OPTIONS_CONFIG_GROUP = {
   HOSTNAME: 'connector.entryOption.hostname',
+  /**
+   * @deprecated We will use the HOSTNAME config instead, in the future we will remove this config
+   * when we are sure that all customers have migrated to the new config
+   */
   PORT: 'connector.entryOption.port',
   TLS_REJECT_UNAUTHORIZED: 'connector.entryOption.tlsRejectUnauthorized',
   TLS_PRIVATE_KEY: 'connector.entryOption.keyFile',
@@ -68,6 +76,12 @@ export const PROXY_SETTINGS_CONFIG = {
 } as const;
 
 export const TIMEOUT_PARAMETER_CONFIG = 'timeoutValue';
+
+export const ECC_WARNING_OPTIONS = {
+  ECC_WARNING_STATUS: 'eccWarnings.status',
+  ECC_WARNING_START_DATE: 'eccWarnings.startDate',
+  CUSTOM_MESSAGE: 'eccWarnings.customMessage',
+} as const;
 
 export enum PROXY_AUTH_TYPES {
   BASIC_AUTH = 'BasicAuth',

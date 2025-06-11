@@ -14,17 +14,21 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * ******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { SOAP_ACTION, SOAP_ACTION_CONTENT_TYPE } from '@/renderer/modules/connector/constants';
 import { TContextParameter, TGetCardsParameter } from '../type-definitions/common-types';
 import template from '@/renderer/modules/connector/assets/soap_templates/commonPTV/get-cards.xml';
-import { getConnectorEndpoint, httpReqConfig } from '@/renderer/modules/connector/services';
+import { httpReqConfig } from '@/renderer/modules/connector/services';
 
 export const runSoapRequest = async (
   contextParameter: TContextParameter,
   endpoint: string,
-  getCardsParameter: TGetCardsParameter,
+  getCardsParameter?: TGetCardsParameter,
 ): Promise<string> => {
   const envelope = getTemplate(contextParameter, getCardsParameter);
 
@@ -32,15 +36,14 @@ export const runSoapRequest = async (
     'Content-Type': SOAP_ACTION_CONTENT_TYPE,
     soapAction: SOAP_ACTION.GetCards,
   };
-  const url = getConnectorEndpoint(endpoint);
-  const { data } = await window.api.httpPost(url, envelope, httpReqConfig(requestHeaders));
+  const { data } = await window.api.httpPost(endpoint, envelope, httpReqConfig(requestHeaders));
   return data;
 };
 
-function getTemplate(contextParameter: TContextParameter, getCardParameter: TGetCardsParameter) {
+function getTemplate(contextParameter: TContextParameter, getCardParameter?: TGetCardsParameter) {
   return template
     .replace('{MANDANT}', contextParameter.mandantId)
     .replace('{CLIENT}', contextParameter.clientId)
     .replace('{WORKPLACE}', contextParameter.workplaceId)
-    .replace('{CARDTYPE}', getCardParameter.cardType);
+    .replace('{CARDTYPE}', getCardParameter ? `<v21:CardType>${getCardParameter.cardType}</v21:CardType>` : '');
 }
