@@ -21,7 +21,7 @@
  */
 
 
-@import 'tailwindcss';
+@import 'tailwindcss/index.css';
 @plugin "@tailwindcss/forms";
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
@@ -107,31 +107,31 @@
 
 @layer components {
 
-.bt {
-    @apply min-w-[145px] h-[36px] px-[16px] py-[8px] bg-btDefault rounded-[4px] text-light text-sm;
-}
+    .bt {
+        @apply min-w-[145px] h-[36px] px-[16px] py-[8px] bg-btDefault rounded-[4px] text-light text-sm;
+    }
 
-.bt:hover {
-    @apply bg-btHover;
-}
+    .bt:hover {
+        @apply bg-btHover;
+    }
 
-.bt:focus {
-    @apply outline-none;
-}
+    .bt:focus {
+        @apply outline-none;
+    }
 
-.bt-sec {
-    @apply min-w-[145px] h-[36px] px-[16px] py-[8px]
-    bg-transparent rounded-[4px] text-btDefault text-sm
-    border-solid border-[1px] border-btDefault;
-}
+    .bt-sec {
+        @apply min-w-[145px] h-[36px] px-[16px] py-[8px]
+        bg-transparent rounded-[4px] text-btDefault text-sm
+        border-solid border-[1px] border-btDefault;
+    }
 
-.bt-sec:hover {
-    @apply border-btSecHover text-btSecHover;
-}
+    .bt-sec:hover {
+        @apply border-btSecHover text-btSecHover;
+    }
 
-.bt-sec:focus {
-    @apply outline-none;
-}
+    .bt-sec:focus {
+        @apply outline-none;
+    }
 
 }
 

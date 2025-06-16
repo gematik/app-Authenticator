@@ -14,6 +14,10 @@
  * In case of changes by gematik find details in the "Readme" file.
  *
  * See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ * *******
+
+For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 /* This script downloads ROOT-CA and SUB-CA certificates from specified URLs, */
@@ -21,16 +25,12 @@
 /* - check the SHA256 hash of the downloaded files */
 /* - converts them from DER to PEM format, and saves them in the specified directory. */
 
-const fs = require('fs');
-const fsPromises = require('fs/promises');
-// import fsPromises from 'fs/promises';
-const path = require('path');
-// import https from 'https';
-const https = require('https');
-// import { execSync } from 'child_process';
-const execSync = require('child_process').execSync;
-// import crypto from 'crypto';
-const crypto = require('crypto');
+import fs from 'fs';
+import fsPromises from 'fs/promises';
+import path from 'path';
+import https from 'https';
+import { execSync } from 'child_process';
+import crypto from 'crypto';
 
 const PU_CERT_DIR = path.resolve(__dirname, '../src/assets/certs-konnektor/pu');
 const PU_ROOT_CA_URL = 'https://download.tsl.ti-dienste.de/ROOT-CA/';
@@ -57,11 +57,11 @@ main().catch((err) => {
   process.exit(1);
 });
 
-function sanitizeFilename(filename) {
+function sanitizeFilename(filename: string): string {
   return filename.replace(/[^a-zA-Z0-9_.-]/g, '_');
 }
 
-async function removeFilesInDir(dir, excludeExtensions = []) {
+async function removeFilesInDir(dir: string, excludeExtensions: string[] = []) {
   try {
     await fsPromises.access(dir);
   } catch {
@@ -83,7 +83,7 @@ async function removeFilesInDir(dir, excludeExtensions = []) {
   }
 }
 
-function downloadFile(url, dest) {
+function downloadFile(url: string, dest: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(dest);
     https
@@ -108,11 +108,11 @@ function downloadFile(url, dest) {
   });
 }
 
-function derToPem(derPath, pemPath) {
+function derToPem(derPath: string, pemPath: string) {
   execSync(`openssl x509 -inform der -in "${derPath}" -out "${pemPath}"`);
 }
 
-function fetchHtml(url){
+function fetchHtml(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = '';
     https
@@ -128,10 +128,10 @@ function fetchHtml(url){
   });
 }
 
-function extractCertLinks(html, pattern) {
-  const links = [];
+function extractCertLinks(html: string, pattern: RegExp): string[] {
+  const links: string[] = [];
   const regex = /href=["']([^"'>]+)["']/g;
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = regex.exec(html)) !== null) {
     if (pattern.test(match[1])) {
       links.push(match[1]);
@@ -140,7 +140,7 @@ function extractCertLinks(html, pattern) {
   return links;
 }
 
-async function downloadAndVerifySha256(certUrl, dest) {
+async function downloadAndVerifySha256(certUrl: string, dest: string): Promise<void> {
   const sha256Url = certUrl + '.sha256';
   const sha256Dest = dest + '.sha256';
 
@@ -160,7 +160,7 @@ async function downloadAndVerifySha256(certUrl, dest) {
   }
 }
 
-async function updateCertificates(certDir, urls ) {
+async function updateCertificates(certDir: string, urls: { url: string; pattern: RegExp }[]) {
   await fsPromises.mkdir(certDir, { recursive: true });
   /*eslint-disable no-console */
   console.log(`Deleting certificates in ${certDir} ...`);
