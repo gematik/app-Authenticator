@@ -22,6 +22,9 @@
 
 import os from 'os';
 import { app } from 'electron';
+// #!if MOCK_MODE === 'ENABLED'
+import { IS_DEV } from '@/constants';
+// #!endif
 import { LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
 import { isMacOS } from '@/main/services/utils';
 import path from 'path';
@@ -62,13 +65,13 @@ export class MainPathProvider {
   }
 
   public static getResourcesPath(): string {
-    if (app.isPackaged) {
-      return process.resourcesPath;
-    }
     // #!if MOCK_MODE === 'ENABLED'
-    else {
+    if (IS_DEV) {
       return path.join(process.cwd(), 'src', 'assets');
     }
     // #!endif
+
+    const pattern = /app.asar/i;
+    return process.resourcesPath.replace(pattern, '');
   }
 }

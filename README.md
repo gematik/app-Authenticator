@@ -101,9 +101,13 @@ We 💖 contributions. You can find detailed information in [CONTRIBUTING](.gith
 
 ## License
 
+Copyright 2021-2025 gematik GmbH
+
 EUROPEAN UNION PUBLIC LICENCE v. 1.2
 
 EUPL © the European Union 2007, 2016
+
+See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License
 
 ## Additional Notes and Disclaimer from gematik GmbH
 
