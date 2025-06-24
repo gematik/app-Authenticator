@@ -65,7 +65,7 @@ exports[`base template screen renders with settings button 1`] = `
     <div
       class="text-sm cursor-default"
       id="lblVersion"
-      title="4.15.0"
+      title="4.15.1"
     >
       Version dev 
     </div>
