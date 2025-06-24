@@ -22,12 +22,13 @@ For additional notes and disclaimer from gematik and in case of changes by gemat
 
 import { IS_DEV } from '@/constants';
 import path from 'path';
+import { MainPathProvider } from '@/main/services/main-path-provider';
 
 const typeName = 'WinCertStoreLib.Methods';
 
 export function callEdgeMethod(methodName: string) {
   const edge = require('electron-edge-js');
-  let assemblyFile: string = 'resources/WinCertStoreLib.dll';
+  let assemblyFile: string = path.join(MainPathProvider.getResourcesPath(), 'WinCertStoreLib.dll');
   // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
     assemblyFile = path.join(__dirname, 'WinCertStoreLib.dll');

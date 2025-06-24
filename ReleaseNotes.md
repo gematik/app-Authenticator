@@ -1,5 +1,11 @@
 # Release Authenticator
 
+## 4.15.1
+
+### Fixed
+
+- Fixed paths for correct reading of certificats and environment variables
+
 ## 4.15.0
 
 ### Added

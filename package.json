@@ -1,6 +1,6 @@
 {
   "name": "authenticator",
-  "version": "4.15.0",
+  "version": "4.15.1",
   "private": true,
   "author": "Gematik GmbH",
   "description": "Authenticator Desktop Client",
