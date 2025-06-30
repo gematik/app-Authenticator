@@ -1,5 +1,11 @@
 # Release Authenticator
 
+## 4.15.2
+
+### Fixed
+
+- Solved an issue with KoCo-Box connector
+
 ## 4.15.1
 
 ### Fixed
