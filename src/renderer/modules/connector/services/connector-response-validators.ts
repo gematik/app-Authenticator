@@ -24,13 +24,8 @@ import { COMMON_USED_REGEXES } from '@/constants';
 
 /**
  * @param signedChallenge the signed challenge as string
- * @param minLength of the challenge string
- * @param maxLength of the challenge string
  */
-export function validateSignedChallenge(signedChallenge: string, minLength = 1, maxLength = 4096): boolean {
-  if (signedChallenge.length < minLength || signedChallenge.length > maxLength) {
-    return false; // Length check failed
-  }
+export function validateSignedChallenge(signedChallenge: string): boolean {
   return COMMON_USED_REGEXES.JWT.test(signedChallenge);
 }
 
