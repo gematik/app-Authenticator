@@ -39,7 +39,7 @@ process.env.VERSION = process.env.npm_package_version;
  * If it is defined take the defined value, if isn't defined set by IS_DEV var
  * @type {string}
  */
-process.env.MOCK_MODE = process.env.MOCK_MODE || IS_DEV ? 'ENABLED' : 'DISABLED';
+process.env.MOCK_MODE = process.env.MOCK_MODE || (IS_DEV ? 'ENABLED' : 'DISABLED');
 
 let shellPluginConfig = {
   safe: true,
