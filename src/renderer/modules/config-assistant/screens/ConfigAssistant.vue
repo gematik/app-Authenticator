@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -169,6 +169,7 @@ function createSteps(vendor: KONNEKTOR_VENDORS, steps: number[]) {
     if (stepNumber == 8) navigationStepNumber = 4;
     if (stepNumber == 9) navigationStepNumber = 4.1;
     if (stepNumber == 10) navigationStepNumber = 5;
+    if (stepNumber == 11) navigationStepNumber = 6;
     return {
       stepNumber,
       navigationStepNumber,
@@ -213,9 +214,9 @@ const toggleDropdown = (headerStepNumber: number) => {
 const isDecimal = (number: number) => number % 1 !== 0;
 
 const konnektorAssistantSteps = {
-  [KONNEKTOR_VENDORS.Rise]: createSteps(KONNEKTOR_VENDORS.Rise, new Array(10).fill(null)),
-  [KONNEKTOR_VENDORS.Koco]: createSteps(KONNEKTOR_VENDORS.Koco, new Array(10).fill(null)),
-  [KONNEKTOR_VENDORS.Secunet]: createSteps(KONNEKTOR_VENDORS.Secunet, new Array(10).fill(null)),
+  [KONNEKTOR_VENDORS.Rise]: createSteps(KONNEKTOR_VENDORS.Rise, new Array(11).fill(null)),
+  [KONNEKTOR_VENDORS.Koco]: createSteps(KONNEKTOR_VENDORS.Koco, new Array(11).fill(null)),
+  [KONNEKTOR_VENDORS.Secunet]: createSteps(KONNEKTOR_VENDORS.Secunet, new Array(11).fill(null)),
 };
 
 const totalSteps = computed(() => konnektorAssistantSteps[props.konnektor].length);

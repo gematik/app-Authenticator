@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,6 +26,8 @@ import { logger } from '@/renderer/service/logger';
 import { UserfacingError } from '@/renderer/errors/errors';
 import i18n from '@/renderer/i18n';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
+import { userAgent } from '@/renderer/utils/utils';
+import { findSolutionLinkByError } from '@/error-solution-links';
 
 export async function idpReachabilityTest(): Promise<TestResult[]> {
   const translate = i18n.global.t;
@@ -41,6 +43,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
         name: translate('missing_idp_test_case_config_file'),
         status: TestStatus.failure,
         details: translate('please_put_the_config_file_to', { filePath: e.data.filePath }),
+        solutionLink: findSolutionLinkByError(translate('missing_idp_test_case_config_file'), 'IDP'),
       });
     }
 
@@ -59,6 +62,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
         name: translate('accessibility_of_the_idp', { name: idpName }),
         status: statusCode === 200 ? TestStatus.success : TestStatus.failure,
         details: translate('accessibility_of_the_idp_result', { url: url, statusCode: statusCode }),
+        solutionLink: findSolutionLinkByError(statusCode.toString(), 'IDP'),
       });
     } catch (err) {
       logger.debug(err.message);
@@ -67,6 +71,7 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
         name: translate('accessibility_of_the_idp', { name: idpName }),
         status: TestStatus.failure,
         details: translate('accessibility_of_the_idp_error', { message: err.message, url: url }),
+        solutionLink: findSolutionLinkByError(err.message, 'IDP'),
       });
     }
   }
@@ -77,15 +82,10 @@ export async function idpReachabilityTest(): Promise<TestResult[]> {
 async function callIdp(url: string): Promise<number> {
   const { status } = await window.api.httpGet(url, {
     ...httpsReqConfig(),
-    timeout: {
-      lookup: 250,
-      connect: 500,
-      secureConnect: 1000,
-      socket: 2000,
-      send: 10000,
-      response: 1000,
+    headers: {
+      'User-Agent': userAgent,
     },
-    retry: 0,
+    timeout: 10000,
   });
   return status;
 }

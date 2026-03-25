@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,7 +20,7 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { ipcRenderer, shell } from 'electron';
+import { ipcRenderer, shell, webUtils } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -29,16 +29,12 @@ import {
   IPC_FOCUS_TO_AUTHENTICATOR,
   IPC_GET_APP_PATH,
   IPC_SELECT_FOLDER,
-  P12_VALIDITY_TYPE,
   IS_DEV,
+  P12_VALIDITY_TYPE,
 } from '@/constants';
-import { HTTP_METHODS, httpClient, TClientRes } from '@/main/services/http-client';
-import { Options } from 'got';
+import { HTTP_METHODS, httpClient, HTTPClientConfig, TClientRes } from '@/main/services/http-client';
 import { createLogZip, logger } from '@/main/services/logging';
-import { findValidCertificate, getP12ValidityType } from '@/main/services/p12-certificate-service';
 import IpcRendererEvent = Electron.IpcRendererEvent;
-
-const { webUtils } = require('electron');
 
 const forge = require('node-forge');
 
@@ -62,10 +58,7 @@ export const preloadApi = {
     ipcRenderer.on(channel, (event: IpcRendererEvent, ...args: any[]) => func(event, ...args));
   },
   openExternal: async (url: string) => {
-    await shell.openExternal(url);
-  },
-  getProcessEnvs: () => {
-    return { ...process.env };
+    await shell.openExternal(url, { activate: true });
   },
   getProcessCwd: () => {
     // #!if MOCK_MODE === 'ENABLED'
@@ -103,10 +96,10 @@ export const preloadApi = {
   getTmpDir: os.tmpdir,
   nativeURL: require('url').URL,
   httpsAgent: require('https').Agent,
-  httpGet: async (url: string, config: Options = {}): Promise<TClientRes | undefined> => {
+  httpGet: async (url: string, config: HTTPClientConfig = {}): Promise<TClientRes | undefined> => {
     return await httpClient(HTTP_METHODS.GET, url, config);
   },
-  httpPost: async (url: string, envelope: any, config: Options = {}) => {
+  httpPost: async (url: string, envelope: any, config: HTTPClientConfig = {}) => {
     return await httpClient(HTTP_METHODS.POST, url, config, envelope);
   },
   setAppConfigInPreload(data: Record<string, unknown>) {
@@ -127,31 +120,41 @@ export const preloadApi = {
     return true;
   },
   /**
-   * Check if the p12 file is valid
+   * Check if the p12 file password is correct
    * @param p12Path file path to p12
    * @param password p12 file password
    */
   isP12Valid(p12Path: string, password: string): P12_VALIDITY_TYPE {
     try {
-      return getP12ValidityType(p12Path, password);
-    } catch (error) {
-      if (error.message.includes('PKCS#12 MAC could not be verified. Invalid password?')) {
+      const p12File = fs.readFileSync(p12Path, 'binary');
+      const p12Asn1 = forge.asn1.fromDer(p12File);
+      const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, password);
+
+      // Check certificate expiration
+      const certBags = p12.getBags({ bagType: forge.pki.oids.certBag });
+      const certs = certBags[forge.pki.oids.certBag];
+      if (certs && certs.length > 0) {
+        const now = new Date();
+        for (const certBag of certs) {
+          if (certBag.cert && certBag.cert.validity) {
+            if (now > certBag.cert.validity.notAfter) {
+              logger.info('Certificate is expired');
+              return P12_VALIDITY_TYPE.EXPIRED;
+            }
+          }
+        }
+      }
+
+      return P12_VALIDITY_TYPE.VALID;
+    } catch (error: any) {
+      if (error.message?.includes('PKCS#12 MAC could not be verified')) {
         logger.info('Password is incorrect: ', error);
         return P12_VALIDITY_TYPE.WRONG_PASSWORD;
       }
-      logger.info('Exception by processing certificate validation: ', error);
-      return P12_VALIDITY_TYPE.PROCESSING_EXCEPTION;
+      // For any other error, assume password is wrong
+      logger.info('P12 validation error: ', error);
+      return P12_VALIDITY_TYPE.WRONG_PASSWORD;
     }
-  },
-  extractValidCertificate(p12Path: string, password: string): string {
-    const certificate = findValidCertificate(p12Path, password);
-    const newP12 = forge.pkcs12.toPkcs12Asn1(certificate.privateKey?.key, [certificate.certificate?.cert], password);
-    const derData = forge.asn1.toDer(newP12).getBytes();
-    // Save the updated P12 file
-
-    const newFilePath = path.join(os.tmpdir(), path.basename(p12Path));
-    fs.writeFileSync(newFilePath, derData, 'binary');
-    return newFilePath;
   },
   isMacOS: (): boolean => {
     return os.platform() === 'darwin';
@@ -168,4 +171,5 @@ export const preloadApi = {
   showFilePath(file: File): string {
     return webUtils.getPathForFile(file);
   },
+  readThirdPartyLicenses: () => ipcRenderer.invoke('readThirdPartyLicenses'),
 };

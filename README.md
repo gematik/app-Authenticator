@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/gematik/app-Authenticator/master/docs/Gematik_Logo_Flag.png" alt="Gematik_Logo" width="200" height="37" align="right"> <br>
+<img src="https://raw.githubusercontent.com/gematik/app-Authenticator/master/docs/img/Gematik_Logo_Flag.png" alt="Gematik_Logo" width="200" height="37" align="right"> <br>
 
 # Authenticator
 
@@ -93,7 +93,7 @@ This stack based on those technologies:
 ## Storing Credentials Securely
 
 For detailed documentation of usage of the Windows Credential Manager in the context of the Authenticator,
-see [here](credential-management/README.md)
+see [here](docs/risk-minimization/README.md)
 
 ## Contributing
 

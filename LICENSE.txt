@@ -321,17 +321,14 @@ Drittsoftwareanteile:
     Komponente: base64url
     Lizenz: MIT
 
-    Komponente: dot-object
+    Komponente: core-js
     Lizenz: MIT
 
-    Komponente: electron-edge-js
-    Lizenz: MIT
+    Komponente: flat
+    Lizenz: BSD-3-Clause
 
     Komponente: flatted
     Lizenz: ISC
-
-    Komponente: got
-    Lizenz: MIT
 
     Komponente: hpagent
     Lizenz: MIT
@@ -358,7 +355,10 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: minimatch
-    Lizenz: ISC
+    Lizenz: BlueOak-1.0.0
+
+    Komponente: node-abi
+    Lizenz: MIT
 
     Komponente: node-forge
     Lizenz: (BSD-3-Clause OR GPL-2.0)
@@ -370,7 +370,7 @@ Drittsoftwareanteile:
     Lizenz: BSD-3-Clause
 
     Komponente: sax
-    Lizenz: ISC
+    Lizenz: BlueOak-1.0.0
 
     Komponente: stream-browserify
     Lizenz: MIT
@@ -382,9 +382,6 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: uuid
-    Lizenz: MIT
-
-    Komponente: validator
     Lizenz: MIT
 
     Komponente: vue
@@ -409,4 +406,7 @@ Drittsoftwareanteile:
     Lizenz: MIT
 
     Komponente: zip-a-folder
+    Lizenz: MIT
+
+    Komponente: electron-edge-js
     Lizenz: MIT

@@ -1,5 +1,8 @@
-# Install Node.js 20
+# Install Node.js 22
 brew "node@22"
+
+# Required dependency for Node.js
+brew "simdjson"
 
 # Install wget
 brew "wget"

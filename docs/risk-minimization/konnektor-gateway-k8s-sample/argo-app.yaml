@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authenticator-proxy
+spec:
+  destination:
+    namespace: authenticator-proxy
+    server: <KUBERNETES-DEFAULT-SERVER>
+  source:
+    path: helm-chart
+    repoURL: >-
+      <GIT-URL-OF-HELMCHART-REPOSITORY>
+    targetRevision: main
+  project: <PROJECT-NAME>
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

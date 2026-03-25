@@ -82,6 +82,18 @@ exports[`home screen render with loading spinner 1`] = `
     >
       Remove Saved User Consents
     </button>
+    <!-- #!if MOCK_MODE === 'ENABLED' -->
+    <div
+      class="mt-4"
+    >
+      <button
+        class="bt ml-[15px]"
+        type="button"
+      >
+        Start Flow
+      </button>
+    </div>
+    <!-- #!endif -->
   </div>
   <!-- #!endif -->
 </div>
@@ -162,6 +174,18 @@ exports[`home screen render with settings button 1`] = `
     >
       Remove Saved User Consents
     </button>
+    <!-- #!if MOCK_MODE === 'ENABLED' -->
+    <div
+      class="mt-4"
+    >
+      <button
+        class="bt ml-[15px]"
+        type="button"
+      >
+        Start Flow
+      </button>
+    </div>
+    <!-- #!endif -->
   </div>
   <!-- #!endif -->
 </div>

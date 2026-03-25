@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,8 +26,8 @@ import path from 'path';
 
 import {
   CUSTOM_PROTOCOL_NAME,
+  IPC_CLOSE_THE_AUTHENTICATOR,
   IPC_FOCUS_TO_AUTHENTICATOR,
-  IPC_MINIMIZE_THE_AUTHENTICATOR,
   IPC_SET_USER_AGENT,
 } from '@/constants';
 import appConfigFactory from '../../app-config';
@@ -35,17 +35,15 @@ import { handleDeepLink } from '@/main/services/url-service';
 
 import { logger } from '@/main/services/logging';
 import { setupEnvReadInterval } from '@/main/services/env-vars-updater';
-// import and add event listeners for electron updater
-import '@/main/services/electron-updater';
 import { hasAppRemoteDebuggingFlags } from '@/main/services/utils';
 import copyFromResourcesToTarget from '@/main/services/copy-from-resources-to-target';
 import { setMacOSDockShortcuts, setWindowsTaskbarShortcuts } from '@/renderer/utils/os-menu-shortcuts';
+import { createMenu } from '@/main/services/menu-service';
 
 require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
 import OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
 import BeforeSendResponse = Electron.BeforeSendResponse;
-
 // #!if MOCK_MODE === 'ENABLED'
 /**
  * @deprecated IS_DEV only can be used with MOCK_MODE == 'ENABLED' check
@@ -194,11 +192,11 @@ async function createWindow() {
     }
   });
   /**
-   * minimize the authenticator app
+   * close the authenticator app
    * We use this functionality if the authenticator is finish successfully
    */
-  ipcMain.on(IPC_MINIMIZE_THE_AUTHENTICATOR, () => {
-    mainWindow?.minimize();
+  ipcMain.on(IPC_CLOSE_THE_AUTHENTICATOR, () => {
+    app.quit();
   });
 
   // #!if MOCK_MODE === 'ENABLED'
@@ -216,9 +214,8 @@ async function createWindow() {
   });
 }
 
-// Force single application instance
 const gotTheLock = app.requestSingleInstanceLock();
-if (!gotTheLock) {
+if (!gotTheLock && process.platform !== PLATFORM_DARWIN) {
   logger.info('Application quit because of single instance lock');
   app.quit();
 } else if (hasAppRemoteDebuggingFlags()) {
@@ -274,6 +271,8 @@ if (!gotTheLock) {
     if (process.platform === PLATFORM_DARWIN) {
       copyFromResourcesToTarget();
     }
+
+    createMenu(createWindow);
 
     logger.info('Application is ready');
     await createWindow();

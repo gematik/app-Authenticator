@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -52,12 +52,15 @@ const openExternalLink = (url: string) => {
 
 <template>
   <div :style="`text-align: ${positioning};`">
-    <a @click="openExternalLink(props.buttonLink)">{{ buttonText }}</a>
+    <button class="link-style" @click="openExternalLink(props.buttonLink)" type="button">
+      {{ buttonText }}
+    </button>
   </div>
 </template>
 
 <style scoped>
 @import '../../../global.css';
+
 div {
   margin-top: 10px;
 }

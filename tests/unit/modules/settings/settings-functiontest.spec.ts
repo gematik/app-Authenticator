@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,7 +20,7 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import dot from 'dot-object';
+import { flatten } from 'flat';
 
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';
 import * as pathProvider from '@/renderer/service/path-provider';
@@ -43,7 +43,7 @@ describe('settings function test', () => {
     fsr.save(SAMPLE_CONFIG_DATA);
     expect(fsr.exist()).toBeTruthy();
 
-    expect(fsr.load()).toStrictEqual(dot.dot(SAMPLE_CONFIG_DATA));
+    expect(fsr.load()).toStrictEqual(flatten(SAMPLE_CONFIG_DATA));
 
     // clear it after tests
     fsr.clear();
@@ -53,7 +53,7 @@ describe('settings function test', () => {
     const fsr = new FileStorageRepository();
     fsr.save(SAMPLE_CONFIG_DATA);
 
-    expect(fsr.load()).toStrictEqual(dot.dot(SAMPLE_CONFIG_DATA));
+    expect(fsr.load()).toStrictEqual(flatten(SAMPLE_CONFIG_DATA));
 
     fsr.clear();
     fsr.save(SAMPLE_CONFIG_DATA);

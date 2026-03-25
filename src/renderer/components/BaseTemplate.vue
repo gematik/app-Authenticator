@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -94,7 +94,9 @@ const settingsSet = computed(() => exist());
         <img src="@/assets/info.svg" class="object-contain mr-[8px]" alt="info icon" />
         <span id="lblImprint" class="text-sm hover:underline">{{ $t('imprint') }}</span>
       </router-link>
-      <div id="lblVersion" class="text-sm cursor-default" :title="buildVersion">{{ $t('version', { version }) }}</div>
+      <div id="lblVersion" class="text-sm cursor-default" :title="buildVersion">
+        {{ $t('version', { version }) }}
+      </div>
     </div>
 
     <AuthFlow />

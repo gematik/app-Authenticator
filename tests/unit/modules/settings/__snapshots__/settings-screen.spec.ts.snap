@@ -36,10 +36,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.mockConnector"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.mockConnector"
                   id="form-connector.mockConnector-label"
                 >
                   Status
@@ -61,7 +61,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-connector.mockConnector"
                   >
                     
@@ -79,11 +79,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <!--v-if-->
@@ -114,10 +110,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-developer.disableCertificateCheck"
               >
                 <label
                   class="text-sm"
+                  for="form-developer.disableCertificateCheck"
                   id="form-developer.disableCertificateCheck-label"
                 >
                   IDP Zertifikatsprüfung
@@ -139,7 +135,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-developer.disableCertificateCheck"
                   >
                     
@@ -157,11 +153,47 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                <!--v-if-->
+              </div>
+            </div>
+            <div
+              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+            >
+              <div
+                class="text-sm"
+              >
+                <label
+                  class="text-sm"
+                  for="form-developer.idpAdditionalAllowedHosts"
+                  id="form-developer.idpAdditionalAllowedHosts-label"
                 >
-                  Diese Änderung wurde noch nicht gespeichert
+                  IDP Zusätzlich erlaubte IDP Hosts
+                </label>
+                <div
+                  class="tooltip"
+                >
+                  <img
+                    alt=""
+                  />
+                  <span
+                    class="tooltiptext"
+                  >
+                    Kommaseparierte Liste zusätzlicher erlaubter IDP-Hosts (z.B. localhost,my-idp.example.com).
+                  </span>
                 </div>
+              </div>
+              <div>
+                <div>
+                  <input
+                    class="settings-input"
+                    id="form-developer.idpAdditionalAllowedHosts"
+                    placeholder=""
+                    type="input"
+                  />
+                </div>
+                <!--v-if-->
+                <!--v-if-->
+                <!--v-if-->
               </div>
             </div>
             
@@ -192,10 +224,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.entryOption.hostname"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.entryOption.hostname"
                   id="form-connector.entryOption.hostname-label"
                 >
                   Host
@@ -232,10 +264,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.contextParameter.mandantId"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.contextParameter.mandantId"
                   id="form-connector.contextParameter.mandantId-label"
                 >
                   Mandant-ID
@@ -272,10 +304,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.contextParameter.clientId"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.contextParameter.clientId"
                   id="form-connector.contextParameter.clientId-label"
                 >
                   Client-ID
@@ -312,10 +344,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.contextParameter.workplaceId"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.contextParameter.workplaceId"
                   id="form-connector.contextParameter.workplaceId-label"
                 >
                   Arbeitsplatz-ID
@@ -352,10 +384,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.tlsAuthType"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.tlsAuthType"
                   id="form-connector.tlsAuthType-label"
                 >
                   Client Authentisierung
@@ -377,7 +409,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-connector.tlsAuthType"
                   >
                     
@@ -394,7 +426,7 @@ exports[`settings screen render  1`] = `
                     <option
                       value="ServerClientCertAuth_Pfx"
                     >
-                      Zertifikat P12-Datei (RSA oder ECC (NIST only))
+                      Zertifikat P12-Datei
                     </option>
                     <option
                       value="ServerCertAuth"
@@ -405,11 +437,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <!--v-if-->
@@ -423,10 +451,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.entryOption.tlsRejectUnauthorized"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.entryOption.tlsRejectUnauthorized"
                   id="form-connector.entryOption.tlsRejectUnauthorized-label"
                 >
                   Konnektor Zertifikat prüfen
@@ -448,7 +476,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-connector.entryOption.tlsRejectUnauthorized"
                   >
                     
@@ -466,11 +494,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <div
@@ -478,10 +502,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-connector.entryOption.smcbPinOption"
               >
                 <label
                   class="text-sm"
+                  for="form-connector.entryOption.smcbPinOption"
                   id="form-connector.entryOption.smcbPinOption-label"
                 >
                   SMC-B PIN Abfrage zulassen
@@ -503,7 +527,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-connector.entryOption.smcbPinOption"
                   >
                     
@@ -521,11 +545,58 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
+                <!--v-if-->
+              </div>
+            </div>
+            <div
+              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
+            >
+              <div
+                class="text-sm"
+              >
+                <label
+                  class="text-sm"
+                  for="form-connector.entryOption.warnCardExpiration"
+                  id="form-connector.entryOption.warnCardExpiration-label"
                 >
-                  Diese Änderung wurde noch nicht gespeichert
+                  Warnung bei SMC-B Kartenablauf anzeigen
+                </label>
+                <div
+                  class="tooltip"
+                >
+                  <img
+                    alt=""
+                  />
+                  <span
+                    class="tooltiptext"
+                  >
+                    Warnung während eines Authentifizierungsvorgangs anzeigen, wenn eine SMC-B Karte in den nächsten 90 Tagen abläuft.
+                  </span>
                 </div>
+              </div>
+              <div>
+                <!--v-if-->
+                <div>
+                  <select
+                    class="settings-input"
+                    id="form-connector.entryOption.warnCardExpiration"
+                  >
+                    
+                    <option
+                      value="true"
+                    >
+                      Aktiviert
+                    </option>
+                    <option
+                      value="false"
+                    >
+                      Deaktiviert
+                    </option>
+                    
+                  </select>
+                </div>
+                <!--v-if-->
+                <!--v-if-->
               </div>
             </div>
             
@@ -552,10 +623,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-eccWarnings.status"
               >
                 <label
                   class="text-sm"
+                  for="form-eccWarnings.status"
                   id="form-eccWarnings.status-label"
                 >
                   ECC Warnung anzeigen
@@ -577,7 +648,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-eccWarnings.status"
                   >
                     
@@ -595,11 +666,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <div
@@ -607,10 +674,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-eccWarnings.startDate"
               >
                 <label
                   class="text-sm"
+                  for="form-eccWarnings.startDate"
                   id="form-eccWarnings.startDate-label"
                 >
                   Hinweis anzeigen ab
@@ -647,10 +714,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-eccWarnings.customMessage"
               >
                 <label
                   class="text-sm"
+                  for="form-eccWarnings.customMessage"
                   id="form-eccWarnings.customMessage-label"
                 >
                   Benutzerdefinierte Nachricht
@@ -706,10 +773,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-proxy.proxySettingsType"
               >
                 <label
                   class="text-sm"
+                  for="form-proxy.proxySettingsType"
                   id="form-proxy.proxySettingsType-label"
                 >
                   Proxy-Authentifizierung
@@ -731,7 +798,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-proxy.proxySettingsType"
                   >
                     
@@ -754,11 +821,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <!--v-if-->
@@ -769,10 +832,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-proxy.useOsSettings"
               >
                 <label
                   class="text-sm"
+                  for="form-proxy.useOsSettings"
                   id="form-proxy.useOsSettings-label"
                 >
                   Betriebssystem Einstellungen benutzen
@@ -794,7 +857,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-proxy.useOsSettings"
                   >
                     
@@ -812,11 +875,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             <!--v-if-->
@@ -826,10 +885,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-proxy.proxyIgnoreList"
               >
                 <label
                   class="text-sm"
+                  for="form-proxy.proxyIgnoreList"
                   id="form-proxy.proxyIgnoreList-label"
                 >
                   kein Proxy für:
@@ -866,10 +925,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-proxy.useForConnector"
               >
                 <label
                   class="text-sm"
+                  for="form-proxy.useForConnector"
                   id="form-proxy.useForConnector-label"
                 >
                   Proxy für die Verbindung zum Konnektor
@@ -891,7 +950,7 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <div>
                   <select
-                    class="settings-input settings-input__changed"
+                    class="settings-input"
                     id="form-proxy.useForConnector"
                   >
                     
@@ -909,11 +968,7 @@ exports[`settings screen render  1`] = `
                   </select>
                 </div>
                 <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
+                <!--v-if-->
               </div>
             </div>
             
@@ -945,10 +1000,10 @@ exports[`settings screen render  1`] = `
             >
               <div
                 class="text-sm"
-                for="input-timeoutValue"
               >
                 <label
                   class="text-sm"
+                  for="form-timeoutValue"
                   id="form-timeoutValue-label"
                 >
                   Wert des Timeouts in Milli-Sekunden
@@ -978,80 +1033,6 @@ exports[`settings screen render  1`] = `
                 <!--v-if-->
                 <!--v-if-->
                 <!--v-if-->
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        <div
-          class="w-full pt-[32px]"
-        >
-          <div>
-            <div
-              class="flex items-center w-full bg-white border-border border-[1px] rounded-t-[8px] h-[72px] py-[26px] px-[48px]"
-            >
-              <!--v-if-->
-              <h3
-                class=""
-                id="lblTitle-7"
-              >
-                Automatische Updates
-              </h3>
-            </div>
-            
-            <div
-              class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
-            >
-              <div
-                class="text-sm"
-                for="input-checkUpdatesAutomatically"
-              >
-                <label
-                  class="text-sm"
-                  id="form-checkUpdatesAutomatically-label"
-                >
-                  Updates automatisch durchführen
-                </label>
-                <div
-                  class="tooltip"
-                >
-                  <img
-                    alt=""
-                  />
-                  <span
-                    class="tooltiptext"
-                  >
-                    Ist diese Option "Aktiviert", dann prüft der Authenticator regelmäßig , ob es Updates gibt und führt diese eigenständig durch
-                  </span>
-                </div>
-              </div>
-              <div>
-                <!--v-if-->
-                <div>
-                  <select
-                    class="settings-input settings-input__changed"
-                    id="form-checkUpdatesAutomatically"
-                  >
-                    
-                    <option
-                      value="true"
-                    >
-                      Aktiviert
-                    </option>
-                    <option
-                      value="false"
-                    >
-                      Deaktiviert
-                    </option>
-                    
-                  </select>
-                </div>
-                <!--v-if-->
-                <div
-                  class="text-orange-500 text-[12px] px-[15px] pt-[5px]"
-                >
-                  Diese Änderung wurde noch nicht gespeichert
-                </div>
               </div>
             </div>
             

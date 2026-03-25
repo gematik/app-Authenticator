@@ -1,8 +1,3 @@
 {
-  "reject": [
-    "got",
-    "sweetalert2",
-    "@types/node",
-    "vue-i18n"
-  ]
+  "reject": ["got", "sweetalert2", "@types/node", "vue-i18n", "@eslint/js", "jest", "@types/jest", "electron-builder"]
 }

@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-configuration'
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+data:
+  replace_endpoint.js: |
+    function replace_endpoint(r, data, flags) {
+        const replaced = data.replace({{ .Values.deployment.replace.pattern }}, 'https://{{ .Values.dns.hostname }}');
+        
+        r.sendBuffer(replaced, flags);
+    }
+
+    export default {replace_endpoint};
+  nginx.conf: |
+    load_module modules/ngx_http_js_module.so;
+    
+    worker_processes auto;
+    events {
+        worker_connections 1024;
+    }
+
+    pid /tmp/nginx.pid;
+
+    error_log /var/log/nginx/error.log;
+    error_log /var/log/nginx/error.log notice;
+
+    http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        
+        js_path "/etc/nginx/njs/";
+
+        js_import main from replace_endpoint.js;
+
+        {{- if .Values.deployment.debug.enable }}        
+        log_format postdata '$request $status $request_body';
+        access_log /var/log/nginx/access.log postdata;
+        {{- else }}
+        access_log /var/log/nginx/access.log;
+        {{- end }}
+
+        map $http_x_konnektor_gateway $upstream_host {
+            {{- range .Values.konnektoren }}
+                {{ .name }} {{ .hostname }};
+            {{- end }}
+        }
+
+        server {
+            listen 8080;
+
+            server_name {{ .Values.dns.hostname }};
+
+            # Common proxy settings
+            proxy_set_header Host $upstream_host;
+            proxy_ssl_server_name on;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # Client certificate configuration for mTLS
+            proxy_ssl_certificate /config/tls-certificates/client-certificate.pem;
+            proxy_ssl_certificate_key /config/tls-certificates/client-certificate.key;
+            proxy_ssl_trusted_certificate /config/tls-certificates/client-certificate.ca-bundle;
+            
+            proxy_ssl_verify on;
+            proxy_ssl_verify_depth 5;
+
+            # If using a domain names, you probably need to reference your DNS server here.
+            resolver  {{ .Values.dns.resolverIp }};
+
+            location /connector.sds {
+                js_body_filter main.replace_endpoint;
+
+                proxy_pass https://$upstream_host;
+            }
+            
+            {{- range .Values.endpoint.locations }}
+                location ~* {{ . }} {
+                    proxy_pass https://$upstream_host;
+                }
+            {{- end }}
+
+            location / {
+                # Define your access permissions here
+                deny all;
+            }
+        }
+    }

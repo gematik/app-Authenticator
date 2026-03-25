@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,12 +20,20 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
+const testPathIgnorePatterns = [];
+
+if (process.platform !== 'win32') {
+  testPathIgnorePatterns.push('<rootDir>/tests/.*\\.windows\\.spec\\.ts$');
+}
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
   globals: {},
   transform: {
-    '^.+\\.vue$': '@vue/vue3-jest',
+    '^.+\\.mjs$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx|cjs)$': 'ts-jest',
+    '^.+\\.vue$': '<rootDir>/tests/vue3TSJestWorkaround.js',
     '^.+\\.(xml|txt|pem)$': '@glen/jest-raw-loader',
   },
   moduleDirectories: ['node_modules', 'src', __dirname],
@@ -37,6 +45,7 @@ module.exports = {
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons'],
   },
+  testPathIgnorePatterns: testPathIgnorePatterns,
   watchPathIgnorePatterns: [
     '<rootDir>/jest.json',
     '<rootDir>/node_modules',
@@ -46,12 +55,12 @@ module.exports = {
     '<rootDir>/test-report.xml',
     '<rootDir>/dist_electron',
   ],
-  moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node'],
+  moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node', 'mjs', 'cjs'],
   testMatch: ['<rootDir>/tests/**/*.spec.ts'],
   modulePathIgnorePatterns: ['__snapshots__'],
   setupFiles: ['dotenv/config', './tests/jest-config/setup.ts'],
   coverageReporters: ['cobertura', 'lcov', 'text'],
-  transformIgnorePatterns: ['<rootDir>/node_modules/'],
+  transformIgnorePatterns: ['node_modules/(?!(flat|uuid|minimatch|tailwindcss|yaml|perfect-debounce|birpc)/)'],
   testResultsProcessor: './resultsProcessor.js',
   reporters: [
     'default',

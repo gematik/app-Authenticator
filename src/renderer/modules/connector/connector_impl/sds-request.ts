@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -36,19 +36,6 @@ function extractEndpoints(sds: string) {
   endpoints = sdsParser(sds);
   logger.debug(`endpoints.size: ${endpoints.size}`);
 }
-
-/**
- * @deprecated The method is not in use! Remove in next version!
- */
-export const getConnectorSdsTls = async (): Promise<string> => {
-  const { data: connectorSdsResponse } = await window.api.httpGet(
-    ConnectorConfig.tlsEntryOptions.hostname + CONNECTOR_SDS_PATH,
-    { ...httpReqConfig() },
-  );
-
-  extractEndpoints(connectorSdsResponse);
-  return connectorSdsResponse;
-};
 
 export const getServiceEndpointTls = async (serviceName: string): Promise<string> => {
   try {

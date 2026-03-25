@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -31,6 +31,7 @@ import { getPinStatus } from '@/renderer/modules/connector/connector_impl/check-
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { getUserIdForCard } from '@/renderer/utils/get-userId-for-card';
 import { getErrorMessage } from '@/renderer/modules/settings/services/utils/get-smartcard-pinstatus-errormessages';
+import { findSolutionLinkByError } from '@/error-solution-links';
 
 const translate = i18n.global.t;
 
@@ -47,7 +48,12 @@ export async function connectorHbaReadabilityTest(): Promise<TestResult> {
     const pinStatus = await getPinStatus(ECardTypes.HBA, cardHbaInfo.cardHandle!, true);
     logger.info('HBA PinStatus: ' + pinStatus.pinStatus);
 
-    const errorMessage = getErrorMessage(pinStatus.pinStatus, cardHbaInfo.slotNr!, cardHbaInfo.ctId!);
+    const errorMessage = getErrorMessage(
+      pinStatus.pinStatus,
+      cardHbaInfo.slotNr!,
+      cardHbaInfo.ctId!,
+      pinStatus.soapFault,
+    );
 
     if (pinStatus.pinStatus !== 'VERIFIED' && pinStatus.pinStatus !== 'VERIFIABLE') {
       return {
@@ -55,6 +61,7 @@ export async function connectorHbaReadabilityTest(): Promise<TestResult> {
         name: translate('hba_availability'),
         status: TestStatus.failure,
         details: errorMessage,
+        solutionLink: findSolutionLinkByError(errorMessage, 'HBA'),
       };
     }
 
@@ -86,6 +93,7 @@ export async function connectorHbaReadabilityTest(): Promise<TestResult> {
       name: translate('hba_availability'),
       status: TestStatus.warning,
       details: details,
+      solutionLink: findSolutionLinkByError(details, 'HBA'),
     };
   }
 }

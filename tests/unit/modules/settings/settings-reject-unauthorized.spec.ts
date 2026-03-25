@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -23,7 +23,6 @@ import { INITIAL_STATE } from '@/renderer/modules/settings/repository';
 import { ENTRY_OPTIONS_CONFIG_GROUP } from '@/config';
 
 jest.mock('@/constants', () => ({
-  IPC_READ_CERTIFICATES: 'IPC_READ_CERTIFICATES',
   IS_TEST: true,
   PROCESS_ENVS: { MOCK_ENV: 'mock_value' },
 }));

@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -22,6 +22,7 @@
 
 <template>
   <GetCardHandle ref="cardHandleComponent" :handle-errors="handleErrors" />
+  <CardExpirationWarner ref="cardExpirationWarnerComponent" />
   <PinActions ref="pinActionsComponent" :handle-errors="handleErrors" />
   <IdpActions ref="idpActionsComponent" />
   <ConnectorActions ref="connectorActionsComponent" :handle-errors="handleErrors" />
@@ -31,11 +32,9 @@
 import { defineComponent } from 'vue';
 
 import {
-  IPC_MINIMIZE_THE_AUTHENTICATOR,
+  IPC_CLOSE_THE_AUTHENTICATOR,
   IPC_START_AUTH_FLOW_EVENT,
-  // #!if MOCK_MODE === 'ENABLED'
   IS_DEV,
-  // #!endif
   LOGIN_NOT_SUCCESSFUL,
   LOGIN_VIA_SMART_CARD_SUCCESSFUL,
   SHOW_DIALOG_DURATION,
@@ -64,15 +63,19 @@ import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connect
 import { CRYPT_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
 import { logStep } from '@/renderer/modules/gem-idp/utils';
 import { showConsentDeclaration } from '@/renderer/modules/gem-idp/utils/consent-declaration';
+import { showLoginConsentDialog } from '@/renderer/modules/gem-idp/utils/login-consent-dialog';
 import { parseAuthArguments } from '@/renderer/modules/gem-idp/services/arguments-parser';
 import CardHandle from '@/renderer/modules/gem-idp/components/CardHandle.vue';
 import PinActions from '@/renderer/modules/gem-idp/components/PinActions.vue';
 import IdpActions from '@/renderer/modules/gem-idp/components/IdpActions.vue';
 import ConnectorActions from '@/renderer/modules/gem-idp/components/ConnectorActions.vue';
+import CardExpirationWarner from '@/renderer/modules/gem-idp/components/CardExpirationWarner.vue';
 
 export default defineComponent({
   name: 'AuthFlow',
+
   components: {
+    CardExpirationWarner,
     ConnectorActions,
     IdpActions,
     PinActions,
@@ -153,6 +156,8 @@ export default defineComponent({
         const nextFlow = this.authQueue.shift();
         if (nextFlow) {
           await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+        } else {
+          this.quit();
         }
       } else {
         // find the current flow with the same ID and remove it from the queue
@@ -166,6 +171,8 @@ export default defineComponent({
         const nextFlow = this.authQueue.shift();
         if (nextFlow) {
           await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
+        } else {
+          this.quit();
         }
       }
     },
@@ -182,6 +189,9 @@ export default defineComponent({
         // get component instances
         const IdpActionsInstance = this.$refs.idpActionsComponent as InstanceType<typeof IdpActions>;
         const CardHandleInstance = this.$refs.cardHandleComponent as InstanceType<typeof CardHandle>;
+        const CardExpirationWarnerInstance = this.$refs.cardExpirationWarnerComponent as InstanceType<
+          typeof CardExpirationWarner
+        >;
         const PinActionsInstance = this.$refs.pinActionsComponent as InstanceType<typeof PinActions>;
         const ConnectorActionsInstance = this.$refs.connectorActionsComponent as InstanceType<typeof ConnectorActions>;
 
@@ -194,9 +204,19 @@ export default defineComponent({
         this.authArguments.cardType = await getCardTypeFromScope(this.authArguments.cardType, args, this.createQueue);
 
         /**
+         * Find card terminals
+         */
+        await ConnectorActionsInstance.getCardTerminals();
+
+        /**
          * Parse and set IdP host
          */
         await IdpActionsInstance.parseAndSetIdpHost();
+
+        /**
+         * Validate that the IdP host is in the list of allowed IDP hosts
+         */
+        await IdpActionsInstance.validateIdpHost();
 
         /**
          * Read IdP data
@@ -209,9 +229,12 @@ export default defineComponent({
         await IdpActionsInstance.getChallengeDataFromIdp();
 
         /**
-         * Find card terminals
+         * Show login consent dialog – user must confirm the target application before proceeding.
+         * ONLY IN PROD MODE / VERSION!
          */
-        await ConnectorActionsInstance.getCardTerminals();
+        // #!if MOCK_MODE !== 'ENABLED'
+        await showLoginConsentDialog(this.$store, this.$t);
+        // #!endif
 
         /**
          * Get CardHandle and force user to place the card
@@ -233,6 +256,11 @@ export default defineComponent({
          * Get the card certificate
          */
         await ConnectorActionsInstance.getCardCertificate(this.authArguments.cardType!);
+
+        /**
+         * Check selected Card expiration date and show warning if needed
+         */
+        CardExpirationWarnerInstance.checkCardExpirationWarning(this.authArguments.cardType!);
 
         /**
          * Sign the challenge for the card type
@@ -257,7 +285,11 @@ export default defineComponent({
         const isRedirectSuccessful = await this.callRedirectUri(authFlowEndState);
 
         if (isRedirectSuccessful && authFlowEndState.isSuccess) {
-          await alertLoginResultWithIconAndTimer('success', LOGIN_VIA_SMART_CARD_SUCCESSFUL, SHOW_DIALOG_DURATION);
+          alertLoginResultWithIconAndTimer('success', LOGIN_VIA_SMART_CARD_SUCCESSFUL, SHOW_DIALOG_DURATION).then(
+            () => {
+              logger.info('Login via smart card was successful!');
+            },
+          );
           await this.finishAndStartNextFlow();
         } else {
           await alertLoginResultWithIconAndTimer('error', LOGIN_NOT_SUCCESSFUL, SHOW_DIALOG_DURATION);
@@ -289,7 +321,6 @@ export default defineComponent({
         await this.finishAndStartNextFlow(true);
       }
     },
-
     /**
      * Try to handle errors with defined error codes. In other case,
      * the function which call this function will handle the error by itself
@@ -387,15 +418,7 @@ export default defineComponent({
 
       const urlObj = new URL(url);
 
-      if (authFlowEndState.isSuccess) {
-        // #!if MOCK_MODE === 'ENABLED'
-        if (!IS_DEV) {
-          // #!endif
-          window.api.send(IPC_MINIMIZE_THE_AUTHENTICATOR);
-          // #!if MOCK_MODE === 'ENABLED'
-        }
-        // #!endif
-      } else {
+      if (!authFlowEndState.isSuccess) {
         if (!urlObj.searchParams.has('error')) {
           urlObj.searchParams.set('error', errorType || OAUTH2_ERROR_TYPE.SERVER_ERROR);
           urlObj.searchParams.set('error_details', authFlowEndState.idpError?.gamatikErrorText || errorText || '');
@@ -438,6 +461,17 @@ export default defineComponent({
       } catch (error) {
         return false;
       }
+    },
+    quit() {
+      // #!if MOCK_MODE === 'ENABLED'
+      if (!IS_DEV) {
+        // #!endif
+        setTimeout(() => {
+          window.api.send(IPC_CLOSE_THE_AUTHENTICATOR);
+        }, 3000);
+        // #!if MOCK_MODE === 'ENABLED'
+      }
+      // #!endif
     },
   },
 });

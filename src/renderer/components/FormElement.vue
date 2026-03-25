@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -21,13 +21,16 @@
   -->
 <template>
   <div
-    v-if="hide !== true"
+    v-if="!hide"
     class="form-element-container flex justify-between items-center px-[48px] py-[8px] bg-neutral inner-box-shadow"
   >
-    <div class="text-sm" :for="`input-${name}`">
-      <label :id="`form-${name}-label`" class="text-sm"> {{ label }} </label>
+    <div class="text-sm">
+      <label :for="`form-${name}`" :id="`form-${name}-label`" class="text-sm">
+        {{ label }}
+      </label>
       <Tooltip :tooltip-content="infoText"></Tooltip>
     </div>
+
     <div>
       <div v-if="type === 'input' || type === 'password' || type === 'email' || type === 'number' || type === 'date'">
         <input
@@ -78,16 +81,22 @@
           </option>
         </select>
       </div>
+
       <div v-else-if="type === 'file' || type === 'file-path'">
-        <label class="flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden">
-          <span
-            v-for="file in iterable ? model[name] : [model[name]]"
-            :key="file"
-            class="w-[273px] overflow-hidden truncate rtl"
-            :title="type === 'file-path' ? file : $t('file_selected')"
-          >
-            {{ type === 'file-path' ? file : $t('file_selected') }}
-          </span>
+        <label
+          class="relative flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
+        >
+          <template v-for="file in iterable ? model[name] : [model[name]]" :key="file">
+            <span
+              v-if="file"
+              class="w-[273px] overflow-hidden truncate"
+              :class="{ rtl: type === 'file-path' }"
+              :title="type === 'file-path' ? file : $t('file_selected')"
+            >
+              <template v-if="type === 'file-path'">&lrm;</template
+              >{{ type === 'file-path' ? file : $t('file_selected') }}
+            </span>
+          </template>
           <img
             v-if="!model[name] || iterable"
             src="@/assets/file-upload.svg"
@@ -99,12 +108,12 @@
             :id="`form-${name}`"
             :disabled="disabled"
             :required="required && !iterable"
-            accept=".pem,.p12,.cer"
+            accept=".pem,.p12,.cer,.key"
             title=""
             type="file"
             @change="onFileChange"
           />
-          <button v-if="model[name]" type="button" @click="clearValue">
+          <button v-if="model[name]" type="button" @click="clearValue" class="relative z-10">
             <svg
               class="h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
@@ -379,5 +388,10 @@ export default defineComponent({
 input[type='file'] {
   opacity: 0;
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 </style>

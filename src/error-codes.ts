@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -34,6 +34,7 @@ export const ERROR_CODES = {
   AUTHCL_0011: 'AUTHCL_0011',
   AUTHCL_0012: 'AUTHCL_0012',
   AUTHCL_0013: 'AUTHCL_0013',
+  AUTHCL_0014: 'AUTHCL_0014',
 
   // connector errors begin with 1XXX
   AUTHCL_1000: 'AUTHCL_1000',
@@ -182,6 +183,7 @@ export const ERROR_CODE_EXPLANATIONS = {
   [ERROR_CODES.AUTHCL_0011]: 'User declined the consent',
   [ERROR_CODES.AUTHCL_0012]: 'Config.json is not valid!',
   [ERROR_CODES.AUTHCL_0013]: 'Creating JWE Signature failed',
+  [ERROR_CODES.AUTHCL_0014]: 'Not allowed IDP host',
 
   [ERROR_CODES.AUTHCL_1000]: 'Could not connect to connector',
   [ERROR_CODES.AUTHCL_1001]: 'Can not get card handle',

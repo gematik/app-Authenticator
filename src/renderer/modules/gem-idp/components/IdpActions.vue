@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -28,8 +28,12 @@ import { OAUTH2_ERROR_TYPE } from '@/renderer/modules/gem-idp/type-definitions';
 import { logStep, sendAutoRedirectRequest } from '@/renderer/modules/gem-idp/utils';
 import { removeLastPartOfChallengePath } from '@/renderer/utils/parse-idp-url';
 import { logger } from '@/renderer/service/logger';
-import { IPC_SET_USER_AGENT } from '@/constants';
+import { IPC_SET_USER_AGENT, IDP_ALLOWED_HOSTS } from '@/constants';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
+// #!if MOCK_MODE === 'ENABLED'
+import { getConfig } from '@/renderer/utils/get-configs';
+import { DEVELOPER_OPTIONS } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
 
 export default defineComponent({
   name: 'IdpActions',
@@ -78,6 +82,60 @@ export default defineComponent({
         await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0001);
         throw new AuthFlowError(
           `Error while parsing and setting IdP host (${ERROR_CODES.AUTHCL_0001})`,
+          e.message,
+          undefined,
+          true,
+          OAUTH2_ERROR_TYPE.INVALID_REQUEST,
+        );
+      }
+    },
+    /**
+     * Validates that the IdP host is in the list of allowed IDP hosts.
+     * If the host is not allowed, the auth flow will be aborted.
+     */
+    async validateIdpHost() {
+      logStep('Step: validateIdpHost');
+      const idpHost = this.$store.state.idpServiceStore.idpHost;
+
+      try {
+        const url = new URL(idpHost);
+        const hostname = url.hostname;
+
+        const allowedHosts = [...IDP_ALLOWED_HOSTS];
+
+        // #!if MOCK_MODE === 'ENABLED'
+        const additionalHosts = getConfig(DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS, '').value as string;
+        if (additionalHosts) {
+          const parsed = additionalHosts
+            .split(',')
+            .map((h) => h.trim())
+            .filter(Boolean);
+          allowedHosts.push(...parsed);
+        }
+        // #!endif
+
+        if (!allowedHosts.includes(hostname)) {
+          logger.error(`IDP host "${hostname}" is not in the list of allowed IDP hosts`);
+          await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0014);
+          throw new AuthFlowError(
+            `Not allowed IDP! (${ERROR_CODES.AUTHCL_0014})`,
+            `IDP host "${hostname}" is not allowed`,
+            undefined,
+            true,
+            OAUTH2_ERROR_TYPE.INVALID_REQUEST,
+          );
+        }
+
+        logger.info(`IDP host "${hostname}" is allowed`);
+      } catch (e) {
+        if (e instanceof AuthFlowError) {
+          throw e;
+        }
+
+        logger.error(`Failed to validate IDP host: ${e.message}`);
+        await alertDefinedErrorWithDataOptional(ERROR_CODES.AUTHCL_0014);
+        throw new AuthFlowError(
+          `Not allowed IDP! (${ERROR_CODES.AUTHCL_0014})`,
           e.message,
           undefined,
           true,

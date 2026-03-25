@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -44,10 +44,10 @@ const WATCHED_ENV_VAR_KEYS = ['CLIENTNAME', 'AUTHCONFIGPATH', 'VIEWCLIENT_MACHIN
 const REGISTRY_KEY_SYSTEM_ENV = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment';
 const REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Citrix\\Ica\\Session';
 
-let assemblyFile: string = 'resources/WinCertStoreLib.dll';
+let assemblyFile: string = 'resources/WinAPILib.dll';
 // #!if MOCK_MODE === 'ENABLED'
 if (IS_DEV) {
-  assemblyFile = path.join(__dirname, 'WinCertStoreLib.dll');
+  assemblyFile = path.join(__dirname, 'WinAPILib.dll');
 }
 
 // #!endif
@@ -118,14 +118,14 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
   }
   try {
     const keyValuePairsFromRegistryAsString = await getVolatileEnv()
-      .then((value) => {
-        return getKeyValueFromWindowsRegistry(value).then((result: string) => {
+      .then((value) =>
+        getKeyValueFromWindowsRegistry(value).then((result: string) => {
           if (result) {
             return result;
           }
           throw new Error('Key not found');
-        });
-      })
+        }),
+      )
       .catch(() => {
         logger.debug('Error when reading the registry key for volatile envs');
         return '';
@@ -139,11 +139,23 @@ export const readLatestEnvs = async (mainWindow: BrowserWindow | null): Promise<
     }
   }
   try {
-    const keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+    // Try the session-specific Citrix connection key first: HKLM\\SOFTWARE\\Citrix\\Ica\\Session\\<SessionId>\\Connection
+    let keyValuePairsFromRegistryAsString: string;
+    try {
+      const sessionID = await querySessionID();
+      const citrixSessionConnectionKey = `${REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION}\\${sessionID}\\Connection`;
+      keyValuePairsFromRegistryAsString = await readRegistryForKey(citrixSessionConnectionKey);
+    } catch (error) {
+      // Fallback: read the base Session key as before
+      keyValuePairsFromRegistryAsString = await readRegistryForKey(REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+    }
     checkEnvVarsChange('CLIENTNAME', keyValuePairsFromRegistryAsString);
   } catch (e) {
     if (!readingRegistryErrorLogged) {
-      logger.debug('Error when reading the registry key for CLIENTNAME: ' + REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION);
+      logger.debug(
+        'Error when reading the registry key for CLIENTNAME under Citrix Session connection and base Session: ' +
+          REGISTRY_KEY_SOFTWARE_CITRIX_ICA_SESSION,
+      );
       readingRegistryErrorLogged = true;
     }
   }

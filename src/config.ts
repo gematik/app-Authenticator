@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -43,6 +43,7 @@ export const ENTRY_OPTIONS_CONFIG_GROUP = {
   USERNAME_BASIC_AUTH: 'connector.entryOption.username',
   PASSWORD_BASIC_AUTH: 'connector.entryOption.password',
   SMCB_PIN_OPTION: 'connector.entryOption.smcbPinOption',
+  WARN_CARD_EXPIRATION: 'connector.entryOption.warnCardExpiration',
 } as const;
 
 /**
@@ -54,11 +55,6 @@ export const AUTH_SIGN_PARAMETER_CONFIG_GROUP = {
 };
 
 export const TLS_AUTH_TYPE_CONFIG = 'connector.tlsAuthType';
-
-/**
- * Whether check updates automatically or not
- */
-export const CHECK_UPDATES_AUTOMATICALLY_CONFIG = 'checkUpdatesAutomatically';
 
 export const CONNECTOR_GATEWAY_NAME = 'connectorGatewayName';
 export const CONNECTOR_GATEWAY_NAME_STATUS = 'connectorGatewayNameStatus';

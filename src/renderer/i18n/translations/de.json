@@ -11,6 +11,8 @@
   "save_anyway": "Trotzdem speichern",
   "start_anyway": "Trotzdem starten",
   "example_screenshot_description": "Sie sehen ein Beispiel Screenshot.",
+  "main_license": "Lizenzen",
+  "third_party_licenses": "Ausführliche Lizenzen Dritter",
   "config_assistant": {
     "menu-title": "Konfigurationsassistent",
     "corner-title": "Schritt-für-Schritt Anleitung",
@@ -108,6 +110,7 @@
         "step_title": "Authentisierungsmethode",
         "title": "Authentisierungsmethoden",
         "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "auth_type_label": "Auswahl der Authentisierungsmethode",
         "basic_auth": "Basic Authentication (Benutzername & Passwort):",
         "cert_option_p12": "Zertifikat im P12-Format",
         "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
@@ -153,15 +156,24 @@
           "step_title": "Keine Authentisierung",
           "title": "Keine Authentisierung",
           "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
-          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentifizierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
           "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
         }
       },
       "step10": {
         "step_title": "SMC-B PIN-Abfrage",
         "title": "SMC-B - PIN-Abfrage",
+        "subtitle": "Einstellung zur SMC-B PIN-Abfrage",
         "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
         "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
+      },
+      "step11": {
+        "step_title": "Warnung SMC-B Kartenablauf",
+        "title": "Warnung SMC-B Kartenablauf",
+        "subtitle": "Einstellung zur Warnung über SMC-B Kartenablauf",
+        "description_text_activated": "<strong>Aktiviert:</strong> Eine Warnung anzeigen, wenn die Gültigkeit einer SMC-B Karte innerhalb der nächsten 90 Tage abläuft. Diese Warnung wird während des Authentifizierungsvorgangs angezeigt.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte während des Authentifizierungsvorgangs anzeigen. Diese Einstellung ist nützlich, wenn Sie keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte benötigen.",
+        "hint": "<u>Hinweis:</u> Sie können sich stets über die Laufzeit von Karten informieren, indem Sie unter Einstellungen die <i>ECC Prüfung</i> ausführen."
       }
     },
     "koco": {
@@ -231,6 +243,7 @@
         "step_title": "Authentisierungsmethode",
         "title": "Authentisierungsmethoden",
         "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "auth_type_label": "Auswahl der Authentisierungsmethode",
         "basic_auth": "Basic Authentication (Benutzername & Passwort):",
         "cert_option_p12": "Zertifikat im P12-Format",
         "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
@@ -277,15 +290,24 @@
           "step_title": "Keine Authentisierung",
           "title": "Keine Authentisierung",
           "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
-          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentifizierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
           "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
         }
       },
       "step10": {
         "step_title": "SMC-B PIN-Abfrage",
         "title": "SMC-B - PIN-Abfrage",
+        "subtitle": "Einstellung zur SMC-B PIN-Abfrage",
         "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
         "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
+      },
+      "step11": {
+        "step_title": "Warnung SMC-B Kartenablauf",
+        "title": "Warnung SMC-B Kartenablauf",
+        "subtitle": "Einstellung zur Warnung über SMC-B Kartenablauf",
+        "description_text_activated": "<strong>Aktiviert:</strong> Eine Warnung anzeigen, wenn die Gültigkeit einer SMC-B Karte innerhalb der nächsten 90 Tage abläuft. Diese Warnung wird während des Authentifizierungsvorgangs angezeigt.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte während des Authentifizierungsvorgangs anzeigen. Diese Einstellung ist nützlich, wenn Sie keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte benötigen.",
+        "hint": "<u>Hinweis:</u> Sie können sich stets über die Laufzeit von Karten informieren, indem Sie unter Einstellungen die <i>ECC Prüfung</i> ausführen."
       }
     },
     "secunet": {
@@ -356,6 +378,7 @@
         "step_title": "Authentisierungsmethode",
         "title": "Authentisierungsmethoden",
         "intro": "Bitte wählen Sie die Art der Authentisierung aus, mit der sich der Authenticator bei Ihrem Konnektor authentisieren soll. Diese Einstellung muss mit der im Konnektor konfigurierten Authentisierungsmethode übereinstimmen. Sie haben die Wahl zwischen folgenden Methoden:",
+        "auth_type_label": "Auswahl der Authentisierungsmethode",
         "basic_auth": "Basic Authentication (Benutzername & Passwort):",
         "cert_option_p12": "Zertifikat im P12-Format",
         "cert_option_others": "Zertifikat (z.B. PEM oder CER)",
@@ -405,15 +428,24 @@
           "step_title": "Keine Authentisierung",
           "title": "Keine Authentisierung",
           "no_authentication_hint": "Sie haben in Schritt 4 \"Keine Authentisierung\" ausgewählt.",
-          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentisierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
+          "no_authentication_text": "Achtung: Diese Methode wird nicht empfohlen, da sie keine zusätzliche Sicherheitsebene bietet und somit potenziell anfälliger für unbefugte Zugriffe ist. Bitte erwägen Sie eine sicherere Authentifizierungsmethode, um die Integrität und Vertraulichkeit Ihrer Daten zu gewährleisten.",
           "no_authentication_back": "Sie können jetzt mit dem Zurück-Button zur Konfiguration zurückkehren und eine andere Authentifizierungsmethode auswählen oder mittles \"Weiter\" fortfahren."
         }
       },
       "step10": {
         "step_title": "SMC-B PIN-Abfrage",
         "title": "SMC-B - PIN-Abfrage",
+        "subtitle": "Einstellung zur SMC-B PIN-Abfrage",
         "description_text_activated": "<strong>Aktiviert:</strong> Der Nutzer kann während des Authentifizierungsprozesses die erforderliche PIN direkt im Authenticator eingeben. Diese Vorgehensweise wird besonders für medizinische Praxen empfohlen, da sie häufig nicht über eine entsprechende Funktion im eigenem Praxisverwaltungssystem (PVS) oder ein vergleichbares Managementsystem verfügen.",
         "description_text_deactivated": "<strong>Deaktiviert:</strong> Es wird ein Warnhinweis angezeigt, sofern eine PIN-Eingabe erforderlich ist. In diesem Fall erfolgt die Eingabe der PIN über das Praxisverwaltungssystem (PVS), ein anderes Managementsystem oder den Konnektor. Diese Option ist insbesondere für Krankenhäuser oder ähnliche Einrichtungen geeignet, die mit einer zentralen Verwaltung der PINs der SMC-B Karten agieren."
+      },
+      "step11": {
+        "step_title": "Warnung SMC-B Kartenablauf",
+        "title": "Warnung SMC-B Kartenablauf",
+        "subtitle": "Einstellung zur Warnung über SMC-B Kartenablauf",
+        "description_text_activated": "<strong>Aktiviert:</strong> Eine Warnung anzeigen, wenn die Gültigkeit einer SMC-B Karte innerhalb der nächsten 90 Tage abläuft. Diese Warnung wird während des Authentifizierungsvorgangs angezeigt.",
+        "description_text_deactivated": "<strong>Deaktiviert:</strong> Keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte während des Authentifizierungsvorgangs anzeigen. Diese Einstellung ist nützlich, wenn Sie keine Warnung über den Ablauf der Gültigkeit einer SMC-B Karte benötigen.",
+        "hint": "<u>Hinweis:</u> Sie können sich stets über die Laufzeit von Karten informieren, indem Sie unter Einstellungen die <i>ECC Prüfung</i> ausführen."
       }
     }
   },
@@ -479,7 +511,6 @@
   "info_text_pfx_file_password": "Das Passwort, welches zur Authentisierung für die P12-Datei verwendet wird.",
   "multi_card_select_header": "Bitte wählen Sie eine {cardType} aus:",
   "multi_card_select": "( Es befinden sich mehrere {cardType}s in den verbundenen Kartenterminals )",
-  "info_text_check_updates_automatically": "Ist diese Option \"Aktiviert\", dann prüft der Authenticator regelmäßig , ob es Updates gibt und führt diese eigenständig durch",
   "info_text_timeout_for_developers": "Hier kann die Dauer des Timeouts zum Verbindungsaufbau in Millisekunden eingetragen werden (Default 30000ms).",
   "work_space_id": "Arbeitsplatz-ID",
   "tls_authentication": "Client Authentisierung",
@@ -493,13 +524,14 @@
   "smcb_pin_option_info": "Diese Option ermöglicht es, die PIN-Abfrage für die SMC-B Karte innerhalb des Authenticators zu aktivieren oder zu deaktivieren. Für Privatpraxen empfiehlt es sich diese Option zu aktivieren.",
   "private_key": "Privater Schlüssel im PEM-Format",
   "client_certificate": "Client-Zertifikat im PEM-Format",
-  "certificate_pfx": "Zertifikat P12-Datei (RSA oder ECC (NIST only))",
-  "pfx_file": "P12-Zertifikat (RSA oder ECC (NIST only))",
+  "certificate_pfx": "Zertifikat P12-Datei",
+  "pfx_file": "P12-Zertifikat",
   "info_text_pfx_file": "Das Zertifikat, welches für die Authentifizierung bei der Verbindung zum Konnektor verwendet wird. (P12-Format)",
   "pfx_file_password": "Passwort des P12-Zertifikats",
   "pfx_file_password_swal": "Geben Sie das Passwort der ausgewählten P12-Datei ein",
   "pfx_cert_invalid": "In der P12-Datei ist kein valides Zertifikat im RSA-Format",
   "pfx_password_fail": "Das eingegebene Passwort ist falsch",
+  "pfx_cert_expired": "Das Zertifikat in der P12-Datei ist abgelaufen",
   "pfx_no_cert": "In der P12-Datei ist kein Zertifikat vorhanden",
   "pfx_with_invalid_certs": "P12 nicht valide",
   "pfx_repair_swal": "Wir haben mehrere Zertifikate gefunden wobei nur eins valide ist. Sollen die invaliden Zertifikate gelöscht werden?",
@@ -545,17 +577,20 @@
   "license": "Lizenz",
   "vat_number": "Umsatzsteuer-Identifikationsnummer (USt-ID)",
   "warning": "Achtung",
+  "warning_card_expire": "Ihre {cardType} Karte (ICCSN: {iccsn}) läuft in {daysUntilExpiration} Tagen ab. Bitte tauschen Sie diese bis zum {expirationDate} aus.",
+  "warning_card_expired": "Ihre {cardType} Karte (ICCSN: {iccsn}) ist am {expirationDate} abgelaufen. Bitte tauschen Sie diese umgehend aus.",
+  "unknown_date": "Unbekannt",
   "selected_file_is_not_compatible_with": "Ausgewählte Datei {filePath} ist nicht richtig für {fieldName}",
   "settings_unsaved": "Einstellungen wurden noch nicht gespeichert!",
   "setting_is_unsaved": "Diese Änderung wurde noch nicht gespeichert",
   "settings_will_be_saved": "Einstellungen werden gespeichert!",
   "are_you_sure": "Sind Sie sicher?",
   "do_you_want_to_save_changes": "Möchten Sie die Änderungen speichern?",
-  "automatic_updates": "Automatische Updates",
-  "check_updates_automatically": "Updates automatisch durchführen",
   "timout_settings": "Timeout Einstellungen",
   "time_out_value": "Wert des Timeouts in Milli-Sekunden",
   "selected_cert_file_is_not_valid": "Ausgewählte Zertifikatsdatei ist falsch formatiert.",
+  "selected_cert_file_is_expired": "Das ausgewählte Zertifikat ist abgelaufen.",
+  "selected_cert_file_not_yet_valid": "Das ausgewählte Zertifikat ist noch nicht gültig.",
   "mock_version_hint": "Nutzen Sie die Mock-Version nicht in der Produktivumgebung, da sonst vertrauliche Informationen geloggt werden. Die Produktiv-Version finden Sie im {url}.",
   "proxy_settings": "Proxy Einstellungen",
   "proxy_authentication_type": "Proxy-Authentifizierung",
@@ -581,6 +616,16 @@
   "value_is_not_valid": "Wert ist nicht gültig!",
   "invalid_ip_address": "Ungültige IP-Adresse: {invalidIPAddress}",
   "invalid_proxy_address": "Ungültige Adresse: {value}",
+  "login_consent_title": "Anmeldung bestätigen",
+  "login_consent_intro": "Sie möchten sich für folgende Anwendung anmelden:",
+  "login_consent_application": "Anwendung",
+  "login_consent_idp": "Identity Provider",
+  "login_consent_rp": "Aufrufende Anwendung",
+  "login_consent_challenge_domain": "Challenge-Domain",
+  "login_consent_confirm": "Ja, anmelden",
+  "login_consent_decline": "Abbrechen",
+  "login_consent_security_hint": "Bitte stellen Sie sicher, dass Sie die Anmeldung selbst über {appUrl} gestartet haben und die URL nicht von Dritten erhalten haben.",
+  "login_consent_security_hint_warning": "Falls Sie unsicher sind, brechen Sie den Vorgang ab.",
   "privacy_notice": "Datenschutzhinweis",
   "consent_declaration_text": "Ich erlaube, dass folgende Informationen an den jeweiligen Diensteanbieter weitergeleitet werden:",
   "accept_consent": "Ich stimme zu",
@@ -603,6 +648,8 @@
   "connector_gateway_status_info_text": "Konnektor API-Gateway mit mehreren Konnektoren im Betrieb. Aktivieren Sie diesen Schalter, können Sie den zu verwendenden Konnektor eintragen.",
   "connector_gateway_name_info_text": "Tragen Sie hier den Konnektornamen ein, den der Authenticator bei der Kommunikation über das Konnektor Gateway verwenden soll.",
   "continue": "Fortfahren",
+  "warn_card_expiration": "Warnung bei SMC-B Kartenablauf anzeigen",
+  "warn_card_expiration_info": "Warnung während eines Authentifizierungsvorgangs anzeigen, wenn eine SMC-B Karte in den nächsten 90 Tagen abläuft.",
   "ecc_warning_options": {
     "ecc_check": "ECC Prüfung",
     "title": "Optionen für HBA ECC Prüfung",
@@ -658,6 +705,10 @@
     "AUTHCL_0012": {
       "title": "Fehler beim Lesen der Konfigurationsdatei",
       "text": "Es gibt einen Fehler in der Konfigurationsdatei, bitte überprüfen Sie die Datei {path}."
+    },
+    "AUTHCL_0014": {
+      "title": "Nicht erlaubter IDP",
+      "text": "Der angegebene IDP-Host ist nicht in der Liste der erlaubten IDP-Hosts enthalten. Der Authentifizierungsvorgang wurde abgebrochen. Fehlercode (AUTHCL_0014)"
     },
     "AUTHCL_1000": {
       "title": "Verbindung zum Konnektor fehlgeschlagen",

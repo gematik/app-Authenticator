@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,7 +20,7 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import dot from 'dot-object';
+import { flatten, unflatten } from 'flat';
 import Swal from 'sweetalert2';
 
 // #!if MOCK_MODE === 'ENABLED'
@@ -41,7 +41,6 @@ import {
 } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import {
-  CHECK_UPDATES_AUTOMATICALLY_CONFIG,
   CONNECTOR_GATEWAY_NAME,
   CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
@@ -79,14 +78,13 @@ export type TRepositoryDataValues = {
   [ENTRY_OPTIONS_CONFIG_GROUP.USERNAME_BASIC_AUTH]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.PASSWORD_BASIC_AUTH]?: string;
   [ENTRY_OPTIONS_CONFIG_GROUP.SMCB_PIN_OPTION]: boolean;
+  [ENTRY_OPTIONS_CONFIG_GROUP.WARN_CARD_EXPIRATION]: boolean;
 
   [CONTEXT_PARAMETERS_CONFIG_GROUP.CLIENT_ID]: string;
   [CONTEXT_PARAMETERS_CONFIG_GROUP.MANDANT_ID]: string;
   [CONTEXT_PARAMETERS_CONFIG_GROUP.WORKPLACE_ID]: string;
 
   [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE;
-
-  [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: boolean;
 
   [TIMEOUT_PARAMETER_CONFIG]: number;
 
@@ -99,6 +97,7 @@ export type TRepositoryDataValues = {
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]?: boolean;
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]?: boolean;
+  [DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS]?: string;
   [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_CERT]: string;
   [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_KEY]: string;
   [MOCK_CONNECTOR_CERTS_CONFIG.HBA_CERT]: string;
@@ -132,7 +131,6 @@ export interface ISettingsRepository {
 }
 
 export const INITIAL_STATE = {
-  [CHECK_UPDATES_AUTOMATICALLY_CONFIG]: true,
   [PROXY_SETTINGS_CONFIG.AUTH_TYPE]: false,
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
   [PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR]: false,
@@ -140,12 +138,14 @@ export const INITIAL_STATE = {
   [ENTRY_OPTIONS_CONFIG_GROUP.SMCB_PIN_OPTION]: false,
   [TLS_AUTH_TYPE_CONFIG]: TLS_AUTH_TYPE.ServerCertAuth,
   [ENTRY_OPTIONS_CONFIG_GROUP.PORT]: 443,
+  [ENTRY_OPTIONS_CONFIG_GROUP.WARN_CARD_EXPIRATION]: true,
 
   [ECC_WARNING_OPTIONS.ECC_WARNING_STATUS]: true,
 
   // #!if MOCK_MODE === 'ENABLED'
   [MOCK_CONNECTOR_CONFIG]: false,
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]: true,
+  [DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS]: '',
   // #!endif
 
   [CONNECTOR_GATEWAY_NAME_STATUS]: false,
@@ -189,7 +189,7 @@ export class FileStorageRepository implements ISettingsRepository {
   private static _isCentralConfigurationInvalid = false;
 
   public static getConfigDir(): { path: string; localEnv: boolean } {
-    const clientName = PROCESS_ENVS.CLIENTNAME;
+    const clientName = PROCESS_ENVS.CLIENTNAME || PROCESS_ENVS.ClientName;
     const computerName = PROCESS_ENVS.COMPUTERNAME;
     const authConfigPath = PROCESS_ENVS.AUTHCONFIGPATH;
     const viewClientMachineName = PROCESS_ENVS.VIEWCLIENT_MACHINE_NAME || PROCESS_ENVS.ViewClient_Machine_Name;
@@ -273,7 +273,7 @@ export class FileStorageRepository implements ISettingsRepository {
 
   save(data: TRepositoryData): void {
     // update state
-    storedData = dot.dot(data);
+    storedData = flatten(data);
 
     // send data to preload & main
     window.api.setAppConfigInPreload(storedData);
@@ -298,7 +298,7 @@ export class FileStorageRepository implements ISettingsRepository {
       }
     }
 
-    const unFlatted = dot.object({ ...nonSensitiveData });
+    const unFlatted = unflatten({ ...nonSensitiveData });
     window.api.writeFileSync(FileStorageRepository.getPath(), JSON.stringify(unFlatted, null, 2));
 
     logger.info('Saved config changes under: ', FileStorageRepository.getPath());
@@ -380,7 +380,7 @@ export class FileStorageRepository implements ISettingsRepository {
     }
 
     const dottedData = {
-      ...dot.dot(json),
+      ...(flatten(json) as TRepositoryData),
       // get sensitive data from credential manager
       ...sensitiveDataFromCredentialsManager,
     };

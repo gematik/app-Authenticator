@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,6 +26,7 @@ import tsEslint from 'typescript-eslint';
 import vueParser from 'vue-eslint-parser';
 import pluginVue from 'eslint-plugin-vue';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import pluginVueA11y from 'eslint-plugin-vuejs-accessibility';
 
 export default [
   {
@@ -81,6 +82,8 @@ export default [
 
   // chosen vue defaults
   ...pluginVue.configs['flat/essential'],
+  // Vue A11y Empfehlungen
+  ...pluginVueA11y.configs['flat/recommended'],
   // vue
   {
     files: ['**/*.vue'],
@@ -93,6 +96,15 @@ export default [
     rules: {
       'vue/no-mutating-props': 'off',
       'vue/no-unused-vars': 'error',
+      'vuejs-accessibility/label-has-for': [
+        'error',
+        {
+          required: {
+            some: ['nesting', 'id'], // Entweder Verschachtelung ODER for/id ist ausreichend
+          },
+          allowChildren: true,
+        },
+      ],
     },
   },
   eslintPluginPrettierRecommended,

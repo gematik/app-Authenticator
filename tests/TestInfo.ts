@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -41,6 +41,8 @@ export const CONNECTOR_TEST_ENTRY_OPTIONS = {
   method: 'GET',
   username: process.env.USER_NAME,
   password: process.env.PASSWORD_CONNECTOR_ENTRY,
+  pfxFile: process.env.PFX_FILE ? path.resolve(process.env.PFX_FILE) : undefined,
+  pfxPassword: process.env.PFX_PASSWORD,
   remoteKT: process.env.REMOTE_KT,
   localKT: process.env.LOCAL_KT,
 };

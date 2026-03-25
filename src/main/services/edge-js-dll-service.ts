@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -24,14 +24,14 @@ import { IS_DEV } from '@/constants';
 import path from 'path';
 import { MainPathProvider } from '@/main/services/main-path-provider';
 
-const typeName = 'WinCertStoreLib.Methods';
+const typeName = 'WinAPILib.Methods';
 
 export function callEdgeMethod(methodName: string) {
   const edge = require('electron-edge-js');
-  let assemblyFile: string = path.join(MainPathProvider.getResourcesPath(), 'WinCertStoreLib.dll');
+  let assemblyFile: string = path.join(MainPathProvider.getResourcesPath(), 'WinAPILib.dll');
   // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
-    assemblyFile = path.join(__dirname, 'WinCertStoreLib.dll');
+    assemblyFile = path.join(__dirname, 'WinAPILib.dll');
   }
   // #!endif
   return edge.func({

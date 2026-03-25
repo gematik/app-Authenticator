@@ -45,13 +45,16 @@ coverage
 # DMG Licence
 /src/assets/license_de.txt
 
+/fastlane/README.md
+/fastlane/report.xml
 
-Archive.Jenkinsfile
-Jenkinsfile
-JenkinsfileMacOS
-Release.Jenkinsfile
-Github-Release.Jenkinsfile
-*Jenkinsfile*
+# Bundled Node.js binaries for macOS (downloaded during build)
+resources/node-bin/
+
+# This should address all Jenkinsfiles, e.g. JenkinsfileMacOS, Post-Release.Jenkinsfile
+Jenkinsfile*
+*.Jenkinsfile
+
 /tests/Integration/
 Koco.env
 Secunet.env
@@ -83,4 +86,8 @@ Rise.env
 # MSIX Configurations
 /msix
 /msix/
+
+.npmrc
+
+/build/*
 

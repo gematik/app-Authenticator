@@ -68,6 +68,7 @@ export type TIdpServiceStore = {
   challengePath: string;
   idpHost: string;
   challenge: string;
+  idpSigJwk: IJsonWebKey | IJsonWebKeySet | null;
   userConsent?: {
     requested_scopes: Record<string, string>;
     requested_claims: Record<string, string>;
@@ -77,3 +78,34 @@ export type TIdpServiceStore = {
   idpEncJwk?: IIdpEncJwk;
   clientId: string;
 };
+
+export interface IJsonWebKey {
+  kty: string;
+  use?: string;
+  key_ops?: string[];
+  alg?: string;
+  kid?: string;
+  x5u?: string;
+  x5c?: string[];
+  x5t?: string;
+  'x5t#S256'?: string;
+  // EC-specific
+  crv?: string;
+  x?: string;
+  y?: string;
+  d?: string;
+  // RSA-specific
+  n?: string;
+  e?: string;
+
+  // allow extra props
+  [propName: string]: unknown;
+}
+
+export interface IJsonWebKeySet {
+  keys: JsonWebKey[];
+}
+
+export type TEcJwk = JsonWebKey & { kty: 'EC'; crv?: string; x?: string; y?: string };
+export type TRsaJwk = JsonWebKey & { kty: 'RSA'; n?: string; e?: string };
+export type TAnyJwk = EcJwk | RsaJwk | JsonWebKey;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -40,6 +40,18 @@ jest.mock('@/renderer/modules/settings/useSettings.ts', () => ({
   },
 }));
 jest.spyOn(FileStorageRepository, 'isCentralConfigurationInvalid', 'get').mockReturnValue(true);
+jest.spyOn(FileStorageRepository, 'isNewInstallation', 'get').mockReturnValue(true);
+
+jest.mock('vue-router', () => ({
+  ...jest.requireActual('vue-router'),
+  onBeforeRouteLeave: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+  useRoute: () => ({
+    params: {},
+  }),
+}));
 
 /**
  * We want to warn the user if a save attempt is made with an invalid central configuration detected
@@ -49,6 +61,7 @@ jest.spyOn(FileStorageRepository, 'isCentralConfigurationInvalid', 'get').mockRe
 describe('settings try save with invalid central config detected', () => {
   afterAll(() => {
     clearSampleData();
+    jest.clearAllMocks();
   });
 
   it('shows a warning box on top of the settings screen', async function () {

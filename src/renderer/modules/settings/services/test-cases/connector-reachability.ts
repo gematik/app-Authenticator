@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -24,6 +24,7 @@ import { TestResult, TestStatus } from '@/renderer/modules/settings/services/tes
 import { launch as getCardTerminals } from '@/renderer/modules/connector/connector_impl/get-card-terminals-launcher';
 import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
+import { findSolutionLinkByError } from '@/error-solution-links';
 
 const translate = i18n.global.t;
 
@@ -39,11 +40,13 @@ export async function connectorReachabilityTest(): Promise<TestResult> {
     };
   } catch (err) {
     logger.debug(err.message);
+
     return {
       title: translate('function_test_general'),
       name: translate('accessibility_of_the_connector'),
       status: TestStatus.failure,
       details: translate('error_info') + `${err.message}`,
+      solutionLink: findSolutionLinkByError(err.message, 'KONNEKTOR'),
     };
   }
 }

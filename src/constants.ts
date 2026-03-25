@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -19,6 +19,10 @@
  *
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
+
+import os from 'os';
+
+export const HOME_DIR = window?.api?.homedir() || os?.homedir();
 
 export const CONFIG_FILE_NAME = 'config.json';
 
@@ -63,8 +67,6 @@ export const IPC_SAVE_CREDENTIALS = 'IPC_SAVE_CREDENTIALS';
  */
 export const IPC_SET_USER_AGENT = 'IPC_SET_USER_AGENT';
 
-export const IPC_READ_CERTIFICATES = 'IPC_READ_CERTIFICATES';
-
 /**
  * @deprecated remove this logic completely and use cardType parameter instead
  */
@@ -82,20 +84,14 @@ export const IPC_GET_PROXY = 'IPC_GET_PROXY';
 export const IPC_WARN_USER = 'IPC_WARN_USER';
 
 /**
- * Start check a new update process
- */
-export const IPC_CHECK_UPDATE = 'IPC_CHECK_UPDATE';
-export const IPC_CANCEL_UPDATE = 'IPC_CANCEL_UPDATE';
-
-/**
  * Event name for  maximizing and focusing to authenticator app
  */
 export const IPC_FOCUS_TO_AUTHENTICATOR = 'IPC_FOCUS_TO_AUTHENTICATOR';
 
 /**
- * Event name for  minimizing the authenticator app
+ * Event name for closing the authenticator app
  */
-export const IPC_MINIMIZE_THE_AUTHENTICATOR = 'IPC_MINIMIZE_THE_AUTHENTICATOR';
+export const IPC_CLOSE_THE_AUTHENTICATOR = 'IPC_CLOSE_THE_AUTHENTICATOR';
 
 /**
  * Our logging system works in the main task, not in the browser.
@@ -223,6 +219,12 @@ export const IDP_ENDPOINTS = {
   OPENID_CONFIGURATION: '/.well-known/openid-configuration',
 };
 
+/**
+ * Allowed IDP hosts for the authentication process
+ * We have to allow only specific hosts for security reasons, to prevent SSRF attacks and other security issues.
+ */
+export const IDP_ALLOWED_HOSTS = ['idp.app.ti-dienste.de', 'idp.zentral.idp.splitdns.ti-dienste.de'];
+
 export const LOGIN_VIA_SMART_CARD_SUCCESSFUL = 'login_via_smart_card_successful';
 
 export const LOGIN_NOT_SUCCESSFUL = 'login_not_successful';
@@ -234,12 +236,8 @@ export const DEV_IDP_CA_CERT_PATH = '/src/assets/certs-idp';
 
 export enum P12_VALIDITY_TYPE {
   'VALID',
-  'INVALID_CERTIFICATE',
   'WRONG_PASSWORD',
-  'NO_CERT_FOUND',
-  'ONE_VALID_AND_INVALID_CERTIFICATES',
-  'TOO_MANY_CERTIFICATES',
-  'PROCESSING_EXCEPTION',
+  'EXPIRED',
 }
 
 export const STORAGE_CONFIG_KEYS = {
@@ -249,7 +247,7 @@ export const STORAGE_CONFIG_KEYS = {
 
 export const MACOS_PATHS = {
   LOGGING_DIR: '/Library/Logs/', // we add the user's home path at the beginning of this path e.x. /Users/x/Library...
-  CERTS_DIR: window?.api?.homedir() + '/Library/Application Support/' + PRODUCT_NAME,
+  RESOURCES_DIR: HOME_DIR + '/Library/Application Support/' + PRODUCT_NAME,
 };
 
 /**
@@ -273,6 +271,7 @@ export const EXPOSED_ENV_VARIABLES = [
   'BUILD_NUMBER',
   'COMPUTERNAME',
   'CLIENTNAME',
+  'ClientName',
   'VIEWCLIENT_MACHINE_NAME',
   'ViewClient_Machine_Name',
   'AUTHCONFIGPATH',
@@ -296,9 +295,62 @@ export const IDP_CIPHERS = [
   'ECDHE-ECDSA-AES256-CCM',
 ];
 
+/**
+ * Allowed ciphers for Konnektor
+ */
+export const CONNECTOR_CIPHERS = [
+  'ECDHE-RSA-AES128-GCM-SHA256',
+  'ECDHE-RSA-AES256-GCM-SHA384',
+  'ECDHE-RSA-AES128-SHA256',
+  'ECDHE-RSA-AES256-SHA384',
+  'ECDHE-RSA-AES128-GCM-SHA256',
+  'ECDHE-RSA-AES256-GCM-SHA384',
+  'ECDHE-ECDSA-AES128-GCM-SHA256',
+  'ECDHE-ECDSA-AES256-GCM-SHA384',
+  'ECDHE-ECDSA-AES128-SHA256',
+  'ECDHE-ECDSA-AES256-SHA384',
+];
+
 export enum CERTIFICATE_VALIDATION_STATUS {
   VALID = 'valid',
   INVALID = 'invalid',
   NOT_VALID_YET = 'not-valid-yet',
   EXPIRED = 'expired',
 }
+
+export const DISCOVERY_DOCUMENT_ROLE = '1.2.276.0.76.4.260';
+
+/**
+ * Mapping of known redirect_uri values to human-readable application names and their official URLs.
+ * Used in the login consent dialog to display a friendly name instead of the domain.
+ * If a redirect_uri is not in this mapping, fallback values will be shown.
+ */
+export const REDIRECT_URI_APP_NAME_MAPPING: Record<string, { name: string; url: string }> = {
+  // Zentrales Vorsorgeregister
+  'https://zvr-ae.bnotk.de/zvr/login/oauth2/code/Oauth2-IDP1': {
+    name: 'Zentrales Vorsorgeregister',
+    url: 'zvr-ae.bnotk.de',
+  },
+  // Betäubungsmittelrezept
+  'https://btm-portal.ti-dienste.bfarm.de/Authorizing': {
+    name: 'Betäubungsmittelrezept',
+    url: 'btm-portal.ti-dienste.bfarm.de',
+  },
+  // DEMIS
+  'https://auth.demis.rki.de/realms/PORTAL/broker/gematik-authenticator/endpoint/result': {
+    name: 'DEMIS',
+    url: 'demis.rki.de',
+  }, // Organ- und Gewebespenderegister
+  'https://account.bdr.de/auth/realms/GematikIDP/broker/gematik-cidp/endpoint/result': {
+    name: 'Organ- und Gewebespenderegister',
+    url: 'ekh.organspende-register.de',
+  }, // Implantateregister
+  'https://rst.ir-d.de/auth/realms/IRD/broker/gematik-idp/endpoint/result': {
+    name: 'Implantateregister',
+    url: 'ir-d.de',
+  }, // TI Score
+  'https://www.ti-score.de/authenticate/redirect': { name: 'TI Score', url: 'ti-score.de' },
+  // RIKA / eRIKA
+  'https://emma-ti.rpdoc.de/idp': { name: 'Rika', url: 'emma-ti.rpdoc.de' },
+  'https://phab-ti.rpdoc.de/idp': { name: 'eRika', url: 'phab-ti.rpdoc.de' },
+};

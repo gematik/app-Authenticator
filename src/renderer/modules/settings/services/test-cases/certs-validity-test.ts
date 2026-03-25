@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,6 +26,7 @@ import i18n from '@/renderer/i18n';
 import { getCaCertsWithFilenames } from '@/renderer/utils/read-tls-certificates';
 import { checkCertificates } from '@/renderer/utils/pem-file-validator';
 import { CERTIFICATE_VALIDATION_STATUS } from '@/constants';
+import { findSolutionLinkByError } from '@/error-solution-links';
 
 const translate = i18n.global.t;
 
@@ -50,16 +51,18 @@ export async function certsValidityTest(): Promise<TestResult> {
     logger.info('invalid certs:', invalidCertNames);
 
     if (invalidCertNames.length > 0) {
+      const details = translate('certs_validity_failure', {
+        totalCerts: totalCerts,
+        notValidCerts: invalidCertNames.length,
+        // list each cert name one below the other
+        certNames: '- ' + invalidCertNames.join('<br>- '),
+      });
       return {
         title: translate('function_test_general'),
         name: translate('certs_validity'),
-        status: TestStatus.failure,
-        details: translate('certs_validity_failure', {
-          totalCerts: totalCerts,
-          notValidCerts: invalidCertNames.length,
-          // list each cert name one below the other
-          certNames: '- ' + invalidCertNames.join('<br>- '),
-        }),
+        status: TestStatus.warning,
+        details,
+        solutionLink: findSolutionLinkByError(details, 'CERTIFICATES'),
       };
     }
     if (totalCerts > 0 && invalidCertNames.length === 0) {
@@ -77,6 +80,7 @@ export async function certsValidityTest(): Promise<TestResult> {
         name: translate('certs_validity'),
         status: TestStatus.warning,
         details: translate('certs_validity_not_found'),
+        solutionLink: findSolutionLinkByError(translate('certs_validity_not_found'), 'CERTIFICATES'),
       };
     }
   } catch (err) {
@@ -86,6 +90,7 @@ export async function certsValidityTest(): Promise<TestResult> {
       name: translate('certs_validity'),
       status: TestStatus.failure,
       details: translate('error_info') + `${err.message}`,
+      solutionLink: findSolutionLinkByError(err.message, 'CERTIFICATES'),
     };
   }
 }

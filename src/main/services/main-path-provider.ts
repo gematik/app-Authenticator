@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -58,6 +58,10 @@ export class MainPathProvider {
   }
 
   public static configDirectoryPath(): string {
+    if (isMacOS) {
+      return MACOS_PATHS.RESOURCES_DIR;
+    }
+
     let configDirectoryPath = app.getPath('userData').replace('Roaming', 'Local');
     //C:\Users\USERNAME\AppData\Local\authenticator -> C:\Users\USERNAME\AppData\Local\gematik Authenticator
     configDirectoryPath = configDirectoryPath.replace('authenticator', 'gematik Authenticator');

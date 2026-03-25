@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,8 +20,6 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Headers, HTTPSOptions, Options } from 'got';
-
 import { TEntryOptions } from '@/renderer/modules/connector/type-definitions';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { TLS_AUTH_TYPE } from '@/@types/common-types';
@@ -29,24 +27,20 @@ import { logger } from '@/renderer/service/logger';
 import { buildCaChainsConnector } from '@/renderer/modules/connector/common/utils';
 import { getConfig } from '@/renderer/utils/get-configs';
 import { CONNECTOR_GATEWAY_NAME, ENTRY_OPTIONS_CONFIG_GROUP, PROXY_SETTINGS_CONFIG } from '@/config';
+import { HTTPClientConfig } from '@/main/services/http-client';
+import { CONNECTOR_CIPHERS } from '@/constants';
 
-/**
- * @deprecated TODO remove in AUTHCL-2004
- * @param endpoint
- */
-export const getConnectorEndpoint = (endpoint?: string) => {
-  return ConnectorConfig.tlsEntryOptions.hostname + endpoint;
-};
+type Headers = Record<string, string | string[] | undefined>;
 
-export const httpReqConfig = (headers?: Headers, customOptions?: Options): Options => {
+export const httpReqConfig = (headers?: Headers, customOptions?: HTTPClientConfig): HTTPClientConfig => {
   // tlsEntryOptions are always stable
   const tlsEntryOptions: TEntryOptions = ConnectorConfig.tlsEntryOptions;
 
   // TODO when adjusting authenticator to official konnektor gateway support,
   // we need to find a better way of parametrize the konnektor instance
-  const reqConfig: Options = {
-    // @ts-ignore
+  const reqConfig: Partial<HTTPClientConfig> = {
     useProxyForConnector: !!getConfig(PROXY_SETTINGS_CONFIG.USE_FOR_CONNECTOR).value,
+    ciphers: CONNECTOR_CIPHERS.join(':'),
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
       accept: '*/*',
@@ -58,7 +52,7 @@ export const httpReqConfig = (headers?: Headers, customOptions?: Options): Optio
   const rejectUnauthorized = !!getConfig(ENTRY_OPTIONS_CONFIG_GROUP.TLS_REJECT_UNAUTHORIZED).value;
 
   // The FQDN will never match a productive connector, so we always accept an unauthorized communication to a connector
-  const agentConfig: HTTPSOptions = {
+  const agentConfig: HTTPClientConfig['https'] = {
     rejectUnauthorized,
     certificateAuthority: buildCaChainsConnector(),
   };
@@ -74,19 +68,15 @@ export const httpReqConfig = (headers?: Headers, customOptions?: Options): Optio
     agentConfig.certificate = certFile && window.api.readFileSync(certFile);
   }
 
-  // Merge `customOptions` so that any of its properties override the defaults:
   return {
     ...reqConfig,
-    // Merge the HTTPS portion if `customOptions.https` exists
     https: {
       ...agentConfig,
       ...(customOptions?.https || {}),
     },
-    // Merge/override everything else in customOptions
     ...customOptions,
-    // Finally, merge headers if customOptions has them
     headers: {
-      ...reqConfig.headers,
+      ...(reqConfig.headers as Record<string, string | string[]>),
       ...(customOptions?.headers || {}),
     },
   };

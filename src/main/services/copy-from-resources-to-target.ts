@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -25,7 +25,14 @@ import os from 'os';
 import { logger } from '@/main/services/logging';
 import { CA_CONNECTOR_DIR_PATH, CA_IDP_DIR_PATH, IS_DEV, TEST_CASES_JSON_FILE_NAME } from '@/constants';
 import { copyFileSync } from 'node:original-fs';
+import { removeDeprecatedCertificates } from '@/main/services/konnektor-certs-maintenance-service';
 
+/**
+ * macOS/Darwin-specific: Copies certificates and config files from the app bundle
+ * resources to the user's Application Support directory, and removes deprecated
+ * Konnektor certificates afterwards.
+ * This function should only be called on macOS (darwin).
+ */
 const copyFromResourcesToTarget = () => {
   // #!if MOCK_MODE === 'ENABLED'
   if (IS_DEV) {
@@ -41,6 +48,9 @@ const copyFromResourcesToTarget = () => {
   const sourcePathCertsKonnektor = path.join(__dirname, '..', '..', CA_CONNECTOR_DIR_PATH);
   const targetPathCertsKonnektor = path.join(APP_DIR, CA_CONNECTOR_DIR_PATH);
   copyFolderSync(sourcePathCertsKonnektor, targetPathCertsKonnektor);
+
+  // Remove deprecated/obsolete certificates
+  removeDeprecatedCertificates(targetPathCertsKonnektor);
 
   // Copy test cases json file
   copyFileSync(
@@ -98,4 +108,5 @@ function copyFolderSync(src: string, dest: string) {
     }
   }
 }
+
 export default copyFromResourcesToTarget;

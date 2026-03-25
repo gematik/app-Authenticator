@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -21,10 +21,11 @@
  */
 
 import i18n from '@/renderer/i18n';
+import { TSoapFault } from '@/renderer/modules/connector/type-definitions';
 
 const translate = i18n.global.t;
 
-export function getErrorMessage(status: string, slotNr: string, cardTerminalId: string) {
+export function getErrorMessage(status: string, slotNr: string, cardTerminalId: string, soapFault?: TSoapFault) {
   let errorMessage: string;
   if (status === 'TRANSPORT_PIN') {
     errorMessage = translate('readability_test_transport_pin', {
@@ -51,6 +52,8 @@ export function getErrorMessage(status: string, slotNr: string, cardTerminalId: 
       slotNr: slotNr,
       ctId: cardTerminalId,
     });
+  } else if (soapFault && (soapFault.code || soapFault.faultstring)) {
+    errorMessage = `${soapFault.faultstring || ''} ${soapFault.code || 'unknown'}`;
   } else {
     errorMessage = translate('readability_test_unknown_pin_status');
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -29,6 +29,7 @@ import { ERROR_CODES } from '@/error-codes';
 import i18n from '@/renderer/i18n';
 import { getPinStatus } from '@/renderer/modules/connector/connector_impl/check-pin-status';
 import { getErrorMessage } from '@/renderer/modules/settings/services/utils/get-smartcard-pinstatus-errormessages';
+import { findSolutionLinkByError } from '@/error-solution-links';
 
 export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
   const translate = i18n.global.t;
@@ -37,13 +38,19 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
     const pinStatus = await getPinStatus(ECardTypes.SMCB, cardSmcbInfo.cardHandle!, true);
     logger.info('SMC-B PinStatus: ' + pinStatus.pinStatus);
 
-    const errorMessage = getErrorMessage(pinStatus.pinStatus, cardSmcbInfo.slotNr!, cardSmcbInfo.ctId!);
+    const errorMessage = getErrorMessage(
+      pinStatus.pinStatus,
+      cardSmcbInfo.slotNr!,
+      cardSmcbInfo.ctId!,
+      pinStatus.soapFault,
+    );
     if (pinStatus.pinStatus !== 'VERIFIED') {
       return {
         title: translate('function_test_general'),
         name: translate('smcb_availability'),
         status: TestStatus.failure,
         details: errorMessage,
+        solutionLink: findSolutionLinkByError(errorMessage, 'SMCB'),
       };
     }
     return {
@@ -74,6 +81,7 @@ export async function connectorSmcbReadabilityTest(): Promise<TestResult> {
       name: translate('smcb_availability'),
       status: TestStatus.failure,
       details: details,
+      solutionLink: findSolutionLinkByError(details, 'SMCB'),
     };
   }
 }

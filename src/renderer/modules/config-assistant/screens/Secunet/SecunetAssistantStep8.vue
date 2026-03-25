@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -36,7 +36,14 @@
         {{ $t('config_assistant.secunet.step8.intro') }}
       </p>
       <div class="assistant-content mt-4">
-        <select v-model="props.repositoryData[TLS_AUTH_TYPE_CONFIG]" class="w-full p-2 border border-gray-300 rounded">
+        <label for="auth-type-select" class="block mb-2 font-medium text-gray-700">
+          {{ $t('config_assistant.secunet.step8.auth_type_label') }}
+        </label>
+        <select
+          id="auth-type-select"
+          v-model="props.repositoryData[TLS_AUTH_TYPE_CONFIG]"
+          class="w-full p-2 border border-gray-300 rounded"
+        >
           <option :value="TLS_AUTH_TYPE.BasicAuth">{{ $t('config_assistant.secunet.step8.basic_auth') }}</option>
           <option :value="TLS_AUTH_TYPE.ServerClientCertAuth">
             {{ $t('config_assistant.secunet.step8.cert_option_others') }}

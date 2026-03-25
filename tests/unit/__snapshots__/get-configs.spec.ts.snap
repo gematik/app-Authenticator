@@ -3,7 +3,6 @@
 exports[`configMapperByGroup and error handling response should set auth sign params properly 1`] = `
 {
   "base64data": "YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=",
-  "signatureCidpSchemes": "RSASSA-PSS",
   "signatureType": "urn:bsi:tr:03111:ecdsa",
 }
 `;

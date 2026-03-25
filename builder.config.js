@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -24,43 +24,67 @@ const appConfigFactory = require('./app-config');
 const FORCE_SIGNING = false;
 const appConfig = appConfigFactory();
 const year = new Date().getFullYear();
+const IS_MOCK = process.env.MOCK_MODE === 'ENABLED';
+const BUILD_TARGET = process.env.BUILD_TARGET; // 'mas', 'dmg', or undefined (both)
+
+const getMacTargets = () => {
+  if (IS_MOCK) return [{ target: 'dmg', arch: 'universal' }];
+  if (BUILD_TARGET === 'mas') return [{ target: 'mas', arch: 'universal' }];
+  if (BUILD_TARGET === 'dmg') return [{ target: 'dmg', arch: 'universal' }];
+  return [
+    { target: 'mas', arch: 'universal' },
+    { target: 'dmg', arch: 'universal' },
+  ];
+};
+
 const artifactName = (productName, version, ext) => {
-  return process.env.MOCK_MODE === 'ENABLED'
-    ? `${productName} - Mock Version ${version}.${ext}`
-    : `${productName} ${version}.${ext}`;
+  return IS_MOCK ? `${productName} - Mock Version ${version}.${ext}` : `${productName} ${version}.${ext}`;
 };
 /**
  *
  * This is necessary for Signing-Validation feature of electron-auto-updater
  * Always be sure that the signed exe contains this string as CN.
  */
-const PUBLISHER_NAME = 'gematik GmbH';
 const TEST_CASES_JSON_FILE_NAME = 'test-cases-config.json';
+const THIRD_PARTY_LICENSES_FILE_NAME = 'third-party-licenses.html';
 
 /**
- * @type {import("electron-builder").Configuration}
+ * @type {import('electron-builder').Configuration}
  */
 module.exports = {
   appId: appConfig.appId,
   productName: appConfig.title,
-  copyright: 'Copyright © ' + year + ' ${author}',
+  buildVersion: require('./package.json').version,
+  buildDependenciesFromSource: true,
+  copyright: 'Copyright ' + year + ' ${author}',
   extraResources: [
     {
       from: './LICENSE.txt',
       to: 'LICENSE.txt',
     },
+    {
+      from: './src/assets/' + THIRD_PARTY_LICENSES_FILE_NAME,
+      to: THIRD_PARTY_LICENSES_FILE_NAME,
+    },
   ],
   win: {
     target: ['nsis'],
-    publisherName: PUBLISHER_NAME,
     extraResources: [
       {
-        from: 'dist_electron/WinCertStoreLib.dll',
-        to: 'WinCertStoreLib.dll',
+        from: 'dist_electron/WinAPILib.dll',
+        to: 'WinAPILib.dll',
+      },
+      {
+        from: './resources/node-bin/win32-x64/node.exe',
+        to: 'node-bin/node.exe',
+      },
+      {
+        from: './dist_electron/node-https-helper.js',
+        to: 'node-bin/node-https-helper.js',
       },
     ],
   },
-  files: ['!*', 'dist_electron/*'],
+  files: ['!*', 'dist_electron/*', '!**/node_gyp_bins'],
   forceCodeSigning: FORCE_SIGNING,
   nsis: {
     unicode: true,
@@ -70,7 +94,7 @@ module.exports = {
     allowToChangeInstallationDirectory: false,
     createDesktopShortcut: false,
     license: 'LICENSE.txt',
-    include: 'build/installer.nsh',
+    include: 'installer.nsh',
     installerLanguages: ['de_DE'],
     publish: {
       provider: 'github',
@@ -81,21 +105,41 @@ module.exports = {
       provider: 'github',
     },
   },
+  mas: {
+    mergeASARs: false,
+    entitlements: './build/entitlements/entitlements.mac.plist',
+    entitlementsInherit: './build/entitlements/entitlements.mas.inherit.plist',
+    provisioningProfile: process.env['sigh_de.gematik.authenticator_appstore_macos_profile-path'],
+    type: 'distribution',
+    icon: './src/assets/icon.icns',
+    notarize: false,
+    category: 'public.app-category.utilities',
+
+    hardenedRuntime: false,
+    gatekeeperAssess: false,
+  },
   mac: {
-    target: [
-      {
-        target: 'dmg',
-        arch: 'universal',
-      },
-      {
-        target: 'zip',
-        arch: 'universal',
-      },
-    ],
+    asarUnpack: ['**/*.node'],
+    target: getMacTargets(),
+    hardenedRuntime: true,
+    entitlements: './build/entitlements/entitlements.dmg.plist',
+    entitlementsInherit: './build/entitlements/entitlements.dmg.plist',
     forceCodeSigning: true,
     category: 'public.app-category.utilities',
+    bundleVersion: '15',
+    extendInfo: IS_MOCK
+      ? {}
+      : {
+          ElectronTeamID: 'A9FL89PFFL',
+          CFBundleURLTypes: [
+            {
+              CFBundleURLSchemes: ['authenticator'],
+            },
+          ],
+        },
+
     artifactName: artifactName('${productName}', '${version}', '${ext}'),
-    icon: './src/assets/logo.png',
+    icon: './src/assets/icon.icns',
     appId: 'de.gematik.authenticator',
     extraResources: [
       {
@@ -113,6 +157,14 @@ module.exports = {
       {
         from: './src/assets/' + TEST_CASES_JSON_FILE_NAME,
         to: './',
+      },
+      {
+        from: './resources/node-bin/darwin-${arch}/bin/node',
+        to: 'node-bin/node',
+      },
+      {
+        from: './dist_electron/node-https-helper.js',
+        to: 'node-bin/node-https-helper.js',
       },
     ],
   },
