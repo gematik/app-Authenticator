@@ -6,10 +6,10 @@ exports[`form element renders drop-down for custom options 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -54,10 +54,10 @@ exports[`form element renders drop-down for standard options 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -107,10 +107,10 @@ exports[`form element renders email field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -149,10 +149,10 @@ exports[`form element renders file field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -172,22 +172,19 @@ exports[`form element renders file field 1`] = `
     <!--v-if-->
     <div>
       <label
-        class="flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
+        class="relative flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
       >
         
-        <span
-          class="w-[273px] overflow-hidden truncate rtl"
-          title="Datei Ausgewählt"
-        >
-          Datei Ausgewählt
-        </span>
+        
+        <!--v-if-->
+        
         
         <img
           alt="File-Upload Icon"
           class="object-none"
         />
         <input
-          accept=".pem,.p12,.cer"
+          accept=".pem,.p12,.cer,.key"
           id="form-name"
           required=""
           title=""
@@ -208,10 +205,10 @@ exports[`form element renders file-path field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -231,19 +228,19 @@ exports[`form element renders file-path field 1`] = `
     <!--v-if-->
     <div>
       <label
-        class="flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
+        class="relative flex row justify-between settings-input w-[233px] leading-[100%] truncate overflow-hidden"
       >
         
-        <span
-          class="w-[273px] overflow-hidden truncate rtl"
-        />
+        
+        <!--v-if-->
+        
         
         <img
           alt="File-Upload Icon"
           class="object-none"
         />
         <input
-          accept=".pem,.p12,.cer"
+          accept=".pem,.p12,.cer,.key"
           id="form-name"
           required=""
           title=""
@@ -264,10 +261,10 @@ exports[`form element renders file-path field 2`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -306,10 +303,10 @@ exports[`form element renders input field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -348,10 +345,10 @@ exports[`form element renders number field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label
@@ -390,10 +387,10 @@ exports[`form element renders text field 1`] = `
 >
   <div
     class="text-sm"
-    for="input-name"
   >
     <label
       class="text-sm"
+      for="form-name"
       id="form-name-label"
     >
       Awesome Label

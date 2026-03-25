@@ -21,14 +21,14 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 10
+        Schritt 1 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 10%;"
+          style="width: 9.090909090909092%;"
         />
       </div>
       
@@ -214,7 +214,7 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -228,6 +228,51 @@ exports[`config assistant screen renders KoCo assistant step 1 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -305,14 +350,14 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 10
+        Schritt 2 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 20%;"
+          style="width: 18.181818181818183%;"
         />
       </div>
       
@@ -498,7 +543,7 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -512,6 +557,51 @@ exports[`config assistant screen renders KoCo assistant step 2 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -589,14 +679,14 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 10
+        Schritt 3 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 30%;"
+          style="width: 27.27272727272727%;"
         />
       </div>
       
@@ -782,7 +872,7 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -796,6 +886,51 @@ exports[`config assistant screen renders KoCo assistant step 3 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -873,14 +1008,14 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 10
+        Schritt 4 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 40%;"
+          style="width: 36.36363636363637%;"
         />
       </div>
       
@@ -1066,7 +1201,7 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -1080,6 +1215,51 @@ exports[`config assistant screen renders KoCo assistant step 4 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -1157,14 +1337,14 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 10
+        Schritt 5 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 45.45454545454545%;"
         />
       </div>
       
@@ -1350,7 +1530,7 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -1364,6 +1544,51 @@ exports[`config assistant screen renders KoCo assistant step 5 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -1441,14 +1666,14 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 10
+        Schritt 6 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 60%;"
+          style="width: 54.54545454545454%;"
         />
       </div>
       
@@ -1634,7 +1859,7 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -1648,6 +1873,51 @@ exports[`config assistant screen renders KoCo assistant step 6 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -1725,14 +1995,14 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 10
+        Schritt 1 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 10%;"
+          style="width: 9.090909090909092%;"
         />
       </div>
       
@@ -1918,7 +2188,7 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -1932,6 +2202,51 @@ exports[`config assistant screen renders Rise assistant step 1 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -2009,14 +2324,14 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 10
+        Schritt 2 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 20%;"
+          style="width: 18.181818181818183%;"
         />
       </div>
       
@@ -2202,7 +2517,7 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -2216,6 +2531,51 @@ exports[`config assistant screen renders Rise assistant step 2 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -2293,14 +2653,14 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 10
+        Schritt 3 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 30%;"
+          style="width: 27.27272727272727%;"
         />
       </div>
       
@@ -2486,7 +2846,7 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -2500,6 +2860,51 @@ exports[`config assistant screen renders Rise assistant step 3 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -2577,14 +2982,14 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 10
+        Schritt 4 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 40%;"
+          style="width: 36.36363636363637%;"
         />
       </div>
       
@@ -2770,7 +3175,7 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -2784,6 +3189,51 @@ exports[`config assistant screen renders Rise assistant step 4 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -2861,14 +3311,14 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 10
+        Schritt 5 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 45.45454545454545%;"
         />
       </div>
       
@@ -3054,7 +3504,7 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -3068,6 +3518,51 @@ exports[`config assistant screen renders Rise assistant step 5 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -3145,14 +3640,14 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 10
+        Schritt 6 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 60%;"
+          style="width: 54.54545454545454%;"
         />
       </div>
       
@@ -3338,7 +3833,7 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -3352,6 +3847,51 @@ exports[`config assistant screen renders Rise assistant step 6 correctly 1`] = `
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -3429,14 +3969,14 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 1 von 10
+        Schritt 1 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 10%;"
+          style="width: 9.090909090909092%;"
         />
       </div>
       
@@ -3622,7 +4162,7 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -3636,6 +4176,51 @@ exports[`config assistant screen renders Secunet assistant step 1 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -3713,14 +4298,14 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 2 von 10
+        Schritt 2 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 20%;"
+          style="width: 18.181818181818183%;"
         />
       </div>
       
@@ -3906,7 +4491,7 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -3920,6 +4505,51 @@ exports[`config assistant screen renders Secunet assistant step 2 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -3997,14 +4627,14 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 3 von 10
+        Schritt 3 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 30%;"
+          style="width: 27.27272727272727%;"
         />
       </div>
       
@@ -4190,7 +4820,7 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -4204,6 +4834,51 @@ exports[`config assistant screen renders Secunet assistant step 3 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -4281,14 +4956,14 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 4 von 10
+        Schritt 4 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 40%;"
+          style="width: 36.36363636363637%;"
         />
       </div>
       
@@ -4474,7 +5149,7 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -4488,6 +5163,51 @@ exports[`config assistant screen renders Secunet assistant step 4 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -4565,14 +5285,14 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 5 von 10
+        Schritt 5 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 50%;"
+          style="width: 45.45454545454545%;"
         />
       </div>
       
@@ -4758,7 +5478,7 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -4772,6 +5492,51 @@ exports[`config assistant screen renders Secunet assistant step 5 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div
@@ -4849,14 +5614,14 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
       <div
         class="mb-1 pr-5 text-blue-900 text-right font-medium"
       >
-        Schritt 6 von 10
+        Schritt 6 von 11
       </div>
       <div
         class="w-full bg-gray-200 h-1 mb-4 ml-1 mr-1 dark:bg-gray-200"
       >
         <div
           class="bg-blue-600 h-1 dark:bg-gray-400"
-          style="width: 60%;"
+          style="width: 54.54545454545454%;"
         />
       </div>
       
@@ -5042,7 +5807,7 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
       </div>
       <div>
         <div
-          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator"
         >
           <div
             class="mr-2 step-number"
@@ -5056,6 +5821,51 @@ exports[`config assistant screen renders Secunet assistant step 6 correctly 1`] 
               class="text-blue-950 ml-1 text-base"
             >
               SMC-B PIN-Abfrage 
+            </h2>
+          </div>
+          <div
+            class="text-yellow-400 text-2xl"
+          />
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <transition-stub
+          appear="true"
+          css="true"
+          name="dropdown"
+          persisted="false"
+        >
+          <!--v-if-->
+        </transition-stub>
+      </div>
+      <div>
+        <div
+          class="flex items-center p-2 cursor-pointer hover:bg-blue-200 transition border-b step-indicator rounded-b-lg"
+        >
+          <div
+            class="mr-2 step-number"
+          >
+            6
+          </div>
+          <div
+            class="flex flex-row justify-between flex-1"
+          >
+            <h2
+              class="text-blue-950 ml-1 text-base"
+            >
+              Warnung SMC-B Kartenablauf 
             </h2>
           </div>
           <div

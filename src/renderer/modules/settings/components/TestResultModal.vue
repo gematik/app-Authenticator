@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -60,9 +60,19 @@
                     />
                     <img v-else src="@/assets/Error@2x.png" class="object-none p-4" alt="error icon" />
                   </div>
-                  <div class="col-span-7">
-                    <div :id="item.name" class="font-bold pl-1 pr-1">{{ item.name }}</div>
-                    <div class="text-base pl-1 pr-1 pb-1 break-words" v-html="escapeHTML(item.details, ['br'])"></div>
+                  <div class="col-span-7 flex items-center justify-between">
+                    <div class="flex flex-col justify-center">
+                      <div :id="item.name" class="font-bold pl-1 pr-1">{{ item.name }}</div>
+                      <div class="text-base pl-1 pr-1 pb-1 break-words" v-html="escapeHTML(item.details, ['br'])"></div>
+                    </div>
+                    <div class="text-sm pl-1 pr-1" v-if="item.solutionLink">
+                      <button
+                        class="bg-blue-500 text-white active:bg-blue-600 text-l px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        @click="openUrlOnclick(item.solutionLink)"
+                      >
+                        Lösungsvorschläge
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -140,6 +150,12 @@ export default defineComponent({
     escapeHTML,
     openFachportalURL() {
       window.api.openExternal(FACHPORTAL_URL);
+    },
+    openUrlOnclick(url: string) {
+      if (!url || !url.startsWith('https://')) {
+        return;
+      }
+      window.api.openExternal(url);
     },
     onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {

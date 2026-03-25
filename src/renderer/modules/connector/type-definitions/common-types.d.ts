@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -24,8 +24,6 @@ import { ECardTypes } from '@/renderer/modules/connector/ECardTypes';
 
 export type TAuthSignParameter = {
   signatureType: string;
-  // @deprecated
-  signatureCidpSchemes: string;
   base64data: string;
 };
 
@@ -122,11 +120,27 @@ export type TCardTerminal = {
   [key: string]: any;
 };
 
+export interface IVerifyCertificateResponse {
+  status: string;
+  verificationResult: string;
+  roleList: string[];
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
 export type TPinStatusTypes = 'VERIFIED' | 'VERIFIABLE' | 'BLOCKED' | 'REJECTED' | 'TRANSPORT_PIN';
+
+export type TSoapFault = {
+  code: string;
+  faultstring: string;
+};
 
 export type TPinStatusResponse = {
   statusResult: string;
-  pinStatus: IPinStatusTypes;
+  pinStatus: TPinStatusTypes;
+  soapFault?: TSoapFault;
 };
 
 export type TConnectorStore = {

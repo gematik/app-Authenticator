@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,8 +26,7 @@ import https from 'https';
 import os from 'os';
 import util from 'util';
 import path from 'path';
-import { Options } from 'got';
-import { TClientRes } from '@/main/services/http-client';
+import { HTTPClientConfig, TClientRes } from '@/main/services/http-client';
 import { P12_VALIDITY_TYPE } from '@/constants';
 
 export declare global {
@@ -55,16 +54,15 @@ export declare global {
       httpsAgent: typeof https.Agent;
       setAppConfigInPreload: (data: Record<string, unknown>) => void;
       setCaChainIdpInPreload: (data: string[]) => void;
-      httpGet: (url: string, options?: Options) => Promise<TClientRes>;
-      httpPost: (url: string, envelope: any, options?: Options) => Promise<TClientRes>;
+      httpGet: (url: string, options?: HTTPClientConfig) => Promise<TClientRes>;
+      httpPost: (url: string, envelope: any, options?: HTTPClientConfig) => Promise<TClientRes>;
       getProcessCwd: () => string;
-      getProcessEnvs: () => Record<string, string>;
       createLogZipFile: () => Promise<boolean>;
       isP12Valid: (p12Path: string, password: string) => P12_VALIDITY_TYPE;
-      extractValidCertificate: (p12Path: string, password: string) => string;
       isMacOS: () => boolean;
       homedir: () => string;
       readLicenceFile: () => string;
+      readThirdPartyLicenses: () => string;
       showFilePath(file: File): string;
     };
   }

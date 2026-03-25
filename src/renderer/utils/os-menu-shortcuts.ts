@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -20,9 +20,10 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { app, Menu, shell } from 'electron';
+import { app, BrowserWindow, Menu, shell } from 'electron';
 import { MainPathProvider } from '@/main/services/main-path-provider';
 import path from 'path';
+import { CA_CONNECTOR_DIR_PATH, CA_IDP_DIR_PATH, MACOS_PATHS } from '@/constants';
 
 // Windows Taskbar Shortcuts
 export const setWindowsTaskbarShortcuts = () => {
@@ -87,6 +88,15 @@ export const setMacOSDockShortcuts = async () => {
   };
 
   const dockMenu = Menu.buildFromTemplate([
+    // #!if MOCK_MODE === 'ENABLED'
+    {
+      label: 'DevTools öffnen',
+      click() {
+        BrowserWindow.getAllWindows()[0]?.webContents.openDevTools();
+      },
+    },
+    { type: 'separator' },
+    // #!endif
     {
       label: 'Öffne Log Ordner',
       click() {
@@ -97,16 +107,16 @@ export const setMacOSDockShortcuts = async () => {
     {
       label: 'Öffne Konnektor Zertifikats-Ordner',
       click() {
-        shell.openPath(path.join(MainPathProvider.getResourcesPath(), 'certs-konnektor'));
+        shell.openPath(path.join(MACOS_PATHS.RESOURCES_DIR, CA_CONNECTOR_DIR_PATH));
       },
     },
     {
       label: 'Öffne IDP Zertifikats-Ordner',
       click() {
-        shell.openPath(path.join(MainPathProvider.getResourcesPath(), 'certs-idp'));
+        shell.openPath(path.join(MACOS_PATHS.RESOURCES_DIR, CA_IDP_DIR_PATH));
       },
     },
   ]);
 
-  app.dock.setMenu(dockMenu);
+  app.dock?.setMenu(dockMenu);
 };

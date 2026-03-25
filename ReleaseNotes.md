@@ -1,6 +1,38 @@
 # Release Authenticator
 
+## 4.16.0
+
+### Added
+
+- Konnektor Gateway sample for connector.sds adjustments regarding Konnektor URLs
+- Konnektor gateway sample kubernetes setup from a real hospital environment added
+- Display a optional warning if a card is expired or about to expire in Auth flow and ECC test
+- Show a FAQ button in Function Test dialog if a possible solution is available
+- Package for better web accessibility
+- Show warning when mock konnektor certificates are expired or not valid yet
+
+### Fixed
+
+- Auto update functionality is removed due to Microsoft/Apple Store usage
+- Brainpool Support for TLS connections to the connector
+- The Authenticator now closes after a successful authentication instead of minimizing to the taskbar
+- Delete obsolete functions and clean up
+- Remove certificate retrieval from OS (Win/Mac) trust stores for Konnektor communication
+- Remove unneeded connector certificates
+- Show a relevant error message when the PinStatus returns error
+- Show the file input required warning in the correct position. 
+
+### Security
+
+- Login consent dialog with security hint to protect users against phishing and unauthorized authentication requests.
+- TLS cipher suites for Konnektor communication is restricted to modern and secure ones
+
+
 ## 4.15.2
+
+### Added
+
+- A new license section that shows the full license text of the gematik Authenticators 3rd Party Licenses
 
 ### Fixed
 
@@ -523,4 +555,3 @@ fixed:
 ### Fixed:
 
 - Remote VerifyPIN
-

@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -46,23 +46,58 @@
     <h1 class="mt-[24px] text-black text-[36px]">
       {{ $t('license') }}
     </h1>
-    <!-- There seems to be a bug in tailwindcss so we have to set the font family in style -->
-    <pre class="whitespace-pre-line font-sans" style="font-family: 'Apercu', serif">
 
-      {{ license }}
-    </pre>
+    <!-- Tab Navigation -->
+    <div class="mt-[16px] border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8">
+        <button
+          @click="activeTab = 'main'"
+          :class="activeTab === 'main' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+          class="py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap"
+        >
+          {{ $t('main_license') }}
+        </button>
+        <button
+          @click="activeTab = 'thirdparty'"
+          :class="activeTab === 'thirdparty' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+          class="py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap"
+        >
+          {{ $t('third_party_licenses') }}
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="mt-[16px] max-h-[500px] overflow-y-auto">
+      <pre v-if="activeTab === 'main'" class="whitespace-pre-line font-sans" style="font-family: 'Apercu', serif">
+        {{ license }}
+      </pre>
+
+      <div v-if="activeTab === 'thirdparty'" class="prose max-w-none" v-html="thirdPartyLicenses"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { logger } from '@/renderer/service/logger';
 
 export default defineComponent({
   name: 'ImprintScreen',
   data() {
     return {
       license: window.api.readLicenceFile(),
+      thirdPartyLicenses: '',
+      activeTab: 'main',
     };
+  },
+  async mounted() {
+    try {
+      this.thirdPartyLicenses = await window.api.readThirdPartyLicenses();
+    } catch (error) {
+      logger.error('Error loading third-party licenses:', error);
+      this.thirdPartyLicenses = '<p>Error loading third-party licenses.</p>';
+    }
   },
 });
 </script>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -75,6 +75,7 @@ export const SOAP_ACTION = {
   ReadCardCertificate: 'http://ws.gematik.de/conn/CertificateService/v6.0#ReadCardCertificate',
   GetCards: 'http://ws.gematik.de/conn/EventService/v7.2#GetCards',
   GetCardTerminals: 'http://ws.gematik.de/conn/EventService/v7.2#GetCardTerminals',
+  VerifyCertificate: 'http://ws.gematik.de/conn/CertificateService/v6.0#VerifyCertificate',
 };
 
 export enum SIGNATURE_TYPES {

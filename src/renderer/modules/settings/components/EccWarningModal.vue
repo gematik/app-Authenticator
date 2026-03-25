@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -46,7 +46,7 @@
               class="container text-slate-500 p-2 text-lg leading-relaxed rounded-lg"
               :class="{
                 'bg-green-300': item.status === CertStatus.success,
-                'bg-orange-100': item.status === CertStatus.loading,
+                'bg-orange-100': item.status === CertStatus.loading || item.validity.isCertAboutToExpire,
                 'bg-red-100': item.status === CertStatus.error,
               }"
             >
@@ -90,7 +90,7 @@
                         'text-red-500 ml-1': !item.validity.isValid,
                       }"
                     >
-                      {{ item.validity.date.toLocaleDateString('de') }}
+                      {{ formatDateSafely(item.validity.date) }}
                     </span>
                   </div>
                 </div>
@@ -125,6 +125,7 @@
         </div>
       </div>
     </div>
+    <CardExpiredWarning ref="cardExpirationWarningRef" />
   </div>
 </template>
 
@@ -137,6 +138,10 @@ import { TRealCardData } from '@/renderer/modules/connector/type-definitions';
 import { launch as getCards } from '@/renderer/modules/connector/connector_impl/get-cards-launcher';
 import { logger } from '@/renderer/service/logger';
 import { ERROR_CODES } from '@/error-codes';
+import CardExpiredWarning from '@/renderer/components/CardExpiredWarning.vue';
+import { useI18n } from 'vue-i18n';
+
+const translate = useI18n().t;
 
 const props = defineProps({
   toggleEccWarningModal: {
@@ -157,6 +162,7 @@ const results = ref(
     name: string;
     validity: {
       date: Date;
+      isCertAboutToExpire: boolean;
       isValid: boolean;
     };
     iccsn: string;
@@ -164,6 +170,16 @@ const results = ref(
     version?: number;
   }[],
 );
+
+const cardExpirationWarningRef = ref<InstanceType<typeof CardExpiredWarning>>();
+
+// Hilfsfunktion für sichere Datumsformatierung
+function formatDateSafely(date: Date): string {
+  if (!date || isNaN(date.getTime())) {
+    return translate('unknown_date');
+  }
+  return date.toLocaleDateString('de');
+}
 
 const getCerts = async () => {
   try {
@@ -175,12 +191,27 @@ const getCerts = async () => {
         const versionAsNumber = Number(Object.values(cert.CardVersion?.ObjectSystemVersion).join(''));
         const eccReadyVersion = 440;
 
+        cardExpirationWarningRef.value?.newCardExpirationWarning({
+          cardType: cert.CardType,
+          expirationDate: cert.CertificateExpirationDate,
+          iccsn: cert.Iccsn,
+        });
+
+        const isCertAboutToExpire = () => {
+          const expirationDate = new Date(cert.CertificateExpirationDate);
+          if (isNaN(expirationDate.getTime())) {
+            return false; // Invalid date
+          }
+          return expirationDate.getTime() - Date.now() <= 90 * 24 * 60 * 60 * 1000; // 90 days
+        };
+
         return {
           name: cert.CardType,
           iccsn: cert.Iccsn,
           validity: {
             date: new Date(cert.CertificateExpirationDate),
             isValid: isValid,
+            isCertAboutToExpire: isCertAboutToExpire(),
           },
           status: versionAsNumber >= eccReadyVersion ? CertStatus.success : CertStatus.error,
         };

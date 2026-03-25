@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -29,6 +29,8 @@ import { CentralIdpError, UserfacingError } from '@/renderer/errors/errors';
 import { IDP_ENDPOINTS } from '@/constants';
 import {
   IIdpEncJwk,
+  IJsonWebKey,
+  IJsonWebKeySet,
   IJweChallenge,
   IOpenIdConfiguration,
   TIdpServiceStore,
@@ -39,12 +41,15 @@ import { TAccessDataResponse } from '@/renderer/modules/gem-idp/type-definitions
 import { StatusCodes } from 'http-status-codes';
 import { TClientRes } from '@/main/services/http-client';
 import { httpsReqConfig } from '@/renderer/modules/gem-idp/services/get-idp-http-config';
+import { validateJwtX5cCertificate } from '@/renderer/modules/gem-idp/services/jwt-x5c-validation-service';
+import { verifyChallengeTokenSignature } from '@/renderer/modules/gem-idp/services/jws-verification-service';
 
 export const INITIAL_AUTH_STORE_STATE = {
   challengePath: '',
   challenge: '',
   jweChallenge: null,
   idpHost: '',
+  idpSigJwk: null,
   jwsHbaSignature: undefined,
   jwsSmcbSignature: undefined,
   clientId: '',
@@ -62,6 +67,9 @@ export const idpServiceStore: Module<TIdpServiceStore, TRootStore> = {
   mutations: {
     setIdpHost(state: TIdpServiceStore, host: string): void {
       state.idpHost = host;
+    },
+    setIdpSigJwk(state: TIdpServiceStore, pukIdpSig: IJsonWebKey | IJsonWebKeySet): void {
+      state.idpSigJwk = pukIdpSig;
     },
     setHbaJwsSignature(state: TIdpServiceStore, jwsSignature: string): void {
       state.jwsHbaSignature = jwsSignature;
@@ -93,6 +101,7 @@ export const idpServiceStore: Module<TIdpServiceStore, TRootStore> = {
     resetStore(state: TIdpServiceStore): void {
       state.jwsHbaSignature = undefined;
       state.jwsSmcbSignature = undefined;
+      state.idpSigJwk = null;
       state.challengePath = '';
       state.challenge = '';
       state.clientId = '';
@@ -121,10 +130,35 @@ export const idpServiceStore: Module<TIdpServiceStore, TRootStore> = {
           },
         });
 
+        // Validate x5c certificate from JWT if present
+        await validateJwtX5cCertificate(res.data, 'OpenID Configuration response', true);
         context.commit('setOpenIdConfiguration', jsonwebtoken.decode(res.data));
+        await context.dispatch('getIdpSigJwk');
       } catch (err) {
+        if (err instanceof UserfacingError) {
+          throw err;
+        }
         logger.error('Can not get discovery document', err);
         throw new CentralIdpError('Could not get discovery document');
+      }
+    },
+    async getIdpSigJwk(context: ActionContext<TIdpServiceStore, TRootStore>): Promise<void> {
+      if (!context.state?.openIdConfiguration?.uri_puk_idp_sig) {
+        logger.warn('NO uri_puk_idp_sig in OID config!');
+        return;
+      }
+
+      try {
+        const res = await window.api.httpGet(context.state.openIdConfiguration.uri_puk_idp_sig, {
+          ...httpsReqConfig(),
+          headers: {
+            'User-Agent': userAgent + context.state.clientId,
+          },
+        });
+        context.commit('setIdpSigJwk', res.data);
+      } catch (err) {
+        logger.error('Cannot get puk idp sig', err);
+        throw new CentralIdpError('could not get IdpSigJwk');
       }
     },
     async getIdpEncJwk(context: ActionContext<TIdpServiceStore, TRootStore>): Promise<void> {
@@ -168,7 +202,11 @@ export const idpServiceStore: Module<TIdpServiceStore, TRootStore> = {
           }
         }
 
-        logger.debug('data.challenge ' + result.data.challenge);
+        // Validate challenge token
+        // Convert reactive state object to plain JS object before passing to crypto functions
+        const plainIdpSigJwk = JSON.parse(JSON.stringify(context.state.idpSigJwk));
+        await verifyChallengeTokenSignature(result.data.challenge, plainIdpSigJwk, 'IDP Sig JWK');
+
         commit('setChallenge', result.data.challenge);
         commit('setUserConsent', result.data.user_consent);
         logger.info('challenge received successfully!');

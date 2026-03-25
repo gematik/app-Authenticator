@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -31,5 +31,6 @@ export const MOCK_CONNECTOR_CERTS_CONFIG = {
 
 export const DEVELOPER_OPTIONS = {
   IDP_CERTIFICATE_CHECK: 'developer.disableCertificateCheck',
+  IDP_ADDITIONAL_ALLOWED_HOSTS: 'developer.idpAdditionalAllowedHosts',
 } as const;
 // #!endif

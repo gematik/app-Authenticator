@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -110,7 +110,7 @@ export class PathProvider {
 
     if (window.api.isMacOS()) {
       const dirName = isConnector ? CA_CONNECTOR_DIR_PATH : CA_IDP_DIR_PATH;
-      return window.api.pathJoin(MACOS_PATHS.CERTS_DIR, dirName);
+      return window.api.pathJoin(MACOS_PATHS.RESOURCES_DIR, dirName);
     } else {
       const replaceValue = isConnector
         ? window.api.pathJoin(CA_CONNECTOR_DIR_PATH + window.api.pathSep())

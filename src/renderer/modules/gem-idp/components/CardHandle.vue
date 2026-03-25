@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -88,7 +88,6 @@ export default defineComponent({
          */
         await this.$store.dispatch('connectorStore/getCardHandle', cardType);
         logger.debug('get CardHandle finished for:' + cardType + '-Card');
-
         // if there is a pending modal close function from the previous missing card action, we close it here
         if (typeof pendingCardActionModalClose === 'function') pendingCardActionModalClose();
       } catch (err) {
@@ -221,6 +220,7 @@ export default defineComponent({
 
 <style scoped>
 @import '../../../global.css';
+
 #multi-card-select-container {
   background: rgba(0, 0, 0, 0.4);
 }

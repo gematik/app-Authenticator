@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -30,14 +30,14 @@
     <OpenSettings v-if="!settingsSet"></OpenSettings>
     <!-- #!if MOCK_MODE === 'ENABLED' -->
     <MockVersionHint />
-    <ClearSavedUserConsents />
+    <DevActions />
     <!-- #!endif -->
   </div>
 </template>
 
 <script lang="ts">
 // #!if MOCK_MODE === 'ENABLED'
-import ClearSavedUserConsents from '@/renderer/modules/home/components/ClearSavedUserConsents.vue';
+import DevActions from '@/renderer/modules/home/components/DevActions.vue';
 import MockVersionHint from '@/renderer/modules/home/components/MockVersionHint.vue';
 // #!endif
 import { computed, defineComponent, onMounted } from 'vue';
@@ -45,13 +45,12 @@ import OpenSettings from '@/renderer/modules/home/components/OpenSettings.vue';
 import { useSettings } from '@/renderer/modules/settings/useSettings';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import LoadingSpinner from '@/renderer/modules/home/components/LoadingSpinner.vue';
-import { checkNewUpdate } from '@/renderer/service/auto-updater-service';
 
 export default defineComponent({
   name: 'HomeScreen',
   components: {
     // #!if MOCK_MODE === 'ENABLED'
-    ClearSavedUserConsents,
+    DevActions,
     MockVersionHint,
     // #!endif
     LoadingSpinner,
@@ -64,9 +63,6 @@ export default defineComponent({
 
     onMounted(() => {
       ConnectorConfig.updateConnectorParameters();
-
-      // call auto update
-      checkNewUpdate();
     });
     return {
       settingsSet,

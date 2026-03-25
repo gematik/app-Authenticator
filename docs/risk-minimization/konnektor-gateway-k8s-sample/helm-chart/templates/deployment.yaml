@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}-deployment'  
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: '{{ .Release.Name }}'
+  template:
+    metadata:
+      annotations:
+        # Bewirkt, dass der Pod neu gestartet wird, wenn sich die Konfiguration ändert
+        # Hinweis: der Pod wird nicht neu gestartet, wenn sich ein Secret ändert, welches verwendet wurde, um die Konfiguration zu templaten!
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app: '{{ .Release.Name }}'
+        app.kubernetes.io/version: '{{ .Chart.Version | replace "+" "_" }}'
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      containers:
+      - name: nginx
+        image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+        imagePullPolicy: {{ .Values.deployment.image.imagePullPolicy }}
+        resources: {{- toYaml .Values.deployment.resources | nindent 10 }}
+        {{- include "pod.podSecurityContext" $ | nindent 8 }} 
+        volumeMounts:
+        - name: 'tls-certificates-volume'
+          mountPath: '/config/tls-certificates/'
+          readOnly: true
+        - name: 'configuration-volume'
+          mountPath: '/etc/nginx/nginx.conf'
+          subPath: 'nginx.conf'
+          readOnly: true
+        - name: 'njs-to-replace-endpoint'
+          mountPath: '/etc/nginx/njs/replace_endpoint.js'
+          subPath: 'replace_endpoint.js'
+          readOnly: true
+      volumes:
+      - name: 'tls-certificates-volume'
+        secret:
+          secretName: '{{ .Release.Name }}-tls-certificates'
+      - name: 'configuration-volume'
+        configMap:
+          name: '{{ .Release.Name }}-configuration'
+      - name: 'njs-to-replace-endpoint'
+        configMap:
+          name: '{{ .Release.Name }}-configuration'
+      # die folgenden Zeilen stellen sicher, dass mehrere Instanzen des gleichen Gateways nicht auf der gleichen maschine deployt werden.
+      # Nötig, damit bei einem Ausfall einer Maschine nicht alle Instanzen gleichzeitig weg sind.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: '{{ .Values.deployment.antiAffinityTopologyKey }}'
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - {{ .Release.Name }}
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - '{{ .Release.Name }}-authenticator-proxy'

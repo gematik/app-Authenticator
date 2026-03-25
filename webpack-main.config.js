@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -96,7 +96,10 @@ module.exports = {
       window: false,
     }),
     new CopyPlugin({
-      patterns: [{ from: 'winCertStoreLib/WinCertStoreLib.dll', to: '' }],
+      patterns: [
+        { from: 'winAPILib/WinAPILib.dll', to: '' },
+        { from: 'src/main/services/node-https-helper.js', to: '' },
+      ],
     }),
   ],
 };

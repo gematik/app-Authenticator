@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -125,7 +125,7 @@
       </form>
     </div>
   </div>
-  <EccWarningModal :toggle-ecc-warning-modal="toggleEccWarningModal" v-if="showEccWarningModal" />
+  <EccWarningModal :toggle-ecc-warning-modal="toggleEccWarningModal as any" v-if="showEccWarningModal" />
   <TestResultModal
     v-if="showFunctionTestModal"
     :function-test-results="functionTestResults"
@@ -154,8 +154,6 @@ import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/setti
 import { runTestsCases, TestResult } from '@/renderer/modules/settings/services/test-runner';
 import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
 import TestResultModal from '@/renderer/modules/settings/components/TestResultModal.vue';
-import { CHECK_UPDATES_AUTOMATICALLY_CONFIG } from '@/config';
-import { cancelActiveUpdateProcess, checkNewUpdate } from '@/renderer/service/auto-updater-service';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
 import { IPC_UPDATE_ENV, WIKI_CONFIGURATION_LINK, WIKI_INSTALLATION_SCENARIOS } from '@/constants';
@@ -223,7 +221,6 @@ export default defineComponent({
           return false;
         }
       }
-      handleUpdateProcess();
       return await performSaveOperation();
     }
 
@@ -310,14 +307,6 @@ export default defineComponent({
 
     async function startConfigAssistant() {
       await router.push('/config-assistant');
-    }
-
-    function handleUpdateProcess() {
-      if (configValues.value[CHECK_UPDATES_AUTOMATICALLY_CONFIG]) {
-        checkNewUpdate(true);
-      } else {
-        cancelActiveUpdateProcess();
-      }
     }
 
     async function performSaveOperation() {

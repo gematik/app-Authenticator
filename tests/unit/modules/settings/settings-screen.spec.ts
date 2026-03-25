@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -33,13 +33,40 @@ jest.mock('@/renderer/modules/settings/useSettings.ts', () => ({
   },
 }));
 
+jest.mock('vue-router', () => ({
+  ...jest.requireActual('vue-router'),
+  onBeforeRouteLeave: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+  useRoute: () => ({
+    params: {},
+  }),
+}));
+
 describe('settings screen', () => {
+  beforeEach(() => {
+    // Ensure clean state so config data from other test files doesn't leak through the shared config file on disk
+    fileStorageRepository.clear();
+  });
+
+  afterAll(() => {
+    fileStorageRepository.clear();
+    jest.clearAllMocks();
+  });
+
   it('render ', async function () {
     const wrapper = mount(SettingsScreen, {
       global: {
         plugins: [store, i18n],
       },
     });
+
+    // Wait for Vue to process reactive updates from FormElement's mounted() hook.
+    // FormElement sets initValue in mounted(), but the re-render is batched into the next tick.
+    // Without this, the snapshot captures an intermediate state where isChanged is incorrectly true.
+    await wrapper.vm.$nextTick();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 });

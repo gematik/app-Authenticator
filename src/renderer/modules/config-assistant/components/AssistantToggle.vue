@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -51,21 +51,24 @@ const handleToggleChange = (e: Event) => {
   model.value = checked;
   emit('update:modelValue', checked);
 };
+
+// Eindeutige ID für Toggle
+const toggleId = ref(Math.random().toString(36).substring(2, 9));
 </script>
 
 <template>
   <div :class="{ 'input-container': true }">
-    <!-- Label für den Toggle -->
-    <label>{{ labelText }}</label>
-
-    <!-- Toggle-Element -->
+    <label :for="`toggle-${toggleId}`">{{ labelText }}</label>
     <div class="toggle-container">
       <input
+        :id="`toggle-${toggleId}`"
         type="checkbox"
         class="toggle-input"
         :checked="modelValue"
         :disabled="disabled"
         @change="handleToggleChange"
+        role="switch"
+        :aria-checked="modelValue"
       />
       <span class="toggle-slider"></span>
     </div>
@@ -74,6 +77,7 @@ const handleToggleChange = (e: Event) => {
 
 <style scoped>
 @import '../../../global.css';
+
 .input-container {
   position: relative;
   margin-top: 25px;

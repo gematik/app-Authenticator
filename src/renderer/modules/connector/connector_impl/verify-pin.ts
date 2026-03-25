@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -42,9 +42,7 @@ export const runSoapRequest = async (
     endpoint,
     envelope,
     httpReqConfig(requestHeaders, {
-      timeout: {
-        request: 60_000,
-      },
+      timeout: 60_000,
     }),
   );
   return data;

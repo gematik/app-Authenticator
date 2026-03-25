@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -21,7 +21,7 @@
  */
 
 import store from '@/renderer/store';
-import got from 'got';
+import * as httpClient from '@/main/services/http-client';
 import { CentralIdpError } from '@/renderer/errors/errors';
 
 const MOCK_AUTH_REQUEST_PARAMS = {
@@ -35,8 +35,9 @@ const MOCK_AUTH_RESPONSE_PROMPT_DATA = {
   },
 };
 
-jest.spyOn(got, 'get').mockImplementation(() => {
+jest.spyOn(httpClient, 'httpClient').mockImplementation(async () => {
   throw {
+    message: 'Request failed',
     response: {
       body: MOCK_AUTH_RESPONSE_PROMPT_DATA.response.data,
       headers: { error_uri: MOCK_AUTH_RESPONSE_PROMPT_DATA.response.headers.error_uri },

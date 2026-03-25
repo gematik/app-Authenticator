@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -105,31 +105,53 @@ const stepText = computed(() => {
 
 <template>
   <div class="screenshot-helper">
-    <div class="screenshot-helper__icon">
-      <img src="@/assets/external-link-svgrepo-com.svg" alt="Open Screenshot Icon" @click="openScreenshot" />
-    </div>
-    <span class="screenshot-helper__link-text" @click="openScreenshot">{{ text }}</span>
+    <!-- Screenshot-Öffner als Button mit Icon -->
+    <button class="screenshot-helper__icon" @click="openScreenshot" aria-label="Open screenshot">
+      <img src="@/assets/external-link-svgrepo-com.svg" alt="" />
+      <span class="screenshot-helper__link-text">{{ text }}</span>
+    </button>
   </div>
-  <div class="screenshot-helper__overlay" :class="{ 'show-screenshot': isScreenshotVisible }" @click="closeScreenshot">
-    <button class="screenshot-helper__close-button" @click="closeScreenshot">X</button>
-    <img :src="require(`@/assets/assistant-screenshots/${currentImageSrc}`)" alt="Screenshot" />
-    <div class="screenshot-helper__image-description">{{ currentImageDescription }} {{ stepText }}</div>
-    <div v-if="Array.isArray(imageSrc)" class="screenshot-helper__nav_container">
-      <div v-if="currentImageIndex == 0"></div>
-      <div
-        v-show="currentImageIndex > 0"
-        class="screenshot-helper__nav_container__left"
-        @click="(event) => onLeftArrowClick(event)"
-      >
-        <span class="custom-arrow">&#129032;</span>
+
+  <!-- Overlay für Screenshot -->
+  <div
+    class="screenshot-helper__overlay"
+    :class="{ 'show-screenshot': isScreenshotVisible }"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="screenshot-title"
+  >
+    <!-- Sauberste Lösung aus A11y-Sicht / ESC-Taste und Close-Button sind bereits implementiert und reichen für barrierefreies Schließen aus -->
+    <div class="overlay-background"></div>
+
+    <!-- Dialog-Container -->
+    <div class="dialog-content">
+      <button class="screenshot-helper__close-button" @click="closeScreenshot" aria-label="Close screenshot">X</button>
+
+      <img :src="require(`@/assets/assistant-screenshots/${currentImageSrc}`)" alt="Screenshot of interface" />
+
+      <div id="screenshot-title" class="screenshot-helper__image-description">
+        {{ currentImageDescription }} {{ stepText }}
       </div>
 
-      <div
-        v-show="currentImageIndex < imageSrc.length - 1"
-        class="screenshot-helper__nav_container__right"
-        @click="(event) => onRightArrowClick(event)"
-      >
-        <span class="custom-arrow">&#129034;</span>
+      <!-- Navigation-Buttons -->
+      <div v-if="Array.isArray(imageSrc)" class="screenshot-helper__nav_container">
+        <button
+          v-show="currentImageIndex > 0"
+          class="screenshot-helper__nav_container__left"
+          @click="onLeftArrowClick"
+          aria-label="Previous screenshot"
+        >
+          <span class="custom-arrow">&#129032;</span>
+        </button>
+
+        <button
+          v-show="currentImageIndex < imageSrc.length - 1"
+          class="screenshot-helper__nav_container__right"
+          @click="onRightArrowClick"
+          aria-label="Next screenshot"
+        >
+          <span class="custom-arrow">&#129034;</span>
+        </button>
       </div>
     </div>
   </div>
@@ -137,6 +159,7 @@ const stepText = computed(() => {
 
 <style scoped>
 @import '../../../global.css';
+
 .show-screenshot {
   display: flex !important;
 }

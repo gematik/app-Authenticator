@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,6 +26,17 @@ import { logger } from '@/renderer/service/logger';
 import i18n from '@/renderer/i18n';
 import store from '@/renderer/store';
 import IdpActions from '@/renderer/modules/gem-idp/components/IdpActions.vue';
+
+// mock settings data (is used in card-expiration-warner)
+jest.mock('@/renderer/modules/settings/useSettings', () => ({
+  useSettings: () => ({
+    load: jest.fn(),
+    save: jest.fn(),
+    clear: jest.fn(),
+    exist: jest.fn(() => true),
+    setWithoutSave: jest.fn(),
+  }),
+}));
 
 // Mocking logger functions
 jest.mock('@/renderer/service/logger', () => {

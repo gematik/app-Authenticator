@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -30,7 +30,6 @@ import {
 import { getMatch } from 'ip-matching';
 import { IConfig, IConfigSection, TLS_AUTH_TYPE } from '@/@types/common-types';
 import {
-  CHECK_UPDATES_AUTOMATICALLY_CONFIG,
   CONNECTOR_GATEWAY_NAME,
   CONNECTOR_GATEWAY_NAME_STATUS,
   CONTEXT_PARAMETERS_CONFIG_GROUP,
@@ -190,6 +189,12 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           optionsType: 'standardBool',
           infoText: 'Zertifikatsprüfung des IDP und die WANDA Applications ein oder auszuschalten.',
         },
+        {
+          label: 'IDP Zusätzlich erlaubte IDP Hosts',
+          key: DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS,
+          type: 'input',
+          infoText: 'Kommaseparierte Liste zusätzlicher erlaubter IDP-Hosts (z.B. localhost,my-idp.example.com).',
+        },
       ],
     },
     // #!endif
@@ -330,6 +335,13 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'drop-down',
           optionsType: 'standardBool',
           infoText: translate('smcb_pin_option_info'),
+        },
+        {
+          label: translate('warn_card_expiration'),
+          key: ENTRY_OPTIONS_CONFIG_GROUP.WARN_CARD_EXPIRATION,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: translate('warn_card_expiration_info'),
         },
       ],
     },
@@ -571,19 +583,6 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
         },
       ],
     },
-    {
-      title: translate('automatic_updates'),
-      hide: false,
-      columns: [
-        {
-          label: translate('check_updates_automatically'),
-          key: CHECK_UPDATES_AUTOMATICALLY_CONFIG,
-          type: 'drop-down',
-          optionsType: 'standardBool',
-          infoText: translate('info_text_check_updates_automatically'),
-        },
-      ],
-    },
   ];
 }
 
@@ -687,48 +686,18 @@ export async function validateP12AndMove(e: Event, repositoryData: TRepositoryDa
     if (!newPassword.isConfirmed) {
       return false;
     }
-    let sourcePath = window.api.showFilePath(file);
-    let errorText = '';
+    const sourcePath = window.api.showFilePath(file);
     const isP12Valid = window.api.isP12Valid(sourcePath, <string>newPassword.value);
-    switch (isP12Valid) {
-      case P12_VALIDITY_TYPE.INVALID_CERTIFICATE:
-        errorText = 'pfx_cert_invalid';
-        break;
-      case P12_VALIDITY_TYPE.WRONG_PASSWORD:
-        errorText = 'pfx_password_fail';
-        break;
-      case P12_VALIDITY_TYPE.NO_CERT_FOUND:
-        errorText = 'pfx_no_cert';
-        break;
-      case P12_VALIDITY_TYPE.ONE_VALID_AND_INVALID_CERTIFICATES:
-        // eslint-disable-next-line no-case-declarations
-        const value = await Swal.fire({
-          title: translate('pfx_with_invalid_certs'),
-          text: translate('pfx_repair_swal'),
-          cancelButtonText: translate('cancel'),
-          confirmButtonText: translate('pfx_confirm_repair'),
-          showCancelButton: true,
-        });
-        if (value.isConfirmed) {
-          sourcePath = window.api.extractValidCertificate(sourcePath, <string>newPassword.value);
-          repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
-          repositoryData[fieldKey] = await copyUploadedFileToTargetDir(sourcePath, fieldKey, pfxFilename);
-          return;
-        }
-        input.value = '';
-        repositoryData[fieldKey] = '';
-        return;
-      case P12_VALIDITY_TYPE.TOO_MANY_CERTIFICATES:
-        errorText = 'pfx_to_many_certificates';
-        break;
-      case P12_VALIDITY_TYPE.PROCESSING_EXCEPTION:
-        errorText = 'pfx_processing_error';
-        break;
-      case P12_VALIDITY_TYPE.VALID:
-        repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
-        repositoryData[fieldKey] = await copyUploadedFileToTargetDir(sourcePath, fieldKey, pfxFilename);
-        return;
+
+    if (isP12Valid === P12_VALIDITY_TYPE.VALID) {
+      repositoryData[ENTRY_OPTIONS_CONFIG_GROUP.TLS_PFX_PASSWORD] = <string>newPassword.value;
+      repositoryData[fieldKey] = await copyUploadedFileToTargetDir(sourcePath, fieldKey, pfxFilename);
+      return;
     }
+
+    // Determine error message
+    const errorText = isP12Valid === P12_VALIDITY_TYPE.EXPIRED ? 'pfx_cert_expired' : 'pfx_password_fail';
+
     input.value = '';
     repositoryData[fieldKey] = '';
     await Swal.fire({

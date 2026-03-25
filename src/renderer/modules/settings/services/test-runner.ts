@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -47,7 +47,7 @@ export enum TestStatus {
   warning = 'warning',
 }
 
-export type TestResult = { title: string; name: string; status: TestStatus; details: string };
+export type TestResult = { title: string; name: string; status: TestStatus; details: string; solutionLink?: string };
 type TestFunction = () => Promise<TestResult> | Promise<TestResult[]>;
 
 export async function runTestsCases(

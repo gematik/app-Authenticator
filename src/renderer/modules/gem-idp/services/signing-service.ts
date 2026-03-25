@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,9 +26,21 @@ import { ERROR_CODES } from '@/error-codes';
 import base64url from 'base64url';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { ENCRYPTION_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
+import { isCertificateValid } from '@/renderer/modules/gem-idp/services/certificate-validation-service';
 
 export async function createUnsignedJws(cardCertificate: string, challenge: string) {
   try {
+    // Validate the certificate before using it
+    const isValid = await isCertificateValid(cardCertificate);
+    if (!isValid) {
+      logger.error('Certificate validation failed');
+      throw new UserfacingError(
+        'Certificate validation failed',
+        'The provided certificate is not valid',
+        ERROR_CODES.AUTHCL_0004,
+      );
+    }
+
     const header = createJwsHeader(cardCertificate);
     const payload = createJwsPayload(challenge);
 
@@ -38,6 +50,9 @@ export async function createUnsignedJws(cardCertificate: string, challenge: stri
       hashedChallenge: await createSigningInputString(header, payload),
     };
   } catch (err) {
+    if (err instanceof UserfacingError) {
+      throw err;
+    }
     logger.error(`Could not create signed input. Error: ${err.message}`);
     throw new UserfacingError('JWS hashing failed', err.message, ERROR_CODES.AUTHCL_0003);
   }

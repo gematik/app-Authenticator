@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -52,9 +52,6 @@ jest.mock('electron', () => ({
     sendSync: () => {},
     on: () => {},
     invoke: jest.fn((channel) => {
-      if (channel === 'IPC_READ_CERTIFICATES') {
-        return Promise.resolve(['mocked certificate']);
-      }
       return Promise.resolve(null); // Default mock response
     }),
   },

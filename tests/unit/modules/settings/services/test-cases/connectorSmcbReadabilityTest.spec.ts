@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -54,14 +54,19 @@ describe('connectorSmcbReadabilityTest', () => {
     mockedGetPinStatus.mockResolvedValue({ pinStatus: 'TRANSPORT_PIN' });
 
     const result = await connectorSmcbReadabilityTest();
+    const { solutionLink, ...rest } = result;
 
-    expect(result).toEqual({
+    expect(rest).toEqual({
       title: 'Allgemeiner Funktionstest',
       name: 'SMC-B Verfügbarkeit',
       status: 'failure',
       details:
         'Ihre Karte in Slot 1 vom Kartenterminal 1234 ist noch mit einer Transport-PIN belegt. Wandeln Sie diesen in einen eigenen PIN um',
     });
+
+    if (solutionLink !== undefined) {
+      expect(typeof solutionLink).toBe('string');
+    }
   });
 
   it('should return success if pinStatus is VERIFIED', async () => {
@@ -104,14 +109,19 @@ describe('connectorSmcbReadabilityTest', () => {
     mockedGetCards.mockRejectedValue(error);
 
     const result = await connectorSmcbReadabilityTest();
+    const { solutionLink, ...rest } = result;
 
     expect(mockedLoggerDebug).toHaveBeenCalledWith('Test Connector Error');
-    expect(result).toEqual({
+    expect(rest).toEqual({
       title: 'Allgemeiner Funktionstest',
       name: 'SMC-B Verfügbarkeit',
       status: 'failure',
       details: 'Fehler: SOME_CODE, Test Connector Error Description ',
     });
+
+    if (solutionLink !== undefined) {
+      expect(typeof solutionLink).toBe('string');
+    }
   });
 
   it('should handle generic errors and return failure', async () => {
@@ -120,13 +130,18 @@ describe('connectorSmcbReadabilityTest', () => {
     mockedGetCards.mockRejectedValue(error);
 
     const result = await connectorSmcbReadabilityTest();
+    const { solutionLink, ...rest } = result;
 
     expect(mockedLoggerDebug).toHaveBeenCalledWith('Generic Error');
-    expect(result).toEqual({
+    expect(rest).toEqual({
       title: 'Allgemeiner Funktionstest',
       name: 'SMC-B Verfügbarkeit',
       status: 'failure',
       details: 'Fehler: Generic Error ',
     });
+
+    if (solutionLink !== undefined) {
+      expect(typeof solutionLink).toBe('string');
+    }
   });
 });

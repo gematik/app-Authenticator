@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -43,13 +43,15 @@ export class UserfacingError extends AuthenticatorError {
   message: string;
   code?: string;
   data?: any;
+  solutionLink?: string;
 
-  constructor(title: string, message: string, code?: string, data?: unknown) {
+  constructor(title: string, message: string, code?: string, data?: unknown, solutionLink?: string) {
     super(window.api.utilFormat('code: %s; error: %s; description: %s; data: %s', code, title, message, data || ''));
     this.title = title;
     this.message = message;
     this.code = code;
     this.data = data;
+    this.solutionLink = solutionLink;
   }
 }
 
@@ -59,8 +61,9 @@ export class ConnectorError extends AuthenticatorError {
   error?: string;
   description?: string;
   data?: any;
+  solutionLink?: string;
 
-  constructor(code: string, error?: string, description?: string, data?: unknown) {
+  constructor(code: string, error?: string, description?: string, data?: unknown, solutionLink?: string) {
     super(
       window.api.utilFormat('code: %s; error: %s; description: %s; data: %s', code, error, description, data || ''),
     );
@@ -68,6 +71,7 @@ export class ConnectorError extends AuthenticatorError {
     this.error = error;
     this.description = description;
     this.data = data;
+    this.solutionLink = solutionLink;
   }
 }
 
@@ -77,13 +81,15 @@ export class ConnectorHint extends AuthenticatorHint {
   error?: string;
   description?: string;
   data?: any;
+  solutionLink?: string;
 
-  constructor(code: string, hint?: string, description?: string, data?: unknown) {
+  constructor(code: string, hint?: string, description?: string, data?: unknown, solutionLink?: string) {
     super(window.api.utilFormat('code: %s; hint: %s; description: %s', code, hint, description));
     this.code = code;
     this.error = hint;
     this.description = description;
     this.data = data;
+    this.solutionLink = solutionLink;
   }
 }
 

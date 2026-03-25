@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -28,7 +28,7 @@ import {
 } from '@/config';
 import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
-import dotObject from 'dot-object';
+import { unflatten } from 'flat';
 import { TLS_AUTH_TYPE } from '@/@types/common-types';
 
 export const SAMPLE_CONFIG_DATA = {
@@ -48,7 +48,7 @@ export const SAMPLE_CONFIG_DATA = {
   [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: true,
 };
 
-export const SAMPLE_CONFIG_DATA_STRUCTURED = dotObject.object(SAMPLE_CONFIG_DATA);
+export const SAMPLE_CONFIG_DATA_STRUCTURED = unflatten(SAMPLE_CONFIG_DATA);
 
 /**
  * Be aware, the test file path is different from production config file!

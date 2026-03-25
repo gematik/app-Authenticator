@@ -1,5 +1,5 @@
 <!--
-  - Copyright 2025, gematik GmbH
+  - Copyright 2026, gematik GmbH
   -
   - Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
   - European Commission – subsequent versions of the EUPL (the "Licence").
@@ -29,7 +29,10 @@
       />
     </div>
     <div class="assistant-section mb-5">
-      <p class="mb-3"><strong>Einstellung zur SMC-B PIN-Abfrage</strong>&nbsp;</p>
+      <p class="mb-3">
+        <strong>{{ $t('config_assistant.koco.step10.subtitle') }}</strong
+        >&nbsp;
+      </p>
       <p
         class="mb-1"
         :style="{ marginTop: '20px' }"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -95,4 +95,34 @@ export enum KONNEKTOR_VENDORS {
   Rise = 'Rise',
   Koco = 'KoCo',
   Secunet = 'Secunet',
+}
+
+/**
+ * Toast Notification types
+ */
+export type TToastIconType = 'success' | 'warning' | 'error' | 'info';
+
+export type TToastPositionType =
+  | 'top-right'
+  | 'top-left'
+  | 'bottom-right'
+  | 'bottom-left'
+  | 'top-center'
+  | 'bottom-center';
+
+export interface IToastNotificationProps {
+  title: string;
+  message: string;
+  icon?: TToastIconType;
+  showPrimaryButton?: boolean; // show Primary Button (default: true)
+  showSecondaryButton?: boolean; // show Secondary Button (default: false)
+  showDismissButton?: boolean; // show X (dismiss) button top right (default: true)
+  position?: TToastPositionType;
+  primaryButtonText?: string; // default: "OK"
+  secondaryButtonText?: string; // default: "Cancel"
+  primaryButtonAction?: () => void;
+  secondaryButtonAction?: () => void;
+  onDismiss?: () => void; // callback when the toast is dismissed
+  autoDismiss?: boolean; // auto dismiss after a certain time (default: false)
+  autoDismissTime?: number; // auto dismiss time seconds (default: 5)
 }

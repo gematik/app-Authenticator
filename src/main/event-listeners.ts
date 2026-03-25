@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -26,7 +26,6 @@ import {
   IPC_GET_APP_PATH,
   IPC_GET_PATH,
   IPC_GET_PROXY,
-  IPC_READ_CERTIFICATES,
   IPC_READ_CREDENTIALS,
   IPC_READ_MAIN_PROCESS_ENVS,
   IPC_SAVE_CREDENTIALS,
@@ -35,7 +34,9 @@ import {
 import { logger } from '@/main/services/logging';
 import { UP_TO_DATE_PROCESS_ENVS } from '@/main/services/env-vars-updater';
 import { getSensitiveConfigValues, saveSensitiveConfigValues } from '@/main/services/credentials-manager';
-import { getCertificates } from '@/main/services/read-root-certs';
+import fs from 'fs';
+import path from 'path';
+import { MainPathProvider } from '@/main/services/main-path-provider';
 
 ipcMain.on(IPC_GET_PATH, (event, name) => {
   event.returnValue = app.getPath(name);
@@ -99,11 +100,20 @@ ipcMain.on(IPC_SAVE_CREDENTIALS, async (event, data) => {
   event.returnValue = await saveSensitiveConfigValues(data);
 });
 
-ipcMain.handle(IPC_READ_CERTIFICATES, async () => {
+ipcMain.handle('readThirdPartyLicenses', () => {
   try {
-    return getCertificates();
+    const filePath = path.join(MainPathProvider.getResourcesPath(), 'third-party-licenses.html');
+    logger.info(`Attempting to read third-party licenses from: ${filePath}`);
+
+    if (fs.existsSync(filePath)) {
+      logger.info(`Successfully found third-party licenses at: ${filePath}`);
+      return fs.readFileSync(filePath, 'utf8');
+    } else {
+      logger.error(`Third-party licenses file not found at: ${filePath}`);
+      return '<p>Error: License file not found.</p>';
+    }
   } catch (error) {
-    logger.error('Error retrieving certificates from trust store:', error);
-    return [];
+    logger.error('Error reading third-party licenses:', error);
+    return '<p>Error loading third-party licenses.</p>';
   }
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -40,8 +40,20 @@ export enum PEM_TYPES {
 
 export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
   let isFormatLineValid: boolean;
+  let errorMessage = `${type}CertificateFile is not properly formated.`;
+  let errorTitleKey = 'selected_cert_file_is_not_valid';
+
   if (type === PEM_TYPES.CERT) {
-    isFormatLineValid = checkCertificates(fileContent) === CERTIFICATE_VALIDATION_STATUS.VALID;
+    const validationStatus = checkCertificates(fileContent);
+    isFormatLineValid = validationStatus === CERTIFICATE_VALIDATION_STATUS.VALID;
+
+    if (validationStatus === CERTIFICATE_VALIDATION_STATUS.EXPIRED) {
+      errorMessage = 'CertificateFile is expired.';
+      errorTitleKey = 'selected_cert_file_is_expired';
+    } else if (validationStatus === CERTIFICATE_VALIDATION_STATUS.NOT_VALID_YET) {
+      errorMessage = 'CertificateFile is not valid yet.';
+      errorTitleKey = 'selected_cert_file_is_not_valid_yet';
+    }
   } else {
     isFormatLineValid = checkPrivateKey(fileContent);
   }
@@ -49,7 +61,7 @@ export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
   if (!isFormatLineValid) {
     await Swal.fire({
       icon: 'error',
-      title: translate('selected_cert_file_is_not_valid'),
+      title: translate(errorTitleKey),
     });
 
     const ERROR_CODE = {
@@ -57,11 +69,7 @@ export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
       cert: ERROR_CODES.AUTHCL_1115,
     };
 
-    throw new UserfacingError(
-      `Invalid ${type} file format`,
-      `${type}CertificateFile ist nicht richtig formatiert.`,
-      ERROR_CODE[type],
-    );
+    throw new UserfacingError(`Invalid ${type} file format`, errorMessage, ERROR_CODE[type]);
   }
 }
 

@@ -1,0 +1,27 @@
+{
+  "checkUpdatesAutomatically": true,
+  "connectorGatewayNameStatus": true,
+  "connectorGatewayName": "konnektor-1",
+  "proxy": {
+    "proxySettingsType": false,
+    "useOsSettings": true,
+    "useForConnector": false
+  },
+  "connector": {
+    "entryOption": {
+      "tlsRejectUnauthorized": true,
+      "smcbPinOption": false,
+      "port": "443",
+      "hostname": "kongateway.de:9443"
+    },
+    "tlsAuthType": "ServerCertAuth",
+    "contextParameter": {
+      "mandantId": "mandant0001",
+      "clientId": "cs0001",
+      "workplaceId": "wp0001"
+    }
+  },
+  "eccWarnings": {
+    "status": true
+  }
+}

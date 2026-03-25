@@ -1,0 +1,48 @@
+dns:
+  hostname: <HOSTNAME-OF-KONNEKTOR-GATEWAY>
+  resolverIp: <INTERNAL-DNS-RESOLVER>
+endpoint:
+  locations:
+  - '^/(service|webservices|ws)/eventservice'
+  - '^/(service|webservices|ws)/authsignatureservice'
+  - '^/(service|webservices|ws)/cardservice'
+  - '^/(service|webservices|ws)/certificateservice'
+  - '^/(service|webservices|ws)/systeminformationservice'
+certificates:
+  tls:
+    certificate:
+      key: client-certificate
+      property: public
+    key:
+      key: client-certificate
+      property: private
+    ca:
+      key: client-certificate
+      property: ca-bundle
+deployment:
+  replicas: 6
+  image:
+    repository: <IMAGE-REPOSITORY-URL>
+    imagePullPolicy: IfNotPresent
+    tag: 1.29-alpine
+  resources:
+    requests:
+      memory: '32Mi'
+      cpu: '250m'
+    limits:
+      memory: '32Mi'
+      cpu: '250m'
+  antiAffinityTopologyKey: "kubernetes.io/hostname"
+  replace:
+    pattern: '<REGULAR-EXPRESSION-FOR-ADJUSTING-CONNECTOR-SDS-RESPONSES-TO-KONNEKTOR-GATEWAY>'
+  debug:
+    enable: false
+externalSecrets:
+  refreshInterval: 5m
+  secretStore:
+    name: prod-secret-store
+konnektoren:
+- name: konnektor-1
+  hostname: konnektor-1-real-url
+- name: konnektor-2
+  hostname: konnektor-2-real-url

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -60,8 +60,6 @@ class ConnectorConfig {
 
   public authSignParameter: TAuthSignParameter = {
     signatureType: SIGNATURE_TYPES.ECC,
-    // @deprecated
-    signatureCidpSchemes: 'RSASSA-PSS', // deprecated as it throws an error for ECC and not required at all
     base64data: 'YK+JQHBucqT8OaqOyNHkYR4kAYtUQawphBNwfEaOA7Y=',
   };
 

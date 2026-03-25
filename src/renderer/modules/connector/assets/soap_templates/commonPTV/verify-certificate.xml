@@ -1,0 +1,19 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:m0="http://ws.gematik.de/conn/ConnectorContext/v2.0"
+    xmlns:m1="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+    xmlns:m2="http://ws.gematik.de/conn/CertificateServiceCommon/v2.0">
+    <SOAP-ENV:Body>
+        <m:VerifyCertificate xmlns:m="http://ws.gematik.de/conn/CertificateService/v6.0">
+            <m0:Context>
+                <m1:MandantId>{MANDANT}</m1:MandantId>
+                <m1:ClientSystemId>{CLIENT}</m1:ClientSystemId>
+                <m1:WorkplaceId>{WORKPLACE}</m1:WorkplaceId>
+            </m0:Context>
+            <m2:X509Certificate>{CERTIFICATE}</m2:X509Certificate>
+            {VERIFICATION_TIME}
+        </m:VerifyCertificate>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

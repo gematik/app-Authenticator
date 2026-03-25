@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -43,7 +43,7 @@ describe('default config', () => {
 
     // remove the dir and its content
     if (fs.existsSync(process.env.AUTHCONFIGPATH!)) {
-      fs.rmdirSync(process.env.AUTHCONFIGPATH!, { recursive: true });
+      fs.rmSync(process.env.AUTHCONFIGPATH!, { recursive: true, force: true });
     }
 
     // create the dir
@@ -74,7 +74,7 @@ describe('default config', () => {
   afterAll(() => {
     // remove the dir and its content
     if (fs.existsSync(process.env.AUTHCONFIGPATH!)) {
-      fs.rmdirSync(process.env.AUTHCONFIGPATH!, { recursive: true });
+      fs.rmSync(process.env.AUTHCONFIGPATH!, { recursive: true, force: true });
     }
 
     jest.resetModules();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, gematik GmbH
+ * Copyright 2026, gematik GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
  * European Commission – subsequent versions of the EUPL (the "Licence").
@@ -21,8 +21,8 @@
  */
 
 import store from '@/renderer/store';
-
-const got = require('got');
+import * as jwsVerificationService from '@/renderer/modules/gem-idp/services/jws-verification-service';
+import * as httpClient from '@/main/services/http-client';
 
 const MOCK_AUTH_REQUEST_PARAMS = {
   challenge_path: 'http://login:8083/test/auth?var1=1&var2=2',
@@ -38,21 +38,17 @@ const MOCK_AUTH_RESPONSE_PROMPT_DATA = {
 // make sense to implement any functionality in this case
 const callbackUrl = 'http://test:0001/callback?session_state=1111111&code=testscode';
 
-jest.spyOn(got, 'get').mockReturnValue({
-  json: () => MOCK_AUTH_RESPONSE_PROMPT_DATA,
-});
-
-jest.spyOn(got, 'post').mockReturnValue({
-  json: () => {},
-  statusCode: 200,
-  headers: {
-    location: callbackUrl,
-  },
+jest.spyOn(httpClient, 'httpClient').mockImplementation(async (method, url) => {
+  if (method === httpClient.HTTP_METHODS.GET) {
+    return { data: MOCK_AUTH_RESPONSE_PROMPT_DATA, status: 200, headers: {} };
+  }
+  return { data: {}, status: 200, headers: { location: callbackUrl } };
 });
 
 describe('auth service sendAuthRequest action', () => {
   beforeEach(() => {
     store.commit('idpServiceStore/resetStore');
+    jest.spyOn(jwsVerificationService, 'verifyChallengeTokenSignature').mockResolvedValue();
   });
 
   it('sends auth request and gets authResponsePromptData ', async () => {
@@ -63,7 +59,7 @@ describe('auth service sendAuthRequest action', () => {
     store.commit('idpServiceStore/setChallengePath', MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge_endpoint);
 
     expect(result).toEqual(true);
-    expect(got.get).toHaveBeenCalledTimes(1);
+    expect(httpClient.httpClient).toHaveBeenCalled();
     expect(store.state.idpServiceStore.challenge).toEqual(MOCK_AUTH_RESPONSE_PROMPT_DATA.challenge);
   });
 });
@@ -71,6 +67,7 @@ describe('auth service sendAuthRequest action', () => {
 describe('auth service sendSignedChallenge action', () => {
   beforeEach(() => {
     store.commit('idpServiceStore/resetStore');
+    jest.spyOn(jwsVerificationService, 'verifyChallengeTokenSignature').mockResolvedValue();
   });
   it('sends auth request and gets authResponsePromptData ', async () => {
     // prepare store to test
