@@ -20,6 +20,7 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
+import 'reflect-metadata';
 import { Crypto } from '@peculiar/webcrypto';
 import { preloadApi } from '@/main/preload-api';
 import { FileStorageRepository } from '@/renderer/modules/settings/repository';

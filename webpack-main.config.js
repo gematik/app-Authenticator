@@ -59,6 +59,7 @@ module.exports = {
   externals: {
     keytar: 'commonjs keytar',
     'electron-edge-js': 'commonjs2 electron-edge-js',
+    lzma: 'commonjs lzma',
   },
   module: {
     rules: [

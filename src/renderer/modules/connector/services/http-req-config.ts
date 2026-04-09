@@ -64,8 +64,8 @@ export const httpReqConfig = (headers?: Headers, customOptions?: HTTPClientConfi
   } else if (ConnectorConfig.tlsAuthType == TLS_AUTH_TYPE.ServerClientCertAuth) {
     const keyFile = ConnectorConfig.tlsEntryOptions.keyFile;
     const certFile = ConnectorConfig.tlsEntryOptions.certFile;
-    agentConfig.key = keyFile && window.api.readFileSync(keyFile);
-    agentConfig.certificate = certFile && window.api.readFileSync(certFile);
+    agentConfig.key = keyFile && window.api.readFileSync(keyFile, 'utf8');
+    agentConfig.certificate = certFile && window.api.readFileSync(certFile, 'utf8');
   }
 
   return {
