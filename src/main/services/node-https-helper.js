@@ -186,9 +186,41 @@ function performRequest(request) {
 
   // Add PEM key/cert if provided (for mTLS with PEM files)
   if (isHttps && keyPem) {
+    // Pre-validate the private key to get a clear error message
+    try {
+      const crypto = require('node:crypto');
+      const keyObj = crypto.createPrivateKey(keyPem);
+      process.stderr.write(
+        'PEM key loaded: type=' + keyObj.asymmetricKeyType + ', format=' + keyPem.trimStart().split('\n')[0] + '\n',
+      );
+    } catch (e) {
+      return outputError(
+        'PEM_KEY_ERROR',
+        'Failed to load PEM private key: ' +
+          e.message +
+          ' | Key header: ' +
+          (keyPem.trimStart().split('\n')[0] || '(empty)'),
+      );
+    }
     options.key = keyPem;
   }
   if (isHttps && certPem) {
+    // Pre-validate the certificate
+    try {
+      const crypto = require('node:crypto');
+      const certObj = new crypto.X509Certificate(certPem);
+      process.stderr.write(
+        'PEM cert loaded: subject=' + certObj.subject + ', format=' + certPem.trimStart().split('\n')[0] + '\n',
+      );
+    } catch (e) {
+      return outputError(
+        'PEM_CERT_ERROR',
+        'Failed to load PEM certificate: ' +
+          e.message +
+          ' | Cert header: ' +
+          (certPem.trimStart().split('\n')[0] || '(empty)'),
+      );
+    }
     options.cert = certPem;
   }
 

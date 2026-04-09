@@ -76,7 +76,7 @@ export async function checkPemFileFormat(fileContent: string, type: PEM_TYPES) {
 // Function to parse certificates
 export function checkCertificates(pem: string): CERTIFICATE_VALIDATION_STATUS {
   try {
-    const normalizedPem = pem.replace(/\r\n/g, '\n');
+    const normalizedPem = pem.replaceAll('\r\n', '\n');
     const cert = new x509.X509Certificate(normalizedPem);
 
     const notBefore = cert.notBefore;
@@ -98,22 +98,43 @@ export function checkCertificates(pem: string): CERTIFICATE_VALIDATION_STATUS {
 }
 
 export function checkPrivateKey(pem: string): boolean {
+  // 1. Try node-forge (supports PKCS#1 RSA keys: -----BEGIN RSA PRIVATE KEY-----)
   try {
     forge.pki.privateKeyFromPem(pem);
 
     return true;
   } catch (error) {
-    logger.warn('Error parsing private key. Try parsing as EC key:', error);
-
-    try {
-      readECPrivateKey(pem);
-
-      logger.info('EC private key parsed successfully');
-
-      return true;
-    } catch (error) {
-      logger.error('Error parsing EC private key:', error);
-      return false;
-    }
+    logger.warn('Error parsing private key with node-forge. Try parsing as EC key:', error);
   }
+
+  // 2. Try custom SEC1 EC parser (supports -----BEGIN EC PRIVATE KEY-----)
+  try {
+    readECPrivateKey(pem);
+
+    logger.info('EC private key parsed successfully');
+
+    return true;
+  } catch (error) {
+    logger.warn('Error parsing SEC1 EC private key. Try PKCS#8 format:', error);
+  }
+
+  // 3. Check for PKCS#8 format (-----BEGIN PRIVATE KEY----- / -----BEGIN ENCRYPTED PRIVATE KEY-----)
+  // Full cryptographic validation happens later in the node-https-helper process which has native OpenSSL support.
+  try {
+    const trimmed = pem.trim();
+    const isPkcs8 =
+      (trimmed.startsWith('-----BEGIN PRIVATE KEY-----') && trimmed.endsWith('-----END PRIVATE KEY-----')) ||
+      (trimmed.startsWith('-----BEGIN ENCRYPTED PRIVATE KEY-----') &&
+        trimmed.endsWith('-----END ENCRYPTED PRIVATE KEY-----'));
+
+    if (isPkcs8) {
+      logger.info('PKCS#8 private key format detected');
+      return true;
+    }
+  } catch (error) {
+    logger.error('Error checking PKCS#8 format:', error);
+  }
+
+  logger.error('Private key could not be parsed in any known format');
+  return false;
 }

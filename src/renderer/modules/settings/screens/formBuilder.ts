@@ -195,6 +195,13 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           type: 'input',
           infoText: 'Kommaseparierte Liste zusätzlicher erlaubter IDP-Hosts (z.B. localhost,my-idp.example.com).',
         },
+        {
+          label: 'Login Consent Dialog anzeigen',
+          key: DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG,
+          type: 'drop-down',
+          optionsType: 'standardBool',
+          infoText: 'Login Consent Dialog vor der Authentifizierung ein- oder ausschalten.',
+        },
       ],
     },
     // #!endif
@@ -462,24 +469,26 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           infoText: translate('info_text_proxy_address'),
           // check if url is valid, and show warning if it isn't valid
           validateInput(value) {
-            if (COMMON_USED_REGEXES.URL.test(value)) {
-              return true;
-            }
-
-            if (isValidDomain(value)) {
-              return true;
-            }
-
-            try {
-              return !!getMatch(value);
-            } catch (e) {
+            // Require http:// or https:// protocol prefix
+            if (!value.startsWith('http://') && !value.startsWith('https://')) {
               Swal.fire({
                 title: translate('error_info'),
-                text: i18n.global.t('invalid_proxy_address', { value }),
+                text: i18n.global.t('proxy_address_requires_protocol'),
                 icon: 'error',
               });
               return false;
             }
+
+            if (COMMON_USED_REGEXES.URL.test(value)) {
+              return true;
+            }
+
+            Swal.fire({
+              title: translate('error_info'),
+              text: i18n.global.t('invalid_proxy_address', { value }),
+              icon: 'error',
+            });
+            return false;
           },
         },
         {
