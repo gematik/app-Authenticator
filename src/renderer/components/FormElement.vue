@@ -262,12 +262,16 @@ export default defineComponent({
     },
   },
   mounted() {
+    // Safety net: ensure initValue is in sync after mount as well
     this.initValue = this.model[this.name];
-    // We use this to check if the value is changed and notify the user
   },
   created() {
     this.validate();
     this.trimInput();
+    // Set initValue here (before the first render) so that isChanged is correct from the start.
+    // Previously this was only set in mounted(), which runs after the first render,
+    // causing a brief intermediate state where isChanged was incorrectly true.
+    this.initValue = this.model[this.name];
   },
   methods: {
     clearValue(): void {

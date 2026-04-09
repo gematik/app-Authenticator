@@ -65,6 +65,10 @@ import { logStep } from '@/renderer/modules/gem-idp/utils';
 import { showConsentDeclaration } from '@/renderer/modules/gem-idp/utils/consent-declaration';
 import { showLoginConsentDialog } from '@/renderer/modules/gem-idp/utils/login-consent-dialog';
 import { parseAuthArguments } from '@/renderer/modules/gem-idp/services/arguments-parser';
+import { getConfig } from '@/renderer/utils/get-configs';
+// #!if MOCK_MODE === 'ENABLED'
+import { DEVELOPER_OPTIONS } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
 import CardHandle from '@/renderer/modules/gem-idp/components/CardHandle.vue';
 import PinActions from '@/renderer/modules/gem-idp/components/PinActions.vue';
 import IdpActions from '@/renderer/modules/gem-idp/components/IdpActions.vue';
@@ -230,11 +234,16 @@ export default defineComponent({
 
         /**
          * Show login consent dialog – user must confirm the target application before proceeding.
-         * ONLY IN PROD MODE / VERSION!
+         * In prod mode, always shown. In mock mode, controlled by developer option (default: true).
          */
-        // #!if MOCK_MODE !== 'ENABLED'
-        await showLoginConsentDialog(this.$store, this.$t);
+        let showLoginConsent = true;
+        // #!if MOCK_MODE === 'ENABLED'
+        const loginConsentSetting = getConfig(DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG, true).value;
+        showLoginConsent = loginConsentSetting !== false;
         // #!endif
+        if (showLoginConsent) {
+          await showLoginConsentDialog(this.$store, this.$t);
+        }
 
         /**
          * Get CardHandle and force user to place the card

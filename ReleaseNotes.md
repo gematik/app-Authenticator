@@ -1,5 +1,28 @@
 # Release Authenticator
 
+## NEXT_VERSION
+
+### Added
+
+### Fixed
+
+### Security
+
+## 4.16.1
+
+### Added
+- Proxy URL validation with support for IP addresses and FQDNs
+- Login Confirmation Dialog now also gets shown in mock version
+- Toggle for Login Confirmation Dialog in settings (only for mock version)
+
+
+### Fixed
+- Handling PEM Certificates and Private Keys correctly, including PKCS#8 format support
+- Improved error messages for invalid PEM key and certificate files
+
+### Security
+- Dependency updates 
+
 ## 4.16.0
 
 ### Added

@@ -19,7 +19,7 @@
  *
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
-
+import 'reflect-metadata';
 // read envs from .env file for production
 import { app, BrowserWindow, Event, ipcMain, protocol } from 'electron';
 import path from 'path';

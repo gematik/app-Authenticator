@@ -235,7 +235,7 @@ describe('proxyResolver', () => {
 
     expect(proxyAgent).toBeUndefined();
   });
-  it('useManualProxySetting', async function () {
+  it('useManualProxySettingWithHttpsProtocol', async function () {
     preloadApi.setAppConfigInPreload({
       ...SAMPLE_CONFIG_DATA,
       [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
@@ -247,6 +247,37 @@ describe('proxyResolver', () => {
 
     // @ts-ignore
     expect(proxyAgent?.proxy?.href).toBe('https://192.169.0.1:8888/');
+  });
+
+  it('useManualProxySettingWithHttpProtocol', async function () {
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: 'http://192.169.0.1',
+      [PROXY_SETTINGS_CONFIG.PROXY_PORT]: '8080',
+    });
+
+    const proxyAgent = await createProxyAgent('https://Server.com');
+
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBe('http://192.169.0.1:8080/');
+  });
+
+  it('useManualProxySettingFallbackWithoutProtocol', async function () {
+    // Backward compatibility: configs saved before the http/https protocol prefix
+    // was enforced in the formBuilder should still work via the resolver fallback.
+    preloadApi.setAppConfigInPreload({
+      ...SAMPLE_CONFIG_DATA,
+      [PROXY_SETTINGS_CONFIG.USE_OS_SETTINGS]: false,
+      [PROXY_SETTINGS_CONFIG.PROXY_ADDRESS]: '192.169.0.1',
+      [PROXY_SETTINGS_CONFIG.PROXY_PORT]: '8080',
+    });
+
+    const proxyAgent = await createProxyAgent('https://Server.com');
+
+    // The resolver prepends "http://" as a default when no protocol prefix is present
+    // @ts-ignore
+    expect(proxyAgent?.proxy?.href).toBe('http://192.169.0.1:8080/');
   });
 
   it('should ignore basic fqdn', async function () {
