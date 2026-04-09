@@ -21,7 +21,7 @@
  */
 
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
-import { rootCertificates } from 'tls';
+import { rootCertificates } from 'node:tls';
 import * as process from 'node:process';
 
 import { PROCESS_ENVS } from '@/constants';
@@ -32,8 +32,10 @@ import { createProxyAgent } from '@/main/services/proxyResolver';
 import { HelperRequest, executeHelperRequest } from '@/main/services/spawned-node-helper';
 import { toCertArray, putP12Config } from '@/main/services/http-tls-config';
 
-export { HTTPClientConfig, HTTP_METHODS, TClientRes } from '@/main/services/http-client-types';
-import { HTTPClientConfig, HTTP_METHODS, TClientRes } from '@/main/services/http-client-types';
+export type { HTTPClientConfig, TClientRes } from '@/main/services/http-client-types';
+export { HTTP_METHODS } from '@/main/services/http-client-types';
+import type { HTTPClientConfig, TClientRes } from '@/main/services/http-client-types';
+import { HTTP_METHODS } from '@/main/services/http-client-types';
 
 /**
  * Normalize connector URL - replace IP with hostname if needed.
@@ -148,7 +150,7 @@ export const httpClient = async (
 
     // We create a proxy agent if 'useProxyForConnector' is undefined or set to true,
     // which happens in the communication between authenticator and idp.
-    if (typeof config.useProxyForConnector === 'undefined' || config.useProxyForConnector) {
+    if (config.useProxyForConnector === undefined || config.useProxyForConnector) {
       proxy = await createProxyAgent(normalizedUrl, rootCertificates);
     }
 

@@ -24,12 +24,12 @@ import { ipcRenderer } from 'electron';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 import { IPC_GET_PROXY } from '@/constants';
 import { PROXY_AUTH_TYPES, PROXY_SETTINGS_CONFIG } from '@/config';
-import fs from 'fs';
+import fs from 'node:fs';
 import { logger } from '@/main/services/logging';
 import { APP_CA_CHAIN_IDP, APP_CONFIG_DATA } from '@/main/preload-api';
 import { matches as ipMatches } from 'ip-matching';
 import { minimatch } from 'minimatch';
-import * as dns from 'dns';
+import * as dns from 'node:dns';
 import isValidDomain = require('is-valid-domain');
 
 type TReturnType = Promise<HttpsProxyAgent | HttpProxyAgent | undefined>;
@@ -75,7 +75,10 @@ async function getProxyUrl(url: string): Promise<string | undefined> {
   } else {
     const host = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_ADDRESS] as string;
     const port = APP_CONFIG_DATA[PROXY_SETTINGS_CONFIG.PROXY_PORT];
-    proxyUrl = `${host}:${port}`;
+    // PROXY_ADDRESS may or may not include a protocol prefix (e.g. "http://proxy" or just "proxy").
+    // new URL() requires a full URL with protocol, so we add "http://" as default if missing.
+    const rawAddress = `${host}:${port}`;
+    proxyUrl = /^https?:\/\//i.test(rawAddress) ? rawAddress : `http://${rawAddress}`;
     logger.info('Proxy URL obtained from app configuration');
   }
 
