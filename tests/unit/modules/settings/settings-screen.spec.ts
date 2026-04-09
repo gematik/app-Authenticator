@@ -66,7 +66,7 @@ describe('settings screen', () => {
     // FormElement sets initValue in mounted(), but the re-render is batched into the next tick.
     // Without this, the snapshot captures an intermediate state where isChanged is incorrectly true.
     await wrapper.vm.$nextTick();
-
+    await wrapper.vm.$nextTick();
     expect(wrapper.element).toMatchSnapshot();
   });
 });
