@@ -71,6 +71,9 @@ describe('settings try save with invalid central config detected', () => {
       },
     });
 
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
     const alertBox = wrapper.find('.w-full.bg-yellow-100.border-l-4.border-yellow-500.text-yellow-700.p-4.mb-5');
     expect(alertBox.exists()).toBe(true);
     expect(alertBox.html()).toContain('Es konnte kein gültiger AUTHCONFIGPATH gefunden werden.');
@@ -82,6 +85,10 @@ describe('settings try save with invalid central config detected', () => {
         plugins: [store, i18n],
       },
     });
+
+    // We wait for Vue to process reactive updates from FormElement's mounted() hook.
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
 
     jest
       .spyOn(Swal, 'fire')
@@ -104,6 +111,9 @@ describe('settings try save with invalid central config detected', () => {
         plugins: [store, i18n],
       },
     });
+
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
 
     jest
       .spyOn(Swal, 'fire')

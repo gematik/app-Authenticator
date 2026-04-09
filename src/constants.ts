@@ -223,7 +223,12 @@ export const IDP_ENDPOINTS = {
  * Allowed IDP hosts for the authentication process
  * We have to allow only specific hosts for security reasons, to prevent SSRF attacks and other security issues.
  */
-export const IDP_ALLOWED_HOSTS = ['idp.app.ti-dienste.de', 'idp.zentral.idp.splitdns.ti-dienste.de'];
+export const IDP_ALLOWED_HOSTS = [
+  'idp.app.ti-dienste.de',
+  'idp.zentral.idp.splitdns.ti-dienste.de',
+  'idp-ref.app.ti-dienste.de',
+  'idp-ref.zentral.idp.splitdns.ti-dienste.de',
+];
 
 export const LOGIN_VIA_SMART_CARD_SUCCESSFUL = 'login_via_smart_card_successful';
 
@@ -341,7 +346,7 @@ export const REDIRECT_URI_APP_NAME_MAPPING: Record<string, { name: string; url: 
     name: 'DEMIS',
     url: 'demis.rki.de',
   }, // Organ- und Gewebespenderegister
-  'https://account.bdr.de/auth/realms/GematikIDP/broker/gematik-cidp/endpoint/result': {
+  'https://ekh.organspende-register.de/auth/realms/OGR-Abrufportal/broker/gematik-cidp/endpoint/result': {
     name: 'Organ- und Gewebespenderegister',
     url: 'ekh.organspende-register.de',
   }, // Implantateregister
