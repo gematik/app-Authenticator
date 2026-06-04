@@ -1,0 +1,228 @@
+openapi: 3.1.0
+info:
+  title: gematik Authenticator — local web server interface
+  version: 1.0.0
+  summary: Loopback HTTP API of the gematik Authenticator desktop app.
+  description: |
+    While a server-mode auth flow is active, the Authenticator runs an HTTP
+    server on the loopback interface (127.0.0.1). A Relying Party (RP) drives
+    the flow in two phases:
+
+      1. The RP fires an `authenticator://` deeplink carrying `server_port` and
+         `handshake_id`; the Authenticator starts this HTTP server on that port.
+      2. The RP polls `GET /status` (a CORS `fetch`) until it is ready, then
+         NAVIGATES the browser (top-level, not `fetch`) to `GET /authorize`.
+
+    The authorization response is delivered by an HTTP 302 redirect to the
+    IDP-registered `redirect_uri`: the authorization code rides in that URL and
+    is followed by the user agent, so it is never returned as data the caller
+    can read. Any `/authorize` failure that cannot be expressed as a redirect is
+    returned as an HTML page (the endpoint is navigated to, so a JSON body would
+    render as raw text). The server binds 127.0.0.1 only; while it is not
+    running, connections are refused (no HTTP response).
+
+servers:
+  - url: http://localhost:{port}
+    description: |
+      Loopback server. The RP chooses the port and passes it to the
+      Authenticator via the deeplink `server_port`.
+    variables:
+      port:
+        default: 'XXXXX'
+
+tags:
+  - name: Authorization
+  - name: Status
+
+paths:
+  /authorize:
+    get:
+      tags:
+        - Authorization
+      operationId: startAuthorizationCodeFlow
+      summary: Run the auth flow and redirect to the registered redirect_uri
+      description: |
+        Reached by a top-level browser navigation (no `Origin` header, so it is
+        deliberately NOT behind the Origin allow-list). The Authenticator
+        performs card + PIN, exchanges with the IDP, and finally answers with an
+        HTTP 302 to the IDP-registered `redirect_uri`.
+
+        The full IDP authorization URL travels URL-encoded inside
+        `challenge_path`; the standard OAuth/OIDC parameters (`client_id`,
+        `response_type=code`, `redirect_uri`, `state`, `code_challenge`,
+        `code_challenge_method=S256`, `scope`, `nonce`, `cardType`) live inside
+        that URL, not on `/authorize` directly.
+
+        The request is held open until the flow finishes (up to 120 s incl. PIN
+        entry). A failure that still has a `redirect_uri` comes back as a 302
+        carrying OAuth error parameters; a failure without one comes back as an
+        HTML page.
+      parameters:
+        - name: challenge_path
+          in: query
+          required: true
+          description: |
+            URL-encoded full IDP authorization URL, including the standard
+            OAuth/OIDC query parameters listed above.
+          schema:
+            type: string
+          example: https://idp-ref.app.ti-dienste.de/auth?client_id=my-client-id&response_type=code&redirect_uri=https%3A%2F%2Fclient.example.com%2Fcallback&state=af0ifjsldkj&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=openid+gem-auth&nonce=n-0S6_WzA2Mj&cardType=HBA
+        - name: handshake_id
+          in: query
+          required: true
+          description: |
+            Opaque id that must match the `handshake_id` passed in the
+            `authenticator://` deeplink that started this server. A missing or
+            mismatched value is rejected with 403.
+          schema:
+            type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '302':
+          description: |
+            The flow finished and the user agent is redirected to `redirect_uri`.
+            On success the target carries `code`, `state` and `cardType` (plus an
+            optional `nonce`); on an IDP/flow error it carries `error`,
+            `error_description`, `state`, `error_uri`, `cardType` and an optional
+            `error_code`.
+          headers:
+            Location:
+              description: Redirect target (the registered `redirect_uri`).
+              schema:
+                type: string
+                format: uri
+              examples:
+                success:
+                  value: https://client.example.com/callback?code=SplxlOBeZQQYbYS6WxSbIA&state=af0ifjsldkj&cardType=HBA
+                error:
+                  value: https://client.example.com/callback?error=server_error&error_description=Something+went+wrong&state=af0ifjsldkj&error_uri=https%3A%2F%2Fwiki.gematik.de%2Fx%2F-A3OGw&cardType=HBA
+        '400':
+          description: |
+            `challenge_path` is missing, or the flow finished with no usable
+            `redirect_uri` to send the browser to.
+          content:
+            text/html:
+              schema:
+                type: string
+        '403':
+          description: '`handshake_id` is missing or does not match the deeplink that started the server.'
+          content:
+            text/html:
+              schema:
+                type: string
+        '409':
+          description: Another auth flow is already pending on this Authenticator.
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Unhandled internal error.
+          content:
+            text/html:
+              schema:
+                type: string
+        '503':
+          description: The Authenticator UI is unavailable, or the server is shutting down.
+          content:
+            text/html:
+              schema:
+                type: string
+        '504':
+          description: The flow did not complete in time (120 s).
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /status:
+    get:
+      tags:
+        - Status
+      operationId: getStatus
+      summary: Readiness probe for the local web server
+      description: |
+        Polled by the RP via a CORS `fetch` to learn whether the local server is
+        up (and which version). Behind the Origin allow-list: only the registered
+        `redirect_uri` origins (plus the local sample-RP origin in dev/mock
+        builds) may read it, and the 200 response carries
+        `Access-Control-Allow-Origin`. While the server is not running the
+        connection is refused (no HTTP response).
+      responses:
+        '200':
+          description: Server is ready.
+          headers:
+            Access-Control-Allow-Origin:
+              description: Echoes the allowed request `Origin`.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+              example:
+                version: 4.17.0
+                status: ready
+                port: XXXXX
+                handshake_id: 550e8400-e29b-41d4-a716-446655440000
+        '403':
+          description: The request `Origin` is not in the allow-list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: origin_not_allowed
+                error_description: The request origin is not allowed
+        '405':
+          description: Unsupported method (only GET is served).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: not_found
+
+components:
+  schemas:
+    StatusResponse:
+      type: object
+      required:
+        - version
+        - status
+        - port
+      properties:
+        version:
+          type: string
+          description: Authenticator version (`app.getVersion()`).
+        status:
+          type: string
+          enum: [ready]
+          description: Always `ready` — the server only answers 200 once it can serve.
+        port:
+          type: integer
+          description: The loopback port the server is bound to.
+        handshake_id:
+          type: string
+          description: |
+            Echoes the `handshake_id` the server was started with (via the
+            deeplink), so the RP can confirm it is talking to the instance it
+            launched. `null` if the server was started without one.
+    OAuthError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code.
+          examples:
+            - origin_not_allowed
+            - not_found
+        error_description:
+          type: string
+          description: Human-readable error description.
+        error_uri:
+          type: string
+          format: uri
+          description: Link to further error documentation.

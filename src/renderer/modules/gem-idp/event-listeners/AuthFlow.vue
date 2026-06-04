@@ -52,6 +52,7 @@ import {
   createRedirectDeeplink,
 } from '@/renderer/utils/utils';
 import { validateRedirectUriProtocol } from '@/renderer/utils/validate-redirect-uri-protocol';
+import { isRegisteredRpRedirectUri } from '@/renderer/utils/validate-redirect-uri-allowlist';
 import { getCardTypeFromScope } from '@/renderer/utils/card-type-service';
 import {
   OAUTH2_ERROR_TYPE,
@@ -100,6 +101,18 @@ export default defineComponent({
         callbackType: TCallback.OPEN_TAB,
         cardType: ECardTypes.SMCB,
       } as TAuthArguments,
+      // True when this flow was started via the local HTTP server: the final
+      // redirect URL goes back to main over IPC instead of being opened locally.
+      isServerMode: false,
+      // Tracks whether main has been notified about this flow's outcome —
+      // used as a safety net so the RP's GET / never hangs.
+      serverModeNotified: false,
+      // Flow identifier minted by main when GET / arrived; echoed back in
+      // sendAuthFlowFinished so main can verify the IPC matches the pending flow.
+      serverModeFlowId: '',
+      // Pending close-the-app timer; a follow-up auth flow (e.g. multi-card
+      // card #2) cancels it so the Authenticator stays up between cards.
+      quitTimerId: null as ReturnType<typeof setTimeout> | null,
     };
   },
   watch: {
@@ -113,6 +126,13 @@ export default defineComponent({
   methods: {
     async createQueue(event: Event, args: TOidcProtocol2UrlSpec) {
       logStep('Step: createQueue');
+
+      // Disarm the close timer scheduled by quit() — multi-card flow #2 lands here.
+      if (this.quitTimerId !== null) {
+        clearTimeout(this.quitTimerId);
+        this.quitTimerId = null;
+      }
+
       // generate a random ID for the current auth flow
       const loginAttemptId = Math.random().toString(36).substring(2, 9);
       this.attemptId = loginAttemptId;
@@ -135,6 +155,25 @@ export default defineComponent({
         cardType: ECardTypes.SMCB,
       };
 
+      // Safety net: ensure the RP's pending GET / always gets a response,
+      // even if an exception escaped past callRedirectUri.
+      if (this.isServerMode && !this.serverModeNotified) {
+        logger.warn('Server-mode flow ended without notifying main — sending fallback error');
+        window.api.sendAuthFlowFinished({
+          flowId: this.serverModeFlowId,
+          error: 'auth_flow_aborted',
+        });
+      }
+
+      // Capture before the resets below; passed to quit() so multi-card
+      // sessions get a longer grace window for the next GET /.
+      const wasServerMode = this.isServerMode;
+
+      // reset server-mode state so a queued legacy flow cannot inherit it
+      this.isServerMode = false;
+      this.serverModeNotified = false;
+      this.serverModeFlowId = '';
+
       // first clear the stores
       this.$store.commit('connectorStore/resetStore');
       this.$store.commit('idpServiceStore/resetStore');
@@ -145,38 +184,33 @@ export default defineComponent({
       // clear class state
       this.isAuthProcessActive = false;
 
-      // set the default ECC value for the next flow
       ConnectorConfig.setCardReaderParameter({
         crypt: CRYPT_TYPES.ECC,
       });
 
-      // set the default ECC value for the next flow
       ConnectorConfig.setAuthSignParameter({
         signatureType: SIGNATURE_TYPES.ECC,
       });
 
-      // start next flow if there is one and the current flow was successful
       if (!hasCurrentFlowFailed) {
         const nextFlow = this.authQueue.shift();
         if (nextFlow) {
           await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
         } else {
-          this.quit();
+          this.quit(wasServerMode);
         }
       } else {
-        // find the current flow with the same ID and remove it from the queue
         const sameAttemptIdIndex = this.authQueue.findIndex((flow) => flow.loginAttemptId === this.attemptId);
         if (sameAttemptIdIndex > -1) {
           this.authQueue.splice(sameAttemptIdIndex, 1);
           logger.error('Flow with ID ' + this.attemptId + ' encountered an error and is removed from queue!');
         }
 
-        // check for the next flow in the queue
         const nextFlow = this.authQueue.shift();
         if (nextFlow) {
           await this.startAuthenticationFlow(nextFlow.event, nextFlow.args);
         } else {
-          this.quit();
+          this.quit(wasServerMode);
         }
       }
     },
@@ -187,10 +221,8 @@ export default defineComponent({
       logger.info('###############################################');
 
       try {
-        // go to home page
         await this.$router.push('/');
 
-        // get component instances
         const IdpActionsInstance = this.$refs.idpActionsComponent as InstanceType<typeof IdpActions>;
         const CardHandleInstance = this.$refs.cardHandleComponent as InstanceType<typeof CardHandle>;
         const CardExpirationWarnerInstance = this.$refs.cardExpirationWarnerComponent as InstanceType<
@@ -200,6 +232,11 @@ export default defineComponent({
         const ConnectorActionsInstance = this.$refs.connectorActionsComponent as InstanceType<typeof ConnectorActions>;
 
         this.isAuthProcessActive = true;
+
+        // capture server-mode flags before any awaits so callRedirectUri can branch on them
+        this.isServerMode = args.serverMode === true;
+        this.serverModeNotified = false;
+        this.serverModeFlowId = args.flowId ?? '';
 
         // parse arguments and set the state
         this.authArguments = await parseAuthArguments(args.challenge_path!, this.$store);
@@ -232,17 +269,16 @@ export default defineComponent({
          */
         await IdpActionsInstance.getChallengeDataFromIdp();
 
-        /**
-         * Show login consent dialog – user must confirm the target application before proceeding.
-         * In prod mode, always shown. In mock mode, controlled by developer option (default: true).
-         */
-        let showLoginConsent = true;
-        // #!if MOCK_MODE === 'ENABLED'
-        const loginConsentSetting = getConfig(DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG, true).value;
-        showLoginConsent = loginConsentSetting !== false;
-        // #!endif
-        if (showLoginConsent) {
-          await showLoginConsentDialog(this.$store, this.$t);
+        // In server mode we already know that this is from a official RP domain, and we can skip the consent dialog.
+        if (!this.isServerMode) {
+          let showLoginConsent = true;
+          // #!if MOCK_MODE === 'ENABLED'
+          const loginConsentSetting = getConfig(DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG, true).value;
+          showLoginConsent = loginConsentSetting !== false;
+          // #!endif
+          if (showLoginConsent) {
+            await showLoginConsentDialog(this.$store, this.$t);
+          }
         }
 
         /**
@@ -305,39 +341,42 @@ export default defineComponent({
           await this.finishAndStartNextFlow(true);
         }
       } catch (error) {
-        let errorUrl = '';
-        if (error instanceof AuthFlowError && error.errorUrl) {
-          errorUrl = error.errorUrl;
+        try {
+          let errorUrl = '';
+          if (error instanceof AuthFlowError && error.errorUrl) {
+            errorUrl = error.errorUrl;
+          }
+
+          const authFlowEndState = await this.sendAuthorizationRequest();
+
+          await this.callRedirectUri(
+            {
+              isSuccess: false,
+              url: errorUrl || authFlowEndState.url,
+            },
+            error.errorType,
+            error.message,
+          );
+
+          if ((error instanceof AuthFlowError && !error.errorShown) || !(error instanceof AuthFlowError)) {
+            await alertLoginResultWithIconAndTimer('error', LOGIN_NOT_SUCCESSFUL, SHOW_DIALOG_DURATION);
+          }
+
+          await this.finishAndStartNextFlow(true);
+        } finally {
+          // Guarantee RP's pending GET / gets a response even if the cleanup above threw.
+          if (this.isServerMode && !this.serverModeNotified) {
+            window.api.sendAuthFlowFinished({
+              flowId: this.serverModeFlowId,
+              error: 'auth_flow_aborted',
+            });
+            this.serverModeNotified = true;
+          }
         }
-
-        const authFlowEndState = await this.sendAuthorizationRequest();
-
-        await this.callRedirectUri(
-          {
-            isSuccess: false,
-            url: errorUrl || authFlowEndState.url,
-          },
-          error.errorType,
-          error.message,
-        );
-
-        // if this is an AuthFlowError and we have already shown the error, we don't need to show it again
-        // OR if this is not an AuthFlowError, we show the error
-        if ((error instanceof AuthFlowError && !error.errorShown) || !(error instanceof AuthFlowError)) {
-          await alertLoginResultWithIconAndTimer('error', LOGIN_NOT_SUCCESSFUL, SHOW_DIALOG_DURATION);
-        }
-
-        await this.finishAndStartNextFlow(true);
       }
     },
-    /**
-     * Try to handle errors with defined error codes. In other case,
-     * the function which call this function will handle the error by itself
-     * @param e
-     */
     async handleErrors(e: ConnectorError | UserfacingError | Error): Promise<void> {
       logStep('Step: handleErrors');
-      // focus to app to show the error
       window.api.focusToApp();
 
       if (
@@ -372,9 +411,6 @@ export default defineComponent({
       }
     },
 
-    /**
-     * @returns URL
-     */
     async sendAuthorizationRequest(): Promise<TAuthFlowEndState> {
       logStep('Step: sendAuthorizationRequest');
 
@@ -419,20 +455,36 @@ export default defineComponent({
         const parsedChallengePath = new URL(challengePath);
         const redirectUri = parsedChallengePath.searchParams.get('redirect_uri');
         const state = parsedChallengePath.searchParams.get('state');
-        if (redirectUri) url = redirectUri;
-        if (state) stateParam = state;
+        // redirect_uri here is RAW from the attacker-controllable challenge_path;
+        // only follow a registered RP origin, else it's an open-redirect 302.
+        if (redirectUri && isRegisteredRpRedirectUri(redirectUri)) {
+          url = redirectUri;
+          if (state) stateParam = state;
+        } else if (redirectUri) {
+          logger.warn(`callRedirectUri: refusing unregistered error-path redirect_uri: ${redirectUri}`);
+        }
       }
 
-      if (!url || !validateRedirectUriProtocol(url)) return false;
+      if (!url || !validateRedirectUriProtocol(url)) {
+        // Server-mode safety: still answer the pending GET / — otherwise
+        // the RP hangs until the local HTTP server timeout.
+        if (this.isServerMode && !this.serverModeNotified) {
+          window.api.sendAuthFlowFinished({
+            flowId: this.serverModeFlowId,
+            error: errorText || errorType || 'no_valid_redirect_uri',
+          });
+          this.serverModeNotified = true;
+        }
+        return false;
+      }
 
       const urlObj = new URL(url);
 
       if (!authFlowEndState.isSuccess) {
         if (!urlObj.searchParams.has('error')) {
           urlObj.searchParams.set('error', errorType || OAUTH2_ERROR_TYPE.SERVER_ERROR);
-          urlObj.searchParams.set('error_details', authFlowEndState.idpError?.gamatikErrorText || errorText || '');
+          urlObj.searchParams.set('error_description', authFlowEndState.idpError?.gamatikErrorText || errorText || '');
 
-          // add the gematikCode to the error url as error_code
           if (authFlowEndState.idpError?.gematikCode) {
             urlObj.searchParams.set('error_code', authFlowEndState.idpError?.gematikCode);
           }
@@ -447,6 +499,24 @@ export default defineComponent({
       urlObj.searchParams.set('cardType', this.authArguments.cardType);
 
       const finalUrl = urlObj.toString();
+
+      // Server-mode: hand the URL back to main via IPC; main answers the
+      // pending GET / and the RP navigates the browser itself. Error
+      // params are already on finalUrl, so we always send `redirectUrl`.
+      // DEEPLINK callbacks have a side-effect (launching a native client
+      // via custom protocol) that the HTTP response can't replace — fire
+      // it here too. OPEN_TAB and DIRECT have no useful side-effect in
+      // server-mode (the RP navigates its own browser from the HTTP body).
+      if (this.isServerMode) {
+        if (this.authArguments.callbackType === TCallback.DEEPLINK) {
+          const localDeepLink = createRedirectDeeplink(this.authArguments.deeplink, finalUrl);
+          logger.info(`open local deeplink:${localDeepLink}`);
+          window.api.openExternal(localDeepLink);
+        }
+        window.api.sendAuthFlowFinished({ flowId: this.serverModeFlowId, redirectUrl: finalUrl });
+        this.serverModeNotified = true;
+        return true;
+      }
 
       try {
         switch (this.authArguments.callbackType) {
@@ -471,13 +541,17 @@ export default defineComponent({
         return false;
       }
     },
-    quit() {
+    quit(wasServerMode = false) {
       // #!if MOCK_MODE === 'ENABLED'
       if (!IS_DEV) {
         // #!endif
-        setTimeout(() => {
+        // Server-mode gets a longer grace so multi-card RPs can fire the
+        // next GET / before the app shuts down.
+        const delayMs = wasServerMode ? 30_000 : 3_000;
+        this.quitTimerId = setTimeout(() => {
+          this.quitTimerId = null;
           window.api.send(IPC_CLOSE_THE_AUTHENTICATOR);
-        }, 3000);
+        }, delayMs);
         // #!if MOCK_MODE === 'ENABLED'
       }
       // #!endif

@@ -45,9 +45,11 @@ describe('AuthFlow callRedirectUri', () => {
     jest.spyOn(window.api, 'utilFormat').mockImplementation(jest.fn());
     jest.spyOn(window.api, 'httpGet').mockImplementation(jest.fn());
 
+    // A registered RP redirect_uri (origin is in REDIRECT_URI_APP_NAME_MAPPING)
+    // so the error-path fallback is allowed to follow it.
     store.commit(
       'idpServiceStore/setChallengePath',
-      'https://idp.example.com/auth?redirect_uri=https://client.example.com/cb&state=xyz',
+      'https://idp.example.com/auth?redirect_uri=https://zvr-ae.bnotk.de/zvr/login/oauth2/code/Oauth2-IDP1&state=xyz',
     );
 
     // Mount component
@@ -138,7 +140,7 @@ describe('AuthFlow callRedirectUri', () => {
     expect(mockOpenExternal).toHaveBeenCalledWith('tim://code=123&cardType=SMC-B');
   });
 
-  it('if isSuccess = false and no url, tries to parse from challenge_path, append error and returns true if protocol is valid', async () => {
+  it('if isSuccess = false and no url, parses a REGISTERED redirect_uri from challenge_path, appends error and returns true', async () => {
     wrapper.vm.authArguments.callbackType = 'OPEN_TAB';
     const authFlowEndState = { isSuccess: false, url: '' };
     const errorType = OAUTH2_ERROR_TYPE.SERVER_ERROR;
@@ -150,7 +152,22 @@ describe('AuthFlow callRedirectUri', () => {
     // // Let's just ensure openExternal is called with something starting with that redirect URI and includes error, state and cardType:
     const calledUrl = mockOpenExternal.mock.calls[0][0];
     expect(calledUrl).toBe(
-      'https://client.example.com/cb?error=server_error&error_details=Something+went+wrong&state=xyz&error_uri=https%3A%2F%2Fwiki.gematik.de%2Fx%2F-A3OGw&cardType=SMC-B',
+      'https://zvr-ae.bnotk.de/zvr/login/oauth2/code/Oauth2-IDP1?error=server_error&error_description=Something+went+wrong&state=xyz&error_uri=https%3A%2F%2Fwiki.gematik.de%2Fx%2F-A3OGw&cardType=SMC-B',
     );
+  });
+
+  it('refuses an UNREGISTERED error-path redirect_uri (open-redirect guard) and returns false', async () => {
+    // Attacker-controlled challenge_path carrying a non-registered redirect_uri
+    // must NOT be turned into a 302 — we answer with an error instead.
+    store.commit(
+      'idpServiceStore/setChallengePath',
+      'https://idp.example.com/auth?redirect_uri=https://attacker.example/phish&state=xyz',
+    );
+    wrapper.vm.authArguments.callbackType = 'OPEN_TAB';
+    const authFlowEndState = { isSuccess: false, url: '' };
+
+    const result = await wrapper.vm.callRedirectUri(authFlowEndState, OAUTH2_ERROR_TYPE.SERVER_ERROR, 'boom');
+    expect(result).toBe(false);
+    expect(mockOpenExternal).not.toHaveBeenCalled();
   });
 });

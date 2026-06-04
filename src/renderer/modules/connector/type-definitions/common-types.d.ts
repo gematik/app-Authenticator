@@ -150,3 +150,16 @@ export type TConnectorStore = {
   };
   terminals?: TCardTerminal;
 };
+
+export type TSdsServiceVersion = {
+  version: string;
+  targetNamespace: string;
+  endpointTls: string;
+};
+
+export type TSdsService = {
+  name: string;
+  versions: TSdsServiceVersion[];
+};
+
+export type TSdsServiceMap = Map<string, TSdsService>;

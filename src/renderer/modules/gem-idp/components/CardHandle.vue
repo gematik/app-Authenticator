@@ -160,9 +160,9 @@ export default defineComponent({
     },
     async handleMissingCardAction(cardType: ECardTypes) {
       if (!pendingCardActionModalClose) {
-        alertWithCancelButton(ERROR_CODES.AUTHCL_2001, cardType).then(() => {
+        alertWithCancelButton(ERROR_CODES.AUTHCL_2001, cardType).then((result) => {
           // to be sure that this throws only for 4047
-          if (!this.multiCardList.length) {
+          if (result.dismiss && !this.multiCardList.length) {
             this.onUserCancelledCardInsert();
           }
         });

@@ -27,19 +27,32 @@ import base64url from 'base64url';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
 import { ENCRYPTION_TYPES, SIGNATURE_TYPES } from '@/renderer/modules/connector/constants';
 import { isCertificateValid } from '@/renderer/modules/gem-idp/services/certificate-validation-service';
+// #!if MOCK_MODE === 'ENABLED'
+import { getConfig } from '@/renderer/utils/get-configs';
+import { MOCK_CONNECTOR_CONFIG } from '@/renderer/modules/connector/connector-mock/mock-config';
+// #!endif
 
 export async function createUnsignedJws(cardCertificate: string, challenge: string) {
   try {
-    // Validate the certificate before using it
-    const isValid = await isCertificateValid(cardCertificate);
-    if (!isValid) {
-      logger.error('Certificate validation failed');
-      throw new UserfacingError(
-        'Certificate validation failed',
-        'The provided certificate is not valid',
-        ERROR_CODES.AUTHCL_0004,
-      );
+    // #!if MOCK_MODE === 'ENABLED'
+    // In mock mode there is no real connector to verify the certificate against, so skip the check.
+    const skipCertValidation = getConfig(MOCK_CONNECTOR_CONFIG).value;
+    if (!skipCertValidation) {
+      // #!endif
+      const isValid = await isCertificateValid(cardCertificate);
+      if (!isValid) {
+        logger.error('Certificate validation failed');
+        throw new UserfacingError(
+          'Certificate validation failed',
+          'The provided certificate is not valid',
+          ERROR_CODES.AUTHCL_0004,
+        );
+      }
+      // #!if MOCK_MODE === 'ENABLED'
+    } else {
+      logger.debug('Mock mode enabled - skipping certificate validity check in createUnsignedJws');
     }
+    // #!endif
 
     const header = createJwsHeader(cardCertificate);
     const payload = createJwsPayload(challenge);

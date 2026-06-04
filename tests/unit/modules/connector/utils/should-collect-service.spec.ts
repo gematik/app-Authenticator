@@ -21,7 +21,7 @@
  */
 
 import { readResourceFile, TestCategory } from '@tests/TestInfo';
-import sdsParser from '@/renderer/modules/connector/common/sds-parser';
+import sdsParser, { flattenToEndpointMap } from '@/renderer/modules/connector/common/sds-parser';
 
 function determineMapServiceEndpointTls(sds: string) {
   return handleSds(sds);
@@ -173,5 +173,5 @@ describe('Collect services for different connectors', () => {
 });
 
 function handleSds(sds: string) {
-  return sdsParser(sds);
+  return flattenToEndpointMap(sdsParser(sds));
 }

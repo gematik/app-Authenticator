@@ -26,6 +26,18 @@ import { IdpError } from '@/renderer/modules/gem-idp/type-definitions';
 export interface TOidcProtocol2UrlSpec {
   challenge_path?: string;
   redirect_automatically?: boolean;
+  /** When true, the deeplink indicated the new auth flow (with local HTTP server) */
+  serverMode?: boolean;
+  /** Port for the local HTTP server – only set when serverMode is true */
+  serverPort?: number;
+  /** It verifies the caller of `GET /` is the same R * session that opened the deeplink. */
+  handshakeId?: string;
+  /**
+   * Opaque per-flow identifier minted by main when `GET /` arrives. The
+   * renderer must echo it back in `sendAuthFlowFinished` so main can verify
+   * the IPC corresponds to the still-pending flow.
+   */
+  flowId?: string;
 }
 
 export type TUserWarnObject = {

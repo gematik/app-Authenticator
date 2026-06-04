@@ -24,8 +24,9 @@ import { TCertReaderParameter, TContextParameter } from '../type-definitions/com
 import { SOAP_ACTION, SOAP_ACTION_CONTENT_TYPE } from '@/renderer/modules/connector/constants';
 import templatePTV4 from '@/renderer/modules/connector/assets/soap_templates/PTV4/read-card-certificate.xml';
 import templatePTV3 from '@/renderer/modules/connector/assets/soap_templates/PTV3/read-card-certificate.xml';
-import { getProductTypeVersion } from '@/renderer/modules/connector/connector_impl/sds-request';
+import { getPtvVersion } from '@/renderer/modules/connector/connector_impl/sds-request';
 import { httpReqConfig } from '@/renderer/modules/connector/services';
+import { PtvVersion } from '@/renderer/modules/connector/ptv';
 
 export const runSoapRequest = async (
   contextParameter: TContextParameter,
@@ -33,13 +34,12 @@ export const runSoapRequest = async (
   cardHandle: string,
   certReaderParameter: TCertReaderParameter,
 ): Promise<string> => {
-  const productVersionPTV = getProductTypeVersion();
-  let envelope = '';
-  if (productVersionPTV.startsWith('3')) {
-    envelope = getTemplateCertificateReaderPTV3(cardHandle, contextParameter, certReaderParameter);
-  } else {
-    envelope = getTemplateCertificateReaderPTV4(cardHandle, contextParameter, certReaderParameter);
-  }
+  const envelope = selectReadCardCertificateEnvelope(
+    getPtvVersion(),
+    cardHandle,
+    contextParameter,
+    certReaderParameter,
+  );
 
   const requestHeaders = {
     'Content-Type': SOAP_ACTION_CONTENT_TYPE,
@@ -49,6 +49,19 @@ export const runSoapRequest = async (
   const { data } = await window.api.httpPost(endpoint, envelope, httpReqConfig(requestHeaders));
   return data;
 };
+
+export function selectReadCardCertificateEnvelope(
+  ptv: PtvVersion,
+  cardHandle: string,
+  contextParameter: TContextParameter,
+  certReaderParameter: TCertReaderParameter,
+): string {
+  // PTV3 used a no-<Crypt> envelope; PTV4+ (including UNKNOWN as conservative default) all share the PTV4 shape.
+  if (ptv === PtvVersion.PTV3) {
+    return getTemplateCertificateReaderPTV3(cardHandle, contextParameter, certReaderParameter);
+  }
+  return getTemplateCertificateReaderPTV4(cardHandle, contextParameter, certReaderParameter);
+}
 
 const getTemplateCertificateReaderPTV3 = (
   cardHandle: string,

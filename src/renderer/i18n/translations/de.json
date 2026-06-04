@@ -711,6 +711,10 @@
       "title": "Nicht erlaubter IDP",
       "text": "Der angegebene IDP-Host ist nicht in der Liste der erlaubten IDP-Hosts enthalten. Der Authentifizierungsvorgang wurde abgebrochen. Fehlercode (AUTHCL_0014)"
     },
+    "AUTHCL_0015": {
+      "title": "Lokaler HTTP-Server konnte nicht gestartet werden",
+      "text": "Der lokale HTTP-Server für den Authentifizierungsvorgang konnte nicht gestartet werden. Bitte stellen Sie sicher, dass keine andere Anwendung den benötigten Port belegt, und versuchen Sie es erneut. Fehlercode (AUTHCL_0015)"
+    },
     "AUTHCL_1000": {
       "title": "Verbindung zum Konnektor fehlgeschlagen",
       "text": "Bitte überprüfen Sie Ihre Konnektor-Einstellungen in den Authenticator-Einstellungen. Stellen Sie sicher, dass der Konnektor läuft und verbunden ist und dass keine Netzwerkprobleme vorliegen. Fehlercode (AUTHCL_1000)"

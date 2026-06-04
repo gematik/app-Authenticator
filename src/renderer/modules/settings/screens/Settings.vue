@@ -152,7 +152,7 @@ import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connect
 import { useSettings } from '@/renderer/modules/settings/useSettings';
 import { FileStorageRepository, TRepositoryData } from '@/renderer/modules/settings/repository';
 import { runTestsCases, TestResult } from '@/renderer/modules/settings/services/test-runner';
-import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
+import { clearSdsCache } from '@/renderer/modules/connector/connector_impl/sds-request';
 import TestResultModal from '@/renderer/modules/settings/components/TestResultModal.vue';
 import { ERROR_CODES } from '@/error-codes';
 import { logger } from '@/renderer/service/logger';
@@ -380,7 +380,7 @@ export default defineComponent({
       reloadFromConfigFile && load(true);
       window.api.setAppConfigInPreload(toRaw(configValues.value));
       ConnectorConfig.updateConnectorParameters();
-      clearEndpoints();
+      clearSdsCache();
     }
 
     const closeFunctionTestModal = () => {

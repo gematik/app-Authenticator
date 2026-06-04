@@ -35,7 +35,7 @@ import { SettingsProvider } from '@/renderer/modules/settings/SettingsProvider';
 import { IPC_UPDATE_ENV, updateProcessEnvs } from '@/constants';
 import { logger } from '@/renderer/service/logger';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
-import { clearEndpoints } from '@/renderer/modules/connector/connector_impl/sds-request';
+import { clearSdsCache } from '@/renderer/modules/connector/connector_impl/sds-request';
 
 const configFileStoreRepo = new FileStorageRepository();
 
@@ -55,7 +55,7 @@ window.api.on(IPC_UPDATE_ENV, () => {
   // put data in connector module
 
   ConnectorConfig.updateConnectorParameters();
-  clearEndpoints();
+  clearSdsCache();
 });
 </script>
 

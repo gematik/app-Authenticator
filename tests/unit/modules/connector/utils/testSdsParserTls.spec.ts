@@ -20,7 +20,7 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import sdsParser from '@/renderer/modules/connector/common/sds-parser';
+import sdsParser, { flattenToEndpointMap } from '@/renderer/modules/connector/common/sds-parser';
 import { printTestTitle, readResourceFile, TestCategory } from '@tests/TestInfo';
 import { XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 
@@ -59,7 +59,7 @@ describe('SdsParser for TLS parses correctly for different Endpoints', () => {
 });
 
 function handleSds(sds: string) {
-  endpoints = sdsParser(sds);
+  endpoints = flattenToEndpointMap(sdsParser(sds));
 }
 
 function getEndpoint(serviceName: string) {
