@@ -64,6 +64,9 @@ export declare global {
       readLicenceFile: () => string;
       readThirdPartyLicenses: () => string;
       showFilePath(file: File): string;
+      sendAuthFlowFinished: (
+        payload: { flowId: string; redirectUrl: string } | { flowId: string; error: string },
+      ) => void;
     };
   }
 }

@@ -94,6 +94,14 @@ export const IPC_FOCUS_TO_AUTHENTICATOR = 'IPC_FOCUS_TO_AUTHENTICATOR';
 export const IPC_CLOSE_THE_AUTHENTICATOR = 'IPC_CLOSE_THE_AUTHENTICATOR';
 
 /**
+ * Sent from the renderer to the main process when the new-auth-flow
+ * is finished. Payload: `{ redirectUrl: string }` on success or
+ * `{ error: string }` on failure. The main process completes the pending
+ * `GET /` HTTP request held by the local HTTP server with this payload.
+ */
+export const IPC_AUTH_FLOW_FINISHED = 'IPC_AUTH_FLOW_FINISHED';
+
+/**
  * Our logging system works in the main task, not in the browser.
  * That's why we use ipc bridge and those events to send logs to file
  */
@@ -324,6 +332,41 @@ export enum CERTIFICATE_VALIDATION_STATUS {
 }
 
 export const DISCOVERY_DOCUMENT_ROLE = '1.2.276.0.76.4.260';
+
+/**
+ * Wire-level surface of the local HTTP server used by the server-mode auth
+ * flow. These values are part of the v4.17 contract with Relying Parties;
+ * changing any of them is a breaking change.
+ */
+export const LOCAL_HTTP_SERVER = {
+  PATHS: {
+    STATUS: '/status',
+    AUTH: '/authorize',
+  },
+  QUERY_PARAMS: {
+    CHALLENGE_PATH: 'challenge_path',
+    SERVER_PORT: 'server_port',
+    HANDSHAKE_ID: 'handshake_id',
+  },
+  ERROR_CODES: {
+    ORIGIN_NOT_ALLOWED: 'origin_not_allowed',
+    FLOW_ALREADY_IN_PROGRESS: 'flow_already_in_progress',
+    MISSING_CHALLENGE_PATH: 'missing_challenge_path',
+    HANDSHAKE_MISMATCH: 'handshake_mismatch',
+    FLOW_TIMEOUT: 'flow_timeout',
+    SERVER_SHUTTING_DOWN: 'server_shutting_down',
+    NOT_FOUND: 'not_found',
+  },
+  // Card signing + PIN entry can take a while, but must not hang forever.
+  AUTH_FLOW_TIMEOUT_MS: 120_000,
+  // Sample-RP origin; only added to the allow-list in dev / mock builds.
+  DEV_ALLOWED_ORIGIN: 'http://localhost:8090',
+  // Privileged ports (<1024) require root; ports >65535 aren't valid TCP.
+  PORT_RANGE: {
+    MIN: 1024,
+    MAX: 65535,
+  },
+} as const;
 
 /**
  * Mapping of known redirect_uri values to human-readable application names and their official URLs.

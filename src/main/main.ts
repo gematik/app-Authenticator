@@ -30,6 +30,7 @@ import {
   IPC_FOCUS_TO_AUTHENTICATOR,
   IPC_SET_USER_AGENT,
 } from '@/constants';
+import { stopLocalHttpServer, isLocalHttpServerRunning } from '@/main/services/local-http-server';
 import appConfigFactory from '../../app-config';
 import { handleDeepLink } from '@/main/services/url-service';
 
@@ -167,7 +168,7 @@ async function createWindow() {
   if (process.platform === PLATFORM_WIN32) {
     await setupEnvReadInterval(mainWindow);
   }
-  handleDeepLink(process.argv, mainWindow);
+  handleDeepLink(process.argv, () => mainWindow);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -227,7 +228,7 @@ if (!gotTheLock && process.platform !== PLATFORM_DARWIN) {
   app.on('second-instance', (_e: Event, argv: string[]) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
-      handleDeepLink(argv, mainWindow);
+      handleDeepLink(argv, () => mainWindow);
     }
   });
 
@@ -241,7 +242,7 @@ if (!gotTheLock && process.platform !== PLATFORM_DARWIN) {
         await setupEnvReadInterval(mainWindow);
       }
 
-      handleDeepLink([argv], mainWindow);
+      handleDeepLink([argv], () => mainWindow);
       deepLink = '';
     } else {
       deepLink = argv;
@@ -279,7 +280,7 @@ if (!gotTheLock && process.platform !== PLATFORM_DARWIN) {
 
     // call previously saved deep link, which was called in the open-url event
     if (deepLink) {
-      handleDeepLink([deepLink], mainWindow);
+      handleDeepLink([deepLink], () => mainWindow);
       deepLink = '';
     }
 
@@ -307,6 +308,19 @@ if (!gotTheLock && process.platform !== PLATFORM_DARWIN) {
       logger.info('Application quit because all windows are closed');
       app.quit();
     }
+  });
+
+  // Electron doesn't await async `before-quit` — flush 503 to the pending
+  // RP socket via preventDefault + re-quit after cleanup.
+  let isCleaningUp = false;
+  app.on('before-quit', (event) => {
+    if (isCleaningUp || !isLocalHttpServerRunning()) {
+      return;
+    }
+    event.preventDefault();
+    isCleaningUp = true;
+    logger.info('Stopping local HTTP server before quit...');
+    stopLocalHttpServer().finally(() => app.quit());
   });
 
   app.on('activate', async () => {

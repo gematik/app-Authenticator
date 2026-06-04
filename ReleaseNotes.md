@@ -1,12 +1,21 @@
 # Release Authenticator
 
-## NEXT_VERSION
+
+## 4.17.0
 
 ### Added
+- HTTP port-based authenticator flow implemented
+
 
 ### Fixed
+- Removed certificate check in the Mock-Version
+- Proxy basic authentication now handles special characters in the username or password correctly
+- CONNECT tunnel: now sends a `User-Agent` header and sets the `Host` header to the destination host, so proxies no longer block or reject the CONNECT request
+- SDS endpoint selection is now capped per service so a supported WSDL version is always chosen
+- SDS cache: a malformed `connector.sds` response no longer locks the cache empty for the session; the next request refetches
 
 ### Security
+
 
 ## 4.16.1
 

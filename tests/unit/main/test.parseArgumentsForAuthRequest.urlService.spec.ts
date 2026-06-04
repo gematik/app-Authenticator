@@ -38,10 +38,12 @@ const GEM_IDP_ARGV = [
 
 describe('check deeplink', () => {
   it('parse deeplink properly for gematik idp', () => {
-    const deeplink = handleDeepLink(GEM_IDP_ARGV, null);
+    const deeplink = handleDeepLink(GEM_IDP_ARGV, () => null);
     expect(parseLauncherArguments(deeplink!)).toEqual({
       challenge_path:
         'http://gstopdh2.top.local:8571/sign_response?client_id=AuthenticatorDevLocal&response_type=code&redirect_uri=http://localhost:8090/callback&state=f1bQrZ4SEsiKCRV4VNqG&code_challenge=AHXOzBAtfJofxkW5IHS1Fmy930tIu1MLxHjoz9GN_94&code_challenge_method=S256&scope=openid authenticator-dev&nonce=MbwsuHIExDKyqKDKSsPp',
+      serverMode: false,
+      serverPort: undefined,
     });
   });
 });

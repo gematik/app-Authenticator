@@ -24,12 +24,29 @@
  * @fileoverview Utility functions.
  */
 
-import { START_ARGUMENTS_TO_PREVENT } from '@/constants';
+import { LOCAL_HTTP_SERVER, START_ARGUMENTS_TO_PREVENT } from '@/constants';
+import { logger } from '@/main/services/logging';
 
 /**
  * Returns true if the current platform is macOS.
  */
 export const isMacOS = process.platform === 'darwin';
+
+/**
+ * Validates that a parsed integer is a usable TCP port. Returns the port if
+ * valid, otherwise `undefined` and logs a warning so the failure is visible
+ * during integration debugging (e.g. when an RP uses an unexpected value).
+ */
+export function validateServerPort(port: number): number | undefined {
+  const { MIN, MAX } = LOCAL_HTTP_SERVER.PORT_RANGE;
+  if (!Number.isInteger(port) || port < MIN || port > MAX) {
+    logger.warn(
+      `server_port=${port} is outside the valid range [${MIN}, ${MAX}] – ignoring and falling back to legacy auth flow`,
+    );
+    return undefined;
+  }
+  return port;
+}
 
 /**
  * Check if the app is running with any of the remote debugging flags

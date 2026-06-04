@@ -78,6 +78,16 @@ export const SOAP_ACTION = {
   VerifyCertificate: 'http://ws.gematik.de/conn/CertificateService/v6.0#VerifyCertificate',
 };
 
+// Cap on the WSDL major.minor we ship envelopes for. Endpoints above the cap are skipped,
+// so a v8.2 Konnektor endpoint never receives v8.1-shaped bodies. Services we do not
+// consume are absent and fall through to unbounded selection.
+export const WSDL_VERSION_CAPS: Record<string, string> = {
+  [XML_TAG_NAMES.TAG_AUTH_SIGNATURE_SERVICE]: '7.4',
+  [XML_TAG_NAMES.TAG_CARD_SERVICE]: '8.1',
+  [XML_TAG_NAMES.TAG_CERTIFICATE_SERVICE]: '6.0',
+  [XML_TAG_NAMES.TAG_EVENT_SERVICE]: '7.2',
+};
+
 export enum SIGNATURE_TYPES {
   ECC = 'urn:bsi:tr:03111:ecdsa',
   RSA = 'urn:ietf:rfc:3447',

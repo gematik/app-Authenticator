@@ -20,55 +20,69 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import sdsParser from '../common/sds-parser';
+import sdsParser, { pickHighestSupportedVersion } from '../common/sds-parser';
 import { logger } from '@/renderer/service/logger';
 import textParser from '@/renderer/modules/connector/common/soap-response-xml-parser';
-import { CONNECTOR_SDS_PATH, XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
+import { CONNECTOR_SDS_PATH, WSDL_VERSION_CAPS, XML_TAG_NAMES } from '@/renderer/modules/connector/constants';
 import { httpReqConfig } from '@/renderer/modules/connector/services';
 import { UserfacingError } from '@/renderer/errors/errors';
 import { ERROR_CODES } from '@/error-codes';
 import ConnectorConfig from '@/renderer/modules/connector/connector_impl/connector-config';
+import { TSdsServiceMap } from '@/renderer/modules/connector/type-definitions';
+import { mapToPtvVersion, PtvVersion } from '@/renderer/modules/connector/ptv';
 
-let endpoints = new Map();
-let productTypeVersion = '';
+type SdsCache = {
+  services: TSdsServiceMap;
+  productTypeVersion: string;
+  loaded: boolean;
+};
 
-function extractEndpoints(sds: string) {
-  endpoints = sdsParser(sds);
-  logger.debug(`endpoints.size: ${endpoints.size}`);
-}
+const emptyCache = (): SdsCache => ({ services: new Map(), productTypeVersion: '', loaded: false });
+
+let cache: SdsCache = emptyCache();
 
 export const getServiceEndpointTls = async (serviceName: string): Promise<string> => {
   try {
-    if (endpoints.size == 0 || productTypeVersion === '') {
+    if (!cache.loaded) {
       const { data: sds } = await window.api.httpGet(ConnectorConfig.tlsEntryOptions.hostname + CONNECTOR_SDS_PATH, {
         ...httpReqConfig(),
       });
-      extractEndpoints(sds);
-      extractPtv(sds);
+      // Build the next cache locally and assign once — if a parser throws, `cache` keeps its previous
+      // value. `loaded` gates on services.size, so a 200-with-garbage response self-heals on the next
+      // call instead of locking the cache empty.
+      const services = sdsParser(sds);
+      const productTypeVersion = textParser(sds, XML_TAG_NAMES.TAG_PRODUCT_TYPE_VERSION);
+      cache = { services, productTypeVersion, loaded: services.size > 0 };
+      logger.debug(`SDS cache filled: ${services.size} services, PTV=${productTypeVersion}`);
     } else {
-      logger.debug(`reuse endpoints: ${endpoints.size} xEndpoints`);
+      logger.debug(`reuse SDS cache: ${cache.services.size} services`);
     }
     return getEndpoint(serviceName);
   } catch (e) {
-    logger.error('Could not get service endpoint: ', e.message);
-    throw new UserfacingError('Could not get service endpoint', e.message, ERROR_CODES.AUTHCL_1000);
+    const message = e?.message ?? String(e);
+    logger.error('Could not get service endpoint: ', message);
+    // Pass the original error through `data` so the stack survives in logs.
+    throw new UserfacingError('Could not get service endpoint', message, ERROR_CODES.AUTHCL_1000, e);
   }
 };
 
 export function getEndpoint(serviceName: string): string {
-  return endpoints.get(serviceName);
+  const chosen = pickHighestSupportedVersion(cache.services.get(serviceName), WSDL_VERSION_CAPS[serviceName]);
+  if (!chosen?.endpointTls) {
+    throw new Error(`No usable TLS endpoint for service "${serviceName}" in SDS`);
+  }
+  return chosen.endpointTls;
 }
 
 export function getProductTypeVersion(): string {
-  return productTypeVersion;
+  return cache.productTypeVersion;
 }
 
-export function clearEndpoints() {
-  endpoints.clear();
-  logger.debug(`endpoints cleared: ${endpoints.size} xEndpoints`);
+export function getPtvVersion(): PtvVersion {
+  return mapToPtvVersion(cache.productTypeVersion);
 }
 
-function extractPtv(sds: string) {
-  productTypeVersion = textParser(sds, XML_TAG_NAMES.TAG_PRODUCT_TYPE_VERSION);
-  logger.debug('productVersionPTV: ' + productTypeVersion);
+export function clearSdsCache() {
+  cache = emptyCache();
+  logger.debug('SDS cache cleared');
 }

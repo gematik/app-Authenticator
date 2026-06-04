@@ -80,10 +80,14 @@ function getProxyHttpModule(proxyObj) {
   return proxyObj.protocol === 'https:' ? https : http;
 }
 
-// Returns proxy auth headers if credentials are provided, empty object otherwise
+// Returns proxy auth headers if credentials are provided, empty object otherwise.
+// Credentials arrive percent-encoded (extracted from a URL object upstream),
+// so we decode them before base64-encoding — matching hpagent's behaviour.
 function getProxyAuthHeaders(proxyObj) {
-  if (proxyObj.username && proxyObj.password) {
-    const auth = Buffer.from(`${proxyObj.username}:${proxyObj.password}`).toString('base64');
+  if (proxyObj.username || proxyObj.password) {
+    const user = decodeURIComponent(proxyObj.username || '');
+    const pass = decodeURIComponent(proxyObj.password || '');
+    const auth = Buffer.from(`${user}:${pass}`).toString('base64');
     return { 'Proxy-Authorization': `Basic ${auth}` };
   }
   return {};
@@ -323,15 +327,25 @@ function performRequest(request) {
     req.end();
   }
 
-  // If using proxy for HTTPS, create CONNECT tunnel first
+  // If using proxy for HTTPS, create CONNECT tunnel first.
+  // setHost:false + explicit Host header are required so the Host points at the
+  // *destination*, not the proxy. Without this, DPI proxies (Fortinet domain-fronting
+  // protection, Palo Alto, Check Point) reject the CONNECT as a host-mismatch.
   if (proxy && isHttps) {
+    const targetHostPort = `${parsedUrl.hostname}:${parsedUrl.port || 443}`;
     const connectReq = getProxyHttpModule(proxy).request({
       host: proxy.host,
       port: proxy.port,
       method: 'CONNECT',
-      path: `${parsedUrl.hostname}:${parsedUrl.port || 443}`,
+      path: targetHostPort,
       timeout: timeout,
-      headers: getProxyAuthHeaders(proxy),
+      setHost: false,
+      headers: {
+        Host: targetHostPort,
+        ...getProxyAuthHeaders(proxy),
+        'User-Agent': headers['User-Agent'] || headers['user-agent'] || 'gematik-authenticator',
+        Connection: 'close',
+      },
     });
 
     connectReq.on('connect', (res, socket) => {

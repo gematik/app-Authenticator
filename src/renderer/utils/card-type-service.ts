@@ -86,17 +86,22 @@ export async function getCardTypeFromScope(
     if (foundCardType) {
       // if cardType is MULTI, that means we have to process the auth flow for both card types
       if (CARD_TYPE_MULTI === foundCardType.toLowerCase()) {
-        // start with HBA, and the  SMCB will be processed after the HBA
+        // start with HBA, and the SMCB will be processed after the HBA
         cardType = ECardTypes.HBA;
 
-        // replace the cardType parameter with SMCB and add it to the queue
-        createQueue(new Event(''), {
-          ...args,
-          challenge_path: filteredChallengePath.challenge_path.replace(
-            'cardType=' + foundCardType,
-            'cardType=' + ECardTypes.SMCB,
-          ),
-        });
+        // In server mode the Relying Party drives each card with its own
+        // GET /authorize request, so the second card must NOT be auto-queued
+        // here — the RP sends it itself. Legacy mode still queues it internally.
+        if (!args.serverMode) {
+          // replace the cardType parameter with SMCB and add it to the queue
+          createQueue(new Event(''), {
+            ...args,
+            challenge_path: filteredChallengePath.challenge_path.replace(
+              'cardType=' + foundCardType,
+              'cardType=' + ECardTypes.SMCB,
+            ),
+          });
+        }
       }
 
       // if cardType exists and suits with ECardTypes, we use it

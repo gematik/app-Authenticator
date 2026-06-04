@@ -126,7 +126,7 @@ module.exports = {
     entitlementsInherit: './build/entitlements/entitlements.dmg.plist',
     forceCodeSigning: true,
     category: 'public.app-category.utilities',
-    bundleVersion: '16',
+    bundleVersion: '17',
     extendInfo: IS_MOCK
       ? {}
       : {

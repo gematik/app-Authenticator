@@ -21,42 +21,95 @@
  */
 
 const saxParser = require('sax');
-import { TTag } from '../type-definitions';
+import { TSdsService, TSdsServiceMap, TSdsServiceVersion } from '../type-definitions';
+import { compareSemver, parseSemver } from '../ptv/semver';
 
-/**
- * This parser is suitable for extracting value from xml tag parameters
- * @param xmlStr
- */
-export default function parse(xmlStr: string) {
+function localName(qualifiedName: string): string {
+  const colonIdx = qualifiedName.indexOf(':');
+  return colonIdx === -1 ? qualifiedName : qualifiedName.slice(colonIdx + 1);
+}
+
+// Returns every <Version> the Konnektor advertises per service; the caller picks one.
+export default function parse(xmlStr: string): TSdsServiceMap {
+  const serviceMap: TSdsServiceMap = new Map<string, TSdsService>();
+  if (typeof xmlStr !== 'string' || !xmlStr) return serviceMap;
+
   const parser = saxParser.parser(true);
-  const serviceMap = new Map<string, string>();
-  let versionMap = new Map<string, string>();
-  let entry: TTag | null = null;
-  let serviceName: string;
-  let serviceVersion: string;
+  let currentService: TSdsService | null = null;
+  let currentVersion: TSdsServiceVersion | null = null;
 
-  parser.onclosetag = function (tagName: string) {
-    if (tagName.indexOf('EndpointTLS') > -1 && entry) {
-      const currentVersion = versionMap.keys().next().value;
-      if (versionMap.size === 0 || (currentVersion && serviceVersion > currentVersion)) {
-        versionMap.clear();
-        versionMap.set(serviceVersion, entry.attributes.Location);
-        serviceMap.set(serviceName, entry.attributes.Location);
-      }
+  parser.onopentag = function (tag: { name: string; attributes: Record<string, string> }) {
+    const name = localName(tag.name);
+
+    if (name === 'Service' && tag.attributes.Name) {
+      currentService = { name: tag.attributes.Name, versions: [] };
+      serviceMap.set(currentService.name, currentService);
+      return;
+    }
+
+    if (name === 'Version' && tag.attributes.Version) {
+      currentVersion = {
+        version: tag.attributes.Version,
+        targetNamespace: tag.attributes.TargetNamespace || '',
+        endpointTls: '',
+      };
+      return;
+    }
+
+    if (name === 'EndpointTLS' && currentVersion && tag.attributes.Location) {
+      currentVersion.endpointTls = tag.attributes.Location;
     }
   };
 
-  parser.onopentag = function (tag: TTag) {
-    entry = tag;
-    if (tag.name.indexOf('Service') > -1) {
-      serviceName = entry.attributes.Name;
-      versionMap = new Map<string, string>();
+  parser.onclosetag = function (qualifiedName: string) {
+    const name = localName(qualifiedName);
+
+    if (name === 'Version' && currentService && currentVersion && currentVersion.endpointTls) {
+      currentService.versions.push(currentVersion);
+      currentVersion = null;
+      return;
     }
-    if (tag.name.indexOf('Version') > -1 && entry.attributes.Version) {
-      serviceVersion = entry.attributes.Version;
+    if (name === 'Version') {
+      currentVersion = null;
+      return;
+    }
+    if (name === 'Service') {
+      currentService = null;
     }
   };
 
   parser.write(xmlStr).end();
   return serviceMap;
+}
+
+// Highest-semver version with a TLS endpoint, optionally capped at `maxMajorMinor` (e.g. '8.1').
+// When nothing fits the cap, falls back to the highest available — downstream then fails loudly
+// instead of silently routing to undefined.
+export function pickHighestSupportedVersion(
+  service: TSdsService | undefined,
+  maxMajorMinor?: string,
+): TSdsServiceVersion | undefined {
+  if (!service || service.versions.length === 0) return undefined;
+  const usable = service.versions.filter((v) => v.endpointTls);
+  if (usable.length === 0) return undefined;
+
+  const sortedDesc = [...usable].sort((a, b) => compareSemver(b.version, a.version));
+  if (!maxMajorMinor) return sortedDesc[0];
+
+  const [maxMajor, maxMinor] = parseSemver(maxMajorMinor);
+  const withinCap = sortedDesc.find((v) => {
+    const [major, minor] = parseSemver(v.version);
+    return major < maxMajor || (major === maxMajor && minor <= maxMinor);
+  });
+  return withinCap ?? sortedDesc[0];
+}
+
+// Convenience used by legacy callers: serviceName → highest TLS endpoint, no cap.
+export function flattenToEndpointMap(services: TSdsServiceMap): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const [name, svc] of services.entries()) {
+    const chosen = pickHighestSupportedVersion(svc);
+    if (chosen) out.set(name, chosen.endpointTls);
+  }
+  return out;
 }

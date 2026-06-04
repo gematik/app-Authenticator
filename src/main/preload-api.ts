@@ -26,6 +26,7 @@ import path from 'path';
 import os from 'os';
 import util from 'util';
 import {
+  IPC_AUTH_FLOW_FINISHED,
   IPC_FOCUS_TO_AUTHENTICATOR,
   IPC_GET_APP_PATH,
   IPC_SELECT_FOLDER,
@@ -172,4 +173,20 @@ export const preloadApi = {
     return webUtils.getPathForFile(file);
   },
   readThirdPartyLicenses: () => ipcRenderer.invoke('readThirdPartyLicenses'),
+
+  /**
+   * Signals completion of a server-mode auth flow to the main process, which
+   * then answers the pending `GET /` HTTP request held by the local
+   * HTTP server. Fire-and-forget — the main-side listener is registered when
+   * the local HTTP server starts.
+   *
+   * On success: `{ redirectUrl }` – the RP's callback URL with OAuth code.
+   * On failure: `{ error }` – the main process returns 500 to the RP with
+   * this description.
+   */
+  sendAuthFlowFinished: (
+    payload: { flowId: string; redirectUrl: string } | { flowId: string; error: string },
+  ): void => {
+    ipcRenderer.send(IPC_AUTH_FLOW_FINISHED, payload);
+  },
 };
