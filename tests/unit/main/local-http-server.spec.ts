@@ -51,9 +51,7 @@ electronMock.ipcMain = {
 
 const TEST_PORT = 28999;
 const HANDSHAKE_ID = 'aaaaaaaa-bbbb-4ccc-9ddd-eeeeeeeeeeee';
-// NODE_ENV=test puts the server into dev-mode origin allow-list which
-// includes http://localhost:8090 (the sample RP). Use it as the default
-// in every test request.
+// Jest skips webpack preprocessor → DEV_ALLOWED_ORIGIN stays in the allow-list.
 const TEST_ORIGIN = 'http://localhost:8090';
 
 type MockBrowserWindow = {

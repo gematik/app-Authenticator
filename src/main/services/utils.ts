@@ -28,11 +28,6 @@ import { LOCAL_HTTP_SERVER, START_ARGUMENTS_TO_PREVENT } from '@/constants';
 import { logger } from '@/main/services/logging';
 
 /**
- * Returns true if the current platform is macOS.
- */
-export const isMacOS = process.platform === 'darwin';
-
-/**
  * Validates that a parsed integer is a usable TCP port. Returns the port if
  * valid, otherwise `undefined` and logs a warning so the failure is visible
  * during integration debugging (e.g. when an RP uses an unexpected value).

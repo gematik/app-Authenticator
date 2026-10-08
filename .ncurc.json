@@ -1,6 +1,5 @@
 {
   "reject": [
-    "got",
     "sweetalert2",
     "@types/node",
     "vue-i18n",
@@ -8,6 +7,9 @@
     "jest",
     "@types/jest",
     "electron-builder",
-    "typescript"
+    "typescript",
+    "@babel/core",
+    "@babel/preset-env",
+    "zip-a-folder"
   ]
 }

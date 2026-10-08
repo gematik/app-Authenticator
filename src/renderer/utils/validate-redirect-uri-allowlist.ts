@@ -22,10 +22,12 @@
 
 import { LOCAL_HTTP_SERVER, REDIRECT_URI_APP_NAME_MAPPING } from '@/constants';
 import { logger } from '@/renderer/service/logger';
+// #!if MOCK_MODE === 'ENABLED'
+import { DEVELOPER_OPTIONS } from '@/renderer/modules/connector/connector-mock/mock-config';
+import { getConfig } from '@/renderer/utils/get-configs';
+// #!endif
 
-// Registered RP origins, derived once from the known redirect_uri mapping
-// (one origin per registered RP). The local sample RP is added only in mock
-// builds; the preprocessor strips it from production.
+// Lazy: settings repository may not be populated at module load.
 function buildAllowedRedirectOrigins(): Set<string> {
   const origins = new Set<string>();
   for (const redirectUri of Object.keys(REDIRECT_URI_APP_NAME_MAPPING)) {
@@ -37,11 +39,19 @@ function buildAllowedRedirectOrigins(): Set<string> {
   }
   // #!if MOCK_MODE === 'ENABLED'
   origins.add(new URL(LOCAL_HTTP_SERVER.DEV_ALLOWED_ORIGIN).origin);
+  const extra = (getConfig(DEVELOPER_OPTIONS.HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS, '').value as string) || '';
+  for (const raw of extra.split(',')) {
+    const trimmed = raw.trim();
+    if (!trimmed) continue;
+    try {
+      origins.add(new URL(trimmed).origin);
+    } catch {
+      logger.warn(`Skipping malformed origin: ${trimmed}`);
+    }
+  }
   // #!endif
   return origins;
 }
-
-const ALLOWED_REDIRECT_ORIGINS = buildAllowedRedirectOrigins();
 
 /**
  * True if `url`'s origin belongs to a registered RP. Gates the error-path
@@ -50,7 +60,7 @@ const ALLOWED_REDIRECT_ORIGINS = buildAllowedRedirectOrigins();
  */
 export function isRegisteredRpRedirectUri(url: string): boolean {
   try {
-    return ALLOWED_REDIRECT_ORIGINS.has(new URL(url).origin);
+    return buildAllowedRedirectOrigins().has(new URL(url).origin);
   } catch (err) {
     logger.error('Invalid redirect uri for allow-list check', err.message);
     return false;

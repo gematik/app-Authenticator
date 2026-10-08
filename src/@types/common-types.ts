@@ -62,15 +62,7 @@ export type IFormInputDropDownOptions = { text: string; value: string | boolean 
  * If option list is not suitable with OptionsType we can give a custom option list for the dropdown
  */
 export type IFormInputColumnTypes =
-  | 'input'
-  | 'number'
-  | 'password'
-  | 'email'
-  | 'text'
-  | 'drop-down'
-  | 'file'
-  | 'date'
-  | 'file-path';
+  'input' | 'number' | 'password' | 'email' | 'text' | 'drop-down' | 'file' | 'date' | 'file-path';
 
 export interface IConfig {
   label: string;
@@ -115,12 +107,7 @@ export enum KONNEKTOR_VENDORS {
 export type TToastIconType = 'success' | 'warning' | 'error' | 'info';
 
 export type TToastPositionType =
-  | 'top-right'
-  | 'top-left'
-  | 'bottom-right'
-  | 'bottom-left'
-  | 'top-center'
-  | 'bottom-center';
+  'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
 
 export interface IToastNotificationProps {
   title: string;

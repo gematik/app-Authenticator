@@ -1,5 +1,13 @@
 # Release Authenticator
 
+## 4.17.1
+
+### Added
+
+### Fixed
+
+### Security
+- Dependency updates
 
 ## 4.17.0
 
