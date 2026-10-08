@@ -31,6 +31,9 @@ import {
   IPC_SET_USER_AGENT,
 } from '@/constants';
 import { stopLocalHttpServer, isLocalHttpServerRunning } from '@/main/services/local-http-server';
+// #!if MOCK_MODE === 'ENABLED'
+import { registerDevAllowedOriginsListener } from '@/main/services/local-http-server';
+// #!endif
 import appConfigFactory from '../../app-config';
 import { handleDeepLink } from '@/main/services/url-service';
 
@@ -93,6 +96,10 @@ ipcMain.on(IPC_SET_USER_AGENT, (event, userAgent) => {
   customUserAgent = userAgent;
   event.returnValue = true;
 });
+
+// #!if MOCK_MODE === 'ENABLED'
+registerDevAllowedOriginsListener();
+// #!endif
 
 async function createWindow() {
   let devTools = false;

@@ -29,6 +29,7 @@ import {
   MOCK_CONNECTOR_CERTS_CONFIG,
   MOCK_CONNECTOR_CONFIG,
 } from '@/renderer/modules/connector/connector-mock/mock-config';
+import { IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS } from '@/constants';
 // #!endif
 import {
   APP_NAME,
@@ -98,6 +99,7 @@ export type TRepositoryDataValues = {
   [MOCK_CONNECTOR_CONFIG]?: boolean;
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]?: boolean;
   [DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS]?: string;
+  [DEVELOPER_OPTIONS.HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS]?: string;
   [DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG]?: boolean;
   [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_CERT]: string;
   [MOCK_CONNECTOR_CERTS_CONFIG.SMCB_KEY]: string;
@@ -114,6 +116,23 @@ export type TRepositoryData = Partial<TRepositoryDataValues>;
  * Holds data in the cache to prevent reading the config file frequently
  */
 let storedData: TRepositoryData = {};
+
+// #!if MOCK_MODE === 'ENABLED'
+function pushLocalHttpAllowedOriginsToMain(data: TRepositoryData): void {
+  const raw = (data[DEVELOPER_OPTIONS.HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS] as string | undefined) ?? '';
+  const parsed: string[] = [];
+  for (const candidate of raw.split(',')) {
+    const trimmed = candidate.trim();
+    if (!trimmed) continue;
+    try {
+      parsed.push(new URL(trimmed).origin);
+    } catch {
+      // skip malformed
+    }
+  }
+  window.api.send(IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS, parsed);
+}
+// #!endif
 
 export interface ISettingsRepository {
   save(data: TRepositoryData): void;
@@ -147,6 +166,7 @@ export const INITIAL_STATE = {
   [MOCK_CONNECTOR_CONFIG]: false,
   [DEVELOPER_OPTIONS.IDP_CERTIFICATE_CHECK]: true,
   [DEVELOPER_OPTIONS.IDP_ADDITIONAL_ALLOWED_HOSTS]: '',
+  [DEVELOPER_OPTIONS.HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS]: '',
   [DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG]: true,
   // #!endif
 
@@ -307,6 +327,7 @@ export class FileStorageRepository implements ISettingsRepository {
     FileStorageRepository._isNewInstallation = false;
     // #!if MOCK_MODE === 'ENABLED'
     FileStorageRepository.printConfig();
+    pushLocalHttpAllowedOriginsToMain(storedData);
     // #!endif
   }
 
@@ -397,6 +418,7 @@ export class FileStorageRepository implements ISettingsRepository {
     window.api.setAppConfigInPreload(storedData);
     // #!if MOCK_MODE === 'ENABLED'
     FileStorageRepository.printConfig();
+    pushLocalHttpAllowedOriginsToMain(storedData);
     // #!endif
     return data;
   }

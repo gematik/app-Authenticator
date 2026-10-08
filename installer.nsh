@@ -110,6 +110,8 @@
   Delete "$INSTDIR\resources\certs-konnektor\GEM.RCA7-CROSS-GEM.RCA6.pem"
   Delete "$INSTDIR\resources\certs-konnektor\GEM.RCA8-CROSS-GEM.RCA6.pem"
   Delete "$INSTDIR\resources\certs-konnektor\GEM.KOMP-CA29_TEST-ONLY.pem"
+  Delete "$INSTDIR\resources\certs-konnektor\GEM.KOMP-CA28_TEST-ONLY.pem"
+  Delete "$INSTDIR\resources\certs-konnektor\GEM.KOMP-CA4.pem"
   Delete "$INSTDIR\resources\certs-konnektor\GEM.KOM.RSA.BUNDLE.crt"
   Delete "$INSTDIR\resources\certs-konnektor\GEM.RCA.RSA.BUNDLE.crt"
   Delete "$INSTDIR\resources\certs-konnektor\GEM.KOM.NIST.BUNDLE.crt"

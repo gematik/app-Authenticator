@@ -196,6 +196,13 @@ export function getFormSections(repositoryData: TRepositoryData): IConfigSection
           infoText: 'Kommaseparierte Liste zusätzlicher erlaubter IDP-Hosts (z.B. localhost,my-idp.example.com).',
         },
         {
+          label: 'HTTP-Server Zusätzlich erlaubte Origins',
+          key: DEVELOPER_OPTIONS.HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS,
+          type: 'input',
+          infoText:
+            'Kommaseparierte Liste zusätzlicher erlaubter Origins für den lokalen HTTP-Server (volles Origin inkl. Schema und Port, z.B. http://localhost:3000,https://my-rp.example.com).',
+        },
+        {
           label: 'Login Consent Dialog anzeigen',
           key: DEVELOPER_OPTIONS.SHOW_LOGIN_CONSENT_DIALOG,
           type: 'drop-down',

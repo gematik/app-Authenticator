@@ -20,14 +20,18 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { createLogZip, getUniqueDateString } from '@/main/services/logging';
+import { createLogZip } from '@/main/services/logging';
+import { MainPathProvider } from '@/main/services/main-path-provider';
 import path from 'path';
 import fs from 'fs';
 
 describe('test zip-a-folder', () => {
   it(' creates Zip files properly', async function () {
     const dirPath = 'reports';
-    const zipLogFileExists = path.join(dirPath, 'authenticator-logData_' + getUniqueDateString() + '.zip');
+    const zipLogFileExists = path.join(
+      dirPath,
+      'authenticator-logData_' + MainPathProvider.getUniqueDateString() + '.zip',
+    );
     await createLogZip(dirPath);
     expect(fs.existsSync(zipLogFileExists)).toBeTruthy();
   });

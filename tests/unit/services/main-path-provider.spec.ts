@@ -22,7 +22,6 @@
 
 import { MainPathProvider } from '@/main/services/main-path-provider';
 import { isMacOS } from '@tests/utils';
-import * as logging from '@/main/services/logging';
 
 describe('MainPathProvider', () => {
   it('MainPathProvide -> genLogDirectoryPath', async function () {
@@ -37,7 +36,7 @@ describe('MainPathProvider', () => {
 
   it('MainPathProvide -> genZipLogDirectoryPath', async function () {
     // mock getUniqueDateString and return always the same string
-    jest.spyOn(logging, 'getUniqueDateString').mockReturnValue('2024-12-31_23-59-59');
+    jest.spyOn(MainPathProvider, 'getUniqueDateString').mockReturnValue('2024-12-31_23-59-59');
 
     if (isMacOS()) {
       expect(MainPathProvider.genZipLogDirectoryPath(MainPathProvider.logDirectoryPath)).toMatch(

@@ -1,0 +1,14 @@
+# Snyk Code exclusions
+version: v1.25.0
+exclude:
+  global:
+    - tests/**
+    - build/**
+    # reviewed false positives; .snyk ignores don't apply to Snyk Code, drop these once ignored in the Snyk UI
+    - src/config.ts
+    - src/main/main.ts
+    - src/main/services/local-http-server.ts
+    - src/main/services/node-https-helper.js
+    - src/renderer/modules/connector/connector_impl/connector-config.ts
+    - src/renderer/modules/gem-idp/services/jwt-x5c-validation-service.ts
+    - src/renderer/modules/gem-idp/store/idp-service-store.ts

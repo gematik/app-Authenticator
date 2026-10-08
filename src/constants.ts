@@ -101,6 +101,10 @@ export const IPC_CLOSE_THE_AUTHENTICATOR = 'IPC_CLOSE_THE_AUTHENTICATOR';
  */
 export const IPC_AUTH_FLOW_FINISHED = 'IPC_AUTH_FLOW_FINISHED';
 
+// #!if MOCK_MODE === 'ENABLED'
+export const IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS = 'IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS';
+// #!endif
+
 /**
  * Our logging system works in the main task, not in the browser.
  * That's why we use ipc bridge and those events to send logs to file
@@ -248,9 +252,9 @@ export const DEV_CON_CA_CERT_PATH = '/src/assets/certs-konnektor/ru';
 export const DEV_IDP_CA_CERT_PATH = '/src/assets/certs-idp';
 
 export enum P12_VALIDITY_TYPE {
-  'VALID',
-  'WRONG_PASSWORD',
-  'EXPIRED',
+  VALID,
+  WRONG_PASSWORD,
+  EXPIRED,
 }
 
 export const STORAGE_CONFIG_KEYS = {

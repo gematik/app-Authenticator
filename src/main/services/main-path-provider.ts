@@ -26,10 +26,11 @@ import { app } from 'electron';
 import { IS_DEV } from '@/constants';
 // #!endif
 import { LOG_DIRECTORY_NAME, MACOS_PATHS } from '@/constants';
-import { isMacOS } from '@/main/services/utils';
 import path from 'path';
 import fs from 'fs';
-import { getUniqueDateString } from '@/main/services/logging';
+
+// Must not import logging (also not via utils): logging reads logDirectoryPath while loading.
+const isMacOS = process.platform === 'darwin';
 
 export class MainPathProvider {
   private static _logDirectoryPath = '';
@@ -54,7 +55,24 @@ export class MainPathProvider {
   }
 
   public static genZipLogDirectoryPath(dirPath: string): string {
-    return path.join(dirPath, 'authenticator-logData_' + getUniqueDateString() + '.zip');
+    return path.join(dirPath, 'authenticator-logData_' + MainPathProvider.getUniqueDateString() + '.zip');
+  }
+
+  public static getUniqueDateString(): string {
+    const now = new Date();
+    return (
+      now.getFullYear() +
+      '-' +
+      (now.getMonth() + 1) +
+      '-' +
+      +now.getDate() +
+      'T' +
+      +now.getHours() +
+      '-' +
+      +now.getMinutes() +
+      '-' +
+      +now.getSeconds()
+    );
   }
 
   public static configDirectoryPath(): string {

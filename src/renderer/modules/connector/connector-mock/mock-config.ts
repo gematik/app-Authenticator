@@ -32,6 +32,7 @@ export const MOCK_CONNECTOR_CERTS_CONFIG = {
 export const DEVELOPER_OPTIONS = {
   IDP_CERTIFICATE_CHECK: 'developer.disableCertificateCheck',
   IDP_ADDITIONAL_ALLOWED_HOSTS: 'developer.idpAdditionalAllowedHosts',
+  HTTP_SERVER_ADDITIONAL_ALLOWED_ORIGINS: 'developer.httpServerAdditionalAllowedOrigins',
   SHOW_LOGIN_CONSENT_DIALOG: 'developer.showLoginConsentDialog',
 } as const;
 // #!endif

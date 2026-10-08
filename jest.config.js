@@ -60,7 +60,7 @@ module.exports = {
   modulePathIgnorePatterns: ['__snapshots__'],
   setupFiles: ['dotenv/config', './tests/jest-config/setup.ts'],
   coverageReporters: ['cobertura', 'lcov', 'text'],
-  transformIgnorePatterns: ['node_modules/(?!(flat|uuid|minimatch|tailwindcss|yaml|perfect-debounce|birpc)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(flat|uuid|minimatch|tailwindcss|yaml|perfect-debounce|birpc|nostics)/)'],
   testResultsProcessor: './resultsProcessor.js',
   reporters: [
     'default',

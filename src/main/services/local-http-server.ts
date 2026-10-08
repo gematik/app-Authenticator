@@ -31,11 +31,16 @@ import {
   LOCAL_HTTP_SERVER,
   REDIRECT_URI_APP_NAME_MAPPING,
 } from '@/constants';
+// #!if MOCK_MODE === 'ENABLED'
+import { IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS } from '@/constants';
+// #!endif
 
 const { PATHS, QUERY_PARAMS, ERROR_CODES, AUTH_FLOW_TIMEOUT_MS, DEV_ALLOWED_ORIGIN } = LOCAL_HTTP_SERVER;
 
-// Allow-list is derived from the known RP redirect_uri mapping (one origin
-// per registered RP) plus the local sample RP origin in dev / mock builds.
+// #!if MOCK_MODE === 'ENABLED'
+let additionalAllowedOrigins: string[] = [];
+// #!endif
+
 function buildAllowedOrigins(): string[] {
   const origins = new Set<string>();
   for (const redirectUri of Object.keys(REDIRECT_URI_APP_NAME_MAPPING)) {
@@ -45,11 +50,12 @@ function buildAllowedOrigins(): string[] {
       logger.warn(`LocalHttpServer: Skipping malformed redirect_uri in mapping: ${redirectUri}`, err);
     }
   }
-  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
-  const isMock = process.env.MOCK_MODE === 'ENABLED';
-  if (isDev || isMock) {
-    origins.add(DEV_ALLOWED_ORIGIN);
+  // #!if MOCK_MODE === 'ENABLED'
+  origins.add(DEV_ALLOWED_ORIGIN);
+  for (const extra of additionalAllowedOrigins) {
+    origins.add(extra);
   }
+  // #!endif
   return Array.from(origins);
 }
 
@@ -60,6 +66,21 @@ function getAllowedOrigins(): string[] {
   }
   return cachedAllowedOrigins;
 }
+
+// #!if MOCK_MODE === 'ENABLED'
+export function registerDevAllowedOriginsListener(): void {
+  ipcMain.on(IPC_UPDATE_LOCAL_HTTP_ALLOWED_ORIGINS, (_event, payload) => {
+    const incoming = Array.isArray(payload)
+      ? (payload as unknown[]).filter((v): v is string => typeof v === 'string')
+      : [];
+    additionalAllowedOrigins = incoming;
+    cachedAllowedOrigins = null;
+    logger.info(
+      `LocalHttpServer: developer-options additional allowed origins updated: ${incoming.join(', ') || '(none)'}`,
+    );
+  });
+}
+// #!endif
 
 let server: http.Server | null = null;
 let currentPort: number | null = null;

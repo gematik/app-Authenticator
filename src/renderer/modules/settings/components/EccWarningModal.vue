@@ -151,9 +151,9 @@ const props = defineProps({
 });
 
 enum CertStatus {
-  'success',
-  'error',
-  'loading',
+  success,
+  error,
+  loading,
 }
 
 const loading = ref(true);

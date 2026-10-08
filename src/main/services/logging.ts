@@ -131,20 +131,3 @@ export async function createLogZip(dirPath: string) {
   await zip(MainPathProvider.logDirectoryPath, zipLogDirectoryPath);
   logger.info('Your Log-Zip-File is here: ' + zipLogDirectoryPath);
 }
-
-export function getUniqueDateString() {
-  const now = new Date();
-  return (
-    now.getFullYear() +
-    '-' +
-    (now.getMonth() + 1) +
-    '-' +
-    +now.getDate() +
-    'T' +
-    +now.getHours() +
-    '-' +
-    +now.getMinutes() +
-    '-' +
-    +now.getSeconds()
-  );
-}
